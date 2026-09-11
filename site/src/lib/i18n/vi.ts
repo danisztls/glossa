@@ -485,8 +485,6 @@ export const vi: Dictionary = {
 	'shortcuts.show': 'Hiện danh sách này',
 	'help.title': 'Trợ giúp',
 	'help.reading.heading': 'Thanh phía trên một bản văn',
-	'help.feature.search':
-		'Gõ một trưng dẫn vào ô trên cùng — chương và câu, một số mục, tên một văn kiện — và nó tự hoàn tất khi bạn gõ.',
 	'help.feature.offline':
 		'Thêm trang này vào màn hình chính thì nó mở ra như một ứng dụng. Bạn có thể tải trọn các tác phẩm để đọc khi không có kết nối.',
 	'help.feature.contents':

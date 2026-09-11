@@ -476,8 +476,6 @@ export const hr: Dictionary = {
 	'shortcuts.show': 'Prikaži ovaj popis',
 	'help.title': 'Pomoć',
 	'help.reading.heading': 'Traka iznad teksta',
-	'help.feature.search':
-		'Upišite navod u okvir na vrhu — poglavlje i redak, broj odlomka, ime dokumenta — i dovršava ga dok tipkate.',
 	'help.feature.offline':
 		'Dodajte stranicu na početni zaslon i otvara se kao aplikacija. Cijela djela možete preuzeti i čitati bez veze.',
 	'help.feature.contents':

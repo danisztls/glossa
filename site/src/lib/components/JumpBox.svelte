@@ -567,11 +567,15 @@
 	explain a control nobody has activated yet. `aria-label` keeps the long
 	form, since a screen-reader user gets no benefit from the visual brevity
 	and does benefit from the examples.
+
+	NO `data-help`, unlike every other control in the bar: the panel below
+	teaches its own notation, with the field the reader is about to type in
+	directly above it, and the help sheet's copy of the same lesson was one
+	that could fall out of step with the box (2026-09-10, by direction).
 -->
 <button
 	type="button"
 	class="menu-trigger wide trigger"
-	data-help="search"
 	onclick={openBox}
 	aria-haspopup="dialog"
 	aria-label={t('jumpbox.placeholder')}

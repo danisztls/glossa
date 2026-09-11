@@ -480,8 +480,6 @@ export const lv: Dictionary = {
 	'shortcuts.show': 'Rādīt šo sarakstu',
 	'help.title': 'Palīdzība',
 	'help.reading.heading': 'Josla virs teksta',
-	'help.feature.search':
-		'Ierakstiet atsauci laukā augšā — nodaļu un pantu, rindkopas numuru, dokumenta nosaukumu — un tā tiek papildināta, jums rakstot.',
 	'help.feature.offline':
 		'Pievienojiet vietni sākuma ekrānam, un tā atvērsies kā lietotne. Varat lejupielādēt veselus darbus, lai lasītu bez savienojuma.',
 	'help.feature.contents':

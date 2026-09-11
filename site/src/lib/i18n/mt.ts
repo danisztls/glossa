@@ -461,8 +461,6 @@ export const mt: Dictionary = {
 	'shortcuts.show': 'Uri din il-lista',
 	'help.title': 'Għajnuna',
 	'help.reading.heading': 'Il-bar fuq test',
-	'help.feature.search':
-		'Ittajpja referenza fil-kaxxa ta’ fuq — kapitlu u vers, numru ta’ paragrafu, isem ta’ dokument — u titlesta waħedha waqt li tikteb.',
 	'help.feature.offline':
 		'Żid is-sit mal-iskrin prinċipali u jinfetaħ bħal app. Tista’ tniżżel xogħlijiet sħaħ biex taqrahom bla konnessjoni.',
 	'help.feature.contents':

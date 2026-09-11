@@ -457,8 +457,6 @@ export const sv: Dictionary = {
 	'shortcuts.show': 'Visa den här listan',
 	'help.title': 'Hjälp',
 	'help.reading.heading': 'Raden ovanför en text',
-	'help.feature.search':
-		'Skriv en hänvisning i rutan överst — kapitel och vers, ett styckenummer, namnet på ett dokument — och den fylls i medan du skriver.',
 	'help.feature.offline':
 		'Lägg till sidan på hemskärmen så öppnas den som en app. Du kan hämta hela verk för att läsa utan uppkoppling.',
 	'help.feature.contents':

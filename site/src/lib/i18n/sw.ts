@@ -486,8 +486,6 @@ export const sw: Dictionary = {
 	'shortcuts.show': 'Onyesha orodha hii',
 	'help.title': 'Msaada',
 	'help.reading.heading': 'Utepe ulio juu ya maandishi',
-	'help.feature.search':
-		'Andika rejeo katika kisanduku cha juu — sura na mstari, nambari ya kifungu, jina la hati — nalo hujikamilisha unapoandika.',
 	'help.feature.offline':
 		'Ongeza tovuti hii kwenye skrini yako ya mwanzo nayo hufunguka kama programu. Waweza kupakua kazi nzima ili kuzisoma bila mtandao.',
 	'help.feature.contents':

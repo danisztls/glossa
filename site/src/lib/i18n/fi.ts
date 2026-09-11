@@ -484,8 +484,6 @@ export const fi: Dictionary = {
 	'shortcuts.show': 'Näytä tämä lista',
 	'help.title': 'Ohje',
 	'help.reading.heading': 'Palkki tekstin yläpuolella',
-	'help.feature.search':
-		'Kirjoita viite yläreunan kenttään — luku ja jae, kappaleen numero, asiakirjan nimi — ja se täydentyy kirjoittaessasi.',
 	'help.feature.offline':
 		'Lisää sivusto aloitusnäytöllesi, niin se avautuu kuin sovellus. Voit ladata kokonaisia teoksia luettavaksi ilman verkkoyhteyttä.',
 	'help.feature.contents':

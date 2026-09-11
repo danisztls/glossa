@@ -521,8 +521,6 @@ export const pt: Dictionary = {
 	'shortcuts.show': 'Mostrar esta lista',
 	'help.title': 'Ajuda',
 	'help.reading.heading': 'A barra acima de um texto',
-	'help.feature.search':
-		'Escreva uma referência na caixa do topo — capítulo e versículo, número de parágrafo, o nome de um documento — e ela a completa à medida que escreve.',
 	'help.feature.offline':
 		'Adicione o site à tela de início e ele abre como um aplicativo. Pode baixar obras inteiras para ler sem conexão.',
 	'help.feature.contents':

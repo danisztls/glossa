@@ -457,8 +457,6 @@ export const es: Dictionary = {
 	'shortcuts.show': 'Mostrar esta lista',
 	'help.title': 'Ayuda',
 	'help.reading.heading': 'La barra sobre un texto',
-	'help.feature.search':
-		'Escribe una referencia en la caja de arriba — capítulo y versículo, número de párrafo, el nombre de un documento — y la completa mientras escribes.',
 	'help.feature.offline':
 		'Añade el sitio a tu pantalla de inicio y se abre como una aplicación. Puedes descargar obras enteras para leerlas sin conexión.',
 	'help.feature.contents':

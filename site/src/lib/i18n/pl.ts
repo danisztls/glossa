@@ -453,8 +453,6 @@ export const pl: Dictionary = {
 	'shortcuts.show': 'Pokaż tę listę',
 	'help.title': 'Pomoc',
 	'help.reading.heading': 'Pasek nad tekstem',
-	'help.feature.search':
-		'Wpisz odsyłacz w pole u góry — rozdział i werset, numer punktu, nazwę dokumentu — a uzupełni go w trakcie pisania.',
 	'help.feature.offline':
 		'Dodaj stronę do ekranu głównego, a otworzy się jak aplikacja. Możesz pobrać całe dzieła i czytać bez połączenia.',
 	'help.feature.contents':

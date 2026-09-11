@@ -476,8 +476,6 @@ export const sk: Dictionary = {
 	'shortcuts.show': 'Zobraziť tento zoznam',
 	'help.title': 'Pomocník',
 	'help.reading.heading': 'Lišta nad textom',
-	'help.feature.search':
-		'Napíšte odkaz do poľa hore — kapitolu a verš, číslo odseku, názov dokumentu — a doplní sa vám počas písania.',
 	'help.feature.offline':
 		'Pridajte web na domovskú obrazovku a otvorí sa ako aplikácia. Celé diela si môžete stiahnuť a čítať bez pripojenia.',
 	'help.feature.contents':

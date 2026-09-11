@@ -459,8 +459,6 @@ export const de: Dictionary = {
 	'shortcuts.show': 'Diese Liste anzeigen',
 	'help.title': 'Hilfe',
 	'help.reading.heading': 'Die Leiste über einem Text',
-	'help.feature.search':
-		'Geben Sie oben eine Stelle in das Feld ein — Kapitel und Vers, eine Nummer, den Namen eines Dokumentes — und es ergänzt sie beim Tippen.',
 	'help.feature.offline':
 		'Legen Sie die Seite auf Ihren Startbildschirm, und sie öffnet sich wie eine App. Sie können ganze Werke herunterladen und ohne Verbindung lesen.',
 	'help.feature.contents':

@@ -486,8 +486,6 @@ export const ig: Dictionary = {
 	'shortcuts.show': 'Gosi ndepụta a',
 	'help.title': 'Enyemaka',
 	'help.reading.heading': "Ogwe dị n'elu ederede",
-	'help.feature.search':
-		"Pịnye nrụtụaka n'igbe dị n'elu — isi na amaokwu, nọmba paragraf, aha akwụkwọ — ọ na-emecha ya ka ị na-apị.",
 	'help.feature.offline':
 		"Tinye saịtị a n'ihuenyo mmalite gị, ọ ga-emeghe ka ngwa. Ị nwere ike ibudata ọrụ ndị zuru ezu iji gụọ ha n'enweghị njikọ.",
 	'help.feature.contents':

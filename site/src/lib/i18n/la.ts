@@ -487,8 +487,6 @@ export const la: Dictionary = {
 	'shortcuts.show': 'Hunc indicem ostendere',
 	'help.title': 'Auxilium',
 	'help.reading.heading': 'Tabula supra textum',
-	'help.feature.search':
-		'Locum in capsam superiorem inscribe — caput et versum, numerum paragraphi, nomen documenti — et scribenti complet.',
 	'help.feature.offline':
 		'Adde sedem ad primam tabulam tuam et sicut applicatio aperitur. Opera integra transferre potes ut sine rete legas.',
 	'help.feature.contents':

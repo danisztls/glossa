@@ -459,8 +459,6 @@ export const hu: Dictionary = {
 	'shortcuts.show': 'Lista megjelenítése',
 	'help.title': 'Súgó',
 	'help.reading.heading': 'A szöveg fölötti sáv',
-	'help.feature.search':
-		'Írjon be egy hivatkozást a felső mezőbe — fejezetet és verset, egy pont számát, egy dokumentum nevét —, és gépelés közben kiegészíti.',
 	'help.feature.offline':
 		'Tegye ki az oldalt a kezdőképernyőre, és alkalmazásként nyílik meg. Egész műveket letölthet, hogy kapcsolat nélkül olvassa őket.',
 	'help.feature.contents':

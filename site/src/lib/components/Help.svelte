@@ -96,7 +96,7 @@
 	import Icon from './Icon.svelte';
 	import type { IconName } from './Icon.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
-	import { helpFor, searchExamples, SEARCH, type HelpSheet } from '$lib/help';
+	import { helpFor, type HelpSheet } from '$lib/help';
 	import {
 		REFERENCE_LINE,
 		indexAtReferenceLine,
@@ -145,13 +145,6 @@
 	 *  empty until then, and read again on every open because which controls
 	 *  a page shows changes with the route, the width and focus mode. */
 	let guide: HelpSheet = $state({ sections: [], groups: [] });
-
-	/** Derived rather than read with the rest: the pairs are drawn from this
-	 *  reader's interface and edition, which the language menu can change under
-	 *  an open sheet. */
-	const examples = $derived(
-		guide.sections.some((section) => section.key === SEARCH.key) ? searchExamples() : []
-	);
 
 	/** Per-code keycap characters for this reader's layout, empty until the
 	 *  sheet is opened and empty forever in browsers without the API. */
@@ -405,10 +398,10 @@
 				<!--
 					A SECTION PER CONTROL THAT IS NOT A ROW, headed by the control's
 					own label rather than by the bar it stands on — `$lib/help.ts`
-					says which controls those are and why. The jump box carries the
-					syntax examples under its sentence, each a pair built there out
-					of the words this reader's own interface and edition already
-					use; nothing else has anything to add.
+					says which controls those are and why. A sentence is the whole
+					of one: the jump box carried a syntax table here until its own
+					panel grew a legend that teaches the same notation with the
+					field in front of the reader.
 				-->
 				{#each guide.sections as section (section.key)}
 					<section class="section">
@@ -417,30 +410,6 @@
 							<span class="feature-icon"><Icon name={section.icon} /></span>
 							<div class="feature-text">
 								<p>{t(`help.feature.${section.key}`)}</p>
-								{#if section.key === SEARCH.key}
-									<!--
-										`aria-hidden` on the arrow and nothing else: the pair
-										reads "Catechism 101, CCC 101" without it, which is
-										two citations and no relation between them. The glyph
-										is the relation, and it is an ICON rather than a
-										character so that it can point the way the interface
-										runs — the same reading `UnitNav` makes of prev/next.
-									-->
-									<dl class="examples">
-										{#each examples as example (example.typed)}
-											<div class="example">
-												<dt>{example.typed}</dt>
-												<dd>
-													<Icon
-														name={i18n.rtl ? 'arrow-left' : 'arrow-right'}
-														class="example-arrow"
-													/>
-													<span class="cites">{example.cites}</span>
-												</dd>
-											</div>
-										{/each}
-									</dl>
-								{/if}
 							</div>
 						</div>
 					</section>
@@ -737,71 +706,6 @@
 	.section > .feature {
 		padding-block-start: 0;
 		border-block-start: 0;
-	}
-
-	/*
-	 * WHAT TO TYPE, AND WHERE IT GOES. Two chips and an arrow, in as many
-	 * columns as the panel has room for — the pairs are short, and set one to a
-	 * line they read as a list of six things rather than three answers.
-	 *
-	 * `align-items: baseline` and not `center`: the two chips have their own
-	 * padding and the arrow does not, so agreeing on the line they sit on is
-	 * what makes the three read as one phrase.
-	 */
-	.examples {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-		gap: 0.4rem 1.25rem;
-		margin: 0.6rem 0 0;
-	}
-
-	.example {
-		display: flex;
-		align-items: baseline;
-		gap: 0.4rem;
-	}
-
-	.example dt,
-	.example dd {
-		margin: 0;
-	}
-
-	/*
-	 * DRAWN AS SOMETHING TO TYPE, in the idiom `/schola`'s specimen chips and
-	 * the keycaps above already use: the interface face on the page's own
-	 * ground inside a hairline. Tabular figures for the reason the keycaps have
-	 * them — a column of numbers that shifts as it is read is a column that
-	 * looks like it is loading.
-	 */
-	.example dt,
-	.example .cites {
-		padding: 0.1rem 0.4rem;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		background: var(--color-bg-elevated);
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
-	}
-
-	/* The citation is the answer, so it is the half that is not muted. */
-	.example dt {
-		color: var(--color-text-muted);
-	}
-
-	.example dd {
-		display: flex;
-		align-items: baseline;
-		gap: 0.4rem;
-		min-width: 0;
-	}
-
-	.example :global(.example-arrow) {
-		flex: 0 0 auto;
-		width: 0.7rem;
-		height: 0.7rem;
-		color: var(--color-apparatus);
 	}
 
 	/*

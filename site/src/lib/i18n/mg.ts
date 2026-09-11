@@ -506,8 +506,6 @@ export const mg: Dictionary = {
 	'shortcuts.show': 'Asehoy ity lisitra ity',
 	'help.title': 'Fanampiana',
 	'help.reading.heading': 'Ny tsipika eo ambonin’ny lahatsoratra',
-	'help.feature.search':
-		'Soraty ao amin’ny boaty ambony ny fanondroana — toko sy andininy, laharan’andalana, anaran’antontan-taratasy — dia tanterahiny izany rehefa manoratra ianao.',
 	'help.feature.offline':
 		'Ampio amin’ny efijerinao voalohany ity tranonkala ity dia hisokatra toy ny rindrankajy. Azonao alaina manontolo ny asa soratra mba hovakiana na tsy misy fifandraisana aza.',
 	'help.feature.contents':

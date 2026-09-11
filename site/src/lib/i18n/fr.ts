@@ -461,8 +461,6 @@ export const fr: Dictionary = {
 	'shortcuts.show': 'Afficher cette liste',
 	'help.title': 'Aide',
 	'help.reading.heading': 'La barre au-dessus d’un texte',
-	'help.feature.search':
-		'Tapez une référence dans la case du haut — un chapitre et un verset, un numéro de paragraphe, le nom d’un document — et elle se complète à mesure.',
 	'help.feature.offline':
 		'Ajoutez le site à votre écran d’accueil et il s’ouvre comme une application. Vous pouvez télécharger des œuvres entières pour les lire hors ligne.',
 	'help.feature.contents':

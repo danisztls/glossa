@@ -475,8 +475,6 @@ export const ko: Dictionary = {
 	'shortcuts.show': '이 목록 보이기',
 	'help.title': '도움말',
 	'help.reading.heading': '본문 위의 막대',
-	'help.feature.search':
-		'맨 위 칸에 인용을 입력하십시오 — 장과 절, 항 번호, 문헌 이름 — 입력하는 대로 완성됩니다.',
 	'help.feature.offline':
 		'이 사이트를 홈 화면에 추가하시면 앱처럼 열립니다. 저작 전체를 내려받아 연결 없이 읽으실 수 있습니다.',
 	'help.feature.contents':

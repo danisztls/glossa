@@ -442,8 +442,6 @@ export const ar: Dictionary = {
 	'shortcuts.show': 'عرض هذه القائمة',
 	'help.title': 'مساعدة',
 	'help.reading.heading': 'الشريط فوق النصّ',
-	'help.feature.search':
-		'اكتب موضعًا في الخانة أعلاه — إصحاحًا وآية، رقم فقرة، اسم وثيقة — فيكملها لك أثناء الكتابة.',
 	'help.feature.offline':
 		'أضف الموقع إلى شاشتك الرئيسة فيُفتح كتطبيق. وتستطيع تنزيل أعمال كاملة لتقرأها بلا اتّصال.',
 	'help.feature.contents':

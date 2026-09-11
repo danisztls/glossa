@@ -456,8 +456,6 @@ export const sl: Dictionary = {
 	'shortcuts.show': 'Pokaži ta seznam',
 	'help.title': 'Pomoč',
 	'help.reading.heading': 'Vrstica nad besedilom',
-	'help.feature.search':
-		'Vtipkajte navedbo v polje na vrhu — poglavje in vrstico, številko člena, ime dokumenta — in dopolni jo med tipkanjem.',
 	'help.feature.offline':
 		'Dodajte spletišče na začetni zaslon in odpre se kakor aplikacija. Cela dela lahko prenesete in jih berete brez povezave.',
 	'help.feature.contents':

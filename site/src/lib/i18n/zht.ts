@@ -459,8 +459,6 @@ export const zht: Dictionary = {
 	'shortcuts.show': '顯示此清單',
 	'help.title': '說明',
 	'help.reading.heading': '正文上方的列',
-	'help.feature.search':
-		'在頂端的框中鍵入一處引文——章與節、條目編號、某份文獻的名稱——它會隨打隨補全。',
 	'help.feature.offline':
 		'把本站加到主畫面，它便如應用程式一般開啟。您可下載整部作品，在沒有連線時閱讀。',
 	'help.feature.contents': '您所在作品的分部——卷、部、章——以便在其中移動而不必回到開頭。',

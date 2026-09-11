@@ -476,8 +476,6 @@ export const cs: Dictionary = {
 	'shortcuts.show': 'Zobrazit tento seznam',
 	'help.title': 'Nápověda',
 	'help.reading.heading': 'Lišta nad textem',
-	'help.feature.search':
-		'Napište odkaz do pole nahoře — kapitolu a verš, číslo odstavce, název dokumentu — a doplní se vám během psaní.',
 	'help.feature.offline':
 		'Přidejte web na domovskou obrazovku a otevře se jako aplikace. Celá díla si můžete stáhnout a číst bez připojení.',
 	'help.feature.contents':

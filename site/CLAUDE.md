@@ -532,7 +532,8 @@ Rationale in `site/docs/finding.md`.
   works the reader had not chosen. The numbers are representative (`CCC 1234`,
   `Can. 123`) and the chips are inert; prayers get none, having no notation.
   The table is `$lib/specimens.ts`, read by this page, the home page and the
-  jump box's legend; `help.ts` keeps its own pairs, teaching the NAME form.
+  jump box's legend — the three surfaces that teach a notation, since the help
+  sheet stopped.
   Four indexes went with the predicates — `/schola` primes `bible` alone, and
   **`index-priming.test.ts` only catches priming too LITTLE**, so over-priming
   has to be pruned by hand. The Bible's specimen stays derived from `bookAbbrev`
@@ -547,23 +548,20 @@ Rationale in `site/docs/finding.md`.
   empties the sheet in focus mode. `help.test.ts` scans the source both ways,
   because a described row nothing marks and a marked control no row describes
   look identical to a control that is simply not on this page.
-- **Rows are named by their control's own key** — `jumpbox.short`,
+- **Rows are named by their control's own key** — `install.label`,
   `compare.enter`, `document.tableOfContents` — so a row and the control it
   describes cannot be called two different things in a translated interface, and
   **the icon is the glyph that control draws**. Only the sentence under each
   (`help.feature.*`) is new writing, and a new one costs thirty-six dictionaries.
-- **A row has to teach something the control does not.** A group heading says
-  WHERE, so the one group left is the reading bar's — the bar a reader does not
-  always have.
+- **A row has to teach something the control does not, and the panel a control
+  opens is part of that control.** A group heading says WHERE, so the one group
+  left is the reading bar's — the bar a reader does not always have. The jump
+  box's row went when the box grew a legend of its own: a guide that teaches the
+  same notation one panel further from the field is a second copy that can fall
+  out of step with the box, so `JumpBox` carries no `data-help` at all.
 - **A control headed by its own name is a SECTION** (`HELP_SECTIONS`), and the
-  header's two are both of them: a heading naming the bar every page carries,
+  install button is the one left: a heading naming the bar every page carries,
   standing over one row, sends a reader looking for a list that is not there.
-  The jump box has one because its lesson is a notation — three pairs,
-  `catechism 101 → ccc 101`, drawn by `searchExamples()` out of the keys
-  `suggest.ts` matches and `/schola` teaches, never written down, or the
-  examples would be English and unchecked. Both halves are lower case with no
-  stops, since `fold` and `sectionForm` ignore both, and the lowercasing is
-  locale-aware.
 - **Nothing in that guide is a page.** Library, Calendar and Bookmarks are
   addresses, not controls, and are a group under `/schola`'s works carrying a
   `what` line and no `cite` line. What the sheet holds is exactly what no link

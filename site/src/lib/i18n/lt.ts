@@ -478,8 +478,6 @@ export const lt: Dictionary = {
 	'shortcuts.show': 'Rodyti šį sąrašą',
 	'help.title': 'Pagalba',
 	'help.reading.heading': 'Juosta virš teksto',
-	'help.feature.search':
-		'Įrašykite nuorodą į viršuje esantį langelį — skyrių ir eilutę, pastraipos numerį, dokumento pavadinimą — ir ji papildoma jums berašant.',
 	'help.feature.offline':
 		'Pridėkite svetainę prie pradžios ekrano ir ji atsivers kaip programėlė. Ištisus veikalus galite atsisiųsti ir skaityti be ryšio.',
 	'help.feature.contents':

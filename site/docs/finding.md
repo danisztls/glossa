@@ -230,10 +230,10 @@ it.** The Bible's line was shared from the start, being the one that cannot be
 written down; the other six were copied into the home page's chip row and were
 about to be copied into the jump box's empty state. A table three files hold by
 hand is a claim they can disagree about, and the one that goes stale is
-whichever page nobody opened while a siglum moved. `help.ts` keeps its own
-pairs deliberately — it teaches that the box reads the work's NAME and answers
-in its siglum, so its left column is `Catechism 101` where every specimen here
-is `CCC 101`.
+whichever page nobody opened while a siglum moved. The help sheet kept its own
+pairs against that rule for three days, on the argument that it taught the NAME
+form (`Catechism 101 → CCC 101`) where every specimen here is a siglum; a fifth
+copy of the notation was the cost, and it went with the section that held it.
 
 **Four indexes went with the predicates.** `/schola` primed `bible`, `ccc`,
 `compendium`, `prayer` and `summa` to decide whether to underline eight words;
@@ -282,53 +282,54 @@ draws only the rows whose control is on the page.** A group with nothing on this
 page is dropped with its heading rather than left standing over an empty list —
 and the last group standing loses its heading too, because a heading
 distinguishes one list from another and over the only list in the sheet it is a
-line above one row. On `/` that is Search; on a Bible chapter it is Search and
-the four reading-bar controls under two headings; in focus mode it is the toggle
-that leaves the mode, because the mode has hidden the rest.
+line above one row. On `/` that is the install button; on a Bible chapter it is
+that plus the four reading-bar controls under a heading; in focus mode it is the
+toggle that leaves the mode, because the mode has hidden the rest.
 
 **A row has to teach something the control does not**, which is what the list
-lost two rows to (2026-09-07, by direction). Opening the settings panel or the
-language menu explains either of them completely; the jump box's notation and
-the fact that whole works download for offline reading are guessable from
-nothing, and those are the two the header keeps. The reading bar's four all
-qualify — nothing on the page says a second edition can be set beside the first,
-or that an edition's own footnotes are available at all.
+lost two rows to (2026-09-07, by direction) and a third on 2026-09-10. Opening
+the settings panel, the language menu or the jump box explains any of the three
+completely; that whole works download for offline reading is guessable from
+nothing, and it is what the header keeps. The reading bar's four all qualify —
+nothing on the page says a second edition can be set beside the first, or that
+an edition's own footnotes are available at all.
 
 **And a heading that names a bar, standing over one row, is what the header
 group became.** Once the jump box had a section of its own, "The bar at the top
 of every page" led a single install row: a heading tells a reader there is a
 list under it and which bar to find it on, and there was no list. So the install
 button took a section too, headed by its own label, and the group heading and
-its key went. **A group exists to tell two lists apart; the reading bar's
-heading survives because that bar is the one a reader does not always have.**
+its key went — which is why the jump box's removal cost the header nothing to
+rearrange. **A group exists to tell two lists apart; the reading bar's heading
+survives because that bar is the one a reader does not always have.**
 
-**The jump box has a section rather than a row, because its lesson is a
-notation and a notation has to be shown.** Three pairs, and the arrow between
-them is the whole grammar: `catechism 101 → ccc 101`, the name a reader already
-has beside the short form the work is cited by, both landing on the same
-paragraph. Nothing in them is written down — the left column is what
-`suggest.ts` matches (`nav.ccc` and `nav.canonLaw` are in its own `SECTIONS`
-table by those very keys, and the reader's edition supplies the book's name),
-the right is the siglum `/schola` teaches out of the keys `citation-label.ts`
-writes a bookmark with. A hard-coded pair would be English, and would be a form
-nobody had checked the parser still reads.
+**The jump box had a section rather than a row, because its lesson is a
+notation and a notation has to be shown** — three pairs, `catechism 101 → ccc
+101`, the name a reader already has beside the short form the work is cited by.
+**It went on 2026-09-10, by direction, because the box now teaches the same
+thing itself**: an empty field is answered by a legend of one row per work, the
+form beside the name, and pressing a row puts that form in the field. The two
+lessons were the same lesson, and the sheet's copy was the one a reader reached
+by pressing `?` instead of pressing the control they were asking about. **A
+panel a control opens is part of that control**, which is what the settings and
+language rows had already been measured against, and the jump box only looked
+like an exception while its own panel had nothing in it.
 
-**Both halves are spelled the way a reader may type them: lower case, no
-stops.** `fold` ignores case and accents and `sectionForm` drops every
-separator from a section keyword, so `comp. 123` and `comp 123` are one input —
-printing the stop teaches punctuation that does not matter and a capital teaches
-a shift key the box ignores. The lowercasing is locale-aware, since these are
-words in the reader's language rather than identifiers; the price is a German
-noun printed against its own spelling, paid because the chip idiom already says
-"something to type" rather than something to read.
+So the sheet's rule generalised rather than gaining an exception, and what the
+section took with it is a `searchExamples()` derived from `suggest.ts`'s keys, a
+`data-help="search"` on the trigger, and a sentence in forty dictionaries. What
+the box's legend keeps of the argument is that both halves are spelled the way a
+reader may type them — lower case, no stops, `fold` and `sectionForm` ignoring
+both — which is the one thing that belongs beside the field.
 
-**The sheet opens on that section and no longer on a sentence about the page.**
-It led with "The text is the whole of the page; everything else is a control you
-can ignore until you want it" — true, and an instruction to ignore what the
-reader had just opened a panel to ask about.
+**The sheet opens on whatever section the page carries, and no longer on a
+sentence about the page.** It led with "The text is the whole of the page;
+everything else is a control you can ignore until you want it" — true, and an
+instruction to ignore what the reader had just opened a panel to ask about.
 
-**The page answers in its own markup: `data-help="search"` on the control, a set
-of keys collected at open time, `$lib/help.ts` turning that set into rows.** No
+**The page answers in its own markup: `data-help="offline"` on the control, a
+set of keys collected at open time, `$lib/help.ts` turning that set into rows.**
+No
 route registers anything, no context store, no list of selectors in the sheet to
 keep in step with eight components — the same bargain the keyboard step already
 strikes with `rel="prev"`, which is the address sitting in the one element whose
@@ -357,7 +358,7 @@ explain itself in place, and eight keycaps drawn for a device with no keyboard
 would push the rows that do apply below the fold.
 
 **Every row is still named by the key its own control is labelled by**
-(`jumpbox.short`, `compare.enter`, `document.tableOfContents`, …), so a reader
+(`install.label`, `compare.enter`, `document.tableOfContents`, …), so a reader
 who reads a row and goes looking for the control finds the same word, and a
 translated interface cannot disagree with its own guide. **The icon is the glyph
 that control draws**, for the same reason and with the same failure mode: the

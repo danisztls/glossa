@@ -459,8 +459,6 @@ export const ro: Dictionary = {
 	'shortcuts.show': 'Afișează această listă',
 	'help.title': 'Ajutor',
 	'help.reading.heading': 'Bara de deasupra unui text',
-	'help.feature.search':
-		'Scrieți o trimitere în caseta de sus — capitol și verset, un număr de paragraf, numele unui document — și o completează pe măsură ce scrieți.',
 	'help.feature.offline':
 		'Adăugați situl pe ecranul de pornire și se deschide ca o aplicație. Puteți descărca opere întregi spre a le citi fără conexiune.',
 	'help.feature.contents':

@@ -480,8 +480,6 @@ export const sq: Dictionary = {
 	'shortcuts.show': 'Shfaq këtë listë',
 	'help.title': 'Ndihmë',
 	'help.reading.heading': 'Shiriti mbi një tekst',
-	'help.feature.search':
-		'Shkruani një referencë në kutinë lart — kapitull dhe varg, një numër paragrafi, emrin e një dokumenti — dhe e plotëson ndërsa shkruani.',
 	'help.feature.offline':
 		'Shtojeni faqen në ekranin kryesor dhe hapet si një aplikacion. Mund të shkarkoni vepra të tëra për t’i lexuar pa lidhje.',
 	'help.feature.contents':

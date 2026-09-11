@@ -457,8 +457,6 @@ export const no: Dictionary = {
 	'shortcuts.show': 'Vis denne listen',
 	'help.title': 'Hjelp',
 	'help.reading.heading': 'Linjen over en tekst',
-	'help.feature.search':
-		'Skriv en henvisning i feltet øverst — kapittel og vers, et avsnittsnummer, navnet på et dokument — og det fullføres mens du skriver.',
 	'help.feature.offline':
 		'Legg stedet på hjemskjermen, så åpnes det som en app. Du kan laste ned hele verk og lese dem uten nett.',
 	'help.feature.contents':

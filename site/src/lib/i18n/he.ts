@@ -470,8 +470,6 @@ export const he: Dictionary = {
 	'shortcuts.show': 'הצגת הרשימה הזאת',
 	'help.title': 'עזרה',
 	'help.reading.heading': 'הסרגל מעל טקסט',
-	'help.feature.search':
-		'הקלידו הפניה בתיבה שלמעלה — פרק ופסוק, מספר סעיף, שם של מסמך — והיא מושלמת תוך כדי הקלדה.',
 	'help.feature.offline':
 		'הוסיפו את האתר למסך הבית והוא ייפתח כיישום. אפשר להוריד יצירות שלמות ולקרוא בלא חיבור.',
 	'help.feature.contents':

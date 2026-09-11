@@ -490,8 +490,6 @@ export const id: Dictionary = {
 	'shortcuts.show': 'Tampilkan daftar ini',
 	'help.title': 'Bantuan',
 	'help.reading.heading': 'Bilah di atas sebuah teks',
-	'help.feature.search':
-		'Ketik sebuah rujukan di kotak paling atas — bab dan ayat, nomor alinea, nama sebuah dokumen — dan ia melengkapinya sambil Anda mengetik.',
 	'help.feature.offline':
 		'Tambahkan situs ini ke layar utama Anda dan ia terbuka seperti aplikasi. Anda dapat mengunduh karya-karya utuh untuk dibaca tanpa koneksi.',
 	'help.feature.contents':

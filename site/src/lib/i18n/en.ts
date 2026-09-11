@@ -1378,7 +1378,7 @@ export const en: Dictionary = {
 	// THE CHROME, ONE SENTENCE EACH — the sheet the `?` button opens, which was
 	// a section of `/schola` until 2026-09-07 (`site/docs/finding.md`). The
 	// heading beside each of these is the key the control itself is labelled by
-	// (`jumpbox.short`, `settings.label`, `compare.enter`, …), so a reader who
+	// (`install.label`, `compare.enter`, `apparatus.label`, …), so a reader who
 	// reads a row and then goes looking for the control finds the same word.
 	// Only the sentence is new writing.
 	//
@@ -1387,13 +1387,12 @@ export const en: Dictionary = {
 	// WHERE A CONTROL LIVES IS THE GROUP HEADING. The sheet draws only the rows
 	// whose control is on the page in front of the reader, so the heading is
 	// what says which bar the ones under it are on — the reading bar being the
-	// one a reader does not always have. The jump box and the install button are
-	// headed by their own labels instead (`$lib/help.ts`), so the sentences
-	// under them are the only new writing they cost.
+	// one a reader does not always have. The install button is headed by its own
+	// label instead (`$lib/help.ts`), so the sentence under it is the only new
+	// writing it costs. The jump box had one until 2026-09-10 and lost it to its
+	// own panel, which teaches the same notation with the field above it.
 	'help.title': 'Help',
 	'help.reading.heading': 'The bar above a text',
-	'help.feature.search':
-		'Type a reference into the box at the top — a chapter and verse, a paragraph number, the name of a document — and it completes it as you type.',
 	'help.feature.offline':
 		'Add the site to your home screen and it opens like an app. You can download whole works to read with no connection.',
 	'help.feature.contents':

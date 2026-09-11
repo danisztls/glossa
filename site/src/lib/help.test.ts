@@ -11,8 +11,8 @@ const KEYS = [
 
 describe('helpFor', () => {
 	it('keeps only the rows whose control is on the page', () => {
-		const sheet = helpFor(new Set(['search', 'focus']));
-		expect(sheet.sections.map((s) => s.key)).toEqual(['search']);
+		const sheet = helpFor(new Set(['offline', 'focus']));
+		expect(sheet.sections.map((s) => s.key)).toEqual(['offline']);
 		expect(sheet.groups.map((g) => g.headingKey)).toEqual(['help.reading.heading']);
 		expect(sheet.groups.flatMap((g) => g.features.map((f) => f.key))).toEqual(['focus']);
 	});
@@ -21,7 +21,7 @@ describe('helpFor', () => {
 	// the same false promise the guide made on `/schola`: it told a reader to
 	// look for the compare button on a page that correctly does not have one.
 	it('drops a group whose controls are all absent, heading and all', () => {
-		expect(helpFor(new Set(['search'])).groups).toEqual([]);
+		expect(helpFor(new Set(['offline'])).groups).toEqual([]);
 		expect(helpFor(new Set()).groups).toEqual([]);
 	});
 
@@ -29,8 +29,8 @@ describe('helpFor', () => {
 	// stands on, so it is answered for apart from the groups — but it is still
 	// the page that decides whether it is drawn.
 	it('answers for a section only when the page carries its control', () => {
-		expect(helpFor(new Set(['search'])).sections.map((s) => s.key)).toEqual(['search']);
 		expect(helpFor(new Set(['offline'])).sections.map((s) => s.key)).toEqual(['offline']);
+		expect(helpFor(new Set(['offline', 'focus'])).sections.map((s) => s.key)).toEqual(['offline']);
 		expect(helpFor(new Set(['focus'])).sections).toEqual([]);
 	});
 
@@ -45,8 +45,14 @@ describe('helpFor', () => {
 		]).toEqual(KEYS);
 	});
 
+	// `search` is the one that was a section and is not any more: the jump box's
+	// own panel teaches the notation, so the control marks itself with nothing
+	// and a sheet asked about it draws nothing.
 	it('knows nothing about a key no section or group holds', () => {
-		expect(helpFor(new Set(['bookmark', 'print']))).toEqual({ sections: [], groups: [] });
+		expect(helpFor(new Set(['bookmark', 'print', 'search']))).toEqual({
+			sections: [],
+			groups: []
+		});
 	});
 });
 

@@ -449,8 +449,6 @@ export const ja: Dictionary = {
 	'shortcuts.show': 'この一覧を表示',
 	'help.title': 'ヘルプ',
 	'help.reading.heading': '本文の上のバー',
-	'help.feature.search':
-		'上の欄に参照を入力してください — 章と節、項の番号、文書の名前 — 入力しながら補完されます。',
 	'help.feature.offline':
 		'ホーム画面に追加すればアプリのように開きます。作品をまるごとダウンロードして、接続なしで読めます。',
 	'help.feature.contents':
