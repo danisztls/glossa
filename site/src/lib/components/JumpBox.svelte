@@ -1168,9 +1168,21 @@
 		   field and the foot take what they need, `ul` takes the rest.
 		   `min-block-size: 0` is what lets it be smaller than its content —
 		   without it a flex item refuses to shrink past that and the panel
-		   grows straight through the cap above. */
+		   grows straight through the cap above.
+
+		   AND THE SAME DECLARATION ON THE OTHER AXIS, for the same rule and
+		   a worse failure. A flex item's automatic minimum is its MIN-CONTENT
+		   size, and a row's min-content is the longest thing in it that
+		   cannot break: the moment `.label` became `nowrap`, that was a
+		   document's entire title. The panel then refused to fit the dialog,
+		   the dialog is in the top layer and clips nothing, and a modal box
+		   ran off the side of the screen and gave the page a horizontal
+		   scrollbar. `overflow: hidden` on the label could not help — it
+		   clips what the box cannot hold, and this box was being sized to
+		   hold everything. */
 		flex: 1 1 auto;
 		min-block-size: 0;
+		min-inline-size: 0;
 		display: flex;
 		flex-direction: column;
 	}
