@@ -372,4 +372,19 @@ describe('filterByQuery', () => {
 	it('keeps nothing when a query means nothing', () => {
 		expect(kept('purgatory')).toEqual([]);
 	});
+
+	/** `/quaestiones` matches a bare substring anywhere, which is a decision
+	 *  about its own vocabulary, so the LITERAL tier is the caller's to bring.
+	 *  The loose one is not — that is what having a second implementation of
+	 *  "near enough" would mean. */
+	it('takes the caller’s literal tier and keeps its own loose one', () => {
+		const one = ['Ingravescentibus'];
+		const anywhere = (text: string, query: string) =>
+			text.toLowerCase().includes(query.toLowerCase());
+		expect(filterByQuery(one, (row) => row, 'rav')).toEqual([]);
+		expect(filterByQuery(one, (row) => row, 'rav', anywhere)).toEqual(one);
+		// The band rule over an injected tier is pinned where it is used —
+		// `topic-search.test.ts`, "withholds the guess from a query that read
+		// something literally", which now runs through this function.
+	});
 });

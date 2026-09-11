@@ -1750,7 +1750,10 @@ could answer out of the literal band while Africa answered out of the loose one.
 page matches a bare substring anywhere, where every other box gates an interior
 hit at four characters, and that difference is about its vocabulary. What a
 reader means by `eutanasia` is not about any vocabulary, so there is one
-implementation of it and `topic-search.ts` imports it.
+implementation of it. **The literal tier is what `filterByQuery` takes as an
+argument, and the band rule is not** — a surface brings its own reading of what
+a word IS, never its own reading of when a guess may be offered, which is the
+one decision the 35% was measured against.
 
 **`lemma.ts` is not a search box and keeps its refusal.** Fuzzy matching there
 was measured to recover zero further headwords, because what is left is not

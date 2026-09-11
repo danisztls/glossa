@@ -435,14 +435,25 @@ export function looselyMatches(text: string, query: string): boolean {
  * meant rather than an empty page. `textOf` per row rather than a prepared
  * array of strings, because the second pass runs for a minority of queries and
  * building every haystack twice for the majority would be the cost this avoids.
+ *
+ * THE LITERAL TIER IS INJECTABLE AND THE LOOSE ONE IS NOT, which is the whole
+ * asymmetry this file is built on said once more. `/quaestiones` matches a
+ * bare substring anywhere where every other box gates an interior hit at four
+ * characters, and that is a decision about its vocabulary, so it passes its
+ * own `readsLiterally`. What a reader means by `eutanasia` is a fact about
+ * typing rather than about any vocabulary, so there is one of those and no
+ * caller may bring another. The empty-query guard belongs to this function
+ * either way: a reader who has typed nothing has not asked a question that a
+ * literal tier could have its own opinion about.
  */
 export function filterByQuery<T>(
 	rows: readonly T[],
 	textOf: (row: T) => string,
-	query: string
+	query: string,
+	readsLiterally: (text: string, query: string) => boolean = matchesQuery
 ): T[] {
 	if (tokensOf(query).length === 0) return [...rows];
-	const literal = rows.filter((row) => matchesQuery(textOf(row), query));
+	const literal = rows.filter((row) => readsLiterally(textOf(row), query));
 	if (literal.length > 0) return literal;
 	return rows.filter((row) => looselyMatches(textOf(row), query));
 }

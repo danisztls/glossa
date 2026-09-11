@@ -35,12 +35,13 @@
  * `highlight.ts`'s; what a reader means by `eutanasia` when the dictionary
  * says `euthanasia` is not a fact about this vocabulary at all, and a second
  * implementation of "near enough" would drift from the first within a week
- * while looking correct in both files. So the fallback is imported, and
- * `matchingSlugs` applies it the one way it may be applied — to a list that
- * kept nothing.
+ * while looking correct in both files. So the fallback is imported whole,
+ * band rule and all: `filterByQuery` takes this file's literal tier as its
+ * argument and keeps the one decision that may not vary — that a guess is what
+ * a list falls back to, never what it mixes in.
  */
 
-import { looselyMatches } from './highlight';
+import { filterByQuery } from './highlight';
 
 /**
  * Case- and diacritic-insensitive form.
@@ -130,17 +131,13 @@ function haystack(row: TopicSearchRow): string {
  * survives at all. Handing back a flat list would make the page rebuild that
  * structure from it.
  *
- * A MISSPELLING IS ANSWERED ONLY WHERE NOTHING ELSE WAS, which is the whole of
- * why the second pass is here and not inside `matchesQuery`. A reader who
- * types `eutanasia` or `cremacão` meant a topic that exists and would
- * otherwise meet a page saying it does not; a reader whose words matched
- * sixteen rows is owed those sixteen and not a seventeenth that merely looks
- * like one of them. `highlight.ts`'s `looselyMatches` carries the measurement
- * behind that rule.
+ * A misspelling is answered only where nothing else was — a reader who types
+ * `eutanasia` meant a topic that exists and would otherwise meet a page saying
+ * it does not, and a reader whose words matched sixteen rows is owed those
+ * sixteen and not a seventeenth that merely looks like one of them.
+ * `filterByQuery` is that rule and carries the measurement behind it; the only
+ * thing this page brings is `matchesQuery`, its own literal tier.
  */
 export function matchingSlugs(rows: TopicSearchRow[], query: string): Set<string> {
-	const literal = rows.filter((row) => matchesQuery(haystack(row), query));
-	const kept =
-		literal.length > 0 ? literal : rows.filter((row) => looselyMatches(haystack(row), query));
-	return new Set(kept.map((row) => row.slug));
+	return new Set(filterByQuery(rows, haystack, query, matchesQuery).map((row) => row.slug));
 }

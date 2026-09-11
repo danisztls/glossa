@@ -1094,6 +1094,10 @@ reverse-chronological list.
   commonest words of the corpus by 35%, and no token-length floor separated
   that from the repairs. A caller that filters row by row instead has silently
   opted out (`site/docs/finding.md`).
+- **The LITERAL tier is the argument, the loose one never is.** `/quaestiones`
+  matches a bare substring anywhere and passes its own `readsLiterally`; a
+  surface that wants its own idea of "near enough" is writing the second
+  implementation this arrangement exists to prevent.
 - **The fallback is decided once per LIST, not per row and not per pool.**
   `/documenta` decides against the whole corpus and AND-s the result with its
   facets; deciding inside a facet would make a word spelled correctly elsewhere
