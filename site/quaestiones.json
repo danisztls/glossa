@@ -253,7 +253,7 @@
 				[853, 853],
 				[827, 827]
 			],
-			"documents": []
+			"documents": ["tertio-millennio-adveniente"]
 		},
 		"divitiae-ecclesiae": {
 			"doorway": "argument",
@@ -414,7 +414,13 @@
 				[1124, 1125],
 				[1200, 1206]
 			],
-			"documents": ["sacrosanctum-concilium", "mediator-dei"]
+			"documents": [
+				"mediator-dei",
+				"sacrosanctum-concilium",
+				"missale-romanum",
+				"summorum-pontificum",
+				"traditionis-custodes"
+			]
 		},
 		"synodalitas": {
 			"doorway": "argument",

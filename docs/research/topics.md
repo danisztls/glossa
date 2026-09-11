@@ -502,14 +502,21 @@ duplicate the topic file's own rule forbids. So the conquest is answered where
 the Church accuses herself, and what she says to indigenous peoples now is
 answered where she says it.
 
-**Three of the four name a document they cannot name yet.** _Tertio Millennio
-Adveniente_, _Summorum Pontificum_, _Traditionis Custodes_ and _Missale
-Romanum_ are all in the corpus and all among the works with no entry in
-`descriptions.json`, which `quaestiones.json` requires read before a document is
-named. So `culpae-praeteritae` ships with no document at all and
-`usus-antiquior` ships on _Sacrosanctum Concilium_ and _Mediator Dei_ alone,
-with the keywords still promising the two motu proprios. Both rows say so, and
-both are one edit from complete once the descriptions exist.
+**A row can wait on this repository rather than on the corpus, and only one of
+those is a block.** _Tertio Millennio Adveniente_, _Summorum Pontificum_,
+_Traditionis Custodes_ and _Missale Romanum_ were all in the corpus and all among
+the English document works with no entry in `descriptions.json`, which
+`quaestiones.json` requires read before a document is named. So for a few hours
+`culpae-praeteritae` shipped with no document at all and `usus-antiquior` shipped
+on _Sacrosanctum Concilium_ and _Mediator Dei_, with its keywords promising two
+motu proprios the page could not name. The descriptions were written later the
+same day — every English document work has one now — and the four topics carry
+what they promise: the record names the letter that calls the Church to examine
+her conscience over her children's historical failures, and the older Mass names
+five documents in the order it happened, from _Mediator Dei_ to _Traditionis
+Custodes_. **A row waiting on a text nobody here can write is a block; a row
+waiting on a paragraph nobody here has written yet is a to-do**, and the two
+belong in different lists.
 
 One further hole belongs to no document: **anything after the corpus's last
 fetch.** A topic page dates faster than a document page, because a topic is a
@@ -644,28 +651,6 @@ The blocklist above is unchanged and still holds.
   anchor set each was formed on. What remains is what those rows record: every
   B names what would replace it, and several name a text the corpus does not
   have — which is this list's business rather than that pass's.
-- **Thirty-eight documents have no description, and that is what actually
-  blocks the released topics.** `site/descriptions.json` covers 290 of the 328
-  English document works (measured 2026-09-10); the 38 without one are entirely
-  motu proprios, apostolic letters, apostolic constitutions and bulls — the same
-  four families `decisions.md` selects from rather than takes whole, and the
-  same ones the blocklist wrongly called absent. Every document the released
-  topics would name is in that 38: _Summorum Pontificum_, _Traditionis
-  Custodes_, _Missale Romanum_, _Tertio Millennio Adveniente_. `quaestiones.json`
-  requires the description to be read before a document is named, so a topic
-  cannot honestly name any of them yet. A description is written by reading the
-  document (PLAN.md gap 16), and the documents are in the corpus.
-- **Four topics wait on four descriptions.** The topics the corpus released
-  were written on 2026-09-10 — `culpae-praeteritae`, `divitiae-ecclesiae`,
-  `colonialismus`, `usus-antiquior` — but three of the documents that answer
-  them best cannot be named until someone writes their descriptions:
-  _Tertio Millennio Adveniente_ for the record, _Summorum Pontificum_ and
-  _Traditionis Custodes_ for the older Mass, with _Missale Romanum_ behind them.
-  Until then `culpae-praeteritae` carries no document and `usus-antiquior`
-  carries two of five. The same edit closes `purgatorium`'s
-  _Indulgentiarum Doctrina_, which is named today against its manifest rather
-  than against a description — the one topic in the file in that state.
-
 - **The other thirty-five dictionaries.** `en` and `pt` carry the keys; until
   all of them do, `/quaestiones` stays out of `CHROME_PATHS` and the sitemap on
   `route-manifest.ts`'s own terms. This is now the largest single block of
