@@ -15,8 +15,11 @@ than a second design. 13.3 s to 0.27 s.
 in.** That rule is about the pipeline, where a stale parse is invisible; this
 one fails in front of you. **What makes it safe is the split rather than the
 reasoning: `prebuild` does not pass the flag**, so no deploy can take a skip.
-`dictionaries` is a separate fingerprint because `readDictionaries` loads them
-with a template-literal `import()` that no walk of import statements resolves.
+**An input the `code` digest cannot see needs a part of its own**, and two do:
+the dictionaries, loaded with a template-literal `import()` that no walk of
+import statements resolves, and `llms.template.md`, which is read with
+`readFileSync` — so editing the prose of `llms.txt` moved no part of the
+fingerprint and `--changed-only` went on serving the previous output.
 
 **A `size:mtime_ns` digest needs a bigint stat, and getting it wrong degrades
 silently.** `mtimeNs` is `undefined` on an ordinary `statSync`, which hashes

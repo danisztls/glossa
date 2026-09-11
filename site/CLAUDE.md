@@ -1297,7 +1297,10 @@ position exactly as strong when editing it. **`/quaestiones/{topic}` is the one
 family that is an enumerated set rather than a grammar, so the file enumerates
 it** — `{{TOPIC_LIST}}` is built by `topicList` from `quaestiones.json` and the
 English dictionary, and a list written by hand would claim a completeness it
-could not keep.
+could not keep. **That list is the last section and everything added to the file
+goes above it**: it is half the bytes and the only half that grows, so a
+consumer that truncates has to lose questions rather than the rights position or
+the publishers.
 
 **The structured data is attribution and not a rich result.** `headHtml` emits
 one `@graph` (`BreadcrumbList`, `WebPage`, the unit, the work); the publisher's

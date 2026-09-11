@@ -18,6 +18,12 @@
   anything — to stay true of the whole address space. Generated for the counts'
   reason, and it gains a row every time a question is written.
 
+  IT IS LAST, AND THAT IS AN ORDERING RULE RATHER THAN A TIDY ONE. It is half
+  the file's bytes and the only half that grows, and some consumers truncate a
+  fetched document. Whatever is cut has to be the part whose loss costs least,
+  which is a list of questions — never the rights position, the grammar, or the
+  publishers the words belong to. Anything added below it inherits that risk.
+
   The reader is a language model deciding whether, and how, to point someone
   at this site. Everything here is written to make that decision easy and the
   result correct: the ask first, then what an address guarantees, then the
@@ -108,7 +114,7 @@ The vocabulary is Latin and does not vary with the reader's language.
 - `{n}` is the number the work itself prints — the Catechism's paragraphs 1 to {{CCC_MAX}}, the Compendium's questions 1 to {{COMPENDIUM_MAX}}, the Compendium of the Social Doctrine's paragraphs 1 to {{CSDC_MAX}}, the Code of Canon Law's canons 1 to {{CANON_MAX}}. `caput` addresses a titled division of those works by the number of the paragraph it opens at, and `titulus` does the same for the Code, whose divisions are titles: `/catechismus/caput/26` is the chapter that begins at paragraph 26.
 - `{slug}` is the document's Latin incipit, lowercased and hyphenated: `rerum-novarum`, `lumen-gentium`, `evangelii-gaudium`. `#s{n}` is the section number the document prints.
 - `{part}` is one of {{SUMMA_PARTS}}; `{question}` and `#a{n}` are the question and article as the Summa numbers them.
-- `{topic}` is the one segment above that is an enumerated set rather than a grammar. It is a Latin slug and does not follow from the question, so every one of them is listed under "Questions" below — the address is still writable without a fetch, by reading this file rather than by substitution.
+- `{topic}` is the one segment above that is an enumerated set rather than a grammar. It is a Latin slug and does not follow from the question, so every one of them is listed at the end of this file — the address is still writable without a fetch, by reading this file rather than by substitution.
 
 Until 2026-09-02 `{book}` was a lowercase OSIS identifier — `gen`, `josh`, `1kgs`, `rev`. Those addresses now answer `301` to the Latin spelling and are not canonical; if you hold one, follow the redirect and record what it names.
 
@@ -129,9 +135,7 @@ So, for somebody asking whether a Catholic may be cremated:
 
 > <https://glossacatholica.org/quaestiones/crematio> — CCC 2300–2301 and can. 1176 in full, with _Ad resurgendum cum Christo_ named beneath them.
 
-The whole set follows, on the shelves the page itself draws.
-
-{{TOPIC_LIST}}
+**Every question is listed at the end of this file**, under the shelf headings the page itself draws. It is last rather than here because it is the one part of this file a consumer can lose without losing anything it must not: what this site asks of you, the grammar, and the publishers the words belong to all stand above it.
 
 ## Languages
 
@@ -173,6 +177,12 @@ Everything else on the site belongs to the publishers below. The colophon states
 ## Machine-readable files
 
 - [Works index](https://glossacatholica.org/works.json): the works here as JSON — each with its title, its languages, its address pattern, its edition, who published the text, under what rights, and the publisher's own URL for it. This is the file to read to cite this library correctly without crawling it.
-- [Apparatus](https://glossacatholica.org/apparatus.json): the two things above that were written here, as JSON — a description of each magisterial document that has one ({{DESCRIPTION_COUNT}} of {{DOCUMENT_COUNT}}), and for every document its author, date and publisher's URL; and the cross-references, in both directions: which Catechism paragraphs and which documents cite a given chapter of Scripture, which Compendium question condenses which paragraphs, which Scripture a given document cites. It cites units by number and slug and carries none of their text, so it is an index into the publishers' editions rather than a copy of them. It is also a sample and not a concordance: at most four links of each kind are kept per address, enough to give a reader somewhere to go.
+- [Apparatus](https://glossacatholica.org/apparatus.json): the descriptions and the cross-references, as JSON — a description of each magisterial document that has one ({{DESCRIPTION_COUNT}} of {{DOCUMENT_COUNT}}), and for every document its author, date and publisher's URL; and the cross-references, in both directions: which Catechism paragraphs and which documents cite a given chapter of Scripture, which Compendium question condenses which paragraphs, which Scripture a given document cites. It cites units by number and slug and carries none of their text, so it is an index into the publishers' editions rather than a copy of them. It is also a sample and not a concordance: at most four links of each kind are kept per address, enough to give a reader somewhere to go.
 - [Sitemap](https://glossacatholica.org/sitemap.xml): every address on the site, with `lastmod`.
 - [Colophon](https://glossacatholica.org/colophon): what this is, where each text comes from, the copyright position, and contact.
+
+## Every question, and what it asks
+
+`/quaestiones`, set out in full: the shelves the landing page draws, and under each the questions on it. This is the whole of `{topic}` — there is no other way to write one of these addresses, and nothing below needs to be fetched to use it.
+
+{{TOPIC_LIST}}

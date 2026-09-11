@@ -500,6 +500,13 @@ questions as a third thing written here, and the rights paragraph stopped
 claiming nothing on this site is "annotated", which one `editorial` note makes
 false.
 
+**It sits at the end of that file, and the reason is what a consumer does with
+a long one.** The rows are half the bytes and the only half that grows; some
+clients truncate a fetched document, and whatever the cut takes must be the
+part whose loss costs least. A list of questions is that part — the prose above
+still says the surface exists — where the rights position and the list of
+publishers are what the file is for.
+
 **The title and the question are the only strings here written as somebody
 else's words** — the keywords are written in the reader's, which is a different
 job with the same rule against transposing the English — and a translator needs

@@ -654,6 +654,13 @@ function syncFingerprint() {
 				path.join(siteRoot, 'descriptions.json'),
 				path.join(siteRoot, 'document-tags.json'),
 				path.join(siteRoot, 'quaestiones.json'),
+				// PROSE, AND SO INVISIBLE TO `code`. `importClosure` walks import
+				// statements and this file is read with `readFileSync`, so editing
+				// the wording of llms.txt moved no part of this fingerprint and
+				// `--changed-only` kept serving the previous output. It is an
+				// editorial input like the four above it — hand-written, not
+				// derived — and belongs in the part that fingerprints those.
+				llmsTemplatePath,
 				BASELINE_PATH
 			],
 			siteRoot
