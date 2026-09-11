@@ -141,6 +141,7 @@
 	bind:this={card.trigger}
 	type="button"
 	class="credit-trigger"
+	class:caption={variant === 'caption'}
 	class:overlay={variant === 'overlay'}
 	class:menu-trigger={variant === 'overlay'}
 	popovertarget={card.id}
@@ -177,6 +178,23 @@
 
 <style>
 	/*
+	 * ONLY WHAT BOTH VARIANTS WANT IS UNSCOPED, and that is one declaration.
+	 *
+	 * The reset below was the shared base for an hour and broke the overlay in
+	 * a way worth keeping a note about: a scoped rule here compiles to
+	 * `.credit-trigger.svelte-hash`, which is two classes and therefore
+	 * outranks the single-class `.menu-trigger` it is meant to be wearing. So
+	 * `border: 0` and `background: none` beat the square's border and its
+	 * elevated ground, `font: inherit` beat its size, and the control rendered
+	 * as a bare glyph on the painting. **A component rule that lands on the
+	 * same element as a global class will win by scoping alone**, so anything
+	 * a variant means to INHERIT from that class has to stay out of the base.
+	 */
+	.credit-trigger {
+		cursor: pointer;
+	}
+
+	/*
 	 * A button that has to read as a caption: no chrome, the caption's own
 	 * colour and size, and the pointer only to say it does something. The
 	 * padding is above rather than a min-height, so the caption row does not
@@ -184,7 +202,7 @@
 	 * reason this card exists at all, so the target extends into whitespace
 	 * the figure already occupies.
 	 */
-	.credit-trigger {
+	.credit-trigger.caption {
 		appearance: none;
 		border: 0;
 		background: none;
@@ -192,10 +210,9 @@
 		margin: 0;
 		font: inherit;
 		color: inherit;
-		cursor: pointer;
 	}
 
-	.credit-trigger:focus-visible {
+	.credit-trigger.caption:focus-visible {
 		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
 		border-radius: 2px;
@@ -208,12 +225,15 @@
 	 * describes is.
 	 *
 	 * WHAT `.menu-trigger` GIVES IS THE SQUARE, and WHAT IS OVERRIDDEN IS THE
-	 * SIZE and only the size. That class is 2.25rem because a header control
-	 * is a primary tap target with neighbours to be told apart from; this one
-	 * sits alone on a picture, is the least important control on the page, and
-	 * at that size it reads as a button somebody left on a painting. The
-	 * radius, ground, border and hover stay the class's, so it is still
-	 * recognisably the same button.
+	 * SIZE and only the size — the radius, the ground, the border, the flex
+	 * centring and the hover all stay the class's, so it is still recognisably
+	 * the same button. That class is 2.25rem because a header control is a
+	 * primary tap target with neighbours to be told apart from; this one sits
+	 * alone on a picture, is the least important control on the page, and at
+	 * that size it reads as a button somebody left on a painting.
+	 *
+	 * Nothing here resets anything, deliberately: see the base rule above for
+	 * what happens when it does.
 	 */
 	.credit-trigger.overlay {
 		position: absolute;
@@ -221,23 +241,17 @@
 		inset-inline-end: 0.5rem;
 		inline-size: 1.6rem;
 		block-size: 1.6rem;
-		padding: 0;
 		font-size: 0.8rem;
 	}
 
-	.credit-trigger :global(.hint) {
+	/* The glyph is a HINT after a title, which is the caption's arrangement and
+	   not the overlay's — there the glyph IS the control, centred in its square
+	   by `.menu-trigger`'s own flex, and it takes neither the spacing nor the
+	   dimming. */
+	.credit-trigger.caption :global(.hint) {
 		margin-inline-start: 0.35em;
 		vertical-align: -0.1em;
 		opacity: 0.55;
-	}
-
-	/* The glyph IS the control here, so it takes neither the spacing that
-	   separates it from a title nor the dimming that makes it a hint after
-	   one. */
-	.credit-trigger.overlay :global(.hint) {
-		margin-inline-start: 0;
-		vertical-align: baseline;
-		opacity: 1;
 	}
 
 	/*

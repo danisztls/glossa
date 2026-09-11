@@ -758,6 +758,16 @@ Rationale in `site/docs/finding.md`.
   difference: `'caption'` is a line of type under a plate, `'overlay'` an icon
   square laid on a picture that has no caption row (so `label` is mandatory
   there — a glyph has no text to take a name from).
+- **A component's own rule outranks a global utility class on the same
+  element, by scoping alone.** Svelte compiles `.credit-trigger` to
+  `.credit-trigger.svelte-hash`, two classes against `.menu-trigger`'s one —
+  so a shared base carrying `border: 0`, `background: none` and `font:
+inherit` beat the square that class exists to draw, and the overlay trigger
+  rendered as a bare glyph on the painting. **Anything a variant means to
+  INHERIT from a global class has to stay out of the base**; only what every
+  variant wants belongs there. The mirror of the rule above it — a class
+  borrowed across a component boundary is silently unstyled, and a class
+  restyled inside one silently wins.
 - **Extract a component when a POLICY is being decided twice, not when the CSS
   looks similar.** Those two agreed on 18 of the 36 declarations in their four
   paired rules, which on its own would not have been worth a third file: most
