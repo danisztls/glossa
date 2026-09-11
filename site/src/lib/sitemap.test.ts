@@ -40,7 +40,10 @@ describe('sitemapPaths', () => {
 		const paths = sitemapPaths(manifest);
 		// 315 chrome + 4 bible + 2 cccChapters + 3 ccc + 1 compChapter
 		// + 2 compendium + 1 socialDoctrineChapter + 1 socialDoctrine
-		// + 1 canonLawTitle + 1 canonLaw + 1 document + 1 prayer + 3 summa.
+		// + 1 canonLawTitle + 1 canonLaw + 1 document + 1 prayer + 1 topic
+		// + 3 summa, and `/quaestiones` itself — which is not in the manifest
+		// and not in `CHROME_PATHS` either, so it is the one term here that no
+		// list above accounts for.
 		//
 		// The chrome is ELEVEN PAGES ONCE PLUS ONCE PER INTERFACE LANGUAGE
 		// (2026-08-28): eleven unprefixed, which are the cluster's `x-default`,
@@ -62,7 +65,7 @@ describe('sitemapPaths', () => {
 		// `CALENDAR_LANGS` and not by having its strings in forty dictionaries —
 		// which is the distinction that makes them affordable at all.
 		expect(paths).toHaveLength(
-			CHROME_PATHS.length * (UI_LANGS.length + 1) + CALENDAR_IDS.length + 21
+			CHROME_PATHS.length * (UI_LANGS.length + 1) + CALENDAR_IDS.length + 23
 		);
 		expect(new Set(paths).size).toBe(paths.length);
 	});
@@ -91,6 +94,15 @@ describe('sitemapPaths', () => {
 			'/doctores/summa/i/2',
 			'/doctores/summa/suppl/77'
 		]);
+	});
+
+	/** The one page in this file that is neither a chrome path nor derived
+	 *  from a work: published once, unprefixed, with the topics under it. */
+	it('publishes the topic index and every topic under it, unprefixed', () => {
+		const paths = sitemapPaths(manifest);
+		expect(paths).toContain('/quaestiones');
+		expect(paths).toContain('/quaestiones/crematio');
+		expect(paths.filter((p) => p.endsWith('/quaestiones'))).toEqual(['/quaestiones']);
 	});
 
 	it('omits the routes that are not addresses to visit', () => {

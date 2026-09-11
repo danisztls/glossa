@@ -164,6 +164,7 @@ const titles: RouteTitles = {
 	],
 	documents: { 'rerum-novarum': ['Rerum Novarum', 'Leo XIII', '1891'] },
 	prayers: { 'ave-maria': 'Hail Mary' },
+	topics: { crematio: ['Cremation', 'May a Catholic be cremated?'] },
 	summa: {
 		i: { '1': 'The Nature and Extent of Sacred Doctrine', '2': 'The Existence of God' },
 		suppl: { '77': 'Of the Time and Manner of the Resurrection' }
@@ -379,6 +380,7 @@ describe('headFor, the corpus', () => {
 			'/ius-canonicum/216',
 			'/documenta/rerum-novarum',
 			'/preces/ave-maria',
+			'/quaestiones/crematio',
 			'/doctores/summa/i/2'
 		]) {
 			const d = head(p)?.description;
@@ -405,6 +407,19 @@ describe('headFor, the corpus', () => {
 
 	it('names a prayer', () => {
 		expect(head('/preces/ave-maria')?.title).toBe('Hail Mary — Glossa Catholica');
+	});
+
+	/** The title is what the route itself writes at hydration, and the question
+	 *  is the description — the one address here whose description was written
+	 *  rather than composed, because a topic holds the reader's own sentence. */
+	it('titles a topic as the route does and describes it with its question', () => {
+		expect(head('/quaestiones/crematio')?.title).toBe('Cremation — Glossa Catholica');
+		expect(head('/quaestiones/crematio')?.description).toBe(
+			"Cremation. May a Catholic be cremated? The passages gathered under it, in the Church's own words."
+		);
+		// An unnamed topic gets no head at all rather than one titled by its
+		// slug, which is what `assertNamed` then refuses the build over.
+		expect(headFor('/quaestiones/crematio', manifest, { ...titles, topics: {} })).toBeUndefined();
 	});
 
 	/** The Supplementum exists in English alone, so its titles come from the

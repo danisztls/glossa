@@ -118,6 +118,13 @@ export interface RouteTitles {
 	/** slug -> `[title, author, year]`. */
 	documents: Record<string, [string, string, string]>;
 	prayers: Record<string, string>;
+	/** Topic slug -> `[title, question]`, in English alone.
+	 *
+	 *  THE ONE TABLE HERE WHOSE WORDS THIS SITE WROTE. Every other name in
+	 *  this file is a heading a publisher printed; a topic's two strings are
+	 *  ours, which is what lets the question be used as a description rather
+	 *  than composed into one (`site/docs/topics.md`). */
+	topics: Record<string, [string, string]>;
 	/** part slug -> question number -> title. */
 	summa: Record<string, Record<string, string>>;
 }
@@ -193,6 +200,11 @@ const MAGISTERIUM = 'Documents of the Magisterium';
 const SOCIAL_DOCTRINE = 'Compendium of the Social Doctrine';
 const CANON_LAW = 'Code of Canon Law';
 const PRAYERS = 'Prayers';
+// NOT A WORK, WHICH IS WHY IT SITS APART FROM THE LIST ABOVE. Every name
+// there is a text somebody else published; this one names the index this
+// site arranges passages into, and it is the English of
+// `quaestiones.landing.title`.
+const QUESTIONS = 'Questions';
 
 const ROOT: Crumb = { name: SITE_NAME, href: '/' };
 
@@ -232,6 +244,15 @@ const STATIC_HEADS: Record<
 	'/preces': {
 		title: `${PRAYERS} — ${SITE_NAME}`,
 		description: `The common prayers of the Church, with their sources.`
+	},
+	// The topic index, on the same arrangement as `/calendarium/liturgia`
+	// below and for the ordinary reason: its `quaestiones.*` keys are written
+	// in English and Portuguese alone, so it is out of `CHROME_PATHS` and its
+	// head is fixed and English here until the rest of the dictionaries carry
+	// them (`site/docs/topics.md`).
+	'/quaestiones': {
+		title: `${QUESTIONS} — ${SITE_NAME}`,
+		description: `Questions people arrive holding, each one gathering the passages of the Catechism, the Social Doctrine and canon law that bear on it.`
 	},
 	// `/calendarium` itself is in `CHROME_PATHS` and gets its head from
 	// `route-titles.json` in every language; this one is not, so it gets a
@@ -849,6 +870,32 @@ function bodyHead(
 				alternates: [],
 				crumbs: [ROOT, { name: PRAYERS, href: '/preces' }, { name, href: pathname }],
 				links: [{ name: PRAYERS, href: '/preces' }]
+			};
+		}
+
+		// THE QUESTION IS THE DESCRIPTION, WHICH NO OTHER CASE HERE CAN DO.
+		// Everywhere else the description is composed around a heading, because
+		// a heading is a name and not a sentence. A topic already holds the
+		// reader's own sentence — the one they would type — so the head's two
+		// slots take the page's two strings as they stand: the title, which is
+		// also what the route writes at hydration, and the question.
+		case 'topic': {
+			const entry = titles.topics[address.slug];
+			if (!entry) return undefined;
+			const [name, question] = entry;
+			return {
+				title: `${name} — ${SITE_NAME}`,
+				// The name leads, because a description is read where the title is
+				// not necessarily beside it, and every question here is written to
+				// stand under its own title — `Why does the Church treat it as the
+				// gravest of them?` has no antecedent on its own. The boilerplate
+				// goes LAST, so the clause a result page truncates is ours.
+				description: `${name}. ${question} The passages gathered under it, in the Church's own words.`,
+				canonical: pathname,
+				noindex: false,
+				alternates: [],
+				crumbs: [ROOT, { name: QUESTIONS, href: '/quaestiones' }, { name, href: pathname }],
+				links: [{ name: QUESTIONS, href: '/quaestiones' }]
 			};
 		}
 

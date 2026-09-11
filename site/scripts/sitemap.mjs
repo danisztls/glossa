@@ -131,6 +131,25 @@ export function sitemapPaths(manifest) {
 	for (const n of manifest.canonLaw) paths.push(hrefFor({ kind: 'canonLaw', n }));
 	for (const slug of manifest.documents) paths.push(hrefFor({ kind: 'document', slug }));
 	for (const slug of manifest.prayers) paths.push(hrefFor({ kind: 'prayer', slug }));
+	/*
+	 * THE QUESTIONS, AND THE INDEX THEY ARE REACHED FROM.
+	 *
+	 * Last because they are the one family here that is not a work: a topic
+	 * page quotes the Catechism, the Social Doctrine and the Code, and what is
+	 * ours is the arrangement (`site/docs/topics.md`).
+	 *
+	 * `/quaestiones` IS PUBLISHED HERE AND IS NOT IN `CHROME_PATHS`, which is
+	 * the country calendars' position reached by the opposite road. A calendar
+	 * stays out of the language cluster because two of them differ in their
+	 * CONTENT; this page stays out because its strings are written in English
+	 * and Portuguese alone, and a 37-language cluster over them would claim a
+	 * page this site does not have (`route-manifest.ts`). Neither objection is
+	 * to publishing it ONCE, unprefixed, in the language a crawler is served —
+	 * and an index left off a map that lists every page beneath it is a door
+	 * missing from the plan.
+	 */
+	paths.push('/quaestiones');
+	for (const slug of manifest.topics) paths.push(hrefFor({ kind: 'topic', slug }));
 	for (const [part, questions] of Object.entries(manifest.summa)) {
 		// An article is a fragment on its question's page (`#a3`), and a
 		// fragment is not a separate address — the question is the unit here.

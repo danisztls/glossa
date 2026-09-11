@@ -1013,6 +1013,14 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   editions), so the short answer above the passages is still quotation with an
   address behind every number. The sync refuses a number the Catechism did not
   flag, and one the topic's own spans already cover.
+- **The topics are in the sitemap and `/quaestiones` is still out of
+  `CHROME_PATHS`.** A cluster claims the page exists in 37 languages and
+  `quaestiones.*` is written in two; a `<loc>` claims only that the address
+  exists, so the index and the 141 topics are listed once, unprefixed
+  (`site/docs/addresses.md`). A topic's head is its own two strings — the title
+  as the route writes it, the question as the description — and its `<lastmod>`
+  is composed from the fingerprints of the passages it prints, a document
+  contributing its title and not its text.
 - **A topic the corpus cannot answer properly does not ship**, and the gap is
   written down instead — the held set is in `docs/research/topics.md`, and
   `fiducia-supplicans` is the case that matters, since the three earlier

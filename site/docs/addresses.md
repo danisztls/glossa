@@ -224,6 +224,14 @@ which is what makes publishing early impossible rather than merely unwise.
 `PLAN.md` §Pages that are unpublished is the current state; the counts here
 are dated and rot.
 
+**WHAT SUCH A PAGE IS WAITING FOR IS THE CLUSTER AND NOT THE SITEMAP ROW**, a
+distinction this section did not draw until the topics were published
+(2026-09-11). The two claims are different sizes: an `hreflang` set says the page
+exists in 37 languages, and `quaestiones.*` in two dictionaries cannot support
+it; a `<loc>` says only that the address exists. So `/quaestiones` and the 141
+topics under it are in `sitemap.xml` — unprefixed and once, the country
+calendars' position — and out of `CHROME_PATHS`, each on its own gate.
+
 ## Which edition a reader gets
 
 **A SHARED LINK MAY PIN ONE, and that is not a hole in the rule above.** `?ed=`

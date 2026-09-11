@@ -428,6 +428,24 @@ bookmarking yet, though the address supports it — `addressResolves` answers
 list, and answering `false` would discard a reader's mark on every topic at
 once.
 
+**A page held out of `CHROME_PATHS` was held out of the sitemap too, and only
+one of those was the translation gate's to decide** (2026-09-11). What a cluster
+claims is that the page exists in 37 languages, which `quaestiones.*` in two
+dictionaries cannot support; what a `<loc>` claims is that the address exists,
+and that is true whatever it is written in. So the 141 topics and the index over
+them are published once, unprefixed, in the language a crawler is served, and
+nothing about the cluster moved — `/quaestiones` is still out of `CHROME_PATHS`,
+still takes no prefix, still declares no alternates (`site/docs/addresses.md`).
+
+**Which made the head real, and a topic is the one address whose description is
+not composed.** Every other case in `bodyHead` builds a sentence around a
+heading, a heading being a name and not a sentence; a topic already holds the
+reader's own question, so `route-titles.json` carries the two strings the page is
+titled by and the head prints them as they stand. The title is the one the route
+writes at hydration, since the edge and the route disagreeing is a visible
+rearrangement on every load, and `assertNamed` refuses a topic whose English
+strings are missing rather than publishing its slug as a title.
+
 **Three ways in, and none of them is the bar.** A card in the catalogue, drawn
 by `ShelfGrid.svelte` on the home page and on `/bibliotheca`, and a row in the
 footer's works column. The bar stops at five doors because a bar is one line

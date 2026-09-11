@@ -306,9 +306,16 @@ change ceiling exists to refuse, so the migration was a `LEDGER_VERSION` bump �
 an unrecognised version re-seeds from each work's own corpus commit date, which
 is true. It produced identical dates.
 
-**The eight static pages carry no `lastmod`**, deliberately: they are chrome,
-whose content changes with the app, and the ledger does not fingerprint the
-app. **The `ETag` is not worth reasoning about either way, and it is worth
+**The static pages carry no `lastmod`**, deliberately: they are chrome, whose
+content changes with the app, and the ledger does not fingerprint the app.
+
+**A topic's date is COMPOSED, and it is the only one that is.** Every other
+address is fingerprinted from text the sync has just parsed; `/quaestiones/{slug}`
+parses nothing — it prints Catechism paragraphs, sections of the Social Doctrine
+and canons that each carry a fingerprint at an address of their own, under
+strings written in `en.ts` — so its fingerprint is those hashes composed with
+those strings. A document it links contributes its TITLE and not its text, which
+is the line the whole ledger is drawn on. **The `ETag` is not worth reasoning about either way, and it is worth
 saying so** rather than leaving it to look like a compensating mechanism:
 `/sitemap.xml` is negated in `run_worker_first`, so the request was already
 free of invocations, and what schedules a recrawl is the `<lastmod>` values a

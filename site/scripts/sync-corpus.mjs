@@ -3767,6 +3767,7 @@ const routeManifest = {
 
 writeJson(routeManifestPath, routeManifest);
 
+const dictionaries = await readDictionaries();
 const routeTitles = buildRouteTitles({
 	manifests,
 	bibleIndex,
@@ -3778,10 +3779,13 @@ const routeTitles = buildRouteTitles({
 	socialDoctrineChapterStarts,
 	canonLawEditions,
 	canonLawUnitStarts,
+	// The topic slugs, so each `/quaestiones/{slug}` is named from the two
+	// strings its own page is titled by rather than from its Latin slug.
+	topics: routeManifest.topics,
 	// The interface's own strings, for the seven chrome pages that take a
 	// language prefix. Read from the dictionaries so the head a searcher
 	// matches on is the sentence the page shows them — see CHROME_KEYS.
-	dictionaries: await readDictionaries()
+	dictionaries
 });
 // Checked here rather than trusted, on the same terms as `assertCanonical`:
 // nothing a reader can see goes wrong when an address loses its name, because
@@ -3789,6 +3793,64 @@ const routeTitles = buildRouteTitles({
 // see it, and none of them reports back.
 assertNamed(sitemapPaths(routeManifest), routeManifest, routeTitles);
 writeJson(routeTitlesPath, routeTitles);
+
+/*
+ * A TOPIC'S FINGERPRINT IS COMPOSED, NOT MEASURED, and it is the only one here
+ * that is.
+ *
+ * Every other address is fingerprinted by `mark()` from text this build just
+ * parsed. A topic page parses nothing: it prints Catechism paragraphs, sections
+ * of the Social Doctrine and canons that each already carry a fingerprint at an
+ * address of their own, under a title, a question and — where the topic has one
+ * — a note, all three written in `en.ts`. So its fingerprint is those hashes
+ * composed with those strings, which moves when and only when something a
+ * reader sees on the page has moved. Recomposing it from the text would be a
+ * second reader of the corpus for an answer the first one already has.
+ *
+ * THE HASHES ARE SORTED GOING IN, because `fingerprint` records them in corpus
+ * read order and a composition that inherited it would move on a rebuild that
+ * changed nothing.
+ *
+ * A DOCUMENT CONTRIBUTES ITS TITLE AND NOT ITS TEXT, which is the line the
+ * whole ledger is drawn on: the topic page LINKS a document, so retitling one
+ * changes this page and re-parsing one does not.
+ *
+ * NO SEED. `corpusDateFor` answers for a work in the corpus and a topic was
+ * written in this repository, so an address the ledger has never seen takes
+ * today — which for a page published today is the only claim available.
+ */
+{
+	const english = dictionaries.en ?? {};
+	/** @param {[number, number][] | undefined} spans */
+	const numbers = (spans) =>
+		(spans ?? []).flatMap(([from, to]) =>
+			Array.from({ length: to - from + 1 }, (_, i) => from + i)
+		);
+	/** @param {string} href */
+	const hashesAt = (href) => [...(addressFingerprints.get(href)?.get('en')?.hashes ?? [])].sort();
+
+	for (const [slug, topic] of Object.entries(quaestiones)) {
+		const quoted = [
+			...[...numbers(topic.ccc), ...(topic.brief ?? [])].map((n) => hrefFor({ kind: 'ccc', n })),
+			...numbers(topic.csdc).map((n) => hrefFor({ kind: 'socialDoctrine', n })),
+			...numbers(topic.canons).map((n) => hrefFor({ kind: 'canonLaw', n }))
+		].flatMap(hashesAt);
+		fingerprint(
+			addressFingerprints,
+			hrefFor({ kind: 'topic', slug }),
+			[
+				topic,
+				quoted,
+				(topic.documents ?? []).map((name) => routeTitles.documents[name]?.[0] ?? name),
+				['title', 'question', 'editorial', 'editorial.sources'].map(
+					(key) => english[`quaestiones.${slug}.${key}`] ?? ''
+				)
+			],
+			undefined,
+			'en'
+		);
+	}
+}
 
 // The descriptions and the cross-reference apparatus: the two things on this
 // site that are ours rather than reproduced, in the form the edge can serve

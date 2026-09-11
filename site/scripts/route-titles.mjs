@@ -242,6 +242,7 @@ function documentChapterNames(nodes, starts, lang, clean) {
  * @param {readonly number[]} input.socialDoctrineChapterStarts
  * @param {{ lang: string, work: string, sections: { n: number }[], structure: any[] }[]} [input.canonLawEditions]
  * @param {readonly number[]} [input.canonLawUnitStarts]
+ * @param {readonly string[]} [input.topics] topic slugs, `manifest.topics`
  * @param {Record<string, Record<string, string>>} input.dictionaries lang -> strings
  */
 export function buildRouteTitles({
@@ -255,6 +256,7 @@ export function buildRouteTitles({
 	socialDoctrineChapterStarts,
 	canonLawEditions,
 	canonLawUnitStarts,
+	topics,
 	dictionaries
 }) {
 	const csdc = servedDocumentEdition(socialDoctrineEditions);
@@ -313,6 +315,7 @@ export function buildRouteTitles({
 			: {},
 		documents: documentNames(manifests),
 		prayers: prayerNames(prayerIndex),
+		topics: topicNames(dictionaries, topics ?? []),
 		summa: summaNames(summaIndex)
 	};
 }
@@ -420,6 +423,38 @@ function documentNames(manifests) {
 		];
 	}
 	return documents;
+}
+
+/**
+ * Topic slug -> `[title, question]`, read straight out of the English
+ * dictionary.
+ *
+ * THE ONLY NAMES IN THIS FILE THIS SITE WROTE, and the exception proves the
+ * rule the docblock states: what may go in here is a name and never a text,
+ * and a topic's title and question are what the page calls itself — the
+ * passages under them stay out exactly as a Catechism paragraph does.
+ *
+ * ENGLISH BECAUSE THE WHOLE FILE IS, not because the strings exist in no other
+ * language: they exist in Portuguese too, and in none of the other thirty-five,
+ * which is why `/quaestiones` is out of `CHROME_PATHS` altogether.
+ *
+ * A slug whose strings are missing is LEFT OUT rather than named from itself,
+ * so `assertNamed` refuses the build instead of publishing a page titled
+ * `associationes-massonicae`.
+ *
+ * @param {Record<string, Record<string, string>>} dictionaries
+ * @param {readonly string[]} slugs
+ */
+function topicNames(dictionaries, slugs) {
+	const english = dictionaries.en ?? {};
+	/** @type {Record<string, [string, string]>} */
+	const topics = {};
+	for (const slug of slugs) {
+		const title = plain(english[`quaestiones.${slug}.title`] ?? '');
+		const question = plain(english[`quaestiones.${slug}.question`] ?? '');
+		if (title && question) topics[slug] = [title, question];
+	}
+	return topics;
 }
 
 /** @param {Record<string, any>} prayerIndex lang -> { prayers } */
