@@ -116,7 +116,7 @@ export const ro: Dictionary = {
 		'Pasajele pe care le-ați însemnat, și unde ați rămas ultima dată în fiecare operă. Amândouă se păstrează în acest navigator și nu se trimit nicăieri.',
 	'schola.what.census':
 		'Ce deține această bibliotecă și cât de departe ajunge — câte opere, în ce limbi, și cât din fiecare poate ajunge cu adevărat un cititor al limbii dumneavoastră.',
-	'schola.formulas.heading': 'Cele zece porunci',
+	'schola.formulas.decalogue': 'Cele zece porunci',
 	'ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
 	'jumpbox.placeholder': 'Salt la… (ex. ioan 3,16, ccc 1234)',
 	'jumpbox.short': 'Caută',

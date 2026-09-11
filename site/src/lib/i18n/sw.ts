@@ -150,7 +150,6 @@ export const sw: Dictionary = {
 		'Vifungu ulivyoviweka alama, na mahali ulipoishia mwisho katika kila kazi. Vyote viwili hubaki katika kivinjari hiki wala havitumwi popote.',
 	'schola.what.census':
 		'Kile maktaba hii inachokihifadhi na inavyofika mbali — kazi ngapi, katika lugha zipi, na kiasi gani cha kila moja ambacho msomaji wa lugha yako mwenyewe anaweza kufikia kwa kweli.',
-	'schola.formulas.heading': 'Amri Kumi za Mungu',
 	'ccc.noCounterpart': 'Hakuna kinacholingana katika kazi nyingine',
 	'jumpbox.placeholder': 'Nenda kwa… (mf. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Tafuta',

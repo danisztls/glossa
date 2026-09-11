@@ -147,7 +147,6 @@ export const sq: Dictionary = {
 		'Pasazhet që keni shënuar, dhe ku e latë së fundi në secilën vepër. Të dyja mbeten në këtë shfletues dhe nuk dërgohen askund.',
 	'schola.what.census':
 		'Çfarë përmban kjo bibliotekë dhe sa larg shtrihet — sa vepra, në cilat gjuhë, dhe sa nga secila mund të arrijë vërtet një lexues i gjuhës suaj.',
-	'schola.formulas.heading': 'Dhjetë Urdhërimet',
 	'ccc.noCounterpart': 'Pa pjesë përkatëse në veprën tjetër',
 	'jumpbox.placeholder': 'Shko te… (p.sh. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Kërko',

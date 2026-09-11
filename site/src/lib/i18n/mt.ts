@@ -126,7 +126,6 @@ export const mt: Dictionary = {
 		'Siltiet li mmarkajt, u fejn wasalt f’kull xogħol. It-tnejn jinżammu f’dan il-browser u ma jintbagħtu mkien.',
 	'schola.what.census':
 		'X’għandha din il-librerija u kemm tasal ’il bogħod — kemm-il xogħol, b’liema lingwi, u kemm minn kull wieħed jista’ tabilħaqq jilħaq min jaqra bil-lingwa tiegħek.',
-	'schola.formulas.heading': 'L-Għaxar Kmandamenti',
 	'ccc.noCounterpart': 'L-ebda korrispondent fix-xogħol l-ieħor',
 	'jumpbox.placeholder': 'Aqbeż għal… (eż. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Fittex',

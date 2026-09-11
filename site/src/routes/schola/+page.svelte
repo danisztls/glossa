@@ -117,7 +117,7 @@
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { IconName } from '$lib/components/Icon.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
 	import type { Formula, Formulas, WorkType } from '$lib/types';
 
 	// The identification, plus the one interface word in it. Composed here and
@@ -329,13 +329,49 @@
 	 * that is whole without it, where `/bibliotheca/census` is a page that is
 	 * nothing without its numbers and therefore says so.
 	 */
+	/**
+	 * **THE SECTION IS HELD OUT OF PRODUCTION** (2026-09-11, by direction: "it
+	 * needs serious review and improvement"). `held.ts`'s argument for a
+	 * calendar, applied to a section: derived, readable, and deliberately not
+	 * served. It draws under `npm run dev` so the review can happen.
+	 *
+	 * WHAT A PRODUCTION BUILD ACTUALLY DROPS, checked rather than assumed:
+	 * Vite replaces `import.meta.env.DEV` with `false`, the constant folds, and
+	 * the `{#if}` goes with it — no markup, and no reference to
+	 * `index/formulas.*.json` anywhere in the bundle, so nothing fetches. What
+	 * still ships is this component's CSS, which Svelte emits whether or not a
+	 * branch draws, and the two dictionary strings, which are data. A few
+	 * hundred bytes, and not worth a mechanism to remove.
+	 *
+	 * The index files are still written, so publishing again is this line.
+	 */
+	const FORMULAS_HELD = !import.meta.env.DEV;
+
+	/**
+	 * **THE READER'S OWN LANGUAGE, AND ONLY WHERE THERE IS MATERIAL IN IT**
+	 * (2026-09-11, by direction). It read `langFor('compendium')`, which
+	 * answers English for a language the corpus cannot meet — right for a work
+	 * a reader asked to read, wrong here: a Japanese reader who had chosen
+	 * nothing was shown the ENGLISH appendix under a Japanese heading, as
+	 * though that were what their Church prints.
+	 *
+	 * So the section is the reader's interface language or nothing, and
+	 * `loadFormulas` IS the gate: it answers undefined for a language
+	 * `sync-corpus.mjs` wrote no file for, which is every language but the ten
+	 * whose appendix parsed. Nothing here lists those ten — a list would be a
+	 * second place to update when an eleventh edition is read.
+	 *
+	 * That is also why `schola.formulas.*` exists in ten dictionaries and not
+	 * in forty. A string no reader of that language can reach is a line the
+	 * next translator keeps true for nobody, which is the rule the
+	 * `schola.cite.*` keys went out on.
+	 */
 	let appendix = $state<Formulas | undefined>(undefined);
-	const compendiumLang = $derived(content.langFor('compendium'));
 	$effect(() => {
-		const lang = compendiumLang;
+		const lang = i18n.lang;
 		let stale = false;
 		appendix = undefined;
-		if (!lang) return;
+		if (FORMULAS_HELD) return;
 		loadFormulas(lang).then(
 			(value) => {
 				if (!stale) appendix = value;
@@ -347,13 +383,40 @@
 		};
 	});
 
-	/** The Decalogue first, then Part B in the order the edition prints it. It
-	 *  is first because it is the list a newcomer came for and the one every
-	 *  other formula is read against, not because the appendix puts it there —
-	 *  the appendix prints it a hundred questions earlier. */
+	/**
+	 * The Decalogue first, then Part B in the order the edition prints it. It
+	 * is first because it is the list a newcomer came for and the one every
+	 * other formula is read against, not because the appendix puts it there —
+	 * the appendix prints it a hundred questions earlier.
+	 *
+	 * **AND IT IS THE ONE HEADING THIS PAGE WRITES** (2026-09-11, by
+	 * direction). Every other heading here is the edition's own, which is the
+	 * whole argument for the section; the Decalogue's is not a name at all —
+	 * English prints "A Traditional Catechetical Formula" over it, Slovenian
+	 * "Katehetski obrazec" — so a reader scanning for the ten commandments
+	 * would pass the ten commandments. `schola.formulas.decalogue` names them,
+	 * and the section's own heading is what the editions call the rest.
+	 */
 	const formulas = $derived(
-		appendix ? [...(appendix.decalogue ? [appendix.decalogue] : []), ...appendix.formulas] : []
+		appendix
+			? [
+					...(appendix.decalogue
+						? [{ ...appendix.decalogue, heading: t('schola.formulas.decalogue') }]
+						: []),
+					...appendix.formulas
+				]
+			: []
 	);
+
+	/**
+	 * A heading with its trailing colon off (2026-09-11, by direction). Six
+	 * editions end every one with it — "The three theological virtues:" —
+	 * because in the appendix the list runs on from the words. A fold's summary
+	 * is a name, and it is followed by nothing until the reader opens it. Only
+	 * the LAST colon goes: the six that print a Scripture reference need theirs
+	 * ("The Beatitudes (Matthew 5:3-12)").
+	 */
+	const nameOf = (formula: Formula) => formula.heading.replace(/\s*:$/, '');
 
 	/**
 	 * **THE HEADINGS ARE NOT LINKIFIED**, and six of them print a Scripture
@@ -729,14 +792,14 @@
 		has read, and a sentence apologising for that would be this page
 		explaining its own pipeline to a reader nine months into the faith.
 	-->
-	{#if formulas.length > 0}
+	{#if !FORMULAS_HELD && formulas.length > 0}
 		<section aria-labelledby="formulas-heading">
 			<h2 id="formulas-heading">{t('schola.formulas.heading')}</h2>
 			<ul class="formulas">
 				{#each formulas as formula (formula.heading)}
 					<li>
 						<details class="fold formula">
-							<summary>{formula.heading}</summary>
+							<summary>{nameOf(formula)}</summary>
 							<!--
 								THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
 								the edition numbered it — the numerals are redrawn because
@@ -1224,12 +1287,34 @@
 	}
 
 	/*
-	 * THE FIRST ROW OF EACH COLUMN KEEPS ITS RULE and every row's rule is its
-	 * own, so a two-column grid does not need to know which cells are at the
-	 * top. `border-block-start` on all of them is uniform by construction —
-	 * with `border-block-end` the last row of the shorter column would leave a
-	 * rule hanging under nothing.
+	 * EVERY ROW'S RULE IS ITS OWN, which is why it is `border-block-start` and
+	 * not `border-block-end`: with the rule underneath, the last row of the
+	 * shorter column would leave a hairline hanging under nothing.
+	 *
+	 * THE TOP ROW IS THE EXCEPTION WHERE THE HEADING ALREADY DREW ONE. A
+	 * `<section>`'s `h2` carries the tinted rule, so the first row of the grid
+	 * right under it put a second hairline four tenths of a rem below the
+	 * first — two lines close enough to read as a mistake rather than as two
+	 * decisions. It was invisible while a lede stood between them and appeared
+	 * the day that lede went (2026-09-11). The selector says the condition
+	 * rather than naming the grid: a grid that directly follows a ruled
+	 * heading. The places grid follows an `h3.group`, which draws no rule, so
+	 * its top row keeps one — it is the only thing separating those rows from
+	 * the heading.
+	 *
+	 * TWO CELLS AT ONE COLUMN COUNT AND ONE AT THE OTHER. The grid is two
+	 * columns above 80rem, so the top ROW is the first two children there and
+	 * the first child below it.
 	 */
+	section > h2 + .book-grid > .book:first-child {
+		border-block-start: none;
+	}
+
+	@media (min-width: 80rem) {
+		section > h2 + .book-grid > .book:nth-child(2) {
+			border-block-start: none;
+		}
+	}
 
 	/*
 	 * THE ICON STANDS FREE, at reading size rather than in a 2.25rem chip. The

@@ -124,7 +124,6 @@ export const no: Dictionary = {
 		'Steder du har merket, og hvor du sist slapp i hvert verk. Begge holdes i denne nettleseren og sendes ingen steder.',
 	'schola.what.census':
 		'Hva dette biblioteket har, og hvor langt det rekker — hvor mange verk, på hvilke språk, og hvor mye av hvert av dem en som leser ditt eget språk faktisk kan nå.',
-	'schola.formulas.heading': 'De ti bud',
 	'ccc.noCounterpart': 'Ingen motsvarighet i det andre verket',
 	'jumpbox.placeholder': 'Gå til… (f.eks. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Søk',

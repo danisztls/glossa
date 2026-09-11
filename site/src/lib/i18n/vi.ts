@@ -150,7 +150,6 @@ export const vi: Dictionary = {
 		'Những đoạn bạn đã đánh dấu, và nơi bạn dừng lại lần cuối trong mỗi tác phẩm. Cả hai được giữ trong trình duyệt này và không gửi đi đâu cả.',
 	'schola.what.census':
 		'Thư viện này có những gì và vươn xa đến đâu — bao nhiêu tác phẩm, bằng những ngôn ngữ nào, và người đọc bằng chính ngôn ngữ của bạn thực sự có thể tiếp cận được bao nhiêu phần của mỗi tác phẩm.',
-	'schola.formulas.heading': 'Mười Điều Răn',
 	'ccc.noCounterpart': 'Không có phần tương ứng trong tác phẩm kia',
 	'jumpbox.placeholder': 'Đi tới… (vd. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Tìm',

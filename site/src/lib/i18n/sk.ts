@@ -142,7 +142,6 @@ export const sk: Dictionary = {
 		'Miesta, ktoré ste si označili, a kde ste naposledy skončili v každom diele. Oboje zostáva v tomto prehliadači a nikam sa neodosiela.',
 	'schola.what.census':
 		'Čo má táto knižnica a ako ďaleko siaha — koľko diel, v akých jazykoch, a koľko z každého sa naozaj dostane k tomu, kto číta vo vašom jazyku.',
-	'schola.formulas.heading': 'Desať prikázaní',
 	'ccc.noCounterpart': 'Bez náprotivku v druhom diele.',
 	'jumpbox.placeholder': 'Prejsť na… (napr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Hľadať',

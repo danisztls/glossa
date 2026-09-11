@@ -153,7 +153,6 @@ export const id: Dictionary = {
 		'Bagian-bagian yang telah Anda tandai, dan di mana Anda terakhir berhenti dalam tiap karya. Keduanya disimpan di peramban ini dan tidak dikirim ke mana pun.',
 	'schola.what.census':
 		'Apa yang dimiliki perpustakaan ini dan seberapa jauh jangkauannya — berapa banyak karya, dalam bahasa apa saja, dan berapa banyak dari masing-masing yang benar-benar dapat dijangkau pembaca dalam bahasa Anda sendiri.',
-	'schola.formulas.heading': 'Sepuluh Perintah Allah',
 	'ccc.noCounterpart': 'Tidak ada padanan dalam karya lainnya',
 	'jumpbox.placeholder': 'Lompat ke… (mis. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Cari',

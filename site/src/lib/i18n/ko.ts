@@ -146,7 +146,6 @@ export const ko: Dictionary = {
 		'표시해 두신 대목들과, 저작마다 마지막으로 멈추신 자리. 둘 다 이 브라우저에 보관되며 어디로도 보내지지 않습니다.',
 	'schola.what.census':
 		'이 서고가 무엇을 담고 있고 얼마나 멀리 미치는지 — 작품이 몇 개이고, 어떤 언어들로 있으며, 당신 자신의 언어를 쓰는 독자가 각각 실제로 얼마나 닿을 수 있는지.',
-	'schola.formulas.heading': '십계명',
 	'ccc.noCounterpart': '다른 저작에 대응하는 부분이 없습니다.',
 	'jumpbox.placeholder': '이동… (예: jn 3,16, ccc 1234)',
 	'jumpbox.short': '찾기',

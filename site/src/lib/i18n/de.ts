@@ -118,7 +118,7 @@ export const de: Dictionary = {
 		'Stellen, die Sie gemerkt haben, und wo Sie in jedem Werk zuletzt aufgehört haben. Beides bleibt in diesem Browser und wird nirgendwohin gesendet.',
 	'schola.what.census':
 		'Was diese Bibliothek enthält und wie weit sie reicht — wie viele Werke, in welchen Sprachen, und wie viel davon ein Leser Ihrer Sprache tatsächlich erreichen kann.',
-	'schola.formulas.heading': 'Die Zehn Gebote',
+	'schola.formulas.decalogue': 'Die Zehn Gebote',
 	'ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
 	'jumpbox.placeholder': 'Springe zu… (z. B. johannes 3,16, ccc 1234)',
 	'jumpbox.short': 'Suchen',

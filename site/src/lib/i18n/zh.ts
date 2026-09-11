@@ -146,7 +146,6 @@ export const zh: Dictionary = {
 		'您所标记的经文，以及您在每部作品中上次读到之处。二者都保存在此浏览器中，不发往任何地方。',
 	'schola.what.census':
 		'本书库收藏了什么，覆盖范围有多广——有多少部作品，涉及哪些语言，以及您自己语言的读者实际能读到每部作品的多少。',
-	'schola.formulas.heading': '十诫',
 	'ccc.noCounterpart': '另一部作品中没有对应内容',
 	'jumpbox.placeholder': '前往…（例：jn 3:16、ccc 1234）',
 	'jumpbox.short': '搜索',

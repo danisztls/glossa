@@ -117,7 +117,7 @@ export const it: Dictionary = {
 		'I passi che hai segnato, e dove ti sei fermato in ciascuna opera. Entrambi restano in questo browser e non sono inviati da nessuna parte.',
 	'schola.what.census':
 		'Che cosa contiene questa biblioteca e fin dove arriva — quante opere, in quali lingue, e quanto di ciascuna un lettore della tua stessa lingua può davvero raggiungere.',
-	'schola.formulas.heading': 'I dieci comandamenti',
+	'schola.formulas.decalogue': 'I dieci comandamenti',
 	'ccc.noCounterpart': 'Nessuna corrispondenza nell’altra opera',
 	'jumpbox.placeholder': 'Vai a… (es. giovanni 3,16, ccc 1234)',
 	'jumpbox.short': 'Cerca',

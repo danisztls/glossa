@@ -142,7 +142,6 @@ export const lt: Dictionary = {
 		'Vietos, kurias pažymėjote, ir ties kuo paskutinį kartą sustojote kiekviename veikale. Abu dalykai lieka šioje naršyklėje ir niekur nesiunčiami.',
 	'schola.what.census':
 		'Ką ši biblioteka turi ir kaip toli ji siekia — kiek veikalų, kokiomis kalbomis, ir kiek iš kiekvieno jūsų pačių kalbos skaitytojas iš tikrųjų gali pasiekti.',
-	'schola.formulas.heading': 'Dešimt Dievo įsakymų',
 	'ccc.noCounterpart': 'Kitame veikale atitikmens nėra.',
 	'jumpbox.placeholder': 'Pereiti prie… (pvz. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Ieškoti',

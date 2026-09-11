@@ -267,15 +267,26 @@ first parsed on the ground that it was "not prayers". `ccc/compendium.py` reads
 it now; `docs/corpus-schema.md` has the shape and `pipeline/CLAUDE.md` the
 parsing rules.
 
-**So the section costs one key and quotes everything else.** The heading names
-the ten commandments, because that is what a reader arrives looking for and no
-edition's own label for them will be recognised — the English calls them "A
-Traditional Catechetical Formula". It named the rest of the appendix too until
-2026-09-11 ("and what else is learnt by heart"), and so did a lede under it
-saying whose the words were; both went by direction, and what says whose the
-words are now is that every heading in the section is one no English speaker
-would write — "I dodici frutti dello Spirito Santo", in the reader's own
-Compendium.
+**So the section costs two keys and quotes everything else.** One is the
+section's heading, which is what the editions call the set — "Catechetical
+Formulas". The other names the Decalogue, and it is the ONE heading in the
+section this site writes rather than quotes: the editions do not name that list
+at all. The English prints "A Traditional Catechetical Formula" over it and the
+Slovenian "Katehetski obrazec", so a reader who came for the ten commandments
+would read past the ten commandments; `schola.formulas.decalogue` says what they
+are. Everything else is the edition's own words, which is also what now says
+whose the words are, the lede that used to say so having gone — every heading in
+the section is one no English speaker would write.
+
+**The section heading has been wrong twice, both times by saying too much.** It
+was "The ten commandments, and what else is learnt by heart", then "The ten
+commandments" (2026-09-11, both by direction). A heading that lists what is
+under it is a heading competing with its own contents, and folding the formulas
+made the contents legible without it: what a reader sees is a dozen names, so
+the heading only has to say what kind of thing they are. The name the folds
+could not supply — the Decalogue's — moved down to the fold that needed it, and
+trailing colons came off the printed headings, which the editions set because
+the list ran on from the words and a fold's summary runs on into nothing.
 
 **Nothing in the section is named, ordered or selected by the site**, because
 nothing can be. The editions disagree about the ORDER — Italian prints the
@@ -284,6 +295,22 @@ virtues, where the other nine print them after — so `formulas.json` carries no
 key at all, and the page renders the headings it is given in the order it is
 given them. There is no formula this page can be found naming, and no formula it
 can be found leaving out.
+
+**And the whole section is HELD out of production** (2026-09-11, by
+direction: it needs review nobody has done yet). `FORMULAS_HELD` in the page,
+true everywhere but `npm run dev`, so it can be read and worked on and is not
+served. That is `held.ts`'s argument for a national calendar applied to a
+section: derived, readable, deliberately not published.
+
+What a production build drops was checked and not assumed. Vite replaces
+`import.meta.env.DEV` with `false`, the constant folds, and the `{#if}` goes
+with it — the built bundle carries no markup for the section and no reference to
+`index/formulas.*.json`, so no reader fetches one. What survives is this
+component's CSS, which Svelte emits whether a branch draws or not, and the two
+dictionary strings, which are data rather than code. That is a few hundred bytes
+and buying them back would mean a mechanism, which is a worse trade than the
+bytes. The index files are still written, so publishing again is one line. What
+follows is the state it is held in.
 
 **It closes the page, and every formula is folded shut** (2026-09-11, by
 direction). It sat above the picture, on the hinge's argument that it reports
@@ -312,6 +339,32 @@ so what the page draws is whole beatitudes and the breaks between them are the
 full stops the edition printed. English, which already sets one per line, comes
 through the same rule untouched — and where a beatitude ends is still the
 source's to say, which was the point all along.
+
+**And it draws in the reader's own language or not at all.** It read
+`langFor('compendium')`, which answers English for a language the corpus cannot
+meet — the right answer for a work somebody asked to read, and the wrong one
+here: a Japanese reader who had chosen nothing was shown the ENGLISH appendix
+under a Japanese heading, as though their Church printed the capital sins in
+English. A fallback is a courtesy when what it offers is a book the reader can
+still read, and a misrepresentation when what it offers is what their own Church
+prints.
+
+So the section reads `i18n.lang`, and `loadFormulas` is the whole gate: it
+answers undefined for a language no file was written for. **That is also why
+`schola.formulas.*` lives in ten dictionaries rather than forty** — the section
+is unreachable in the other thirty, and a translated string nothing can reach is
+a line the next translator keeps true for nobody. Neither the page nor the
+dictionaries name the ten: the built index is the list, so reading an eleventh
+edition adds a language without anyone remembering to.
+
+**Of those ten, nine are not translated yet either, deliberately.** The section
+is held for a review that may rename it, and translating a surface into every
+language is the last thing done to it rather than the first — the chance of
+rework is what makes it last. `schola.formulas.heading` is English in `en.ts`
+and absent elsewhere, which falls back silently; a key only English has is legal
+and `i18n.test.ts` says so. `schola.formulas.decalogue` is the exception that
+proves the ordering: those ten values already existed, having been the section's
+heading until the swap, so keeping them cost nothing to keep.
 
 **A reader whose edition has none gets no section and no sentence.** Four of the
 fourteen editions are PDFs whose appendix nothing has read, so a Russian reader

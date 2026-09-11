@@ -160,7 +160,6 @@ export const mg: Dictionary = {
 		'Ny andalana nomarihinao, sy ny toerana nijanonanao farany tamin’ny asa soratra tsirairay. Samy mijanona ao amin’ity navigateur ity izy ireo ary tsy alefa na aiza na aiza.',
 	'schola.what.census':
 		'Izay ananan’ity tranomboky ity, sy hatraiza no tratrany — firy ny asa soratra, amin’ny fiteny inona, ary hafiriana amin’ireny no azon’ny mpamaky ny fiteninao ho tratrarina marina tokoa.',
-	'schola.formulas.heading': 'Ny Didy folo',
 	'ccc.noCounterpart': 'Tsy misy mifanandrify aminy ao amin’ny asa soratra hafa',
 	'jumpbox.placeholder': 'Mankanesa any… (ohatra: joany 3:16, ccc 1234)',
 	'jumpbox.short': 'Karohy',

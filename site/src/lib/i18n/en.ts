@@ -527,15 +527,20 @@ export const en: Dictionary = {
 	// drifting — was never worth considering. `routes/schola/+page.svelte` has
 	// the argument.
 	//
-	// IT NAMES THE DECALOGUE AND NOTHING ELSE (2026-09-11, by direction). It
-	// named the rest too — "and what else is learnt by heart" — which is the
-	// heading explaining the fold under it; the folded headings are the
-	// contents, and they are the Church's own words where a summary of them
-	// would be ours. The Decalogue still has to be named, because it is the
-	// one item the contents cannot advertise: a reader scanning for "the ten
-	// commandments" will not recognise "A Traditional Catechetical Formula",
-	// which is what the English edition calls them.
-	'schola.formulas.heading': 'The ten commandments',
+	// THE SECTION HEADING IS WHAT THE EDITIONS CALL THE REST, and the second
+	// key names the Decalogue (2026-09-11, by direction). The heading was "The
+	// ten commandments" and before that "The ten commandments, and what else
+	// is learnt by heart" — a heading listing the contents of the folds under
+	// it, when the folds are the contents.
+	//
+	// `schola.formulas.decalogue` is the ONE heading in this section the site
+	// writes, and it is written because the editions do not name that list at
+	// all: the English prints "A Traditional Catechetical Formula" over it and
+	// the Slovenian "Katehetski obrazec", so a reader scanning for the ten
+	// commandments would pass the ten commandments. Every other fold carries
+	// its edition's own words.
+	'schola.formulas.heading': 'Catechetical Formulas',
+	'schola.formulas.decalogue': 'The ten commandments',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.

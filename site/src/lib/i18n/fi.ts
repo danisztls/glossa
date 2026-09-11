@@ -146,7 +146,6 @@ export const fi: Dictionary = {
 		'Kohdat jotka olet merkinnyt, ja mihin viimeksi jäit kussakin teoksessa. Molemmat pysyvät tässä selaimessa eikä niitä lähetetä minnekään.',
 	'schola.what.census':
 		'Mitä tämä kirjasto sisältää ja miten pitkälle se ulottuu — montako teosta, millä kielillä, ja kuinka paljon kustakin oman kielesi lukija todella tavoittaa.',
-	'schola.formulas.heading': 'Kymmenen käskyä',
 	'ccc.noCounterpart': 'Ei vastinetta toisessa teoksessa',
 	'jumpbox.placeholder': 'Siirry… (esim. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Haku',

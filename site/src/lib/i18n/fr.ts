@@ -120,7 +120,7 @@ export const fr: Dictionary = {
 		'Les passages que vous avez marqués, et où vous vous êtes arrêté dans chaque œuvre. Les deux restent dans ce navigateur et ne sont envoyés nulle part.',
 	'schola.what.census':
 		'Ce que cette bibliothèque contient et jusqu’où elle va — combien d’œuvres, en quelles langues, et combien de chacune un lecteur de votre propre langue peut réellement atteindre.',
-	'schola.formulas.heading': 'Les dix commandements',
+	'schola.formulas.decalogue': 'Les dix commandements',
 	'ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
 	'jumpbox.placeholder': 'Aller à… (p. ex. jean 3,16, ccc 1234)',
 	'jumpbox.short': 'Rechercher',

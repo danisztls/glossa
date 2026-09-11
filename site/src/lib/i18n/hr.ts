@@ -141,7 +141,6 @@ export const hr: Dictionary = {
 		'Mjesta koja ste označili, i gdje ste posljednji put stali u svakom djelu. Oboje ostaje u ovom pregledniku i ne šalje se nikamo.',
 	'schola.what.census':
 		'Što ova knjižnica sadrži i dokle seže — koliko djela, na kojim jezicima, i koliko od svakoga čitatelj vašeg jezika doista može doseći.',
-	'schola.formulas.heading': 'Deset zapovijedi',
 	'ccc.noCounterpart': 'Nema odgovarajućeg mjesta u drugom djelu',
 	'jumpbox.placeholder': 'Idi na… (npr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Traži',

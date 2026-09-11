@@ -118,7 +118,6 @@ export const la: Dictionary = {
 		'Loci quos signasti, et ubi in quoque opere ultimo desiisti. Utraque in hoc navigatro manent nec usquam mittuntur.',
 	'schola.what.census':
 		'Quid haec bibliotheca teneat et quo usque pertingat — quot opera, quibus linguis, et quantum ex quoque lector tuae ipsius linguae revera attingere possit.',
-	'schola.formulas.heading': 'Decalogus',
 	'ccc.noCounterpart': 'Nihil respondens in altero opere',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations

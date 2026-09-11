@@ -115,7 +115,7 @@ export const sl: Dictionary = {
 		'Odlomki, ki ste jih označili, in kje ste nazadnje ostali pri vsakem delu. Oboje ostaja v tem brskalniku in se nikamor ne pošilja.',
 	'schola.what.census':
 		'Kaj hrani ta knjižnica in kako daleč sega — koliko del, v katerih jezikih, in koliko od vsakega dela je bralcu v njegovem jeziku dejansko dosegljivo.',
-	'schola.formulas.heading': 'Deset božjih zapovedi',
+	'schola.formulas.decalogue': 'Deset božjih zapovedi',
 	'ccc.noCounterpart': 'Ni ustreznika v drugem delu',
 	'jumpbox.placeholder': 'Skoči na… (npr. janez 3,16, ccc 1234)',
 	'jumpbox.short': 'Iskanje',

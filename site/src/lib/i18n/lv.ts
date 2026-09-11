@@ -146,7 +146,6 @@ export const lv: Dictionary = {
 		'Vietas, ko esat atzīmējis, un kur pēdējoreiz palikāt katrā darbā. Abas paliek šajā pārlūkā un netiek nekur sūtītas.',
 	'schola.what.census':
 		'Ko šī bibliotēka satur un cik tālu tā sniedzas — cik darbu tajā ir, kādās valodās, un cik daudz no katra jūsu paša valodas lasītājs patiesībā var sasniegt.',
-	'schola.formulas.heading': 'Desmit baušļi',
 	'ccc.noCounterpart': 'Nav atbilsmes otrā darbā',
 	'jumpbox.placeholder': 'Pāriet uz… (piem. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Meklēt',

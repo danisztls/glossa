@@ -152,7 +152,6 @@ export const ig: Dictionary = {
 		"Akụkụ ndị i kara akara, na ebe ị kwụsịrị n'ikpeazụ n'ọrụ ọ bụla. Ha abụọ na-anọgide n'ihe nchọgharị a, a naghịkwa eziga ha ebe ọ bụla.",
 	'schola.what.census':
 		"Ihe ọbá akwụkwọ a nwere na oke ọ na-eru — ọrụ ole dị, n'asụsụ ole, na ole n'ime ha ka onye na-agụ n'asụsụ gị nwere ike iru n'ezie.",
-	'schola.formulas.heading': 'Iwu Iri Chineke',
 	'ccc.noCounterpart': 'Ọ dịghị ihe yiri ya n’ọrụ nke ọzọ ahụ.',
 	'jumpbox.placeholder': 'Gaa na… (dka. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Chọọ',

@@ -121,7 +121,6 @@ export const ja: Dictionary = {
 		'印を付けた箇所と、各作品でどこまで読んだか。どちらもこのブラウザに保存され、どこにも送られません。',
 	'schola.what.census':
 		'この書庫が何を持ち、どこまで及んでいるか — 作品がいくつあり、どの言語にあり、あなた自身の言語の読者がそれぞれどれだけ実際に読めるか。',
-	'schola.formulas.heading': '十戒',
 	'ccc.noCounterpart': 'もう一方の作品に対応する箇所はありません',
 	'jumpbox.placeholder': '移動先… （例 john 3:16、ccc 1234）',
 	'jumpbox.short': '検索',

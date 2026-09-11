@@ -589,6 +589,14 @@ Rationale in `site/docs/finding.md`.
 
 ### The formulas of Catholic doctrine
 
+- **IT IS HELD OUT OF PRODUCTION** (2026-09-11, by direction — it needs review
+  nobody has done yet). `FORMULAS_HELD` in the page; it draws under
+  `npm run dev`, and a production build folds the constant, drops the `{#if}`
+  and references no `index/formulas.*.json`, so nothing fetches. The
+  component's CSS and the two dictionary strings still ship, Svelte emitting
+  the first regardless and the second being data. `held.ts`'s argument for a
+  calendar, applied to a section: derived, readable, deliberately not served.
+  Publishing again is that one line.
 - **The one section on the site whose every word is the Church's, and it cost
   one key.** The Compendium's appendix prints the ten commandments, the
   theological and cardinal virtues, the seven capital sins, the Beatitudes, the
@@ -596,17 +604,37 @@ Rationale in `site/docs/finding.md`.
   writes `index/formulas.{lang}.json`, and the section renders it. The
   alternative was two dozen names as interface strings in thirty-seven
   dictionaries — our words for the Church's list, drifting.
-- **Nothing there is named, ordered or selected by the site**, because nothing
-  can be: the editions disagree about the order and about how many items a
-  formula has, so `formulas.json` carries no key (`docs/corpus-schema.md`). A
-  heading is the edition's, an order is the edition's, and the section has no
-  way to be found saying something the appendix does not.
+- **It draws in the reader's own language or not at all, and `loadFormulas` is
+  the gate.** It read `langFor('compendium')`, which answers English for a
+  language the corpus cannot meet — so a Japanese reader saw the English
+  appendix under a Japanese heading. It reads `i18n.lang` now, and a language
+  `sync-corpus.mjs` wrote no file for gets nothing. **So `schola.formulas.*` is
+  in ten dictionaries and not forty**: a string no reader of that language can
+  reach is one the next translator keeps true for nobody, which is what the
+  `schola.cite.*` keys went out on. Nothing in the code lists the ten — a list
+  is a second place to update when an eleventh edition is read.
+- **A held section is not translated yet, and that is the general rule.**
+  `schola.formulas.heading` is English in `en.ts` and absent everywhere else,
+  which falls back silently and is legal. **Translating to every language is one
+  of the LAST things done to a surface, because the chance of rework is
+  significant** — this section is held for a review that may well rename it.
+  `schola.formulas.decalogue` is in all ten because those values already
+  existed under the old key, so keeping them cost nothing.
+- **Nothing there is ordered or selected by the site, and exactly one thing is
+  named.** The editions disagree about order and item counts, so
+  `formulas.json` carries no key (`docs/corpus-schema.md`) — a heading is the
+  edition's and so is its order. The exception is the Decalogue, which no
+  edition NAMES: English heads it "A Traditional Catechetical Formula", so
+  `schola.formulas.decalogue` says "the ten commandments" and a reader scanning
+  for them stops. A trailing colon comes off every heading the editions print
+  with one; a colon inside a Scripture reference stays.
 - **It closes the page and every formula is folded shut** (2026-09-11, by
   direction). Open it is the longest thing on the page and the only quoted text
   on it; shut it is a dozen names of lists, which is what a reader who came for
   the ten commandments scans. `<details class="fold">` — `disclosure.test.ts`
-  fails on a `<details>` without the class — and the summary is the edition's
-  own heading, so the shut state is a table of contents nobody wrote.
+  fails on a `<details>` without the class — and every summary but the
+  Decalogue's is the edition's own heading, so the shut state is a table of
+  contents nobody wrote.
 - **The headings are not linkified**, and six of them print a Scripture
   reference. That is the specimens' lesson a second time — a reference inside a
   heading on a catalogue page is a door into the middle of a work the reader

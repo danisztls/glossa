@@ -144,7 +144,6 @@ export const nl: Dictionary = {
 		'Plaatsen die u gemarkeerd hebt, en waar u in elk werk het laatst gebleven bent. Beide blijven in deze browser en worden nergens heen gestuurd.',
 	'schola.what.census':
 		'Wat deze bibliotheek bevat en hoe ver zij reikt — hoeveel werken, in welke talen, en hoeveel daarvan iemand die uw taal leest werkelijk kan bereiken.',
-	'schola.formulas.heading': 'De tien geboden',
 	'ccc.noCounterpart': 'Geen tegenhanger in het andere werk',
 	'jumpbox.placeholder': 'Ga naar… (bv. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Zoeken',

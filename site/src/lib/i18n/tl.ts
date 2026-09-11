@@ -152,7 +152,6 @@ export const tl: Dictionary = {
 		'Ang mga bahaging minarkahan ninyo, at kung saan kayo huling tumigil sa bawat akda. Parehong nananatili sa browser na ito at hindi ipinapadala kahit saan.',
 	'schola.what.census':
 		'Kung ano ang taglay ng aklatang ito at gaano ito kalawak — ilang akda, sa aling mga wika, at gaano karami sa bawat isa ang aktuwal na maaabot ng mambabasa ng sarili ninyong wika.',
-	'schola.formulas.heading': 'Ang Sampung Utos ng Diyos',
 	'ccc.noCounterpart': 'Walang katumbas sa kabilang akda',
 	'jumpbox.placeholder': 'Pumunta sa… (hal. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Maghanap',

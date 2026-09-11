@@ -118,7 +118,7 @@ export const es: Dictionary = {
 		'Pasajes que has marcado, y dónde lo dejaste por última vez en cada obra. Ambos se guardan en este navegador y no se envían a ninguna parte.',
 	'schola.what.census':
 		'Lo que esta biblioteca contiene y hasta dónde llega —cuántas obras, en qué lenguas, y cuánto de cada una puede alcanzar de verdad un lector de tu propia lengua.',
-	'schola.formulas.heading': 'Los diez mandamientos',
+	'schola.formulas.decalogue': 'Los diez mandamientos',
 	'ccc.noCounterpart': 'Sin correspondencia en la otra obra',
 	'jumpbox.placeholder': 'Ir a… (p. ej. juan 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',

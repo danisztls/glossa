@@ -116,7 +116,7 @@ export const hu: Dictionary = {
 		'A megjelölt helyek, és az, hol hagyta abba utoljára az egyes műveket. Mindkettő ebben a böngészőben marad, és sehová sem küldjük el.',
 	'schola.what.census':
 		'Mit tartalmaz ez a könyvtár, és milyen messzire ér el — hány mű, hány nyelven, és mennyihez tud valójában hozzáférni egy saját nyelvén olvasó.',
-	'schola.formulas.heading': 'A Tízparancsolat',
+	'schola.formulas.decalogue': 'A Tízparancsolat',
 	'ccc.noCounterpart': 'Nincs megfelelője a másik műben',
 	'jumpbox.placeholder': 'Ugrás… (pl. jános 3,16, ccc 1234)',
 	'jumpbox.short': 'Keresés',

@@ -142,7 +142,6 @@ export const da: Dictionary = {
 		'Steder, du har markeret, og hvor du sidst slap i hvert værk. Begge dele bliver i denne browser og sendes ingen steder hen.',
 	'schola.what.census':
 		'Hvad dette bibliotek rummer, og hvor langt det rækker — hvor mange værker, på hvilke sprog, og hvor meget af hvert en læser af dit eget sprog faktisk kan nå.',
-	'schola.formulas.heading': 'De ti bud',
 	'ccc.noCounterpart': 'Intet modstykke i det andet værk',
 	'jumpbox.placeholder': 'Gå til… (f.eks. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Søg',

@@ -114,7 +114,7 @@ export const sv: Dictionary = {
 		'Ställen du har markerat, och var du senast slutade i varje verk. Bådadera stannar i den här webbläsaren och skickas ingenstans.',
 	'schola.what.census':
 		'Vad det här biblioteket innehåller och hur långt det räcker — hur många verk, på vilka språk, och hur mycket av vart och ett en läsare av ditt eget språk faktiskt kan nå.',
-	'schola.formulas.heading': 'Tio Guds bud',
+	'schola.formulas.decalogue': 'Tio Guds bud',
 	'ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
 	'jumpbox.placeholder': 'Gå till… (t.ex. joh 3:16, ccc 1234)',
 	'jumpbox.short': 'Sök',

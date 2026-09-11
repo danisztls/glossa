@@ -115,7 +115,6 @@ export const pl: Dictionary = {
 		'Fragmenty, które zaznaczyłeś, i miejsce, na którym ostatnio stanąłeś w każdym dziele. Jedno i drugie zostaje w tej przeglądarce i nigdzie nie jest wysyłane.',
 	'schola.what.census':
 		'Co ma ta biblioteka i jak daleko sięga — ile dzieł, w jakich językach, i ile z każdego może naprawdę osiągnąć ktoś, kto czyta w twoim własnym języku.',
-	'schola.formulas.heading': 'Dziesięć przykazań',
 	'ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
 	'jumpbox.placeholder': 'Przejdź do… (np. jan 3,16, ccc 1234)',
 	'jumpbox.short': 'Szukaj',
