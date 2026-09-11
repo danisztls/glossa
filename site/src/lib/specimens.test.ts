@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { availableSpecimens, citationSpecimens } from './specimens';
-import { suggest } from './suggest';
+import { availableSpecimens, citationSpecimens, scopeSpecimen } from './specimens';
+import { parseSectionFilter, suggest } from './suggest';
 
 /** The fixture Bible carries Genesis and John, which is what lets the
  *  Scripture row be drawn at all — `scriptureSpecimen` reads the book's own
@@ -100,6 +100,23 @@ describe('the box answers what the legend prints', () => {
 		['STh I, 1', '/doctores/summa/i/1']
 	])('still resolves the printed form %s', (query, href) => {
 		expect(ask(query.replace('123', '1'))[0]?.href).toBe(href);
+	});
+});
+
+/**
+ * The legend's last row, which teaches a SCOPE rather than a citation. The
+ * property that matters is the one the rows above have: what it prints is a
+ * string that goes into the field and does what it says it does.
+ */
+describe('scopeSpecimen', () => {
+	it('is the first available work’s own siglum, and a colon', () => {
+		expect(scopeSpecimen()).toBe('ccc:');
+	});
+
+	it('is a prefix the box really reads as a scope', () => {
+		const prefix = scopeSpecimen();
+		expect(prefix).toBeDefined();
+		expect(parseSectionFilter(`${prefix} gene`)?.paths).toEqual(['/catechismus']);
 	});
 });
 

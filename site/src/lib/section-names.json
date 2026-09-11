@@ -13,7 +13,8 @@
 			"nav.canonLaw": "Canon Law",
 			"canonLaw.canon": "Can.",
 			"nav.prayers": "Prayers",
-			"nav.summa": "Summa"
+			"nav.summa": "Summa",
+			"quaestiones.landing.title": "Questions"
 		},
 		"pt": {
 			"nav.bible": "Bíblia",
@@ -27,7 +28,8 @@
 			"nav.canonLaw": "Direito Canônico",
 			"canonLaw.canon": "Cân.",
 			"nav.prayers": "Orações",
-			"nav.summa": "Suma"
+			"nav.summa": "Suma",
+			"quaestiones.landing.title": "Perguntas"
 		},
 		"la": {
 			"nav.bible": "Scriptura",

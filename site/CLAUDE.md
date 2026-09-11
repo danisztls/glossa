@@ -511,6 +511,12 @@ Rationale in `site/docs/finding.md`.
   Punctuation that MEANS something stays: Scripture's separator is the
   chapter/verse mark, and `specimens.test.ts` puts both forms through
   `suggest()`.
+- **A scope is a section word and a colon** — `ccc: church`. The left side is
+  whatever `matchSections` already resolves, in every language, which is why it
+  is a colon and not `in:`; literal tiers only, so `jn 3:16` is untouched and a
+  misspelled section is not a filter. A row is filed by the longest
+  `SECTIONS.path` its href sits under, never by `SuggestionKind` — `heading`
+  belongs to three sections. It narrows the merged list and no producer.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

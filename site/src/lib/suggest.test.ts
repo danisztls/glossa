@@ -19,7 +19,7 @@
 import fuzzysort from 'fuzzysort';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { dictionaryFor, i18n, loadedDictionary } from './i18n.svelte';
-import { resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
+import { parseSectionFilter, resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
 import type { TopicIndex } from './types';
 
 /**
@@ -628,6 +628,144 @@ describe('suggest', () => {
 			// otherwise be offered as a row reading `quaestiones.x.title`.
 			const unwritten: TopicIndex = { ...topics, topics: { 'nondum-scripta': topic } };
 			expect(labels('nondum', { topics: unwritten })).toEqual([]);
+		});
+
+		it('offers the page that lists them, which is a section like any other', () => {
+			expect(hrefs('questions')).toContain('/quaestiones');
+		});
+	});
+
+	/**
+	 * A SCOPE: `ccc: church` is "church, in the Catechism".
+	 *
+	 * Two halves, tested apart. `parseSectionFilter` is where the syntax lives
+	 * and is a pure function of a string; what `suggest` does with the answer
+	 * is a filter over addresses, which needs rows to filter.
+	 */
+	describe('a scope', () => {
+		describe('the syntax', () => {
+			it('reads a section word, a colon, and the rest', () => {
+				expect(parseSectionFilter('ccc: church')).toEqual({
+					paths: ['/catechismus'],
+					rest: 'church'
+				});
+			});
+
+			it('does not require the space', () => {
+				expect(parseSectionFilter('ccc:church')?.rest).toBe('church');
+			});
+
+			it('takes every language’s word, which is the whole reason for the colon', () => {
+				// `biblia` is an `extra`; `Bibel` is what the German dictionary
+				// calls the section, and both reach it from an English interface.
+				expect(parseSectionFilter('biblia: genesis')?.paths).toEqual(['/scriptura']);
+				expect(parseSectionFilter('bibel: genesis')?.paths).toEqual(['/scriptura']);
+			});
+
+			/**
+			 * THE COLLISION WITH SCRIPTURE, and it needs no rule about digits:
+			 * what stands left of a citation's colon is a CHAPTER, and no
+			 * section's name begins with one.
+			 */
+			it.each(['jn 3:16', 'ps 118:1', 'genesis 1:1'])('is not a filter in %s', (query) => {
+				expect(parseSectionFilter(query)).toBeUndefined();
+			});
+
+			it('still resolves a citation written with the colon', () => {
+				expect(hrefs('john 3:16')).toContain('/scriptura/ioannes/3#v16');
+			});
+
+			/**
+			 * The literal tiers only. A loose reading is right for a keyword —
+			 * `catechsim` reaches the Catechism — and wrong for a scope, which
+			 * would then narrow a search to a work the reader never named.
+			 */
+			it('refuses a misspelled section', () => {
+				expect(parseSectionFilter('catechsim: church')).toBeUndefined();
+			});
+
+			it('is nothing with nothing after the colon', () => {
+				// `ccc:` is a keyword with a stop on it, which `sectionForm`
+				// drops — so the bare form already reaches the landing page.
+				expect(parseSectionFilter('ccc:')).toBeUndefined();
+				expect(hrefs('ccc:')).toContain('/catechismus');
+			});
+
+			it('keeps an exact word over the prefixes of the same length', () => {
+				expect(parseSectionFilter('can: marriage')?.paths).toEqual(['/ius-canonicum']);
+			});
+
+			/** The one ambiguity this table admits on purpose: `CIC` is the
+			 *  Catechism in Portuguese and the Code everywhere else. */
+			it('scopes to both works a genuinely ambiguous siglum names', () => {
+				expect(parseSectionFilter('cic: 27')?.paths.sort()).toEqual([
+					'/catechismus',
+					'/ius-canonicum'
+				]);
+			});
+		});
+
+		describe('what it filters', () => {
+			it('keeps only the work the reader named', () => {
+				expect(hrefs('ccc: 27')).toEqual(['/catechismus/27']);
+				expect(hrefs('compendium: 1')).toEqual(['/catechismus/compendium/1']);
+			});
+
+			/** The one pair of nesting paths, and the reason `sectionPathOf`
+			 *  takes the LONGEST match: `/catechismus/compendium/1` sits under
+			 *  `/catechismus` and is not the Catechism's. */
+			it('does not let the Catechism swallow its own Compendium', () => {
+				expect(hrefs('ccc: 1')).not.toContain('/catechismus/compendium/1');
+			});
+
+			it('drops a row from another work that merely shares the letters', () => {
+				// A Summa question's title carries "gene" and is offered beside
+				// Genesis; naming the Bible is how a reader says which they meant.
+				expect(hrefs('gene')).toContain('/doctores/summa/ii-ii/184');
+				expect(hrefs('biblia: gene')).not.toContain('/doctores/summa/ii-ii/184');
+				expect(hrefs('biblia: gene')).toContain('/scriptura/genesis/1');
+			});
+
+			it('scopes a name as well as a number', () => {
+				expect(hrefs('ccc: gene')).toEqual([]);
+			});
+		});
+
+		/**
+		 * The per-kind caps exist to stop one producer filling a list of eight
+		 * that six others belong in. Under a scope there are no others.
+		 */
+		describe('the caps', () => {
+			const headings = {
+				documents: {},
+				socialDoctrine: [],
+				canonLaw: [
+					[10, 'The Principle of Legality'],
+					[20, 'The Principle of Subsidiarity'],
+					[30, 'The Principle of Solidarity'],
+					[40, 'The Principle of the Common Good'],
+					[50, 'The Principle of Equity'],
+					[60, 'The Principle of Proportionality']
+				] as [number, string][]
+			};
+
+			it('holds a heading producer to four rows unscoped', () => {
+				expect(hrefs('principle', { headings })).toHaveLength(4);
+			});
+
+			it('gives the whole list to the work the reader named', () => {
+				expect(hrefs('can: principle', { headings })).toHaveLength(6);
+			});
+		});
+
+		it('answers nothing where the work holds nothing, rather than answering elsewhere', () => {
+			const headings = {
+				documents: {},
+				socialDoctrine: [],
+				canonLaw: [[1055, 'Marriage']] as [number, string][]
+			};
+			expect(hrefs('marriage', { headings })).toContain('/ius-canonicum/1055');
+			expect(hrefs('ccc: marriage', { headings })).toEqual([]);
 		});
 	});
 });

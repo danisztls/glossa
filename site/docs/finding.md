@@ -1108,7 +1108,8 @@ there are five thousand per shard against fifteen hundred names. So `mercy`
 offers the works called that before the chapters that mention it, and the
 tier still decides within a band, so an exact heading beats a substring one
 and no heading climbs out. Capped at four rows, the same cap a kind of title
-gets.
+gets — and that cap is lifted by a scope, which is the only state in which
+there is nobody to crowd.
 
 **The questions are wired to the box on the same terms, and cost no fetch at
 all beyond the topic list.** What is matched is what `/quaestiones`'s own
@@ -1177,6 +1178,69 @@ Enter, the arrows and an edit to one letter all still have it — a browser's ow
 address bar, for the same two cases. It also settles who sees the legend, since
 a box with a query in it shows results instead: the lesson meets a reader who
 has not used the box and gets out of the way of everyone who has.
+
+### A scope is a section word and a colon
+
+**Naming the work you wanted used to destroy the query.** `catechism creation`
+answered with NOTHING, measured — `KEYWORD_RE` folds a whole non-digit prefix
+into one keyword, so `catechismcreation` matched no section, and
+`titleSuggestions` folds the entire query, so `creation` was never matched on
+its own either. The two vocabularies the box already had did not compose, and
+the reader who knew most about where they were going was the one it served
+worst.
+
+**The operator is a colon after a word the box already knows, and that is why
+it costs no vocabulary at all.** `SECTIONS` holds every section's name in
+fourteen dictionaries, every siglum and every URL segment; `ccc: church` puts
+that table on the left of a colon and changes nothing about it. **`in:` was the
+proposal and it is an English word on an interface in thirty-seven languages** —
+translating it means thirty-seven strings AND a parser accepting all of them at
+once, since a Portuguese speaker reading English chrome still types `em:`, which
+is the `cic` argument (a section word is accepted in every language, because the
+interface language decides what a row is LABELLED and not what the reader
+MEANT) arriving at the operator.
+
+**The literal tiers only, and that is also what settles the collision with
+Scripture.** `matchSections` falls back to a loose reading when nothing matches
+literally, which is right for a keyword and wrong for a scope: a fuzzy match
+would narrow a search to a work the reader never named. So an unrecognised left
+side is not a filter and the query falls through — and in `jn 3:16` the left
+side is `jn 3`, which folds to `jn3` and is no section's prefix. **No rule about
+digits was needed**, because a chapter number stands left of a citation's colon
+and no section name begins with one.
+
+**A row is filed by its ADDRESS, not by its kind.** `heading` is one
+`SuggestionKind` belonging to three sections, so a kind list could not tell a
+title of the Code from a division of the Compendium of the Social Doctrine;
+`sectionPathOf` takes the longest `SECTIONS.path` the href sits under, which
+says so already and says so for every row a producer will ever add. The longest,
+because exactly one pair nests — `/catechismus/compendium/1` is not the
+Catechism's.
+
+**It narrows the answer and never the search.** Every producer still runs over
+the rest of the query and the rows are filtered afterwards, which is `suggest`'s
+own rule about ranking rather than routing held to under a filter: `ccc: 27`
+has to reach the tier for a query with NO keyword in it, and dispatching on the
+section would never have got there.
+
+**An empty scoped list is an answer, so it says so while the reader types.**
+Everywhere else the box stays silent on no match, because nothing matching `chu`
+is what typing looks like; a scope has a subject, and silence to `ccc: church`
+reads as the filter having been ignored. Gated at two characters, which is where
+`titleSuggestions` starts answering at all.
+
+**`/quaestiones` gained a row in `SECTIONS` for this**, and the gap it closes
+predates the scope: the topics were matchable by their titles and the page
+listing them was not typeable at all. A scope is what made it worth fixing —
+`quaestiones:` has to name something.
+
+**The legend's last row is not a work.** It prints a siglum and a colon and
+stops there, because the words a reader searches for are their own and an
+example term would be written in one language for readers of thirty-seven. Its
+candidates are the four works whose siglum IS a section word (`SECTIONS`' four
+`abbrevKey`s); a document is cited by its incipit, so `dei verbum:` names no
+section, and Scripture's specimen is a BOOK rather than a work, so `jn:` would
+scope nothing.
 
 ## `/documenta` is a filtered list, not a table of contents
 

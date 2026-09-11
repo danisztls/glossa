@@ -37,11 +37,11 @@
 		prayerIndexLang
 	} from '$lib/corpus';
 	import type { SectionHeadings } from '$lib/section-headings';
-	import { availableSpecimens } from '$lib/specimens';
+	import { availableSpecimens, scopeSpecimen } from '$lib/specimens';
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
-	import type { suggest as suggestFn } from '$lib/suggest';
+	import type { parseSectionFilter as parseScopeFn, suggest as suggestFn } from '$lib/suggest';
 	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { isOverlayOpen, isTypingTarget } from '$lib/shortcuts';
@@ -96,6 +96,9 @@
 	 */
 	let fuzzyReady = $state(false);
 	let suggester: typeof suggestFn | undefined = $state();
+	/** Arrives with the suggester, and is read for one thing only: whether
+	 *  this query named a section (see `scope` below). */
+	let parseScope: typeof parseScopeFn | undefined = $state();
 	/**
 	 * The two tables `suggest()` cannot read for itself, fetched with the
 	 * suggester and handed to it as arguments.
@@ -125,11 +128,8 @@
 		// whole address space by definition — a fragment can become a chapter, a
 		// paragraph, a question, a document or a prayer, and which one is the
 		// answer, not the question.
-		const [{ setFuzzyRanker, suggest }, { default: fuzzysort }] = await Promise.all([
-			import('$lib/suggest'),
-			import('fuzzysort'),
-			ensureAllIndexes()
-		]);
+		const [{ parseSectionFilter, setFuzzyRanker, suggest }, { default: fuzzysort }] =
+			await Promise.all([import('$lib/suggest'), import('fuzzysort'), ensureAllIndexes()]);
 		setFuzzyRanker((needle, haystack) =>
 			fuzzysort
 				// 0.3, NOT fuzzysort's default 0.5, and the number is measured
@@ -152,6 +152,7 @@
 				.map((hit) => ({ index: hit.obj.index, score: hit.score }))
 		);
 		fuzzyReady = true;
+		parseScope = parseSectionFilter;
 		suggester = suggest;
 	}
 
@@ -229,6 +230,31 @@
 		void fuzzyReady;
 		return availableSpecimens(content.workIdFor('bible'), content.langFor('bible'));
 	});
+
+	/** The scope prefix the legend's last row teaches (`$lib/specimens.ts`),
+	 *  gated on the build the same way the rows above it are, and reading
+	 *  `fuzzyReady` for the same signal. */
+	const scopePrefix = $derived.by(() => {
+		void fuzzyReady;
+		return scopeSpecimen();
+	});
+
+	/**
+	 * WHETHER THE READER HAS NAMED A WORK — and it is the one state where an
+	 * empty list is an ANSWER rather than a reader mid-word.
+	 *
+	 * Everywhere else the box stays silent while nothing matches, because
+	 * nothing matching `chu` is what typing looks like. A scope is different:
+	 * `ccc: church` is a question with a subject, and silence to it reads as
+	 * the filter having been ignored. So the not-found line runs live here,
+	 * gated at two characters — `titleSuggestions` needs two before it will
+	 * answer at all, so below that an empty list is still the field warming up
+	 * and not a refusal.
+	 */
+	const scope = $derived(query.trim() && parseScope ? parseScope(query) : undefined);
+	const scopeEmpty = $derived(
+		scope !== undefined && scope.rest.length >= 2 && suggestions.length === 0
+	);
 
 	/**
 	 * A specimen goes into the FIELD and nowhere else.
@@ -665,6 +691,27 @@
 							</button>
 						</li>
 					{/each}
+					<!--
+						THE LAST ROW IS NOT A WORK. Every row above teaches how a
+						work is CITED; this one teaches how to look inside one —
+						a siglum and a colon, which `suggest.ts`'s
+						`parseSectionFilter` reads as a scope. It is in the same
+						list because it is the same gesture: a string that goes
+						into the field above.
+
+						It stops at the colon, and the caret lands there, because
+						the words a reader searches for are their own — an
+						example term would be written in one language for readers
+						of thirty-seven.
+					-->
+					{#if scopePrefix}
+						<li>
+							<button type="button" tabindex="-1" onclick={() => fillExample(scopePrefix)}>
+								<span class="example-work">{t('jumpbox.scope')}</span>
+								<span class="example-form">{scopePrefix}</span>
+							</button>
+						</li>
+					{/if}
 				</ul>
 			</div>
 		{/if}
@@ -740,7 +787,9 @@
 			</ul>
 		{/if}
 
-		{#if notFound}
+		<!-- `scopeEmpty` says why the second condition is live where the first
+		     waits for Enter. -->
+		{#if notFound || scopeEmpty}
 			<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
 		{/if}
 

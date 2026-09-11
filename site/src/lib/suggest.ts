@@ -390,6 +390,18 @@ interface Context {
 	topics: TopicIndex | undefined;
 	limit: number;
 	sep: string;
+	/**
+	 * The query named a section (`parseSectionFilter`), so a producer may
+	 * spend the whole list on one work.
+	 *
+	 * The per-kind caps below exist to stop one producer crowding the others
+	 * in a list of eight — four titles of a kind, four headings, three topics.
+	 * Under a scope there are no others to crowd: everything that survives the
+	 * filter belongs to the section the reader named, and a cap then hides
+	 * answers to the question they asked in order to leave room for rows that
+	 * have already been dropped.
+	 */
+	scoped: boolean;
 }
 
 /** The first content language of `chain` that `available` actually carries. */
@@ -437,7 +449,7 @@ function orderedBibleWorkIds(lang: string, preferWorkId?: string): string[] {
 	return [preferWorkId, ...ids.filter((id) => id !== preferWorkId)];
 }
 
-function resolveContext(opts: SuggestOpts): Context {
+function resolveContext(opts: SuggestOpts, scoped: boolean): Context {
 	const lang = opts.lang ?? i18n.lang;
 	const chain = contentLangChain(lang);
 	return {
@@ -452,7 +464,8 @@ function resolveContext(opts: SuggestOpts): Context {
 		headings: opts.headings ?? EMPTY_SECTION_HEADINGS,
 		topics: opts.topics,
 		limit: opts.limit ?? DEFAULT_LIMIT,
-		sep: grammarSurface(lang).chapterVerseSep
+		sep: grammarSurface(lang).chapterVerseSep,
+		scoped
 	};
 }
 
@@ -1064,6 +1077,13 @@ interface SectionWords {
 	 * one-letter prefix that matches several sections from offering the same
 	 * page under several names, which is a property of the matcher and not of
 	 * any one section's path.
+	 *
+	 * IT IS ALSO WHAT FILES A ROW INTO A SECTION (`sectionPathOf`), which is
+	 * how a scope knows what it holds. Deliberately the address and not a set
+	 * of `SuggestionKind`s: `heading` is one kind belonging to three sections,
+	 * so a kind list could not tell a title of the Code from a division of the
+	 * Compendium of the Social Doctrine — where the address says so already,
+	 * and says so for every row a producer will ever add.
 	 */
 	path: string;
 	titleKey: string;
@@ -1158,6 +1178,18 @@ const SECTIONS: SectionWords[] = [
 		path: '/doctores/summa',
 		titleKey: 'nav.summa',
 		extra: ['summa', 'sth', 'stheol']
+	},
+	// Last, and not a work: `/quaestiones` is a door onto the others rather
+	// than a unit of any of them, which is what `SuggestionKind`'s own note on
+	// `topic` says. It had no row here until 2026-09-10 and so could not be
+	// typed at all — the topics were matchable by their titles and the page
+	// that lists them was not. A scope (`parseSectionFilter`) is what made the
+	// gap worth fixing: `quaestiones:` has to name something.
+	{
+		kind: 'topic',
+		path: '/quaestiones',
+		titleKey: 'quaestiones.landing.title',
+		extra: ['quaestiones', 'questions']
 	}
 ];
 
@@ -1236,15 +1268,20 @@ const KEYWORD_RE = /^([^\d]*?)\s*(\d{1,4})?\s*$/u;
  * gap-penalised match on one is nearly always also a prefix match on another,
  * and mixing the two produces a list that reorders itself as the reader types.
  */
-function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 }[] {
-	const needle = sectionForm(text);
-	if (!needle) return [];
-	const best = new Map<SectionWords, 0 | 1 | 2>();
+function literalSections(needle: string): Map<SectionWords, 1 | 2> {
+	const best = new Map<SectionWords, 1 | 2>();
 	for (const { form, section } of sectionForms) {
 		const score = form === needle ? 2 : form.startsWith(needle) ? 1 : 0;
 		if (score === 0) continue;
 		best.set(section, Math.max(best.get(section) ?? 0, score) as 1 | 2);
 	}
+	return best;
+}
+
+function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 }[] {
+	const needle = sectionForm(text);
+	if (!needle) return [];
+	const best: Map<SectionWords, 0 | 1 | 2> = literalSections(needle);
 
 	if (best.size === 0) {
 		for (const position of fuzzyHits(needle, sectionHaystack).keys()) {
@@ -1255,6 +1292,100 @@ function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 
 	return [...best.entries()]
 		.map(([section, score]) => ({ section, score }))
 		.sort((a, b) => b.score - a.score);
+}
+
+// --------------------------------------------------------------------------
+// A scope: `ccc: church` is "church, in the Catechism".
+// --------------------------------------------------------------------------
+
+/**
+ * A section named on the left of a colon, and the query left over.
+ *
+ * ## Why a colon and not `in:`
+ *
+ * The reader who knows which work they want had no way to say so, and saying
+ * it made things worse rather than merely no better: `KEYWORD_RE` folds a
+ * whole non-digit prefix into one keyword, so `catechism church` matched no
+ * section, and `titleSuggestions` folds the entire query, so `church` was
+ * never matched on its own either. Measured, that query answered with NOTHING
+ * — naming the work destroyed the search.
+ *
+ * The operator is a colon after a word this table already knows, because that
+ * costs no vocabulary at all. `in:` is an English word on an interface in
+ * thirty-seven languages, and translating it means thirty-seven strings AND a
+ * parser accepting all of them at once — `EVERY LANGUAGE'S WORD IS ACCEPTED`
+ * (see `abbrevKey`) is the standing rule here, and an English-only operator
+ * contradicts it. What sits left of the colon is exactly what `matchSections`
+ * already resolves: every section's name in fourteen dictionaries, every
+ * siglum, every URL segment. Nothing to translate, nothing to keep in step.
+ *
+ * ## Why the literal tiers only
+ *
+ * `matchSections` falls back to a loose reading when the literal ones find
+ * nothing, and that is right for a keyword and wrong for a scope: a fuzzy
+ * match would silently narrow a search to a work the reader did not name,
+ * which is the one failure a filter must not have. So this reads `sectionForm`
+ * exactly or as a prefix, and an unrecognised left side is not a filter — the
+ * query falls through unchanged.
+ *
+ * THAT IS ALSO WHAT SETTLES THE COLLISION WITH SCRIPTURE, with no rule about
+ * digits. In `jn 3:16` the left side is `jn 3`, which folds to `jn3` and is no
+ * section's prefix; the same holds for `ps 118:1` and every other citation the
+ * grammar writes, because a chapter number is on the left of that colon and no
+ * section name begins with one.
+ *
+ * ## Several sections, and an empty rest
+ *
+ * A prefix may name more than one — `c:` is the Catechism, its Compendium and
+ * the Code — and all of them are kept, at the best tier present. `cic:` is the
+ * deliberate ambiguity this table documents at length, preserved: it scopes to
+ * the Catechism AND the Code, rather than guessing at the reader's language.
+ *
+ * Nothing follows the colon, nothing is returned: `ccc:` is a section keyword
+ * with a stop on it, which `sectionForm` drops, so the bare form already
+ * reaches that section's landing page and needs no branch here.
+ */
+export interface SectionFilter {
+	/** The landing paths of the sections named — `SECTIONS[].path`, which is
+	 *  also what `sectionPathOf` files a row under. */
+	paths: string[];
+	/** The query with the scope taken off. Never empty, and normalised the
+	 *  way `suggest` normalises its input. */
+	rest: string;
+}
+
+const SCOPE_RE = /^([^:]+):\s*(\S.*)$/;
+
+export function parseSectionFilter(input: string): SectionFilter | undefined {
+	const match = SCOPE_RE.exec(input.trim());
+	if (!match) return undefined;
+	const needle = sectionForm(match[1]);
+	if (!needle) return undefined;
+	const sections = literalSections(needle);
+	if (sections.size === 0) return undefined;
+	const top = Math.max(...sections.values());
+	return {
+		paths: [...sections.entries()].filter(([, score]) => score === top).map(([s]) => s.path),
+		rest: match[2].trim().replace(/\s+/g, ' ')
+	};
+}
+
+/**
+ * The section an address belongs to: the longest `SECTIONS` path it sits
+ * under, or `undefined` for an address no section covers.
+ *
+ * LONGEST, because exactly one pair nests — `/catechismus/compendium/1` is the
+ * Compendium and not the Catechism — and that pair is the one the table
+ * already argues about under `path`.
+ */
+function sectionPathOf(href: string): string | undefined {
+	const path = href.replace(/[#?].*$/, '');
+	let best: string | undefined;
+	for (const { path: base } of SECTIONS) {
+		if (path !== base && !path.startsWith(`${base}/`)) continue;
+		if (best === undefined || base.length > best.length) best = base;
+	}
+	return best;
 }
 
 function cccRow(n: number, score: number, order: number, ctx: Context): Scored {
@@ -1804,13 +1935,15 @@ function titleSuggestions(query: string, ctx: Context): Scored[] {
 	}
 
 	// Capped PER KIND rather than overall: 450 documents would otherwise fill
-	// every row of a list a prayer and a chapter also belong in.
+	// every row of a list a prayer and a chapter also belong in. Lifted under
+	// a scope, where there is no list to share — see `Context.scoped`.
+	const cap = ctx.scoped ? ctx.limit : 4;
 	const perKind = new Map<SuggestionKind, number>();
 	return hits
 		.sort((a, b) => b.score - a.score || a.order - b.order)
 		.filter((hit) => {
 			const seen = perKind.get(hit.kind) ?? 0;
-			if (seen >= 4) return false;
+			if (seen >= cap) return false;
 			perKind.set(hit.kind, seen + 1);
 			return true;
 		});
@@ -1992,7 +2125,7 @@ function headingSuggestions(query: string, ctx: Context): Scored[] {
 	if (needle.length < 3) return [];
 	const index = headingIndex(ctx);
 	if (index.candidates.length === 0) return [];
-	return bandedHits(needle, index, SCORE.heading, 4);
+	return bandedHits(needle, index, SCORE.heading, ctx.scoped ? ctx.limit : 4);
 }
 
 let topicIndexCache = new WeakMap<object, Map<string, TitleIndex>>();
@@ -2050,7 +2183,7 @@ function topicSuggestions(query: string, ctx: Context): Scored[] {
 	if (needle.length < 3) return [];
 	const index = topicIndex(ctx);
 	if (index.candidates.length === 0) return [];
-	return bandedHits(needle, index, SCORE.topic, 3);
+	return bandedHits(needle, index, SCORE.topic, ctx.scoped ? ctx.limit : 3);
 }
 
 // --------------------------------------------------------------------------
@@ -2066,11 +2199,26 @@ function topicSuggestions(query: string, ctx: Context): Scored[] {
  *
  * Deduplicated by href, keeping the highest score: the same address reached
  * two ways (a complete citation and its own partial reading) is one row.
+ *
+ * A SCOPE (`ccc: church`) is applied to that merged list and to nothing
+ * before it — see `parseSectionFilter` for the syntax and `Context.scoped`
+ * for what it costs the caps.
  */
 export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
-	const query = input.trim().replace(/\s+/g, ' ');
-	if (!query) return [];
-	const ctx = resolveContext(opts);
+	const typed = input.trim().replace(/\s+/g, ' ');
+	if (!typed) return [];
+	// A SCOPE NARROWS THE ANSWER AND NEVER THE SEARCH. Every producer still
+	// runs over the rest of the query, and the rows are filtered afterwards by
+	// the address they landed on — so a scope cannot make a producer fail to
+	// look, only fail to be listened to. Routing on the section instead would
+	// be the mistake `suggest`'s own docblock warns about one paragraph up,
+	// made deliberately: `ccc: 27` has to reach the exactly-numbered tier of
+	// `numberedWorkSuggestions`, which is the branch for a query with no
+	// keyword at all.
+	const filter = parseSectionFilter(typed);
+	const query = filter ? filter.rest : typed;
+	const scope = filter && new Set(filter.paths);
+	const ctx = resolveContext(opts, filter !== undefined);
 
 	const rows = [
 		...exactReference(query, ctx),
@@ -2084,6 +2232,13 @@ export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
 
 	const best = new Map<string, Scored>();
 	for (const row of rows) {
+		if (scope) {
+			const path = sectionPathOf(row.href);
+			// An address no section covers is dropped rather than kept: under a
+			// scope the reader has named where they are looking, and a row that
+			// belongs nowhere is not in there.
+			if (path === undefined || !scope.has(path)) continue;
+		}
 		const existing = best.get(row.href);
 		if (!existing || row.score > existing.score) best.set(row.href, row);
 	}

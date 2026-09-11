@@ -536,6 +536,12 @@ export const en: Dictionary = {
 	// it — that one is the home page's line, where the box is shut and the
 	// shortcut it names is true.
 	'jumpbox.searches': 'Type a reference, or a name — pick an example to try it.',
+	// The last row of that legend, and the only one that is not a work: the
+	// form beside it is a work's siglum and a colon (`ccc:`), which searches
+	// inside that work alone. It ends there on purpose — the words a reader
+	// would search for are their own, and an example term would be written in
+	// one language for readers of thirty-seven.
+	'jumpbox.scope': 'Inside one work',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 	'jumpbox.noMatch': 'No match',
 	// The suggestion listbox's accessible name. The box has no visible

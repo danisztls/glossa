@@ -56,7 +56,11 @@ export const SECTION_KEYS = [
 	// never "Code of Canon Law 748" — so this is the form a reader types.
 	'canonLaw.canon',
 	'nav.prayers',
-	'nav.summa'
+	'nav.summa',
+	// `/quaestiones` is a section of the box without being a work — the page
+	// is titled by its landing key and has no `nav.*` entry, the bar having no
+	// door for it.
+	'quaestiones.landing.title'
 ];
 
 /**

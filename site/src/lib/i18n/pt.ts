@@ -138,6 +138,7 @@ export const pt: Dictionary = {
 	'jumpbox.field': 'Ir para…',
 	'jumpbox.short': 'Buscar',
 	'jumpbox.searches': 'Digite uma referência ou um nome — escolha um exemplo para experimentar.',
+	'jumpbox.scope': 'Dentro de uma obra',
 	'jumpbox.hint': 'Pressione / ou Ctrl+K para ir a uma referência',
 	'jumpbox.noMatch': 'Nenhum resultado',
 	'jumpbox.suggestions': 'Sugestões',

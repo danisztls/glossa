@@ -155,6 +155,44 @@ export function citationSpecimens(bibleWorkId: string | undefined, bibleLang: st
 }
 
 /**
+ * The scope prefix the jump box's legend teaches — `ccc:`, and nothing after
+ * it.
+ *
+ * A SCOPE IS NOT A CITATION, so it is not a row of the table above: those say
+ * how a work is addressed, and this says how to look inside one
+ * (`suggest.ts`'s `parseSectionFilter`). What it shares with them is the
+ * siglum, which is why it lives here.
+ *
+ * THE CANDIDATES ARE THE FOUR WORKS WHOSE SIGLUM IS ALSO A SECTION WORD —
+ * `SECTIONS`' four `abbrevKey`s, in the order a reader meets them. The others
+ * cannot teach this: a document is cited by its incipit and `dei verbum:`
+ * names no section, and Scripture's specimen is a BOOK rather than a work, so
+ * `jn:` would scope nothing. Gated on the build the way every row above is,
+ * because a prefix naming a work this build does not carry teaches a form and
+ * then declines it.
+ *
+ * IT ENDS WITH THE COLON AND NO EXAMPLE TERM. A legend row goes into the
+ * field, and the words a reader would search for are their own — an English
+ * `ccc: church` printed to a reader of any of the other thirty-six languages
+ * teaches half a form in a language they may not read. The prefix alone is
+ * the whole lesson, and the caret lands where the reader types.
+ */
+const SCOPE_WORKS: { type: WorkType; abbrevKey: string }[] = [
+	{ type: 'catechism', abbrevKey: 'ccc.abbrev' },
+	{ type: 'compendium', abbrevKey: 'compendium.abbrev' },
+	{ type: 'canon-law', abbrevKey: 'canonLaw.canon' },
+	{ type: 'social-doctrine', abbrevKey: 'socialDoctrine.abbrev' }
+];
+
+export function scopeSpecimen(): string | undefined {
+	for (const { type, abbrevKey } of SCOPE_WORKS) {
+		if (listWorksOfType(type).length === 0) continue;
+		return `${typeable(t(abbrevKey))}:`;
+	}
+	return undefined;
+}
+
+/**
  * The rows this build can actually answer, in the order above.
  *
  * Two gates and they fail for different reasons: a work a partial sync or the
