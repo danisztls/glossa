@@ -6,12 +6,12 @@
 	 * `/quaestiones` draws one per shelf of questions, `/preces` one per section
 	 * of prayers and `/schola` one per catechetical formula, and the first two had
 	 * arrived at the same object twice: the
-	 * `<details class="fold">`, the `<summary>` with an `<h2>` in it, the
+	 * `<details class="fold">`, the `<summary>` with a heading in it, the
 	 * heading set in the interface face, the hover that answers on the words
 	 * because the words are the only thing in the row, the sticky-chrome
-	 * `scroll-margin-top` a fragment needs, and the collapse of a shut
-	 * section's margin so a run of them reads as a list of rows rather than as
-	 * sections with nothing in them.
+	 * `scroll-margin-top` a fragment needs, and the one row's worth of space
+	 * above every heading so a run of them reads as a list of rows rather than
+	 * as sections with nothing in them.
 	 *
 	 * THE ROWS ARE NOT HERE, and that is the seam. One page sets short names in
 	 * multicolumn flow, another a grid of title-over-question cells, the third a
@@ -81,8 +81,16 @@
 </details>
 
 <style>
+	/*
+	 * EVERY HEADING SITS THE SAME DISTANCE FROM THE ONE ABOVE IT, open or shut.
+	 * The space that separates two rows is what a list of headings is made of,
+	 * and it is the only space a heading gets above it — opening a section used
+	 * to push its own heading down by two rems, which moved the words the
+	 * reader had just clicked and left a hole in the list where they had been
+	 * reading.
+	 */
 	.index-section {
-		margin-block: 2.25rem;
+		margin-block: 0.5rem;
 		/* Clears the sticky chrome when a fragment lands on this heading —
 		   without it the heading sits behind the bar and the reader meets the
 		   section's second row first. `scroll-padding-top` on the scroll
@@ -92,11 +100,13 @@
 		scroll-margin-top: calc(var(--sticky-chrome-height) + 1.5rem);
 	}
 
-	/* Closed sections want to read as a list of rows rather than as sections
-	   with nothing in them, so a shut one keeps only the space that separates
-	   two rows. */
-	.index-section:not([open]) {
-		margin-block: 0.5rem;
+	/* WHAT AN OPEN SECTION ADDS IS UNDERNEATH, and it is for its rows: without
+	   it the last row of one section and the heading of the next are a row
+	   apart, and the heading reads as one more entry in the list it is closing
+	   rather than as the start of the next. A shut section has no rows and owes
+	   nothing. */
+	.index-section[open] {
+		margin-block-end: 2.25rem;
 	}
 
 	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.
