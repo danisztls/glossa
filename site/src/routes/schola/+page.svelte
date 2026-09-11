@@ -852,8 +852,10 @@
 	 * `What is here`, `Where to begin` — so each takes the interface face,
 	 * and what the page SAYS takes the reading face below. That is the
 	 * colophon's arrangement, on the site's other page written to be read
-	 * through. What still stands in the text face is the source's: a work's
-	 * name in a card, a formula's own heading, a Scripture address.
+	 * through. A NAME ON THIS PAGE IS A DOOR AND NOT A TITLE — a work in a
+	 * card, a passage to start with — so those take the interface face too.
+	 * What stands in the text face is what the source itself supplies: the
+	 * formulas, and the headings the editions print over them.
 	 */
 	h1 {
 		margin: 0 0 0.5rem;
@@ -1079,7 +1081,6 @@
 	 * touch screen, where there is no hover, as a paragraph in a box.
 	 */
 	.pick-name {
-		font-family: var(--font-serif);
 		font-size: 1.1rem;
 		line-height: 1.25;
 		color: var(--color-accent);
@@ -1418,8 +1419,10 @@
 	}
 
 	.book h4 {
-		font-family: var(--font-serif);
 		font-size: 1.05rem;
+		/* Below a heading's bold: the card is one line of name over one line of
+		   description, and at 1.05rem the weight was doing the separating twice. */
+		font-weight: 600;
 		margin: 0 0 0.2rem;
 	}
 

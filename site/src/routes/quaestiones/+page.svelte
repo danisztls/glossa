@@ -597,9 +597,13 @@
 		text-decoration: underline;
 	}
 
+	/* The reading face, and a size up to pay for it: this line is the question
+	   itself rather than a label on the row above it, and EB Garamond's
+	   x-height at 0.85rem set it smaller than the sans it replaced. */
 	.question {
 		margin: 0.1rem 0 0;
-		font-size: 0.85rem;
+		font-family: var(--font-serif);
+		font-size: 0.92rem;
 		color: var(--color-text-muted);
 	}
 
