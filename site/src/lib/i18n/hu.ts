@@ -91,8 +91,6 @@ export const hu: Dictionary = {
 	'schola.bible.bothWays':
 		'Ismerős dolgokra fog bukkanni, és ez a lényeg, nem véletlen egybeesés. Az Egyház a régebbi könyveket Krisztus fényében olvassa, az újabbakat pedig annak fényében, ami előttük volt — mindegyik fél magyarázza a másikat, s ezért egyiket sem olvassuk magában.',
 	'schola.books.heading': 'Mi van itt',
-	'schola.books.lede':
-		'Mindegyikük másfajta könyv, és az alatta lévő sor megmondja, melyik. Nyissa meg a keresőmezőt az oldal tetején, hogy lássa, hogyan hivatkozunk mindegyikre, és hogy egyenesen egy helyre jusson.',
 	'schola.what.scripture':
 		'A Szentírás úgy, ahogyan az Egyház elfogadja, mindkét Szövetségben. Itt minden mást ennek fényében olvasunk.',
 	'schola.what.catechism':
@@ -118,9 +116,7 @@ export const hu: Dictionary = {
 		'A megjelölt helyek, és az, hol hagyta abba utoljára az egyes műveket. Mindkettő ebben a böngészőben marad, és sehová sem küldjük el.',
 	'schola.what.census':
 		'Mit tartalmaz ez a könyvtár, és milyen messzire ér el — hány mű, hány nyelven, és mennyihez tud valójában hozzáférni egy saját nyelvén olvasó.',
-	'schola.formulas.heading': 'A Tízparancsolat, és amit még könyv nélkül tanulunk',
-	'schola.formulas.lede':
-		'Nem ennek az oldalnak az összefoglalása: ezek azok a felsorolások, amelyeket maga az Egyház nyomtat a Kompendium végén, bárki számára, akit a hitre tanítanak. Az alábbi minden szó az Ön saját kiadásából van szó szerint idézve.',
+	'schola.formulas.heading': 'A Tízparancsolat',
 	'ccc.noCounterpart': 'Nincs megfelelője a másik műben',
 	'jumpbox.placeholder': 'Ugrás… (pl. jános 3,16, ccc 1234)',
 	'jumpbox.short': 'Keresés',

@@ -101,8 +101,6 @@ export const pt: Dictionary = {
 	'schola.bible.bothWays':
 		'Vai reconhecer coisas, e isso é o ponto, não uma coincidência. A Igreja lê os livros mais antigos à luz de Cristo e os mais recentes à luz do que veio antes — cada metade explica a outra, e é por isso que nenhuma se lê sozinha.',
 	'schola.books.heading': 'O que está aqui',
-	'schola.books.lede':
-		'Cada um destes é um gênero de livro diferente, e a linha por baixo diz qual. Abra a caixa de busca no topo da página para ver como cada um é referido, e para chegar direto a uma passagem.',
 	'schola.what.scripture':
 		'As Escrituras tal como a Igreja as recebe, nos dois Testamentos. Tudo o mais que está aqui se lê à luz delas.',
 	'schola.what.catechism':
@@ -128,9 +126,7 @@ export const pt: Dictionary = {
 		'Passagens que marcou, e onde parou pela última vez em cada obra. Os dois ficam neste navegador e não são enviados para lugar nenhum.',
 	'schola.what.census':
 		'O que esta biblioteca tem e até onde ela chega — quantas obras, em que línguas, e quanto de cada uma um leitor da sua própria língua consegue de fato alcançar.',
-	'schola.formulas.heading': 'Os dez mandamentos, e o que mais se aprende de cor',
-	'schola.formulas.lede':
-		'Não é um resumo deste site: são as listas que a própria Igreja imprime no final do Compêndio, para quem está aprendendo a fé. Cada palavra abaixo é citada da sua própria edição dele.',
+	'schola.formulas.heading': 'Os dez mandamentos',
 	'ccc.noCounterpart': 'Sem correspondência na outra obra',
 	'jumpbox.placeholder': 'Ir para… (ex: jo 3,16, ccc 1234)',
 	'jumpbox.field': 'Ir para…',

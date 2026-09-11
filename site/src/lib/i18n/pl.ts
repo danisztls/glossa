@@ -90,8 +90,6 @@ export const pl: Dictionary = {
 	'schola.bible.bothWays':
 		'Będziesz rozpoznawał rzeczy, i o to właśnie chodzi, a nie o zbieg okoliczności. Kościół czyta księgi starsze w świetle Chrystusa, a nowsze w świetle tego, co było przedtem — każda połowa tłumaczy drugą, i dlatego żadnej nie czyta się osobno.',
 	'schola.books.heading': 'Co tu jest',
-	'schola.books.lede':
-		'Każda z tych ksiąg jest innego rodzaju, a linia pod nią mówi, jakiego. Otwórz pole wyszukiwania na górze strony, by zobaczyć, jak się do każdej z nich odsyła, i trafić prosto do fragmentu.',
 	'schola.what.scripture':
 		'Pismo Święte, jak je Kościół przyjmuje, w obu Testamentach. Wszystko inne tutaj czyta się w jego świetle.',
 	'schola.what.catechism':
@@ -117,9 +115,7 @@ export const pl: Dictionary = {
 		'Fragmenty, które zaznaczyłeś, i miejsce, na którym ostatnio stanąłeś w każdym dziele. Jedno i drugie zostaje w tej przeglądarce i nigdzie nie jest wysyłane.',
 	'schola.what.census':
 		'Co ma ta biblioteka i jak daleko sięga — ile dzieł, w jakich językach, i ile z każdego może naprawdę osiągnąć ktoś, kto czyta w twoim własnym języku.',
-	'schola.formulas.heading': 'Dziesięć przykazań i to, czego jeszcze uczy się na pamięć',
-	'schola.formulas.lede':
-		'To nie streszczenie tej strony: to wykazy, które sam Kościół drukuje na końcu Kompendium, dla każdego, kto jest nauczany wiary. Każde słowo poniżej zostało zacytowane z twojego własnego wydania.',
+	'schola.formulas.heading': 'Dziesięć przykazań',
 	'ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
 	'jumpbox.placeholder': 'Przejdź do… (np. jan 3,16, ccc 1234)',
 	'jumpbox.short': 'Szukaj',

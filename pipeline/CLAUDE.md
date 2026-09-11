@@ -1164,6 +1164,14 @@ Commandments` and `Exodus 20:2-17` as three separate blocks. Merging on
   across three lines and English packs two numbered items onto one; Hungarian's
   Decalogue is ten cells with no numeral in it, which reads as 21 fragments and
   is ten commandments.
+- **A line break the source did not mean is the printer's column width**, so
+  `shape_lines` joins a line to the next unless it ended a sentence: Portuguese
+  broke every beatitude after its comma, which reproduced as a hard break on
+  every screen. A block whose lines carry no sentence between them is a list of
+  terms instead, which is how Slovenian sets the virtues and the capital sins.
+- **The appendix does not go through `strip_tags`, so it needs its own
+  repairs.** Spanish's beatitudes arrived behind a doubly encoded em dash for a
+  day because `strip_double_encoding` ran only on the question path.
 - **The Compendium's own parsed headings are not a substitute for the Decalogue
   table**, which is what was tried first: `structure.json` carries a heading per
   commandment and only five editions print those ten cleanly — Swedish loses two

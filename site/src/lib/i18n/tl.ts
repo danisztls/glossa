@@ -126,8 +126,6 @@ export const tl: Dictionary = {
 	'schola.bible.bothWays':
 		'May makikilala kayong mga bagay, at iyon ang layunin at hindi pagkakataon lamang. Binabasa ng Simbahan ang mas lumang mga aklat sa liwanag ni Kristo at ang mas bago sa liwanag ng nauna — bawat kalahati ay nagpapaliwanag sa isa, at kaya walang isa man sa kanila ang binabasang mag-isa.',
 	'schola.books.heading': 'Ano ang narito',
-	'schola.books.lede':
-		'Bawat isa sa mga ito ay ibang uri ng aklat, at sinasabi ng linya sa ilalim nito kung anong uri. Buksan ang kahon ng paghahanap sa itaas ng pahinang ito upang makita kung paano tinutukoy ang bawat isa, at upang direktang marating ang isang bahagi.',
 	'schola.what.scripture':
 		'Ang Kasulatan gaya ng pagtanggap dito ng Simbahan, sa dalawang Tipan. Ang lahat ng iba rito ay binabasa sa liwanag nito.',
 	'schola.what.catechism':
@@ -154,9 +152,7 @@ export const tl: Dictionary = {
 		'Ang mga bahaging minarkahan ninyo, at kung saan kayo huling tumigil sa bawat akda. Parehong nananatili sa browser na ito at hindi ipinapadala kahit saan.',
 	'schola.what.census':
 		'Kung ano ang taglay ng aklatang ito at gaano ito kalawak — ilang akda, sa aling mga wika, at gaano karami sa bawat isa ang aktuwal na maaabot ng mambabasa ng sarili ninyong wika.',
-	'schola.formulas.heading': 'Ang Sampung Utos ng Diyos, at ang iba pang isinasaulo',
-	'schola.formulas.lede':
-		'Hindi buod ng pook na ito: ito ang mga talaang inilalathala mismo ng Simbahan sa dulo ng Kompendyo, para sa sinumang tinuturuan ng pananampalataya. Bawat salita sa ibaba ay sinipi mula sa inyong sariling edisyon nito.',
+	'schola.formulas.heading': 'Ang Sampung Utos ng Diyos',
 	'ccc.noCounterpart': 'Walang katumbas sa kabilang akda',
 	'jumpbox.placeholder': 'Pumunta sa… (hal. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Maghanap',

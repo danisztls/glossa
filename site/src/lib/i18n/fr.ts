@@ -94,8 +94,6 @@ export const fr: Dictionary = {
 	'schola.bible.bothWays':
 		'Vous reconnaîtrez des choses, et c’est le but plutôt qu’une coïncidence. L’Église lit les livres anciens à la lumière du Christ et les récents à la lumière de ce qui a précédé — chaque moitié explique l’autre, et c’est pourquoi aucune ne se lit seule.',
 	'schola.books.heading': 'Ce qui est ici',
-	'schola.books.lede':
-		'Chacun de ces livres est d’un genre différent, et la ligne en dessous dit lequel. Ouvrez la case de recherche en haut de la page pour voir comment on désigne chacun, et pour arriver directement à un passage.',
 	'schola.what.scripture':
 		'Les Écritures telles que l’Église les reçoit, dans les deux Testaments. Tout le reste ici se lit à leur lumière.',
 	'schola.what.catechism':
@@ -122,9 +120,7 @@ export const fr: Dictionary = {
 		'Les passages que vous avez marqués, et où vous vous êtes arrêté dans chaque œuvre. Les deux restent dans ce navigateur et ne sont envoyés nulle part.',
 	'schola.what.census':
 		'Ce que cette bibliothèque contient et jusqu’où elle va — combien d’œuvres, en quelles langues, et combien de chacune un lecteur de votre propre langue peut réellement atteindre.',
-	'schola.formulas.heading': 'Les dix commandements, et le reste de ce qui s’apprend par cœur',
-	'schola.formulas.lede':
-		'Pas un résumé de ce site : ce sont les listes que l’Église elle-même imprime à la fin de l’Abrégé, pour quiconque est instruit dans la foi. Chaque mot ci-dessous est cité de votre propre édition.',
+	'schola.formulas.heading': 'Les dix commandements',
 	'ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
 	'jumpbox.placeholder': 'Aller à… (p. ex. jean 3,16, ccc 1234)',
 	'jumpbox.short': 'Rechercher',

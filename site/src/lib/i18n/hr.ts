@@ -117,8 +117,6 @@ export const hr: Dictionary = {
 	'schola.bible.bothWays':
 		'Prepoznavat ćete stvari, i u tome je smisao, a nije slučajnost. Crkva čita starije knjige u svjetlu Kristovu a novije u svjetlu onoga što je bilo prije — svaka polovica objašnjava drugu, i zato se nijedna ne čita sama.',
 	'schola.books.heading': 'Što je ovdje',
-	'schola.books.lede':
-		'Svaka je od ovih knjiga druge vrste, i redak ispod nje kaže koje. Otvorite okvir za traženje na vrhu stranice da vidite kako se na svaku upućuje, i da odete izravno na mjesto.',
 	'schola.what.scripture':
 		'Pismo kako ga Crkva prima, u oba Zavjeta. Sve ostalo ovdje čita se u njegovu svjetlu.',
 	'schola.what.catechism':
@@ -143,9 +141,7 @@ export const hr: Dictionary = {
 		'Mjesta koja ste označili, i gdje ste posljednji put stali u svakom djelu. Oboje ostaje u ovom pregledniku i ne šalje se nikamo.',
 	'schola.what.census':
 		'Što ova knjižnica sadrži i dokle seže — koliko djela, na kojim jezicima, i koliko od svakoga čitatelj vašeg jezika doista može doseći.',
-	'schola.formulas.heading': 'Deset zapovijedi, i što se još uči napamet',
-	'schola.formulas.lede':
-		'Nije sažetak ove stranice: ovo su popisi koje sama Crkva tiska na kraju Kompendija, za svakoga tko uči vjeru. Svaka riječ ispod doslovno je navedena iz vašeg vlastitog izdanja toga djela.',
+	'schola.formulas.heading': 'Deset zapovijedi',
 	'ccc.noCounterpart': 'Nema odgovarajućeg mjesta u drugom djelu',
 	'jumpbox.placeholder': 'Idi na… (npr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Traži',

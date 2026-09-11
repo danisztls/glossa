@@ -117,8 +117,6 @@ export const cs: Dictionary = {
 	'schola.bible.bothWays':
 		'Budete poznávat věci, a o to jde, není to náhoda. Církev čte starší knihy ve světle Kristově a novější ve světle toho, co bylo předtím — každá polovina vysvětluje druhou, a proto se žádná nečte sama.',
 	'schola.books.heading': 'Co je zde',
-	'schola.books.lede':
-		'Každá z těchto knih je jiného druhu, a řádek pod ní říká jakého. Otevřete vyhledávací pole v horní části stránky a uvidíte, jak se na každou odkazuje, a dostanete se rovnou na místo.',
 	'schola.what.scripture':
 		'Písmo, jak je církev přijímá, v obou Zákonech. Všechno ostatní zde se čte v jeho světle.',
 	'schola.what.catechism':
@@ -144,9 +142,7 @@ export const cs: Dictionary = {
 		'Místa, která jste si označili, a kde jste naposledy skončili v každém díle. Obojí zůstává v tomto prohlížeči a nikam se neodesílá.',
 	'schola.what.census':
 		'Co tato knihovna obsahuje a jak daleko sahá — kolik děl, v jakých jazycích, a kolik z každého je čtenáři ve vašem jazyce skutečně dostupné.',
-	'schola.formulas.heading': 'Desatero a co dalšího se učí zpaměti',
-	'schola.formulas.lede':
-		'Není to shrnutí tohoto webu: jsou to seznamy, které sama církev tiskne na konci kompendia, pro každého, kdo je učen víře. Každé slovo níže je citováno z vašeho vlastního vydání.',
+	'schola.formulas.heading': 'Desatero',
 	'ccc.noCounterpart': 'Nemá protějšek v druhém díle',
 	'jumpbox.placeholder': 'Přejít na… (např. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Hledat',

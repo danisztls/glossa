@@ -93,8 +93,6 @@ export const es: Dictionary = {
 	'schola.bible.bothWays':
 		'Reconocerás cosas, y eso es lo que se busca, no una coincidencia. La Iglesia lee los libros antiguos a la luz de Cristo y los nuevos a la luz de lo que vino antes — cada mitad explica la otra, y por eso ninguna se lee sola.',
 	'schola.books.heading': 'Qué hay aquí',
-	'schola.books.lede':
-		'Cada uno de estos es una clase distinta de libro, y la línea debajo dice cuál. Abre la caja de búsqueda en la parte superior de la página para ver cómo se remite a cada uno, y para llegar directo a un pasaje.',
 	'schola.what.scripture':
 		'Las Escrituras tal como la Iglesia las recibe, en ambos Testamentos. Todo lo demás que hay aquí se lee a su luz.',
 	'schola.what.catechism':
@@ -120,9 +118,7 @@ export const es: Dictionary = {
 		'Pasajes que has marcado, y dónde lo dejaste por última vez en cada obra. Ambos se guardan en este navegador y no se envían a ninguna parte.',
 	'schola.what.census':
 		'Lo que esta biblioteca contiene y hasta dónde llega —cuántas obras, en qué lenguas, y cuánto de cada una puede alcanzar de verdad un lector de tu propia lengua.',
-	'schola.formulas.heading': 'Los diez mandamientos, y lo demás que se aprende de memoria',
-	'schola.formulas.lede':
-		'No es un resumen de este sitio: son las listas que la propia Iglesia imprime al final del Compendio, para quien está siendo instruido en la fe. Cada palabra de abajo está citada de tu propia edición.',
+	'schola.formulas.heading': 'Los diez mandamientos',
 	'ccc.noCounterpart': 'Sin correspondencia en la otra obra',
 	'jumpbox.placeholder': 'Ir a… (p. ej. juan 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',

@@ -461,9 +461,12 @@ export const en: Dictionary = {
 	// notation is already in the box. The `schola.cite.*` keys went out of
 	// every dictionary with the row: a translated value nothing reads is a
 	// line the next translator keeps true for nobody.
+	//
+	// THE SECTION'S LEDE WENT TOO (2026-09-11, by direction). It said that
+	// each of these is a different kind of book and that the line under it
+	// says which kind — a sentence describing the shape of the list it stands
+	// on, which the list states by being one.
 	'schola.books.heading': 'What is here',
-	'schola.books.lede':
-		'Each of these is a different kind of book, and the line under it says which kind. Open the search box at the top of the page to see how each one is referred to, and to go straight to a passage.',
 	'schola.what.scripture':
 		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',
 	'schola.what.catechism':
@@ -517,27 +520,22 @@ export const en: Dictionary = {
 		'What this library holds and how far it reaches — how many works, in which languages, and how much of each a reader of your own language can actually get to.',
 
 	// THE FORMULAS OF CATHOLIC DOCTRINE — the Compendium's own appendix, read
-	// out of the reader's own edition. TWO KEYS FOR A WHOLE SECTION, and that
+	// out of the reader's own edition. ONE KEY FOR A WHOLE SECTION, and that
 	// is the point of it: every heading it draws and every word under one is
 	// the Holy See's, in the language the reader chose their Compendium in, so
 	// the alternative — two dozen names in thirty-seven dictionaries, ours and
 	// drifting — was never worth considering. `routes/schola/+page.svelte` has
 	// the argument.
 	//
-	// THE HEADING NAMES THE DECALOGUE because that is the list a reader
-	// arrives looking for, and it is the one item in the section that the
-	// section's own contents cannot advertise: a reader scanning for "the ten
+	// IT NAMES THE DECALOGUE AND NOTHING ELSE (2026-09-11, by direction). It
+	// named the rest too — "and what else is learnt by heart" — which is the
+	// heading explaining the fold under it; the folded headings are the
+	// contents, and they are the Church's own words where a summary of them
+	// would be ours. The Decalogue still has to be named, because it is the
+	// one item the contents cannot advertise: a reader scanning for "the ten
 	// commandments" will not recognise "A Traditional Catechetical Formula",
 	// which is what the English edition calls them.
-	//
-	// THE LEDE SAYS WHOSE THE WORDS ARE, in the same breath as what the list
-	// is. Everything else on this page that is not ours says so
-	// (`quaestiones`' tagline, the `†` marks in the Bible section); a page
-	// printing the seven capital sins without a word about where they come
-	// from reads as the site's own catechism.
-	'schola.formulas.heading': 'The ten commandments, and what else is learnt by heart',
-	'schola.formulas.lede':
-		'Not a summary of this site: these are the lists the Church itself prints at the end of the Compendium, for anyone being taught the faith. Every word below is quoted from your own edition of it.',
+	'schola.formulas.heading': 'The ten commandments',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.

@@ -91,8 +91,6 @@ export const ro: Dictionary = {
 	'schola.bible.bothWays':
 		'Veți recunoaște lucruri, iar acesta este rostul, nu o întâmplare. Biserica citește cărțile mai vechi în lumina lui Cristos și pe cele mai noi în lumina a ceea ce a fost înainte — fiecare jumătate o lămurește pe cealaltă, și de aceea niciuna nu se citește singură.',
 	'schola.books.heading': 'Ce se află aici',
-	'schola.books.lede':
-		'Fiecare dintre acestea este un alt fel de carte, și rândul de sub ea spune care anume. Deschideți caseta de căutare din partea de sus a paginii ca să vedeți cum se trimite la fiecare, și ca să ajungeți direct la un pasaj.',
 	'schola.what.scripture':
 		'Scripturile așa cum le primește Biserica, în ambele Testamente. Tot restul de aici se citește în lumina lor.',
 	'schola.what.catechism':
@@ -118,9 +116,7 @@ export const ro: Dictionary = {
 		'Pasajele pe care le-ați însemnat, și unde ați rămas ultima dată în fiecare operă. Amândouă se păstrează în acest navigator și nu se trimit nicăieri.',
 	'schola.what.census':
 		'Ce deține această bibliotecă și cât de departe ajunge — câte opere, în ce limbi, și cât din fiecare poate ajunge cu adevărat un cititor al limbii dumneavoastră.',
-	'schola.formulas.heading': 'Cele zece porunci, și ce se mai învață pe de rost',
-	'schola.formulas.lede':
-		'Nu este un rezumat al acestui sit: acestea sunt listele pe care Biserica însăși le tipărește la sfârșitul Compendiului, pentru oricine este învățat în credință. Fiecare cuvânt de mai jos este citat din propria dumneavoastră ediție a lui.',
+	'schola.formulas.heading': 'Cele zece porunci',
 	'ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
 	'jumpbox.placeholder': 'Salt la… (ex. ioan 3,16, ccc 1234)',
 	'jumpbox.short': 'Caută',

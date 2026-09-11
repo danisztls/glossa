@@ -125,8 +125,6 @@ export const sw: Dictionary = {
 	'schola.bible.bothWays':
 		'Utatambua mambo, na hilo ndilo kusudi wala si sadfa. Kanisa husoma vitabu vya kale katika nuru ya Kristo na vile vipya katika nuru ya yaliyotangulia — kila nusu huieleza nyingine, na ndiyo sababu hakuna inayosomwa peke yake.',
 	'schola.books.heading': 'Kilichopo hapa',
-	'schola.books.lede':
-		'Kila kimoja cha hivi ni aina tofauti ya kitabu, na mstari ulio chini yake husema aina gani. Fungua kisanduku cha kutafuta kilicho juu ya ukurasa huu ili kuona jinsi kila kimoja kinavyorejewa, na kufika moja kwa moja kwenye kifungu.',
 	'schola.what.scripture':
 		'Maandiko kama Kanisa linavyoyapokea, katika Maagano yote mawili. Kila kingine hapa husomwa katika nuru yake.',
 	'schola.what.catechism':
@@ -152,9 +150,7 @@ export const sw: Dictionary = {
 		'Vifungu ulivyoviweka alama, na mahali ulipoishia mwisho katika kila kazi. Vyote viwili hubaki katika kivinjari hiki wala havitumwi popote.',
 	'schola.what.census':
 		'Kile maktaba hii inachokihifadhi na inavyofika mbali — kazi ngapi, katika lugha zipi, na kiasi gani cha kila moja ambacho msomaji wa lugha yako mwenyewe anaweza kufikia kwa kweli.',
-	'schola.formulas.heading': 'Amri Kumi za Mungu, na mengine yanayojifunzwa kwa moyo',
-	'schola.formulas.lede':
-		'Si muhtasari wa tovuti hii: hizi ni orodha ambazo Kanisa lenyewe huchapisha mwishoni mwa Muhtasari, kwa ajili ya yeyote anayefundishwa imani. Kila neno hapa chini limenukuliwa kutoka toleo lako lenyewe.',
+	'schola.formulas.heading': 'Amri Kumi za Mungu',
 	'ccc.noCounterpart': 'Hakuna kinacholingana katika kazi nyingine',
 	'jumpbox.placeholder': 'Nenda kwa… (mf. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Tafuta',

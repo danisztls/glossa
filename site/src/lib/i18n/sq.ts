@@ -122,8 +122,6 @@ export const sq: Dictionary = {
 	'schola.bible.bothWays':
 		'Do të njihni gjëra, dhe kjo është qëllimi e jo një rastësi. Kisha i lexon librat më të vjetër në dritën e Krishtit dhe ata më të rinj në dritën e asaj që erdhi më parë — secila gjysmë shpjegon tjetrën, dhe prandaj asnjëra nuk lexohet vetëm.',
 	'schola.books.heading': 'Çfarë gjendet këtu',
-	'schola.books.lede':
-		'Secili prej tyre është një lloj tjetër libri, dhe rreshti poshtë tregon cilin lloj. Hapni kutinë e kërkimit në krye të kësaj faqeje për të parë si i referohemi secilit, dhe për të mbërritur drejt e te një pasazh.',
 	'schola.what.scripture':
 		'Shkrimet ashtu si i merr Kisha, në të dyja Besëlidhjet. Gjithçka tjetër këtu lexohet në dritën e tyre.',
 	'schola.what.catechism':
@@ -149,9 +147,7 @@ export const sq: Dictionary = {
 		'Pasazhet që keni shënuar, dhe ku e latë së fundi në secilën vepër. Të dyja mbeten në këtë shfletues dhe nuk dërgohen askund.',
 	'schola.what.census':
 		'Çfarë përmban kjo bibliotekë dhe sa larg shtrihet — sa vepra, në cilat gjuhë, dhe sa nga secila mund të arrijë vërtet një lexues i gjuhës suaj.',
-	'schola.formulas.heading': 'Dhjetë Urdhërimet, dhe çfarë tjetër mësohet përmendsh',
-	'schola.formulas.lede':
-		'Jo një përmbledhje e kësaj faqeje: këto janë listat që vetë Kisha i shtyp në fund të Përmbledhjes, për këdo që po mësohet në besim. Çdo fjalë më poshtë është marrë fjalë për fjalë nga botimi juaj i saj.',
+	'schola.formulas.heading': 'Dhjetë Urdhërimet',
 	'ccc.noCounterpart': 'Pa pjesë përkatëse në veprën tjetër',
 	'jumpbox.placeholder': 'Shko te… (p.sh. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Kërko',

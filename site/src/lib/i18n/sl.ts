@@ -90,8 +90,6 @@ export const sl: Dictionary = {
 	'schola.bible.bothWays':
 		'Marsikaj boste prepoznali, in prav to je namen, ne naključje. Cerkev bere starejše knjige v luči Kristusa in novejše v luči tega, kar je bilo prej — vsaka polovica pojasnjuje drugo, in zato se nobena ne bere sama.',
 	'schola.books.heading': 'Kaj je tu',
-	'schola.books.lede':
-		'Vsaka od teh je druga vrsta knjige, vrstica pod njo pa pove, katera. Odprite iskalno polje na vrhu strani, da vidite, kako se na vsako sklicuje, in da pridete naravnost do odlomka.',
 	'schola.what.scripture':
 		'Sveto pismo, kakor ga Cerkev prejema, v obeh zavezah. Vse drugo tu se bere v njegovi luči.',
 	'schola.what.catechism':
@@ -117,9 +115,7 @@ export const sl: Dictionary = {
 		'Odlomki, ki ste jih označili, in kje ste nazadnje ostali pri vsakem delu. Oboje ostaja v tem brskalniku in se nikamor ne pošilja.',
 	'schola.what.census':
 		'Kaj hrani ta knjižnica in kako daleč sega — koliko del, v katerih jezikih, in koliko od vsakega dela je bralcu v njegovem jeziku dejansko dosegljivo.',
-	'schola.formulas.heading': 'Deset božjih zapovedi in kaj drugega se uči na pamet',
-	'schola.formulas.lede':
-		'Ne povzetek tega spletišča: to so seznami, ki jih Cerkev sama natisne na koncu Kompendija, za vsakogar, ki se uči vere. Vsaka beseda spodaj je navedena iz vaše lastne izdaje Kompendija.',
+	'schola.formulas.heading': 'Deset božjih zapovedi',
 	'ccc.noCounterpart': 'Ni ustreznika v drugem delu',
 	'jumpbox.placeholder': 'Skoči na… (npr. janez 3,16, ccc 1234)',
 	'jumpbox.short': 'Iskanje',

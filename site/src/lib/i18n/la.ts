@@ -93,8 +93,6 @@ export const la: Dictionary = {
 	'schola.bible.bothWays':
 		'Agnosces quaedam, idque propositum est, non casus. Ecclesia libros antiquiores in lumine Christi legit et recentiores in lumine eorum quae praecesserunt — utraque pars alteram explicat, ideoque neutra sola legitur.',
 	'schola.books.heading': 'Quae hic sint',
-	'schola.books.lede':
-		'Horum quisque diversum librorum genus est, et versus infra positus quod genus dicit. Capsam quaerendi in summa pagina aperi ut videas quomodo quisque designetur, et ut recta ad locum pervenias.',
 	'schola.what.scripture':
 		'Scripturae ut eas Ecclesia accipit, in utroque Testamento. Cetera omnia hic in earum lumine leguntur.',
 	'schola.what.catechism':
@@ -120,9 +118,7 @@ export const la: Dictionary = {
 		'Loci quos signasti, et ubi in quoque opere ultimo desiisti. Utraque in hoc navigatro manent nec usquam mittuntur.',
 	'schola.what.census':
 		'Quid haec bibliotheca teneat et quo usque pertingat — quot opera, quibus linguis, et quantum ex quoque lector tuae ipsius linguae revera attingere possit.',
-	'schola.formulas.heading': 'Decalogus, et quae alia memoriter discuntur',
-	'schola.formulas.lede':
-		'Non huius sedis summarium: hae sunt enumerationes quas Ecclesia ipsa in Compendii fine imprimit, cuivis qui in fide instituitur. Omne verbum infra ex tua ipsius editione ad verbum descriptum est.',
+	'schola.formulas.heading': 'Decalogus',
 	'ccc.noCounterpart': 'Nihil respondens in altero opere',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations

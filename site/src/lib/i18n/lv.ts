@@ -121,8 +121,6 @@ export const lv: Dictionary = {
 	'schola.bible.bothWays':
 		'Jūs atpazīsiet lietas, un tā ir jēga, nevis sakritība. Baznīca senākās grāmatas lasa Kristus gaismā un jaunākās — tā gaismā, kas bija pirms tam: katra puse skaidro otru, un tāpēc neviena netiek lasīta viena pati.',
 	'schola.books.heading': 'Kas šeit ir',
-	'schola.books.lede':
-		'Katra no šīm ir cita veida grāmata, un rinda zem tās pasaka, kāda tieši. Atveriet meklēšanas lauku lapas augšpusē, lai redzētu, kā uz katru atsaucas, un lai nokļūtu tieši pie vietas.',
 	'schola.what.scripture':
 		'Raksti tādi, kādus tos saņem Baznīca, abās Derībās. Viss pārējais šeit tiek lasīts to gaismā.',
 	'schola.what.catechism':
@@ -148,9 +146,7 @@ export const lv: Dictionary = {
 		'Vietas, ko esat atzīmējis, un kur pēdējoreiz palikāt katrā darbā. Abas paliek šajā pārlūkā un netiek nekur sūtītas.',
 	'schola.what.census':
 		'Ko šī bibliotēka satur un cik tālu tā sniedzas — cik darbu tajā ir, kādās valodās, un cik daudz no katra jūsu paša valodas lasītājs patiesībā var sasniegt.',
-	'schola.formulas.heading': 'Desmit baušļi, un kas vēl tiek mācīts no galvas',
-	'schola.formulas.lede':
-		'Tā nav šīs vietnes kopsavilkums: šie ir saraksti, ko pati Baznīca iespiež Kompendija beigās ikvienam, kas tiek mācīts ticībā. Katrs zemāk esošais vārds ir burtiski citēts no jūsu paša izdevuma.',
+	'schola.formulas.heading': 'Desmit baušļi',
 	'ccc.noCounterpart': 'Nav atbilsmes otrā darbā',
 	'jumpbox.placeholder': 'Pāriet uz… (piem. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Meklēt',

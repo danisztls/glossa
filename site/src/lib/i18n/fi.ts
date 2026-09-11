@@ -121,8 +121,6 @@ export const fi: Dictionary = {
 	'schola.bible.bothWays':
 		'Tunnistat asioita, ja se on tarkoitus eikä sattuma. Kirkko lukee vanhemmat kirjat Kristuksen valossa ja uudemmat sen valossa mikä tuli ennen — kumpikin puolisko selittää toista, ja siksi kumpaakaan ei lueta yksin.',
 	'schola.books.heading': 'Mitä täällä on',
-	'schola.books.lede':
-		'Jokainen näistä on eri laji kirja, ja sen alla oleva rivi kertoo mikä. Avaa sivun yläreunan hakukenttä nähdäksesi, miten kuhunkin viitataan, ja päästäksesi suoraan kohtaan.',
 	'schola.what.scripture':
 		'Raamattu sellaisena kuin kirkko sen vastaanottaa, molemmissa testamenteissa. Kaikki muu täällä luetaan sen valossa.',
 	'schola.what.catechism':
@@ -148,9 +146,7 @@ export const fi: Dictionary = {
 		'Kohdat jotka olet merkinnyt, ja mihin viimeksi jäit kussakin teoksessa. Molemmat pysyvät tässä selaimessa eikä niitä lähetetä minnekään.',
 	'schola.what.census':
 		'Mitä tämä kirjasto sisältää ja miten pitkälle se ulottuu — montako teosta, millä kielillä, ja kuinka paljon kustakin oman kielesi lukija todella tavoittaa.',
-	'schola.formulas.heading': 'Kymmenen käskyä ja muu ulkoa opittava',
-	'schola.formulas.lede':
-		'Ei tämän sivuston yhteenveto: nämä ovat luetteloita, jotka kirkko itse painaa Kompendiumin loppuun, kaikille uskoon opetettaville. Jokainen sana alla on lainattu omasta laitoksestasi.',
+	'schola.formulas.heading': 'Kymmenen käskyä',
 	'ccc.noCounterpart': 'Ei vastinetta toisessa teoksessa',
 	'jumpbox.placeholder': 'Siirry… (esim. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Haku',

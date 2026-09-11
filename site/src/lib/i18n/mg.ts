@@ -135,8 +135,6 @@ export const mg: Dictionary = {
 	'schola.bible.bothWays':
 		'Hahafantatra zavatra ianao, ary izany no tanjona fa tsy kisendrasendra. Ny Fiangonana mamaky ny boky taloha amin’ny fahazavan’i Kristy ary ny vaovao kokoa amin’ny fahazavan’izay teo aloha — samy manazava ny hafa ny antsasany tsirairay, ka izany no tsy amakiana na dia iray aza irery.',
 	'schola.books.heading': 'Izay eto',
-	'schola.books.lede':
-		'Samy karazana boky hafa avy ireo, ary ny tsipika eo ambaniny no milaza hoe karazany inona. Sokafy ny boaty fikarohana eo an-tampon’ny pejy mba hahitana ny fomba fanondroana ny tsirairay, ary handeha mivantana any amin’ny andalana iray.',
 	'schola.what.scripture':
 		'Ny Soratra Masina araka ny andraisan’ny Fiangonana azy, amin’ny Testamenta roa. Ny zavatra rehetra hafa eto dia vakiana amin’ny fahazavany.',
 	'schola.what.catechism':
@@ -162,9 +160,7 @@ export const mg: Dictionary = {
 		'Ny andalana nomarihinao, sy ny toerana nijanonanao farany tamin’ny asa soratra tsirairay. Samy mijanona ao amin’ity navigateur ity izy ireo ary tsy alefa na aiza na aiza.',
 	'schola.what.census':
 		'Izay ananan’ity tranomboky ity, sy hatraiza no tratrany — firy ny asa soratra, amin’ny fiteny inona, ary hafiriana amin’ireny no azon’ny mpamaky ny fiteninao ho tratrarina marina tokoa.',
-	'schola.formulas.heading': 'Ny Didy folo, sy izay hafa ianarana tsianjery',
-	'schola.formulas.lede':
-		'Tsy famintinan’ity tranonkala ity: ireto no lisitra navoakan’ny Fiangonana mihitsy any amin’ny faran’ny Famintinana, ho an’izay mianatra ny finoana. Ny teny rehetra eto ambany dia nalaina avy amin’ny famoahana ananao.',
+	'schola.formulas.heading': 'Ny Didy folo',
 	'ccc.noCounterpart': 'Tsy misy mifanandrify aminy ao amin’ny asa soratra hafa',
 	'jumpbox.placeholder': 'Mankanesa any… (ohatra: joany 3:16, ccc 1234)',
 	'jumpbox.short': 'Karohy',

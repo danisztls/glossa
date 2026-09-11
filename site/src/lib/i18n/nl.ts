@@ -119,8 +119,6 @@ export const nl: Dictionary = {
 	'schola.bible.bothWays':
 		'U zult dingen herkennen, en dat is de bedoeling en geen toeval. De Kerk leest de oudere boeken in het licht van Christus en de nieuwere in het licht van wat eraan voorafging — elke helft verklaart de andere, en daarom wordt geen van beide alleen gelezen.',
 	'schola.books.heading': 'Wat hier staat',
-	'schola.books.lede':
-		'Elk hiervan is een andere soort boek, en de regel eronder zegt welke soort. Open het zoekvak bovenaan de pagina om te zien hoe naar elk ervan wordt verwezen, en om rechtstreeks bij een passage uit te komen.',
 	'schola.what.scripture':
 		'De Schrift zoals de Kerk haar ontvangt, in beide Testamenten. Al het andere hier wordt in haar licht gelezen.',
 	'schola.what.catechism':
@@ -146,9 +144,7 @@ export const nl: Dictionary = {
 		'Plaatsen die u gemarkeerd hebt, en waar u in elk werk het laatst gebleven bent. Beide blijven in deze browser en worden nergens heen gestuurd.',
 	'schola.what.census':
 		'Wat deze bibliotheek bevat en hoe ver zij reikt — hoeveel werken, in welke talen, en hoeveel daarvan iemand die uw taal leest werkelijk kan bereiken.',
-	'schola.formulas.heading': 'De tien geboden, en wat er verder uit het hoofd wordt geleerd',
-	'schola.formulas.lede':
-		'Geen samenvatting van deze site: dit zijn de lijsten die de Kerk zelf achterin het Compendium afdrukt, voor iedereen die in het geloof wordt onderwezen. Elk woord hieronder is aangehaald uit uw eigen uitgave ervan.',
+	'schola.formulas.heading': 'De tien geboden',
 	'ccc.noCounterpart': 'Geen tegenhanger in het andere werk',
 	'jumpbox.placeholder': 'Ga naar… (bv. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Zoeken',

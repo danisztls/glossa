@@ -590,7 +590,7 @@ Rationale in `site/docs/finding.md`.
 ### The formulas of Catholic doctrine
 
 - **The one section on the site whose every word is the Church's, and it cost
-  two keys.** The Compendium's appendix prints the ten commandments, the
+  one key.** The Compendium's appendix prints the ten commandments, the
   theological and cardinal virtues, the seven capital sins, the Beatitudes, the
   works of mercy and the rest; `compendium.py` parses it, `sync-corpus.mjs`
   writes `index/formulas.{lang}.json`, and the section renders it. The
@@ -601,8 +601,12 @@ Rationale in `site/docs/finding.md`.
   formula has, so `formulas.json` carries no key (`docs/corpus-schema.md`). A
   heading is the edition's, an order is the edition's, and the section has no
   way to be found saying something the appendix does not.
-- **It reports, so it sits above the picture** — the hinge divides the sections
-  that LIST from the two that ADVISE.
+- **It closes the page and every formula is folded shut** (2026-09-11, by
+  direction). Open it is the longest thing on the page and the only quoted text
+  on it; shut it is a dozen names of lists, which is what a reader who came for
+  the ten commandments scans. `<details class="fold">` — `disclosure.test.ts`
+  fails on a `<details>` without the class — and the summary is the edition's
+  own heading, so the shut state is a table of contents nobody wrote.
 - **The headings are not linkified**, and six of them print a Scripture
   reference. That is the specimens' lesson a second time — a reference inside a
   heading on a catalogue page is a door into the middle of a work the reader

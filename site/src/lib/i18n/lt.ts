@@ -117,8 +117,6 @@ export const lt: Dictionary = {
 	'schola.bible.bothWays':
 		'Atpažinsite dalykus, ir tai yra esmė, o ne sutapimas. Bažnyčia senesnes knygas skaito Kristaus šviesoje, o naujesnes — to, kas buvo anksčiau, šviesoje: kiekviena pusė aiškina kitą, ir todėl nė viena neskaitoma viena.',
 	'schola.books.heading': 'Kas čia yra',
-	'schola.books.lede':
-		'Kiekviena iš jų yra kitokios rūšies knyga, ir po ja esanti eilutė sako, kokios. Atverkite paieškos langelį puslapio viršuje, kad pamatytumėte, kaip į kiekvieną nurodoma, ir kad patektumėte tiesiai prie vietos.',
 	'schola.what.scripture':
 		'Šventasis Raštas, kaip jį priima Bažnyčia, abiejuose Testamentuose. Visa kita čia skaitoma jo šviesoje.',
 	'schola.what.catechism':
@@ -144,9 +142,7 @@ export const lt: Dictionary = {
 		'Vietos, kurias pažymėjote, ir ties kuo paskutinį kartą sustojote kiekviename veikale. Abu dalykai lieka šioje naršyklėje ir niekur nesiunčiami.',
 	'schola.what.census':
 		'Ką ši biblioteka turi ir kaip toli ji siekia — kiek veikalų, kokiomis kalbomis, ir kiek iš kiekvieno jūsų pačių kalbos skaitytojas iš tikrųjų gali pasiekti.',
-	'schola.formulas.heading': 'Dešimt Dievo įsakymų, ir kas dar mokoma atmintinai',
-	'schola.formulas.lede':
-		'Tai ne šios svetainės santrauka: tai sąrašai, kuriuos pati Bažnyčia spausdina Santraukos gale, skirti kiekvienam, kas mokomas tikėjimo. Kiekvienas žemiau esantis žodis pažodžiui cituojamas iš jūsų paties leidimo.',
+	'schola.formulas.heading': 'Dešimt Dievo įsakymų',
 	'ccc.noCounterpart': 'Kitame veikale atitikmens nėra.',
 	'jumpbox.placeholder': 'Pereiti prie… (pvz. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Ieškoti',

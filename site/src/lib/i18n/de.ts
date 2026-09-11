@@ -93,8 +93,6 @@ export const de: Dictionary = {
 	'schola.bible.bothWays':
 		'Sie werden Dinge wiedererkennen, und das ist der Sinn und kein Zufall. Die Kirche liest die älteren Bücher im Licht Christi und die neueren im Licht dessen, was vorher war — jede Hälfte erklärt die andere, und darum wird keine allein gelesen.',
 	'schola.books.heading': 'Was hier steht',
-	'schola.books.lede':
-		'Jedes davon ist eine andere Art Buch, und die Zeile darunter sagt, welche. Öffnen Sie das Suchfeld oben auf der Seite, um zu sehen, wie auf jedes verwiesen wird, und um direkt zu einer Stelle zu gelangen.',
 	'schola.what.scripture':
 		'Die Schrift, wie die Kirche sie empfängt, in beiden Testamenten. Alles andere hier wird in ihrem Licht gelesen.',
 	'schola.what.catechism':
@@ -120,9 +118,7 @@ export const de: Dictionary = {
 		'Stellen, die Sie gemerkt haben, und wo Sie in jedem Werk zuletzt aufgehört haben. Beides bleibt in diesem Browser und wird nirgendwohin gesendet.',
 	'schola.what.census':
 		'Was diese Bibliothek enthält und wie weit sie reicht — wie viele Werke, in welchen Sprachen, und wie viel davon ein Leser Ihrer Sprache tatsächlich erreichen kann.',
-	'schola.formulas.heading': 'Die Zehn Gebote, und was sonst noch auswendig gelernt wird',
-	'schola.formulas.lede':
-		'Keine Zusammenfassung von dieser Seite: das sind die Listen, die die Kirche selbst am Ende des Kompendiums abdruckt, für jeden, der im Glauben unterwiesen wird. Jedes Wort unten ist aus Ihrer eigenen Ausgabe zitiert.',
+	'schola.formulas.heading': 'Die Zehn Gebote',
 	'ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
 	'jumpbox.placeholder': 'Springe zu… (z. B. johannes 3,16, ccc 1234)',
 	'jumpbox.short': 'Suchen',

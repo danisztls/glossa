@@ -267,13 +267,15 @@ first parsed on the ground that it was "not prayers". `ccc/compendium.py` reads
 it now; `docs/corpus-schema.md` has the shape and `pipeline/CLAUDE.md` the
 parsing rules.
 
-**So the section costs two keys and quotes everything else.** The heading names
+**So the section costs one key and quotes everything else.** The heading names
 the ten commandments, because that is what a reader arrives looking for and no
 edition's own label for them will be recognised — the English calls them "A
-Traditional Catechetical Formula". The lede says whose the words are, in the
-same breath as what the list is, which is the same disclosure `/quaestiones`
-makes at length on its own page: a page printing the seven capital sins with no
-word about where they come from reads as the site's own catechism.
+Traditional Catechetical Formula". It named the rest of the appendix too until
+2026-09-11 ("and what else is learnt by heart"), and so did a lede under it
+saying whose the words were; both went by direction, and what says whose the
+words are now is that every heading in the section is one no English speaker
+would write — "I dodici frutti dello Spirito Santo", in the reader's own
+Compendium.
 
 **Nothing in the section is named, ordered or selected by the site**, because
 nothing can be. The editions disagree about the ORDER — Italian prints the
@@ -283,18 +285,33 @@ key at all, and the page renders the headings it is given in the order it is
 given them. There is no formula this page can be found naming, and no formula it
 can be found leaving out.
 
-**It reports, so it sits above the picture.** The hinge divides the sections
-that LIST from the two that ADVISE, and a printed list of the Church's own
-formulas is on the listing side of that line.
+**It closes the page, and every formula is folded shut** (2026-09-11, by
+direction). It sat above the picture, on the hinge's argument that it reports
+where the two sections below advise — which was true and cost the page its
+shape: open, twelve formulas and the Decalogue are longer than everything else
+on `/schola` put together, and they stood between a reader and the advice
+written for them. Folded, the section is a dozen names of lists, and the names
+are the editions' own. `<details class="fold">` is the site's one accordion, so
+the mark is the mark every other disclosure here draws.
 
 **Three shapes, and the source chooses.** A numbered list where the edition
 numbered it, the numerals redrawn because the parse strips them; a plain list
-where the edition set each item apart without numbering it (Slovenian's
-`<ol><li>`, Hungarian's table cells); and a block of printed lines where the
-source marks no item boundary at all. The Beatitudes are numbered in no edition,
-and nine lines of "Blessed are…" are a passage rather than a list — reading them
-as one would be this page deciding where a beatitude ends, which is exactly what
-it has nothing to decide with.
+where the edition set its items apart without numbering them (Slovenian's
+`<ol><li>`, Hungarian's table cells, Spanish's dashed beatitudes); and a block
+of printed lines where the source marks no item boundary at all. The Beatitudes
+are numbered in no edition, and nine lines of "Blessed are…" are a passage
+rather than a list — reading them as one would be this page deciding where a
+beatitude ends, which is exactly what it has nothing to decide with.
+
+**But a line break is not a boundary either, and six editions proved it.**
+Portuguese breaks every beatitude after its comma, Italian and Romanian
+mid-clause: the source's `<br/>`s there are one printer's column width, and
+reproducing them put a hard break in the middle of every sentence at every
+screen size. `shape_lines` joins a line to the next unless it ended a sentence,
+so what the page draws is whole beatitudes and the breaks between them are the
+full stops the edition printed. English, which already sets one per line, comes
+through the same rule untouched — and where a beatitude ends is still the
+source's to say, which was the point all along.
 
 **A reader whose edition has none gets no section and no sentence.** Four of the
 fourteen editions are PDFs whose appendix nothing has read, so a Russian reader

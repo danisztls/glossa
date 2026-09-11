@@ -101,8 +101,6 @@ export const mt: Dictionary = {
 	'schola.bible.bothWays':
 		'Se tagħraf affarijiet, u dak huwa l-punt aktar milli koinċidenza. Il-Knisja taqra l-kotba eqdem fid-dawl ta’ Kristu u dawk ġodda fid-dawl ta’ dak li ġie qabel — kull nofs jispjega l-ieħor, u għalhekk l-ebda wieħed ma jinqara waħdu.',
 	'schola.books.heading': 'X’hemm hawn',
-	'schola.books.lede':
-		'Kull wieħed minn dawn huwa xorta differenti ta’ ktieb, u l-linja taħtu tgħid liema xorta. Iftaħ il-kaxxa tat-tfittxija fin-naħa ta’ fuq tal-paġna biex tara kif jissemma kull wieħed, u biex tasal dritt għal silta.',
 	'schola.what.scripture':
 		'L-Iskrittura kif tirċeviha l-Knisja, fiż-żewġ Testmenti. Kull ħaġa oħra hawn tinqara fid-dawl tagħha.',
 	'schola.what.catechism':
@@ -128,9 +126,7 @@ export const mt: Dictionary = {
 		'Siltiet li mmarkajt, u fejn wasalt f’kull xogħol. It-tnejn jinżammu f’dan il-browser u ma jintbagħtu mkien.',
 	'schola.what.census':
 		'X’għandha din il-librerija u kemm tasal ’il bogħod — kemm-il xogħol, b’liema lingwi, u kemm minn kull wieħed jista’ tabilħaqq jilħaq min jaqra bil-lingwa tiegħek.',
-	'schola.formulas.heading': 'L-Għaxar Kmandamenti, u dak li jitgħallem bl-amment',
-	'schola.formulas.lede':
-		'Mhux sommarju ta’ dan is-sit: dawn huma l-listi li l-Knisja stess tistampa fl-aħħar tal-Kompendju, għal min qed jitgħallem il-fidi. Kull kelma hawn taħt hija kkwotata mill-edizzjoni tiegħek stess.',
+	'schola.formulas.heading': 'L-Għaxar Kmandamenti',
 	'ccc.noCounterpart': 'L-ebda korrispondent fix-xogħol l-ieħor',
 	'jumpbox.placeholder': 'Aqbeż għal… (eż. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Fittex',

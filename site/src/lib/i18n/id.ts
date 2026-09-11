@@ -127,8 +127,6 @@ export const id: Dictionary = {
 	'schola.bible.bothWays':
 		'Anda akan mengenali banyak hal, dan itulah maksudnya, bukan kebetulan. Gereja membaca kitab-kitab yang lebih tua dalam terang Kristus dan yang lebih baru dalam terang apa yang mendahuluinya — masing-masing paruh menjelaskan yang lain, dan karena itu tak satu pun dibaca sendirian.',
 	'schola.books.heading': 'Apa yang ada di sini',
-	'schola.books.lede':
-		'Masing-masing ini adalah jenis kitab yang berbeda, dan baris di bawahnya menyebutkan jenis itu. Buka kotak pencarian di bagian atas halaman untuk melihat bagaimana masing-masing dirujuk, dan untuk langsung menuju suatu bagian.',
 	'schola.what.scripture':
 		'Kitab Suci sebagaimana diterima Gereja, dalam kedua Perjanjian. Segala sesuatu yang lain di sini dibaca dalam terangnya.',
 	'schola.what.catechism':
@@ -155,9 +153,7 @@ export const id: Dictionary = {
 		'Bagian-bagian yang telah Anda tandai, dan di mana Anda terakhir berhenti dalam tiap karya. Keduanya disimpan di peramban ini dan tidak dikirim ke mana pun.',
 	'schola.what.census':
 		'Apa yang dimiliki perpustakaan ini dan seberapa jauh jangkauannya — berapa banyak karya, dalam bahasa apa saja, dan berapa banyak dari masing-masing yang benar-benar dapat dijangkau pembaca dalam bahasa Anda sendiri.',
-	'schola.formulas.heading': 'Sepuluh Perintah Allah, dan apa lagi yang dihafalkan',
-	'schola.formulas.lede':
-		'Bukan ringkasan situs ini: inilah daftar-daftar yang dicetak Gereja sendiri di akhir Kompendium, bagi siapa pun yang sedang diajar imannya. Setiap kata di bawah ini dikutip dari edisi Anda sendiri.',
+	'schola.formulas.heading': 'Sepuluh Perintah Allah',
 	'ccc.noCounterpart': 'Tidak ada padanan dalam karya lainnya',
 	'jumpbox.placeholder': 'Lompat ke… (mis. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Cari',

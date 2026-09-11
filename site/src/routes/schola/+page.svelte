@@ -306,8 +306,8 @@
 	 * Catholic wants the ten commandments and the seven capital sins, and the
 	 * cheap way to give them is two dozen interface strings — our words for
 	 * the Church's list, in thirty-seven dictionaries, drifting. These are the
-	 * Church's words, in the reader's own edition, and the section costs a
-	 * heading and a lede.
+	 * Church's words, in the reader's own edition, and the section costs one
+	 * interface string — its heading.
 	 *
 	 * **NOTHING HERE IS NAMED, ORDERED OR TRANSLATED BY THIS PAGE.** Every
 	 * heading is the edition's, every order is the edition's, and the editions
@@ -316,9 +316,11 @@
 	 * key to select on, no sentence of ours against a formula, and no way for
 	 * this page to be found saying something the appendix does not.
 	 *
-	 * **IT REPORTS, SO IT SITS ABOVE THE PICTURE.** The hinge below divides
-	 * the sections that LIST from the two that ADVISE, and a printed list of
-	 * the Church's own formulas is on the listing side of that line.
+	 * **IT CLOSES THE PAGE, AND EVERY FORMULA IS FOLDED SHUT** (2026-09-11, by
+	 * direction). Open, it is the longest thing on the page by far and the
+	 * only quoted text on it; shut, it is a dozen names of lists, which is
+	 * what a reader who came for the ten commandments is scanning for. So it
+	 * reads as a list either way, and the reader chooses what to unfold.
 	 *
 	 * TEN EDITIONS OF FOURTEEN. The four vatican.va publishes only as a PDF
 	 * print the same appendix and nothing has read it, so a reader whose
@@ -369,17 +371,6 @@
 	 * of this section that did). That is 214 KB fetched before first paint, on
 	 * the page written for the reader least likely to wait for it.
 	 */
-
-	/**
-	 * Whether a formula is set across the grid rather than in one column of
-	 * it. The precepts of the Church are five sentences and the Beatitudes
-	 * nine; the cardinal virtues are four words. A column wide enough for the
-	 * first wastes two thirds of itself on the second, and the source is what
-	 * says which is which — the longest thing it prints.
-	 */
-	const LONG_ITEM = 64;
-	const isWide = (formula: Formula) =>
-		(formula.items ?? formula.lines ?? []).some((row) => row.length > LONG_ITEM);
 
 	/**
 	 * Questions is the one row here that is gated, and `ShelfGrid.svelte`'s
@@ -509,7 +500,6 @@
 
 	<section aria-labelledby="books-heading">
 		<h2 id="books-heading">{t('schola.books.heading')}</h2>
-		<p class="section-lede">{t('schola.books.lede')}</p>
 		<ul class="book-grid">
 			{#each works as work (work.key)}
 				<li class="book">
@@ -541,61 +531,6 @@
 			{/each}
 		</ul>
 	</section>
-
-	<!--
-		THE FORMULAS OF CATHOLIC DOCTRINE — the Compendium's own appendix, and
-		the only section on this page whose every word is the Church's. The
-		script's own note says why it is parsed rather than written and why
-		nothing here is named, ordered or selected by us.
-
-		DRAWN ONLY WHEN THERE IS SOMETHING TO DRAW, with no message where there
-		is not: four of the fourteen editions are PDFs whose appendix nothing
-		has read, and a sentence apologising for that would be this page
-		explaining its own pipeline to a reader nine months into the faith.
-	-->
-	{#if formulas.length > 0}
-		<section aria-labelledby="formulas-heading">
-			<h2 id="formulas-heading">{t('schola.formulas.heading')}</h2>
-			<p class="section-lede">{t('schola.formulas.lede')}</p>
-			<ul class="formulas">
-				{#each formulas as formula (formula.heading)}
-					<li class="formula" class:wide={isWide(formula)}>
-						<h3>{formula.heading}</h3>
-						<!--
-							THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
-							the edition numbered it — the numerals are redrawn because
-							the parse strips them, so they are the list's own and cannot
-							come apart from the items. A plain list where the edition
-							set each item apart without numbering it (Slovenian's
-							`<ol><li>`, Hungarian's table cells). And a block of lines
-							where the source marks no item boundary at all: the
-							Beatitudes are numbered in no edition, and nine lines of
-							"Blessed are…" are a passage, not a list. Reading them as
-							one would be this page deciding where a beatitude ends,
-							which is exactly what it has nothing to decide it with.
-						-->
-						{#if formula.items && formula.numbered}
-							<ol class="formula-items">
-								{#each formula.items as item, i (i)}
-									<li>{item}</li>
-								{/each}
-							</ol>
-						{:else if formula.items}
-							<ul class="formula-items plain">
-								{#each formula.items as item, i (i)}
-									<li>{item}</li>
-								{/each}
-							</ul>
-						{:else}
-							<p class="formula-lines">
-								{#each formula.lines ?? [] as line, i (i)}{#if i > 0}<br />{/if}{line}{/each}
-							</p>
-						{/if}
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
 
 	<!--
 		THE PICTURE IS THE HINGE, AND IT WAS THE MASTHEAD UNTIL 2026-09-06.
@@ -774,6 +709,70 @@
 						aria-label={verbumDomini.label}>†</a
 					>{/if}
 			</p>
+		</section>
+	{/if}
+	<!--
+		THE FORMULAS OF CATHOLIC DOCTRINE — the Compendium's own appendix, and
+		the only section on this page whose every word is the Church's. The
+		script's own note says why it is parsed rather than written and why
+		nothing here is named, ordered or selected by us.
+
+		IT CLOSES THE PAGE AND EVERY FORMULA IS FOLDED SHUT, so the section
+		reads as what it is — a dozen names of lists — until a reader opens
+		one. `<details class="fold">` is the site's one accordion
+		(`disclosure.test.ts` fails on a `<details>` without the class), and
+		the summary carries the edition's own heading, so the shut state is a
+		table of contents nobody wrote.
+
+		DRAWN ONLY WHEN THERE IS SOMETHING TO DRAW, with no message where there
+		is not: four of the fourteen editions are PDFs whose appendix nothing
+		has read, and a sentence apologising for that would be this page
+		explaining its own pipeline to a reader nine months into the faith.
+	-->
+	{#if formulas.length > 0}
+		<section aria-labelledby="formulas-heading">
+			<h2 id="formulas-heading">{t('schola.formulas.heading')}</h2>
+			<ul class="formulas">
+				{#each formulas as formula (formula.heading)}
+					<li>
+						<details class="fold formula">
+							<summary>{formula.heading}</summary>
+							<!--
+								THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
+								the edition numbered it — the numerals are redrawn because
+								the parse strips them, so they are the list's own and cannot
+								come apart from the items. A plain list where the edition
+								set its items apart without numbering them (Slovenian's
+								terms, Spanish's dashed beatitudes, Hungarian's table
+								cells). And a block of lines where the source marks no item
+								boundary at all: `shape_lines` in the scraper rejoins what
+								the edition wrapped at its own column width, so what arrives
+								here is whole sentences and the breaks between them are the
+								only structure the source actually marks.
+							-->
+							<div class="formula-body">
+								{#if formula.items && formula.numbered}
+									<ol class="formula-items">
+										{#each formula.items as item, i (i)}
+											<li>{item}</li>
+										{/each}
+									</ol>
+								{:else if formula.items}
+									<ul class="formula-items plain">
+										{#each formula.items as item, i (i)}
+											<li>{item}</li>
+										{/each}
+									</ul>
+								{:else}
+									<p class="formula-lines">
+										{#each formula.lines ?? [] as line, i (i)}{#if i > 0}<br />{/if}{line}{/each}
+									</p>
+								{/if}
+							</div>
+						</details>
+					</li>
+				{/each}
+			</ul>
 		</section>
 	{/if}
 </div>
@@ -1105,34 +1104,42 @@
 	 * are neither doors nor choices. A heading and the air under it are the
 	 * whole structure.
 	 */
+	/*
+	 * A STACK AND NOT A GRID. Two columns of folded rows would put the mark a
+	 * reader clicks in two places and make the list's order a reading order
+	 * only half the time; shut, these are twelve names, which is a list.
+	 */
 	.formulas {
 		list-style: none;
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
-		gap: 1.5rem 2rem;
 		margin: 0;
 		padding: 0;
-	}
-
-	.formula.wide {
-		grid-column: 1 / -1;
 	}
 
 	/*
 	 * The heading is the edition's own and may be long — "Le sette opere di
 	 * misericordia corporale" — so it wraps, and a wrapped line of it must not
 	 * read as two entries. Serif at the size the stage titles take, and a rule
-	 * under it rather than around the block, which is the same answer the
-	 * catalogue rows give.
+	 * under each row rather than a box around it, which is the same answer the
+	 * catalogue rows give. `.fold` (components.css) draws the mark, hides the
+	 * browser's triangle and sets the tap target.
 	 */
-	.formula h3 {
+	.formula {
+		border-block-end: 1px solid var(--color-border);
+	}
+
+	.formula > summary {
 		font-family: var(--font-serif);
 		font-size: 1.02rem;
 		font-weight: 600;
-		margin: 0 0 0.5rem;
-		padding-block-end: 0.35rem;
-		border-block-end: 1px solid var(--color-border);
-		text-wrap: balance;
+		padding-block: 0.55rem;
+	}
+
+	/* The body lines up with the summary's TEXT rather than its mark: the mark
+	   is 0.5rem wide with a 0.55rem gap after it, and an item hanging under the
+	   arrow reads as a second column. */
+	.formula-body {
+		padding-inline-start: 1.05rem;
+		padding-block-end: 0.7rem;
 	}
 
 	.formula-items {
@@ -1155,9 +1162,9 @@
 	/*
 	 * A BLOCK OF LINES IS SET AS LINES, which is the one place on this page
 	 * that a `<br>` is the right element: the Beatitudes carry no item boundary
-	 * in any edition, and the line breaks are the only structure the source
-	 * actually marks. A hanging indent so a line too long for the column reads
-	 * as a continuation rather than as the next line of the passage.
+	 * in any edition, and a sentence break is the only structure the source
+	 * marks. A hanging indent so a beatitude too long for the column reads as
+	 * a continuation rather than as the next one.
 	 */
 	.formula-lines {
 		margin: 0;

@@ -122,8 +122,6 @@ export const ko: Dictionary = {
 	'schola.bible.bothWays':
 		'알아보시는 것들이 있을 텐데, 우연이 아니라 그것이 요점입니다. 교회는 더 오래된 책들을 그리스도의 빛에서, 더 나중의 책들을 앞서 있었던 것의 빛에서 읽습니다 — 두 절반이 서로를 풀이하므로, 어느 쪽도 홀로 읽지 않습니다.',
 	'schola.books.heading': '여기 무엇이 있는가',
-	'schola.books.lede':
-		'이들은 저마다 다른 종류의 책이며, 그 아래 줄이 어떤 종류인지 말해 줍니다. 페이지 위쪽의 검색 창을 열면 각각이 어떻게 표시되는지 볼 수 있고, 곧바로 그 대목으로 갈 수 있습니다.',
 	'schola.what.scripture':
 		'교회가 받아들이는 그대로의 성경, 두 계약 모두. 여기 있는 나머지 전부는 그 빛에서 읽힙니다.',
 	'schola.what.catechism':
@@ -148,9 +146,7 @@ export const ko: Dictionary = {
 		'표시해 두신 대목들과, 저작마다 마지막으로 멈추신 자리. 둘 다 이 브라우저에 보관되며 어디로도 보내지지 않습니다.',
 	'schola.what.census':
 		'이 서고가 무엇을 담고 있고 얼마나 멀리 미치는지 — 작품이 몇 개이고, 어떤 언어들로 있으며, 당신 자신의 언어를 쓰는 독자가 각각 실제로 얼마나 닿을 수 있는지.',
-	'schola.formulas.heading': '십계명, 그리고 그 밖에 외워서 익히는 것들',
-	'schola.formulas.lede':
-		'이 사이트의 요약이 아닙니다. 이는 신앙을 배우는 모든 이를 위해 교회가 직접 『요약』 끝에 싣는 목록들입니다. 아래의 모든 말은 당신 자신의 판에서 그대로 인용한 것입니다.',
+	'schola.formulas.heading': '십계명',
 	'ccc.noCounterpart': '다른 저작에 대응하는 부분이 없습니다.',
 	'jumpbox.placeholder': '이동… (예: jn 3,16, ccc 1234)',
 	'jumpbox.short': '찾기',

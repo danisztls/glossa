@@ -125,8 +125,6 @@ export const vi: Dictionary = {
 	'schola.bible.bothWays':
 		'Bạn sẽ nhận ra nhiều điều, và đó là chủ ý chứ không phải tình cờ. Hội Thánh đọc các sách cổ hơn dưới ánh sáng Đức Kitô và các sách mới hơn dưới ánh sáng những gì đi trước — mỗi nửa giải thích nửa kia, và vì thế không nửa nào được đọc riêng một mình.',
 	'schola.books.heading': 'Ở đây có gì',
-	'schola.books.lede':
-		'Mỗi cuốn trong số này là một loại sách khác nhau, và dòng chữ bên dưới cho biết là loại nào. Hãy mở ô tìm kiếm ở đầu trang này để xem mỗi cuốn được quy chiếu thế nào, và để đi thẳng tới một đoạn.',
 	'schola.what.scripture':
 		'Kinh Thánh như Hội Thánh lãnh nhận, trong cả hai Giao ước. Mọi thứ khác ở đây được đọc dưới ánh sáng của nó.',
 	'schola.what.catechism':
@@ -152,9 +150,7 @@ export const vi: Dictionary = {
 		'Những đoạn bạn đã đánh dấu, và nơi bạn dừng lại lần cuối trong mỗi tác phẩm. Cả hai được giữ trong trình duyệt này và không gửi đi đâu cả.',
 	'schola.what.census':
 		'Thư viện này có những gì và vươn xa đến đâu — bao nhiêu tác phẩm, bằng những ngôn ngữ nào, và người đọc bằng chính ngôn ngữ của bạn thực sự có thể tiếp cận được bao nhiêu phần của mỗi tác phẩm.',
-	'schola.formulas.heading': 'Mười Điều Răn, và những gì khác được học thuộc lòng',
-	'schola.formulas.lede':
-		'Đây không phải là bản tóm lược của trang này: đây là những danh mục mà chính Hội Thánh in ở cuối Bản Toát yếu, dành cho bất cứ ai đang được dạy giáo lý. Mỗi lời dưới đây đều được trích từ chính ấn bản của bạn.',
+	'schola.formulas.heading': 'Mười Điều Răn',
 	'ccc.noCounterpart': 'Không có phần tương ứng trong tác phẩm kia',
 	'jumpbox.placeholder': 'Đi tới… (vd. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Tìm',

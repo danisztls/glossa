@@ -89,8 +89,6 @@ export const sv: Dictionary = {
 	'schola.bible.bothWays':
 		'Du kommer att känna igen saker, och det är meningen snarare än en tillfällighet. Kyrkan läser de äldre böckerna i Kristi ljus och de nyare i ljuset av det som kom före — varje hälft förklarar den andra, och därför läses ingen av dem ensam.',
 	'schola.books.heading': 'Vad som finns här',
-	'schola.books.lede':
-		'Var och en av dessa är ett slags bok för sig, och raden under den säger vilket slag. Öppna sökrutan högst upp på sidan för att se hur var och en anges, och för att komma direkt till ett ställe.',
 	'schola.what.scripture':
 		'Skriften så som kyrkan tar emot den, i båda testamentena. Allt annat här läses i dess ljus.',
 	'schola.what.catechism':
@@ -116,9 +114,7 @@ export const sv: Dictionary = {
 		'Ställen du har markerat, och var du senast slutade i varje verk. Bådadera stannar i den här webbläsaren och skickas ingenstans.',
 	'schola.what.census':
 		'Vad det här biblioteket innehåller och hur långt det räcker — hur många verk, på vilka språk, och hur mycket av vart och ett en läsare av ditt eget språk faktiskt kan nå.',
-	'schola.formulas.heading': 'Tio Guds bud, och vad mer som lärs utantill',
-	'schola.formulas.lede':
-		'Ingen sammanfattning av den här sidan: detta är de listor Kyrkan själv trycker i slutet av Kompendiet, för var och en som undervisas i tron. Varje ord nedan är citerat ur din egen utgåva av det.',
+	'schola.formulas.heading': 'Tio Guds bud',
 	'ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
 	'jumpbox.placeholder': 'Gå till… (t.ex. joh 3:16, ccc 1234)',
 	'jumpbox.short': 'Sök',

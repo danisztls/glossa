@@ -2013,8 +2013,15 @@ def printed_lines_bold(markup: str) -> list[PrintedLine]:
 
 
 def collapse(text: str) -> str:
-    """Printed text with its whitespace folded, as the block walk stores it."""
-    return re.sub(r"\s+", " ", text.replace("\xa0", " ")).strip()
+    """Printed text with its whitespace folded, as the block walk stores it.
+
+    IT REPAIRS THE DOUBLE ENCODING TOO, which is what `strip_tags` does for
+    the question parse -- the appendix does not go through it, and Spanish
+    sets every beatitude behind a doubly encoded em dash, so the mark the
+    site draws itself arrived as part of the sentence.
+    """
+    folded = re.sub(r"\s+", " ", text.replace("\xa0", " ")).strip()
+    return strip_double_encoding(folded)
 
 
 def group_formulas(
@@ -2058,11 +2065,10 @@ def formula_items(body: list[PrintedLine]) -> dict:
     splitting inside a line would lose one of them. Joining the body and
     cutting it at the numerals answers both.
 
-    An unnumbered formula keeps its lines as printed. That is not a failure
-    to parse: the Beatitudes and the Golden Rule are numbered in no edition,
-    Slovenian numbers nothing it sets as `<ol>` (the numerals are the
-    browser's), and Spanish marks its beatitudes with a dash. A block of
-    lines is what the source prints, and the site sets it as one.
+    An unnumbered formula goes to `shape_lines`, which decides between a list
+    and a passage. That is not a failure to parse: the Beatitudes and the
+    Golden Rule are numbered in no edition and Slovenian numbers nothing it
+    sets as `<ol>`, the numerals there being the browser's.
     """
     joined = " ".join(line.text for line in body)
     cuts = list(_ITEM_N_RE.finditer(joined))
@@ -2095,7 +2101,53 @@ def formula_items(body: list[PrintedLine]) -> dict:
     if len(by_cell) > 1:
         cells = [collapse(" ".join(part)) for part in by_cell]
         return {"numbered": False, "items": [strip_item_mark(x) for x in cells if x]}
-    return {"numbered": False, "lines": [strip_item_mark(line.text) for line in body]}
+    return {"numbered": False, **shape_lines([line.text for line in body])}
+
+
+#: A line that ends in one of these ended a sentence, so the next line starts
+#: something. Nothing else is a boundary: the editions wrap at their own
+#: column width and a comma at the end of a line means the line continues.
+_SENTENCE_END = ".!?"
+
+#: An unpunctuated line longer than this is prose that happens to have no full
+#: stop, not a term in a list. The longest real term across the ten editions is
+#: Slovenian's "dar strahu božjega" at eighteen characters.
+_TERM_MAX = 48
+
+
+def shape_lines(lines: list[str]) -> dict:
+    """A `<br/>`-separated block as either a list of items or printed lines.
+
+    THE EDITIONS BREAK LINES AT THEIR OWN COLUMN WIDTH, and six of them set
+    the Beatitudes as wrapped prose -- Portuguese breaks every beatitude after
+    its comma, Italian and Romanian mid-clause. Reproducing those breaks
+    reproduces a page width nobody else has, so a line that does not end a
+    sentence is joined to the next. English, whose beatitudes are one complete
+    sentence each, comes through the same rule untouched.
+
+    A LIST SAYS SO IN ONE OF TWO WAYS. Spanish marks every beatitude with an
+    em dash, and a source that marks its items has told us where they end.
+    Slovenian marks nothing and needs no mark: three lines reading "vera",
+    "upanje", "ljubezen" carry no sentence between them, and no edition wraps
+    a line at eighteen characters. Everything else is a passage.
+    """
+    if not lines:
+        return {"lines": []}
+    if all(_ITEM_MARK_RE.match(line) for line in lines):
+        return {"items": [strip_item_mark(line) for line in lines]}
+    stripped = [strip_item_mark(line) for line in lines]
+    if all(
+        len(line) <= _TERM_MAX and not any(c in line for c in _SENTENCE_END)
+        for line in stripped
+    ):
+        return {"items": stripped}
+    merged: list[str] = []
+    for line in stripped:
+        if merged and not merged[-1].endswith(tuple(_SENTENCE_END)):
+            merged[-1] = f"{merged[-1]} {line}"
+        else:
+            merged.append(line)
+    return {"lines": merged}
 
 
 #: The mark Spanish sets before each beatitude, and Latin-1 editions' dashes.
@@ -2629,8 +2681,14 @@ def print_summary(
         print(f"appendix formulas: {len(state.formulas)}")
         for formula in state.formulas:
             n = len(formula.get("items") or formula.get("lines") or [])
-            shape = "items" if formula["numbered"] else "lines"
-            print(f"  [{n:>2} {shape}] {formula['heading']}")
+            # The three shapes the site draws, named apart. Reading the label
+            # off `numbered` called every unnumbered list a block of lines,
+            # which is the one thing this table exists to tell apart.
+            if "items" not in formula:
+                shape = "lines"
+            else:
+                shape = "numbered" if formula["numbered"] else "items"
+            print(f"  [{n:>2} {shape:<8}] {formula['heading']}")
     if state.decalogue:
         n = len(state.decalogue.get("items") or state.decalogue.get("lines") or [])
         shape = "items" if "items" in state.decalogue else "lines"

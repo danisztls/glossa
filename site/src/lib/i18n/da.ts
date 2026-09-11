@@ -117,8 +117,6 @@ export const da: Dictionary = {
 	'schola.bible.bothWays':
 		'Du vil genkende ting, og det er meningen snarere end et tilfælde. Kirken læser de ældre bøger i Kristi lys og de nyere i lyset af det, der gik forud — hver halvdel forklarer den anden, og derfor læses ingen af dem alene.',
 	'schola.books.heading': 'Hvad der er her',
-	'schola.books.lede':
-		'Hver af disse er en anden slags bog, og linjen under den siger hvilken. Åbn søgefeltet øverst på siden for at se, hvordan der henvises til hver enkelt, og for at komme direkte til et sted.',
 	'schola.what.scripture':
 		'Skriften, som Kirken modtager den, i begge testamenter. Alt andet her læses i dens lys.',
 	'schola.what.catechism':
@@ -144,9 +142,7 @@ export const da: Dictionary = {
 		'Steder, du har markeret, og hvor du sidst slap i hvert værk. Begge dele bliver i denne browser og sendes ingen steder hen.',
 	'schola.what.census':
 		'Hvad dette bibliotek rummer, og hvor langt det rækker — hvor mange værker, på hvilke sprog, og hvor meget af hvert en læser af dit eget sprog faktisk kan nå.',
-	'schola.formulas.heading': 'De ti bud, og hvad man ellers lærer udenad',
-	'schola.formulas.lede':
-		'Ikke et sammendrag fra dette websted: det er de lister, som Kirken selv trykker bagest i Kompendiet, til enhver, der undervises i troen. Hvert ord nedenfor er citeret fra din egen udgave af det.',
+	'schola.formulas.heading': 'De ti bud',
 	'ccc.noCounterpart': 'Intet modstykke i det andet værk',
 	'jumpbox.placeholder': 'Gå til… (f.eks. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Søg',

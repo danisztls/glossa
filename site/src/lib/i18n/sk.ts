@@ -117,8 +117,6 @@ export const sk: Dictionary = {
 	'schola.bible.bothWays':
 		'Budete spoznávať veci, a o to ide, nie je to náhoda. Cirkev číta staršie knihy vo svetle Kristovom a novšie vo svetle toho, čo bolo predtým — každá polovica vysvetľuje druhú, a preto sa žiadna nečíta sama.',
 	'schola.books.heading': 'Čo je tu',
-	'schola.books.lede':
-		'Každá z týchto kníh je iného druhu, a riadok pod ňou hovorí, akého. Otvorte vyhľadávacie pole navrchu stránky, aby ste videli, ako sa na každú z nich odkazuje, a dostali sa priamo na miesto.',
 	'schola.what.scripture':
 		'Písmo, ako ho cirkev prijíma, v oboch Zákonoch. Všetko ostatné tu sa číta v jeho svetle.',
 	'schola.what.catechism':
@@ -144,9 +142,7 @@ export const sk: Dictionary = {
 		'Miesta, ktoré ste si označili, a kde ste naposledy skončili v každom diele. Oboje zostáva v tomto prehliadači a nikam sa neodosiela.',
 	'schola.what.census':
 		'Čo má táto knižnica a ako ďaleko siaha — koľko diel, v akých jazykoch, a koľko z každého sa naozaj dostane k tomu, kto číta vo vašom jazyku.',
-	'schola.formulas.heading': 'Desať prikázaní a čo ešte sa učí naspamäť',
-	'schola.formulas.lede':
-		'Nie je to zhrnutie tejto stránky: sú to zoznamy, ktoré samotná cirkev tlačí na konci Kompendia, pre každého, kto je vyučovaný vo viere. Každé slovo nižšie je citované z vášho vlastného vydania.',
+	'schola.formulas.heading': 'Desať prikázaní',
 	'ccc.noCounterpart': 'Bez náprotivku v druhom diele.',
 	'jumpbox.placeholder': 'Prejsť na… (napr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Hľadať',

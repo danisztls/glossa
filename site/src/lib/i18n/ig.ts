@@ -127,8 +127,6 @@ export const ig: Dictionary = {
 	'schola.bible.bothWays':
 		"Ị ga-amata ihe ụfọdụ, nke ahụ bụkwa ebumnuche ọ bụghị ihe mberede. Chọọchị na-agụ akwụkwọ ndị ochie n'ìhè Kraịst, na-agụkwa ndị ọhụrụ n'ìhè nke ihe buru ụzọ — akụkụ ọ bụla na-akọwa ibe ya, ọ bụkwa ya mere na a naghị agụ nke ọ bụla naanị ya.",
 	'schola.books.heading': 'Ihe dị ebe a',
-	'schola.books.lede':
-		"Nke ọ bụla n'ime ndị a bụ ụdị akwụkwọ dị iche, ahịrị dị n'okpuru ya na-akọwa ụdị ọ bụ. Meghee igbe nchọta dị n'elu ibe ahụ ka ị hụ otú e si arụtụ aka na nke ọ bụla, na iji jeruo akụkụ ozugbo.",
 	'schola.what.scripture':
 		"Akwụkwọ Nsọ dị ka Chọọchị si anabata ya, n'Ọgbụgba Ndụ abụọ ahụ. Ihe niile ọzọ dị ebe a ka a na-agụ n'ìhè ha.",
 	'schola.what.catechism':
@@ -154,9 +152,7 @@ export const ig: Dictionary = {
 		"Akụkụ ndị i kara akara, na ebe ị kwụsịrị n'ikpeazụ n'ọrụ ọ bụla. Ha abụọ na-anọgide n'ihe nchọgharị a, a naghịkwa eziga ha ebe ọ bụla.",
 	'schola.what.census':
 		"Ihe ọbá akwụkwọ a nwere na oke ọ na-eru — ọrụ ole dị, n'asụsụ ole, na ole n'ime ha ka onye na-agụ n'asụsụ gị nwere ike iru n'ezie.",
-	'schola.formulas.heading': 'Iwu Iri Chineke, na ihe ndị ọzọ a na-amụta n’isi',
-	'schola.formulas.lede':
-		"Ọ bụghị nchịkọta nke saịtị a: ndị a bụ ndepụta ndị Chọọchị n'onwe ya bipụtara na ngwụcha Nchịkọta ahụ, nye onye ọ bụla a na-akụziri okwukwe. E si n'akwụkwọ gị wepụta okwu ọ bụla dị n'okpuru a n'ụzọ kpọmkwem.",
+	'schola.formulas.heading': 'Iwu Iri Chineke',
 	'ccc.noCounterpart': 'Ọ dịghị ihe yiri ya n’ọrụ nke ọzọ ahụ.',
 	'jumpbox.placeholder': 'Gaa na… (dka. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Chọọ',

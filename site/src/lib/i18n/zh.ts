@@ -127,8 +127,6 @@ export const zh: Dictionary = {
 	'schola.bible.bothWays':
 		'您会认出一些东西，这正是用意所在，而非巧合。教会在基督的光中读较古的书卷，又在此前所有的光中读较新的书卷——两半彼此解释，因此没有一半是独自阅读的。',
 	'schola.books.heading': '此处有什么',
-	'schola.books.lede':
-		'这些各是不同种类的书，其下的文字说明是哪一种。打开本页顶部的搜索框，可查看各书如何被引用，并直接抵达某一处。',
 	'schola.what.scripture': '教会所领受的圣经，包括新旧两约。此处其余一切都在其光中阅读。',
 	'schola.what.catechism':
 		'天主教会所信的撮要，合为一册。它本身不是源头：它汇集圣经、教父、礼仪与教会的训导，而每一条都指明其所言出自何处。',
@@ -148,9 +146,7 @@ export const zh: Dictionary = {
 		'您所标记的经文，以及您在每部作品中上次读到之处。二者都保存在此浏览器中，不发往任何地方。',
 	'schola.what.census':
 		'本书库收藏了什么，覆盖范围有多广——有多少部作品，涉及哪些语言，以及您自己语言的读者实际能读到每部作品的多少。',
-	'schola.formulas.heading': '十诫，以及还要背诵的其他内容',
-	'schola.formulas.lede':
-		'这并非本站的撮要：这些是教会本身印于《简编》末尾的清单，供任何正在学习教理的人使用。以下每一个字都逐字引自您所用的版本。',
+	'schola.formulas.heading': '十诫',
 	'ccc.noCounterpart': '另一部作品中没有对应内容',
 	'jumpbox.placeholder': '前往…（例：jn 3:16、ccc 1234）',
 	'jumpbox.short': '搜索',
