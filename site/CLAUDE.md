@@ -524,11 +524,14 @@ Rationale in `site/docs/finding.md`.
   per `SECTIONS` entry — nine, two of which have no citation to teach — and
   `specimens.test.ts` welds the hand-written paths to `SECTION_PATHS`, since
   `specimens.ts` must not pull `suggest.ts` into the boot payload.
-- **A legend row and the armed chip wear the work's mark; a result row's
-  badge stays a word.** A glyph is decoration beside a name and the only
-  carrier without one, and a result row's label is a heading or a number — so
-  there the badge is all that says which work answered. `Icon.svelte` enforces
-  `aria-hidden`, which is the colour rule one channel over.
+- **Every row in the box wears its work's mark**, the legend's and the chip's
+  beside a name and the result's in place of one. A glyph replacing the only
+  words that say which work answered owes a text alternative, not a second
+  channel — `Icon.svelte` enforces `aria-hidden`, so the badge's words stay
+  in the row, visually hidden, and are what the option still announces.
+  **Shape is not the colour rule**: 1.4.1 is about colour and a distinct shape
+  is its remedy. The mark comes off `Suggestion.section` — the address, where
+  the badge is a name — so `suggest.test.ts` welds the two.
 - **An armed scope is a CHIP in the field, and the colon alone arms it.**
   `ccc:` read as a keyword also went to the loose title tier, which answered
   it with two magisterial documents; it now answers with that section's

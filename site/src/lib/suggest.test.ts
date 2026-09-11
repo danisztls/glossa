@@ -18,8 +18,15 @@
 
 import fuzzysort from 'fuzzysort';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { dictionaryFor, i18n, loadedDictionary } from './i18n.svelte';
-import { parseSectionFilter, resetSuggestCaches, setFuzzyRanker, suggest } from './suggest';
+import { dictionaryFor, i18n, loadedDictionary, t } from './i18n.svelte';
+import { sectionIcon, sectionSpecimens } from './specimens';
+import {
+	parseSectionFilter,
+	resetSuggestCaches,
+	SECTION_PATHS,
+	setFuzzyRanker,
+	suggest
+} from './suggest';
 import type { TopicIndex } from './types';
 
 /**
@@ -59,6 +66,45 @@ const hrefs = (query: string, opts = {}) =>
 	suggest(query, { lang: 'en', ...opts }).map((s) => s.href);
 const labels = (query: string, opts = {}) =>
 	suggest(query, { lang: 'en', ...opts }).map((s) => s.label);
+
+/**
+ * EVERY ROW KNOWS WHICH SECTION IT CAME OUT OF, which is what lets the box
+ * draw a work's mark beside an answer instead of its name. Two things have to
+ * hold for that mark to be trustworthy, and neither is a type: that the
+ * address really does sit under a section, and that the section agrees with
+ * the badge the row would otherwise have printed.
+ *
+ * The battery is one query per producer the fixtures can answer. A producer
+ * added without a section is a row that silently loses its mark.
+ */
+describe('a row’s section', () => {
+	const BATTERY = ['gene', 'john 3', '27', 'ccc 27', 'church', 'i 1', 'catechism', 'summa'];
+
+	const everyRow = () => BATTERY.flatMap((query) => suggest(query, { lang: 'en' }));
+
+	it('files every row under a section, and draws a mark for it', () => {
+		const rows = everyRow();
+		expect(rows.length).toBeGreaterThan(0);
+		for (const row of rows) {
+			expect(row.section, row.href).toBeDefined();
+			expect(SECTION_PATHS).toContain(row.section);
+			expect(sectionIcon(row.section!), row.href).toBeDefined();
+		}
+	});
+
+	/** The weld between the two channels. The badge is a NAME and the section
+	 *  is an ADDRESS, derived apart — by the producer and by `sectionPathOf` —
+	 *  so a row whose href belongs to one work and whose badge names another
+	 *  would draw the wrong mark and read correctly while doing it. */
+	it('names the same work the badge does', () => {
+		const named = new Map(
+			sectionSpecimens(undefined, 'en').map((row) => [row.path, t(row.labelKey)])
+		);
+		for (const row of everyRow()) {
+			expect(row.badge, `${row.href} → ${row.section}`).toBe(named.get(row.section!));
+		}
+	});
+});
 
 describe('suggest', () => {
 	it('offers nothing for an empty query', () => {

@@ -50,7 +50,7 @@
 	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { isOverlayOpen, isTypingTarget } from '$lib/shortcuts';
-	import Icon from './Icon.svelte';
+	import Icon, { type IconName } from './Icon.svelte';
 
 	// CCC scope for jump-box resolution: a single content language for now
 	// (see `ccc/[n]` route) — once the reading route carries a language,
@@ -322,6 +322,14 @@
 	 * typed by hand arrive at the same chip.
 	 */
 	const scopeGlyph = $derived(scope?.paths.length === 1 ? sectionIcon(scope.paths[0]) : undefined);
+
+	/** A result row's mark, off the section its ADDRESS sits in (`Suggestion.section`)
+	 *  rather than off the badge, which is a name in whichever language the
+	 *  reader is reading. `undefined` where no section covers the address,
+	 *  and the row keeps its word. */
+	function badgeIcon(row: { section?: string }): IconName | undefined {
+		return row.section === undefined ? undefined : sectionIcon(row.section);
+	}
 
 	/**
 	 * Recognise a scope the reader has just finished typing, and take it out
@@ -941,6 +949,7 @@
 				data-link-preview="hover"
 			>
 				{#each suggestions as suggestion, index (suggestion.href)}
+					{@const glyph = badgeIcon(suggestion)}
 					<li
 						id={optionId(index)}
 						role="option"
@@ -979,7 +988,33 @@
 												>{segment.text}</mark
 											>{:else}{segment.text}{/if}{/each}</span
 								>
-								<span class="badge label-micro">{suggestion.badge}</span>
+								<!--
+									THE WORK'S MARK, AND ITS NAME UNDERNEATH. The glyph is
+									the one the legend above taught, the catalogue draws
+									and `/schola` lists (`$lib/work-icons.ts`); the badge
+									text it replaces is still here, visually hidden, and is
+									still what the option announces — `Icon.svelte` makes
+									every glyph `aria-hidden`, so without it the row would
+									name a heading and no work.
+
+									A row is told apart by SHAPE, which is a channel of its
+									own and not the colour case: what a mark may not do is
+									be the only carrier in the accessibility tree, which is
+									exactly what the hidden name prevents. `title` gives a
+									pointer the word as well — the fastest way to learn a
+									vocabulary is to meet it named.
+
+									IT DEGRADES TO THE WORD. An address no section covers
+									has no mark to draw, and the badge is printed as it
+									always was rather than left blank.
+								-->
+								{#if glyph}
+									<span class="badge badge-glyph" title={suggestion.badge}>
+										<Icon name={glyph} /><span class="visually-hidden">{suggestion.badge}</span>
+									</span>
+								{:else}
+									<span class="badge label-micro">{suggestion.badge}</span>
+								{/if}
 							</span>
 							{#if suggestion.detail}
 								<!--
@@ -1543,6 +1578,30 @@
 
 	.badge {
 		flex: none;
+	}
+
+	/*
+	 * The badge as the work's mark. `align-self` for `.example-glyph`'s
+	 * reason — the row is baseline-aligned and a box with no text in it
+	 * offers its bottom edge as one — and `1lh` so the glyph occupies the
+	 * line it sits on rather than setting the row's height itself.
+	 *
+	 * Muted at rest and lit on the active row, which is what `.label-micro`
+	 * did for the word it replaces: a column of marks down the trailing edge
+	 * is apparatus, and the label beside it is the answer.
+	 */
+	.badge-glyph {
+		display: grid;
+		place-items: center;
+		align-self: center;
+		block-size: 1lh;
+		font-size: 0.95rem;
+		color: var(--color-text-muted);
+	}
+
+	li.active .badge-glyph,
+	a:hover .badge-glyph {
+		color: var(--color-accent);
 	}
 
 	/* One line, ellipsized: a Summa question title or a Catechism chapter

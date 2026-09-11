@@ -126,6 +126,19 @@ export interface Suggestion {
 	/** Which work this belongs to, already translated — the row's quiet badge. */
 	badge: string;
 	/**
+	 * The same answer as an ADDRESS: the `SECTIONS.path` this row's href sits
+	 * under (`sectionPathOf`), or `undefined` for an address no section
+	 * covers.
+	 *
+	 * It is here because two surfaces want the section and only one of them
+	 * can read a translated string: the scope filters on it, and the box
+	 * draws the work's mark from it (`specimens.ts`'s `sectionIcon`). Deriving
+	 * it in the component would mean holding a second function out of this
+	 * lazily-loaded module, and deriving it from `badge` would mean matching
+	 * on a name in thirty-nine languages.
+	 */
+	section?: string;
+	/**
 	 * What to put in the box when the reader completes this row with Tab.
 	 *
 	 * USUALLY THE LABEL, AND NOT DEFINABLE AS IT. A completion is an INPUT and
@@ -2290,15 +2303,17 @@ export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
 
 	const best = new Map<string, Scored>();
 	for (const row of rows) {
-		if (scope) {
-			const path = sectionPathOf(row.href);
-			// An address no section covers is dropped rather than kept: under a
-			// scope the reader has named where they are looking, and a row that
-			// belongs nowhere is not in there.
-			if (path === undefined || !scope.has(path)) continue;
-		}
+		const path = sectionPathOf(row.href);
+		// An address no section covers is dropped rather than kept: under a
+		// scope the reader has named where they are looking, and a row that
+		// belongs nowhere is not in there.
+		if (scope && (path === undefined || !scope.has(path))) continue;
+		// Copied rather than assigned onto the row: a producer may hand back an
+		// object it holds in an index cache, and a field written into one of
+		// those would outlive the call that wrote it.
+		const scored = { ...row, section: path };
 		const existing = best.get(row.href);
-		if (!existing || row.score > existing.score) best.set(row.href, row);
+		if (!existing || scored.score > existing.score) best.set(row.href, scored);
 	}
 
 	return [...best.values()]

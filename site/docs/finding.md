@@ -1432,23 +1432,38 @@ that the parser reads every row's own prefix back as that row's own path. A
 tenth section, or a siglum that stopped resolving, is then a failing test rather
 than a chip that quietly filters nothing.
 
-**A legend row and the armed chip take the work's own mark; a result row does
-not, and the difference is whether the work is named in words.** On
-`/bibliotheca` and `/schola` a glyph sits beside the work's name, which is what
-makes it decoration — nothing is told apart by it and nothing is required to
-understand it. A legend row is that same list, so the mark is free there;
-`work-icons.ts` is the vocabulary and `sectionIcon` the lookup. A RESULT row
-is the case those pages never have: its label is a heading, a paragraph number
-or a topic, and the badge is the only thing saying which work it came out of.
-A glyph there would be the sole carrier, which costs three things at once —
-`Icon.svelte` enforces `aria-hidden` as its contract, so the option would
-announce its label and no work; **it is the colour rule one channel over**
-("if a pigment ever becomes the only thing saying which work a row is, it owes
-WCAG 1.4.1 and cannot pay it"); and it asks a reader in a hurry to have
-visited another page first.
+**Every row in the box wears its work's mark — the legend's, the armed chip's
+and the result's — out of `work-icons.ts` through `sectionIcon`.** The legend
+and the chip were the easy half: they name the work in words beside the glyph,
+which is `/bibliotheca`'s and `/schola`'s arrangement, where nothing is told
+apart by the mark and nothing needs it.
 
-**The chip's mark follows its label by the same test**: one section, its
-glyph; several, none. There is no mark for "the Catechism or the Code", and
+**A RESULT row is the case those pages never have, and it was refused for two
+bad reasons and one real one.** Its label is a heading, a paragraph number or
+a topic, so the badge is the only thing saying which work answered. The two
+bad reasons: that `Icon.svelte` enforces `aria-hidden` (true, and an argument
+about HOW rather than whether — the badge's words are still there, visually
+hidden, and are still what the option announces); and that it is the colour
+rule one channel over (**it is not — 1.4.1 is about colour, and a distinct
+SHAPE is the standard remedy for it rather than an instance of it**; what a
+mark owes is 1.1.1, a text alternative, which the hidden name pays). The real
+one is learnability, and it is the one the legend answered: nine glyphs beside
+their nine names, in the same panel, immediately above where the results will
+stand. **A legend in the cartographic sense is what makes a key legible**, and
+the box grew one before the marks went in. `title` on the badge gives a
+pointer the word as well.
+
+**The mark is derived from the ADDRESS and the badge from the producer, which
+is what makes the pair worth testing.** `Suggestion.section` is the longest
+`SECTIONS.path` a row's href sits under — the same `sectionPathOf` the scope
+filters on — so a row whose href belongs to one work and whose badge names
+another would draw the wrong mark and read correctly doing it.
+`suggest.test.ts` asserts over a battery that every row has a section, that
+the section draws a mark, and that the mark's work is the one the badge names.
+An address no section covers keeps its word.
+
+**The chip's mark follows its LABEL's test, not the badge's**: one section,
+its glyph; several, none. There is no mark for "the Catechism or the Code", and
 picking either is the guess `SECTIONS` refuses to make — so `cic:` is the word
 alone, which is what it looks like. It is read from the PATH rather than
 carried in from the row that was pressed, so a legend row and a `ccc:` typed
