@@ -1432,18 +1432,24 @@
 			],
 			"documents": ["rerum-novarum", "laborem-exercens"]
 		},
+		"pecunia-expendenda": {
+			"doorway": "ordinary",
+			"cluster": "money-and-work",
+			"ccc": [
+				[2405, 2405],
+				[2536, 2536]
+			],
+			"csdc": [[358, 360]]
+		},
 		"pecunia-collocanda": {
 			"doorway": "ordinary",
 			"cluster": "money-and-work",
 			"ccc": [
-				[2413, 2413],
 				[2409, 2409],
+				[2413, 2413],
 				[2431, 2432]
 			],
-			"csdc": [
-				[358, 360],
-				[368, 369]
-			],
+			"csdc": [[368, 369]],
 			"documents": ["caritas-in-veritate", "oeconomicae-et-pecuniariae-quaestiones"]
 		},
 		"tributum": {

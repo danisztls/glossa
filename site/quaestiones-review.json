@@ -854,12 +854,18 @@
 			"anchors": "ccc 2434-2435 | csdc 301-304,305-307 | documents rerum-novarum,laborem-exercens",
 			"note": "2434 says what a wage is supposed to cover, at the length of the question, and CSDC 304 covers the strike the title also promises."
 		},
+		"pecunia-expendenda": {
+			"grade": "A",
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 2405,2536 | csdc 358-360",
+			"note": "Split out of `pecunia-collocanda` on 2026-09-11, and the Compendium's own table of contents is what decided it: its heading over 358–360 is _Savings and consumer goods_, where 368–369 is _The international financial system_. Those three sections were anchored under _Is there a wrong way to make money with money?_, so the page answered a spending question under an earning title and every word a reader would type for it — `consume`, `consuming`, `saving` — matched nothing on the site. A on both clauses: 2405 is the measure (`use them with moderation, reserving the better part for guests, for the sick and the poor`), 2536 is the limit (`forbids greed and the desire to amass earthly goods without limit`), and CSDC 359 states the duty to give from one's abundance. No `documents`: CSDC 360 cites Centesimus Annus for `having` against `being` and that citation resolves at render, which is the whole argument for anchoring a span rather than naming a work."
+		},
 		"pecunia-collocanda": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"was": "C",
-			"anchors": "ccc 2413,2409,2431-2432 | csdc 358-360,368-369 | documents caritas-in-veritate,oeconomicae-et-pecuniariae-quaestiones",
-			"note": "Was C: the topic is titled _Investing and speculation_ and the paragraph naming speculation, 2409, was on the tax page. 2409 and 2413 (games of chance) added 2026-09-10."
+			"reviewed": "2026-09-11",
+			"was": "B",
+			"anchors": "ccc 2409,2413,2431-2432 | csdc 368-369 | documents caritas-in-veritate,oeconomicae-et-pecuniariae-quaestiones",
+			"note": "Graded A on 2026-09-10 after 2409 and 2413 arrived; re-read on 2026-09-11 and the A was about three fifths of the page — CSDC 358–360 is the consumer's chapter and was answering nobody's question here. It moved to `pecunia-expendenda` and 2409 now opens, being the paragraph that names speculation and usury and so the one the title promises. 2413 (games of chance) is kept rather than made a topic: measured, it is the ONLY paragraph on gambling in the Catechism and the Compendium of the Social Doctrine has nothing at all, so a page of its own would be one paragraph long."
 		},
 		"tributum": {
 			"grade": "A",

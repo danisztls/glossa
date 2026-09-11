@@ -2369,10 +2369,26 @@ export const en: Dictionary = {
 	'quaestiones.merces-iusta.question': 'What is a wage supposed to cover?',
 	'quaestiones.merces-iusta.keywords':
 		'minimum wage, living wage, union, salary, employer, overtime, unpaid, exploitation',
+	// THE HALF OF `pecunia-collocanda` THAT HAD NO TITLE. That topic anchored
+	// CSDC 358-360 — the Compendium's own heading over them is `Savings and
+	// consumer goods` — under a question about making money with money, so
+	// every word a reader types for the spending half missed: `consume`,
+	// `consuming`, `saving` all matched nothing on the whole site.
+	'quaestiones.pecunia-expendenda.title': 'Spending and saving',
+	'quaestiones.pecunia-expendenda.question': 'How much is too much to spend on myself?',
+	// No `debt` and no `credit card`, deliberately: the page has nothing
+	// anchored that answers somebody who owes money and cannot pay, and a
+	// keyword promising what no passage below delivers is the C this file's
+	// review pass exists to catch. The debt topic stays blocked on
+	// `vix-pervenit` (docs/research/topics.md).
+	'quaestiones.pecunia-expendenda.keywords':
+		'consumerism, consuming, savings, shopping, budget, luxury, materialism, living beyond my means, impulse buying',
 	'quaestiones.pecunia-collocanda.title': 'Investing and speculation',
 	'quaestiones.pecunia-collocanda.question': 'Is there a wrong way to make money with money?',
+	// `loans` and `lending` for CCC 2409's own clause, `deliberate retention
+	// of goods lent`, which is the sentence usury sits in.
 	'quaestiones.pecunia-collocanda.keywords':
-		'stocks, usury, interest, crypto, gambling, betting, ethical funds, lottery',
+		'stocks, usury, interest, crypto, gambling, betting, ethical funds, lottery, loans, lending',
 	'quaestiones.tributum.title': 'Tax',
 	'quaestiones.tributum.question': 'Is cheating on it a sin?',
 	'quaestiones.tributum.keywords':
@@ -2408,7 +2424,7 @@ export const en: Dictionary = {
 	'quaestiones.carceres.title': 'Prison and torture',
 	'quaestiones.carceres.question': 'What may be done to someone who has done wrong?',
 	'quaestiones.carceres.keywords':
-		'prisoners, punishment, rehabilitation, life sentence, criminals, visiting, solitary confinement',
+		'prisoners, punishment, rehabilitation, life sentence, criminals, crime, visiting, solitary confinement',
 	'quaestiones.defensio-sui.title': 'Self-defence',
 	'quaestiones.defensio-sui.question': 'May a person defend themselves, and how far?',
 	'quaestiones.defensio-sui.keywords':

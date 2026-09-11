@@ -427,6 +427,34 @@ all three. Padding either would mean reaching for something general and calling
 it an answer. The measure is whether the question is answered, never how much of
 the page is filled.
 
+**A WORK'S OWN TABLE OF CONTENTS IS AN ORACLE FOR WHETHER A TOPIC IS ONE
+TOPIC**, and it is cheaper than any judgement about scope. `pecunia-collocanda`
+was graded A on 2026-09-10 and the A was about three fifths of its page: its five
+Compendium sections sit under two of the Compendium's own headings — 358–360
+under _Savings and consumer goods_, 368–369 under _The international financial
+system_ — and the topic's question, "Is there a wrong way to make money with
+money?", is true of the second and answers nobody who arrived at the first. The
+split was the source's, already drawn, and reading `structure.json` for the
+headings over a span is one command.
+
+**What made it visible from the outside was a list of dead words.** The topic
+was reported by somebody offering `consume`, `consuming` and `saving` as terms to
+add — all three dead site-wide, and all three the vocabulary of CSDC 358–360's
+own sentences ("whether to put their money into consumer goods or savings",
+"purchasing power", "the phenomenon of consumerism"). **When a keyword a page
+plainly ought to answer cannot be written, check whether the page has two
+subjects before writing the keyword**: the words were not missing, the title was.
+A keyword pass cannot see this, because it asks whether a term belongs on a topic
+and never whether the topic is one.
+
+**And a dead query is not an empty result.** Measured on 2026-09-11, `loan`
+returned Ecology, AI, Horoscopes and Sloth, and `lend` six more — the loose tier
+in `highlight.ts` firing because the literal tier found nothing, at `MIN_LOOSE`
+of four characters where one edit reaches most short words, which that file's own
+docblock predicts. So the cost of a missing keyword is not that the reader is
+told nothing; it is that they are told something confident and wrong. Adding the
+term is what stops the guess.
+
 ## Open: the corpus has dates and the reader is not told them
 
 **A magisterial text is not timeless, and this site currently renders it as

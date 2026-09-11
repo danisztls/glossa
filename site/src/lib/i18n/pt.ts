@@ -1289,11 +1289,17 @@ export const pt: Dictionary = {
 	'quaestiones.merces-iusta.question': 'O que um salário tem de cobrir?',
 	'quaestiones.merces-iusta.keywords':
 		'salário mínimo, salário digno, sindicato, remuneração, patrão, hora extra, atraso de pagamento, exploração',
+	// A metade de `pecunia-collocanda` que não tinha título. Ver o comentário
+	// correspondente em `en.ts`.
+	'quaestiones.pecunia-expendenda.title': 'Gastar e poupar',
+	'quaestiones.pecunia-expendenda.question': 'Quanto é demais para gastar comigo mesmo?',
+	'quaestiones.pecunia-expendenda.keywords':
+		'consumismo, consumir, poupança, compras, orçamento, luxo, materialismo, viver acima das possibilidades, comprar por impulso',
 	'quaestiones.pecunia-collocanda.title': 'Investimento e especulação',
 	'quaestiones.pecunia-collocanda.question':
 		'Existe um jeito errado de ganhar dinheiro com dinheiro?',
 	'quaestiones.pecunia-collocanda.keywords':
-		'investir, ações, usura, juros, cripto, jogo, apostas, fundos éticos, loteria',
+		'investir, ações, usura, juros, cripto, jogo, apostas, fundos éticos, loteria, empréstimo, emprestar',
 	'quaestiones.tributum.title': 'Os impostos',
 	'quaestiones.tributum.question': 'Sonegar é pecado?',
 	'quaestiones.tributum.keywords':
@@ -1331,7 +1337,7 @@ export const pt: Dictionary = {
 	'quaestiones.carceres.title': 'A prisão e a tortura',
 	'quaestiones.carceres.question': 'O que se pode fazer com quem fez o mal?',
 	'quaestiones.carceres.keywords':
-		'presos, punição, ressocialização, prisão perpétua, criminosos, visitar, solitária',
+		'presos, punição, ressocialização, prisão perpétua, criminosos, crime, visitar, solitária',
 	'quaestiones.defensio-sui.title': 'A legítima defesa',
 	'quaestiones.defensio-sui.question': 'Uma pessoa pode se defender, e até onde?',
 	'quaestiones.defensio-sui.keywords':
