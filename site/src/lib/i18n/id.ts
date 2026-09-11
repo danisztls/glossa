@@ -238,7 +238,6 @@ export const id: Dictionary = {
 	'bible.landing.title': 'Alkitab',
 	'bible.landing.tagline': 'Bacalah seluruh Alkitab, kitab demi kitab, bab demi bab.',
 	'bible.landing.random': 'Saya lagi beruntung',
-	'bible.landing.books': 'Kitab',
 	'bible.chapterUnavailable': 'Tidak tersedia dalam edisi ini',
 	'bible.introduction': 'Pengantar',
 	'bible.introUnavailable': 'Belum ada pengantar dalam bahasa ini',

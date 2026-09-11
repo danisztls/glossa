@@ -240,7 +240,6 @@ export const hi: Dictionary = {
 	'bible.landing.title': 'बाइबिल',
 	'bible.landing.tagline': 'पूरी बाइबिल पढ़ें, पुस्तक दर पुस्तक, अध्याय दर अध्याय।',
 	'bible.landing.random': 'भाग्य आज़माएँ',
-	'bible.landing.books': 'ग्रंथ',
 	'bible.chapterUnavailable': 'इस संस्करण में उपलब्ध नहीं',
 	'bible.introduction': 'प्रस्तावना',
 	'bible.introUnavailable': 'इस भाषा में अभी तक कोई प्रस्तावना नहीं',

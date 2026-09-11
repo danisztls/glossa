@@ -230,7 +230,6 @@ export const nl: Dictionary = {
 	'bible.landing.title': 'De Bijbel',
 	'bible.landing.tagline': 'Lees de hele Bijbel, boek voor boek, hoofdstuk voor hoofdstuk.',
 	'bible.landing.random': 'Verras me',
-	'bible.landing.books': 'Boeken',
 	'bible.chapterUnavailable': 'Niet beschikbaar in deze uitgave',
 	'bible.introduction': 'Inleiding',
 	'bible.introUnavailable': 'Nog geen inleiding in deze taal',

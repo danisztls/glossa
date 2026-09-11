@@ -238,7 +238,6 @@ export const tl: Dictionary = {
 	'bible.landing.title': 'Ang Bibliya',
 	'bible.landing.tagline': 'Basahin ang buong Bibliya, aklat bawat aklat, kabanata bawat kabanata.',
 	'bible.landing.random': 'Susubok ng Suwerte',
-	'bible.landing.books': 'Mga Aklat',
 	'bible.chapterUnavailable': 'Wala sa edisyong ito',
 	'bible.introduction': 'Panimula',
 	'bible.introUnavailable': 'Wala pang panimula sa wikang ito',

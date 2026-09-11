@@ -248,7 +248,6 @@ export const mg: Dictionary = {
 	'bible.landing.title': 'Ny Baiboly',
 	'bible.landing.tagline': 'Vakio manontolo ny Baiboly, boky isaky ny boky, toko isaky ny toko.',
 	'bible.landing.random': 'Vakio kisendrasendra',
-	'bible.landing.books': 'Boky',
 	'bible.chapterUnavailable': 'Tsy misy amin’ity famoahana ity',
 	'bible.introduction': 'Teny mialoha',
 	'bible.introUnavailable': 'Mbola tsy misy fampidirana amin’ity fiteny ity',

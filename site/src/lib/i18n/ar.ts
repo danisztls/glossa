@@ -194,7 +194,6 @@ export const ar: Dictionary = {
 	'bible.landing.title': 'الكتاب المقدّس',
 	'bible.landing.tagline': 'اقرأ الكتاب المقدّس كلّه، سفرًا بعد سفر وفصلًا بعد فصل.',
 	'bible.landing.random': 'ضربة حظ',
-	'bible.landing.books': 'الأسفار',
 	'bible.chapterUnavailable': 'غير متوفّر في هذه الطبعة',
 	'bible.introduction': 'مقدّمة',
 	'bible.introUnavailable': 'لا مقدّمة بهذه اللغة بعد',

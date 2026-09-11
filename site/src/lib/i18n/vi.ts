@@ -234,7 +234,6 @@ export const vi: Dictionary = {
 	'bible.landing.title': 'Kinh Thánh',
 	'bible.landing.tagline': 'Đọc trọn bộ Kinh Thánh, từng cuốn một, từng chương một.',
 	'bible.landing.random': 'Thử vận may',
-	'bible.landing.books': 'Các sách',
 	'bible.chapterUnavailable': 'Không có trong bản in này',
 	'bible.introduction': 'Dẫn nhập',
 	'bible.introUnavailable': 'Chưa có dẫn nhập bằng ngôn ngữ này',

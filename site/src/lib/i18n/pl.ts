@@ -201,7 +201,6 @@ export const pl: Dictionary = {
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Czytaj całą Biblię, księga po księdze, rozdział po rozdziale.',
 	'bible.landing.random': 'Szczęśliwy traf',
-	'bible.landing.books': 'Księgi',
 	'bible.chapterUnavailable': 'Niedostępne w tym wydaniu',
 	'bible.introduction': 'Wprowadzenie',
 	'bible.introUnavailable': 'Brak jeszcze wprowadzenia w tym języku',

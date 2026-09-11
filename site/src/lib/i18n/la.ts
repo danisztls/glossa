@@ -221,7 +221,6 @@ export const la: Dictionary = {
 	'bible.landing.title': 'Sacra Scriptura',
 	'bible.landing.tagline': 'Lege totam Scripturam, librum post librum, caput post caput.',
 	'bible.landing.random': 'Fortunam tento',
-	'bible.landing.books': 'Libri',
 	'bible.chapterUnavailable': 'In hac editione non exstat',
 	'bible.introduction': 'Prooemium',
 	'bible.introUnavailable': 'Nondum est prooemium hac lingua',

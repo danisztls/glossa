@@ -206,7 +206,6 @@ export const ja: Dictionary = {
 	'bible.landing.title': '聖書',
 	'bible.landing.tagline': '聖書全体を、書ごとに、章ごとに読む。',
 	'bible.landing.random': '運試し',
-	'bible.landing.books': '書',
 	'bible.chapterUnavailable': 'この版にはありません',
 	'bible.introduction': '序',
 	'bible.introUnavailable': 'この言語での序はまだありません',

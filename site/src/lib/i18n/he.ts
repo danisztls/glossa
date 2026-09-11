@@ -231,7 +231,6 @@ export const he: Dictionary = {
 	'bible.landing.title': 'כתבי הקודש',
 	'bible.landing.tagline': 'קראו את כתבי הקודש כולם, ספר אחר ספר, פרק אחר פרק.',
 	'bible.landing.random': 'בר מזל',
-	'bible.landing.books': 'ספרים',
 	'bible.chapterUnavailable': 'אינו זמין במהדורה זו',
 	'bible.introduction': 'מבוא',
 	'bible.introUnavailable': 'אין עדיין מבוא בשפה זו',

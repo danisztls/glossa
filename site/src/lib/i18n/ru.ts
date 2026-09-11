@@ -203,7 +203,6 @@ export const ru: Dictionary = {
 	'bible.landing.title': 'Библия',
 	'bible.landing.tagline': 'Читайте всю Библию, книгу за книгой, главу за главой.',
 	'bible.landing.random': 'Мне повезёт',
-	'bible.landing.books': 'Книги',
 	'bible.chapterUnavailable': 'Недоступно в этом издании',
 	'bible.introduction': 'Введение',
 	'bible.introUnavailable': 'Введения на этом языке пока нет',

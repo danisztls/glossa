@@ -232,7 +232,6 @@ export const sq: Dictionary = {
 	'bible.landing.title': 'Bibla',
 	'bible.landing.tagline': 'Lexoni tërë Biblën, libër pas libri, kapitull pas kapitulli.',
 	'bible.landing.random': 'Ndjehem me fat',
-	'bible.landing.books': 'Libra',
 	'bible.chapterUnavailable': 'Nuk gjendet në këtë botim',
 	'bible.introduction': 'Hyrje',
 	'bible.introUnavailable': 'Ende nuk ka hyrje në këtë gjuhë',

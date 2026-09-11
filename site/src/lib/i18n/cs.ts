@@ -227,7 +227,6 @@ export const cs: Dictionary = {
 	'bible.landing.title': 'Bible',
 	'bible.landing.tagline': 'Čtěte celou Bibli, knihu po knize, kapitolu po kapitole.',
 	'bible.landing.random': 'Mám štěstí',
-	'bible.landing.books': 'Knihy',
 	'bible.chapterUnavailable': 'V tomto vydání není k dispozici',
 	'bible.introduction': 'Úvod',
 	'bible.introUnavailable': 'V tomto jazyce zatím není úvod',

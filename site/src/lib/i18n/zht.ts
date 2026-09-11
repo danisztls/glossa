@@ -224,7 +224,6 @@ export const zht: Dictionary = {
 	'bible.landing.title': '聖經',
 	'bible.landing.tagline': '通讀全部聖經，一卷一卷，一章一章。',
 	'bible.landing.random': '好手氣',
-	'bible.landing.books': '書卷',
 	'bible.chapterUnavailable': '此版本未收錄',
 	'bible.introduction': '導言',
 	'bible.introUnavailable': '此語言尚無導言',

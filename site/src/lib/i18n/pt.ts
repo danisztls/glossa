@@ -236,7 +236,6 @@ export const pt: Dictionary = {
 	'bible.landing.tagline':
 		'As Escrituras tal como a Igreja as recebe, em 73 livros nos dois Testamentos.',
 	'bible.landing.random': 'Estou com sorte',
-	'bible.landing.books': 'Livros',
 	'bible.chapterUnavailable': 'Não disponível nesta edição',
 	'bible.introduction': 'Introdução',
 	'bible.introUnavailable': 'Ainda não há introdução nesta língua',

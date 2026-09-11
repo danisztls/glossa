@@ -231,7 +231,6 @@ export const ko: Dictionary = {
 	'bible.landing.title': '성경',
 	'bible.landing.tagline': '성경 전체를 한 권씩, 한 장씩 읽으십시오.',
 	'bible.landing.random': '무작위로 한 장 보기',
-	'bible.landing.books': '책',
 	'bible.chapterUnavailable': '이 판본에는 없습니다',
 	'bible.introduction': '머리말',
 	'bible.introUnavailable': '아직 이 언어의 머리말이 없습니다',

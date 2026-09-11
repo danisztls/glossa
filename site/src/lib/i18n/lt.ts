@@ -227,7 +227,6 @@ export const lt: Dictionary = {
 	'bible.landing.title': 'Šventasis Raštas',
 	'bible.landing.tagline': 'Skaitykite visą Šventąjį Raštą – knyga po knygos, skyrius po skyriaus.',
 	'bible.landing.random': 'Man pasiseks',
-	'bible.landing.books': 'Knygos',
 	'bible.chapterUnavailable': 'Nepasiekiama šiame leidime',
 	'bible.introduction': 'Įvadas',
 	'bible.introUnavailable': 'Šia kalba įvado kol kas nėra',

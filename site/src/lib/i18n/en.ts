@@ -785,7 +785,6 @@ export const en: Dictionary = {
 	'bible.landing.tagline':
 		'The Scriptures as the Church receives them, in 73 books across both Testaments.',
 	'bible.landing.random': "I'm feeling lucky",
-	'bible.landing.books': 'Books',
 	// The canonical book/chapter structure is edition-independent, so the
 	// picker can offer a chapter the reader's current edition lacks.
 	'bible.chapterUnavailable': 'Not available in this edition',

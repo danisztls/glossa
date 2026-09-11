@@ -231,7 +231,6 @@ export const be: Dictionary = {
 	'bible.landing.title': 'Біблія',
 	'bible.landing.tagline': 'Чытайце ўсю Біблію, кнігу за кнігай, раздзел за раздзелам.',
 	'bible.landing.random': 'Мне пашанцуе',
-	'bible.landing.books': 'Кнігі',
 	'bible.chapterUnavailable': 'Няма ў гэтым выданні',
 	'bible.introduction': 'Уводзіны',
 	'bible.introUnavailable': 'Пакуль няма ўводзінаў на гэтай мове',

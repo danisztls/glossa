@@ -203,7 +203,6 @@ export const ro: Dictionary = {
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Citiți întreaga Biblie, carte cu carte, capitol cu capitol.',
 	'bible.landing.random': 'Mă simt norocos',
-	'bible.landing.books': 'Cărți',
 	'bible.chapterUnavailable': 'Indisponibil în această ediție',
 	'bible.introduction': 'Introducere',
 	'bible.introUnavailable': 'Încă nicio introducere în această limbă',

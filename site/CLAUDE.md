@@ -778,36 +778,38 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   69.5rem and the file's 4.21:1 and loses nothing at full width. Below that
   width `cover` crops the ENDS, so a frieze wants a SHORTER band on a phone, not
   a taller one — the opposite of `/bibliotheca`'s call.
-- **A picture in the MIDDLE of a list is a divider, and a divider is short.**
-  `/scriptura`'s hangs on the seam between the Testaments with 27 books still
-  below it, so it is 13rem of a 69.5rem column against a file that would draw
-  itself 32rem tall — where a tailpiece closing a page may take the room
-  `/bibliotheca` gives one. It needs no mobile rule either: at that height the
-  file's own 2.15:1 puts `cover`'s crossover at 27.9rem of column, below which
-  a phone gets MORE picture rather than less.
+- **A picture inside a list divides it, so the picture goes after the list.**
+  `/scriptura`'s hung on the seam between the Testaments for part of a day —
+  the most interesting place to put it and the wrong one, since 73 books are
+  one canon and a band across the middle is a page break the corpus does not
+  have. All four close their page now.
 - **How tall the band is and WHICH band it is are two questions, and centring
   only answers the second while the file's ratio is near the slot's.** Jerome
   is 2.2:1 in a 2.3:1 box, so the window is nearly the whole file and
   `assets/README.md`'s rule — centre the band on the file and let `cover` find
-  it — settles it. `/scriptura` is 2.15:1 in a 5.3:1 slot, where the window is
-  a THIRD of the file and the middle third gives God an arm and no head: one
-  figure with a face and one without reads as a crop that missed.
-  `--art-position` is the page's second knob for that, and **the crop is baked
-  into the file only where the file and the slot want the same window at every
-  width** — baked in here it would also be all a phone could show, where
-  `cover` flips to cropping the ends and a narrow screen wants the panel back.
+  it — settles it. `/scriptura` is 2.15:1 in a 3.9:1 slot, where the middle
+  gives God an arm and no head: one figure with a face and one without reads as
+  a crop that missed. `--art-position` is the page's second knob for that, and
+  **the crop is baked into the file only where the file and the slot want the
+  same window at every width** — baked in here it would also be all a phone
+  could show, where `cover` flips to cropping the ends and a narrow screen
+  wants the panel back.
 - **A caption's "(detail)" is a claim about what the reader SEES, not about the
   file.** That band's file is the Creation panel entire and `detail` is still
   true, because the slot crops it — a picture the page crops is a detail
   however whole the bytes were.
-- **A component offers a slot; it does not learn what goes in it.**
-  `BookChapterPicker` has four call sites and one of them wanted a picture on
-  the Old/New seam, so it takes a `seam` snippet and the other three pass
-  nothing — a reading sidebar does not get a painting because a landing page
-  wanted one. The wrapper around it is the component's own, so the spacing
-  either side stays the component's business, and **an adjacent-sibling rule
-  stops matching the moment something may come between** (`.testament +
-.testament`).
+- **A slot with no caller is machinery.** `BookChapterPicker`'s `seam` snippet
+  outlived the picture it was cut for by an hour and went with it; git has it.
+  While it existed it silently broke `.testament + .testament` — **an
+  adjacent-sibling rule stops matching the moment something may come
+  between**, which is the half of such a slot nothing type-checks.
+- **A heading that names what the page already is earns nothing, and the
+  landmark around it goes too.** `/scriptura` titled its one list "Books" under
+  a title saying Bible; with the heading gone the `<section aria-labelledby>`
+  had nothing to be named by, and a landmark announcing itself as untitled is
+  worse than none — the picker's own testament headings already put that list
+  in the outline. **Delete the key from every dictionary in the same commit**,
+  since nothing flags an orphan.
 - **The viewer's surround BLURS where the browser can and is only dimmed where
   it cannot.** Dark was the means and not the end: what has to stop is the page
   competing, and opacity alone was also erasing the one cue saying the reader

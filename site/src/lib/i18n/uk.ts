@@ -233,7 +233,6 @@ export const uk: Dictionary = {
 	'bible.landing.title': 'Біблія',
 	'bible.landing.tagline': 'Читайте всю Біблію, книгу за книгою, розділ за розділом.',
 	'bible.landing.random': 'Мені пощастить',
-	'bible.landing.books': 'Книги',
 	'bible.chapterUnavailable': 'Немає в цьому виданні',
 	'bible.introduction': 'Вступ',
 	'bible.introUnavailable': 'Поки немає вступу цією мовою',

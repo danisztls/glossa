@@ -1,13 +1,16 @@
 /**
  * The public-domain paintings the landing pages are illustrated with: one
  * each on `/schola`, `/bibliotheca`, `/quaestiones` and `/scriptura`, and no
- * other picture on any of them. A banner over `/schola`'s title; a band under
- * the last of what `/bibliotheca` and `/quaestiones` came to offer; and on
- * `/scriptura` a band in the MIDDLE of the list, on the seam between the
- * Testaments. All three bands open to more of the picture on a press, because
- * an index's reader came for the index. `BANNERS` is now the derivation's name
- * rather than the role, the same way the filenames are — and it was never the
- * position either.
+ * other picture on any of them. A banner over `/schola`'s title; on the other
+ * three a band under the last of what the page came to offer, opening to more
+ * of the picture on a press, because an index's reader came for the index.
+ * `BANNERS` is now the derivation's name rather than the role, the same way
+ * the filenames are.
+ *
+ * `/scriptura`'s hung between the Testaments for part of 2026-09-11 and closes
+ * the page instead. **A picture inside a list divides it**, and 73 books are
+ * one canon: a band across the middle is a page break the corpus does not
+ * have. The seam was the most interesting place to put it and the wrong one.
  *
  * ## A picture earns its page by a sentence, and the sentence is about both
  *
@@ -255,21 +258,14 @@ export interface Artwork {
  * that matters, its whole subject being the span, which is the second reason
  * that picture ships a `whole` and Jerome does not.
  *
- * **AND ON `/scriptura` THE SLOT IS NOT AT THE FOOT OF THE PAGE AT ALL**, so
- * the second question is asked by a third thing: what a picture may take in
- * the MIDDLE of a list. That band hangs on the seam between the Testaments
- * with 46 books above it and 27 below, and everything under it is still the
- * index — so where a tailpiece may take the room a tailpiece takes, this one
- * is 13rem of a 69.5rem column against a file that would draw itself 32rem
- * tall. That is also why its `detail` is true while its file is whole.
- *
- * **AND A SLOT THAT FAR FROM ITS FILE'S RATIO ASKS A THIRD QUESTION, which is
- * WHICH band.** 2.15:1 in a 5.3:1 box shows about a third of the panel, and
- * the middle third has God's arm in it and not his head — one figure with a
- * face and one without. So the page raises the window with `--art-position`
- * and takes the sky instead. Centring is the right default and `cover`'s own
- * behaviour; it stops being an answer once the window is a fraction of the
- * file rather than nearly all of it.
+ * **AND A SLOT FAR FROM ITS FILE'S RATIO ASKS A THIRD QUESTION, which is WHICH
+ * band.** `/scriptura` hangs a 2.15:1 panel in a 3.9:1 tailpiece, so `cover`
+ * shows about half the picture's height — and the middle half has God's arm in
+ * it and not his head, one figure with a face and one without. So the page
+ * raises the window with `--art-position` and takes the sky instead. Centring
+ * is the right default and `cover`'s own behaviour; it stops being an answer
+ * once the window is a fraction of the file rather than nearly all of it. That
+ * is also why this `detail` is true while its file is whole.
  *
  * So these numbers are the intrinsic pixels and nothing more: the `<img>`
  * attributes, the ratio the viewer's stage reserves. They stopped being a

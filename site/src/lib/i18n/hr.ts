@@ -226,7 +226,6 @@ export const hr: Dictionary = {
 	'bible.landing.title': 'Biblija',
 	'bible.landing.tagline': 'Čitajte cijelu Bibliju, knjigu po knjigu, poglavlje po poglavlje.',
 	'bible.landing.random': 'Iznenadi me',
-	'bible.landing.books': 'Knjige',
 	'bible.chapterUnavailable': 'Nije dostupno u ovom izdanju',
 	'bible.introduction': 'Uvod',
 	'bible.introUnavailable': 'Uvod još nije dostupan na ovom jeziku',

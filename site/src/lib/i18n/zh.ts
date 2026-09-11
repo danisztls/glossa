@@ -229,7 +229,6 @@ export const zh: Dictionary = {
 	'bible.landing.title': '圣经',
 	'bible.landing.tagline': '通读全部圣经，一卷一卷，一章一章。',
 	'bible.landing.random': '手气不错',
-	'bible.landing.books': '书卷',
 	'bible.chapterUnavailable': '此版本未收录此内容',
 	'bible.introduction': '导言',
 	'bible.introUnavailable': '尚无此语言的导言',

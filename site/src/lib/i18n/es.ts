@@ -204,7 +204,6 @@ export const es: Dictionary = {
 	'bible.landing.title': 'La Biblia',
 	'bible.landing.tagline': 'Lee la Biblia entera, libro a libro, capítulo a capítulo.',
 	'bible.landing.random': 'Voy a tener suerte',
-	'bible.landing.books': 'Libros',
 	'bible.chapterUnavailable': 'No disponible en esta edición',
 	'bible.introduction': 'Introducción',
 	'bible.introUnavailable': 'Todavía no hay introducción en esta lengua',

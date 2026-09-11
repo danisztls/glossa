@@ -205,7 +205,6 @@ export const de: Dictionary = {
 	'bible.landing.title': 'Die Bibel',
 	'bible.landing.tagline': 'Lesen Sie die ganze Bibel, Buch für Buch, Kapitel für Kapitel.',
 	'bible.landing.random': 'Auf gut Glück',
-	'bible.landing.books': 'Bücher',
 	'bible.chapterUnavailable': 'In dieser Ausgabe nicht verfügbar',
 	'bible.introduction': 'Einleitung',
 	'bible.introUnavailable': 'Noch keine Einleitung in dieser Sprache',

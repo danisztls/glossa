@@ -203,7 +203,6 @@ export const sl: Dictionary = {
 	'bible.landing.tagline':
 		'Preberite celotno Sveto pismo, knjigo za knjigo, poglavje za poglavjem.',
 	'bible.landing.random': 'Počutim se srečnega',
-	'bible.landing.books': 'Knjige',
 	'bible.chapterUnavailable': 'V tej izdaji ni na voljo',
 	'bible.introduction': 'Uvod',
 	'bible.introUnavailable': 'V tem jeziku uvoda še ni',

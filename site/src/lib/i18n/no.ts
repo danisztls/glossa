@@ -208,7 +208,6 @@ export const no: Dictionary = {
 	'bible.landing.title': 'Bibelen',
 	'bible.landing.tagline': 'Les hele Bibelen, bok for bok, kapittel for kapittel.',
 	'bible.landing.random': 'Jeg prøver lykken',
-	'bible.landing.books': 'Bøker',
 	'bible.chapterUnavailable': 'Ikke tilgjengelig i denne utgaven',
 	'bible.introduction': 'Innledning',
 	'bible.introUnavailable': 'Ingen innledning på dette språket ennå',

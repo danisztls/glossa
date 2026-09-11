@@ -212,7 +212,6 @@ export const mt: Dictionary = {
 	'bible.landing.title': 'Il-Bibbja',
 	'bible.landing.tagline': 'Aqra l-Bibbja kollha, ktieb ktieb, kapitlu kapitlu.',
 	'bible.landing.random': 'Silta bl-addoċċ',
-	'bible.landing.books': 'Kotba',
 	'bible.chapterUnavailable': 'Mhux disponibbli f’din l-edizzjoni',
 	'bible.introduction': 'Introduzzjoni',
 	'bible.introUnavailable': 'Għad m’hemm l-ebda introduzzjoni b’din il-lingwa',

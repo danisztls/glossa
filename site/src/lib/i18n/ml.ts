@@ -239,7 +239,6 @@ export const ml: Dictionary = {
 	'bible.landing.title': 'ബൈബിൾ',
 	'bible.landing.tagline': 'ബൈബിൾ മുഴുവൻ വായിക്കുക, പുസ്തകം പുസ്തകമായി, അധ്യായം അധ്യായമായി.',
 	'bible.landing.random': 'എനിക്ക് ഭാഗ്യമുണ്ടെന്നു തോന്നുന്നു',
-	'bible.landing.books': 'പുസ്തകങ്ങൾ',
 	'bible.chapterUnavailable': 'ഈ പതിപ്പിൽ ലഭ്യമല്ല',
 	'bible.introduction': 'ആമുഖം',
 	'bible.introUnavailable': 'ഈ ഭാഷയിൽ ആമുഖം ഇതുവരെ ഇല്ല',

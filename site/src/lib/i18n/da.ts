@@ -227,7 +227,6 @@ export const da: Dictionary = {
 	'bible.landing.title': 'Bibelen',
 	'bible.landing.tagline': 'Læs hele Bibelen, bog for bog, kapitel for kapitel.',
 	'bible.landing.random': 'Jeg føler mig heldig',
-	'bible.landing.books': 'Bøger',
 	'bible.chapterUnavailable': 'Ikke tilgængelig i denne udgave',
 	'bible.introduction': 'Indledning',
 	'bible.introUnavailable': 'Ingen indledning på dette sprog endnu',

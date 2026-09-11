@@ -82,39 +82,41 @@
 	{/if}
 
 	{#if workId}
-		<section aria-labelledby="books-heading">
-			<h2 id="books-heading">{t('bible.landing.books')}</h2>
-			<!--
-				THE PICTURE HANGS ON THE SEAM BETWEEN THE TESTAMENTS, which is
-				the one boundary in this list that is a fact about the canon
-				rather than about the control — so it is the picker that offers
-				the slot, as a snippet, and the three other call sites pass
-				nothing. A reading sidebar does not get a painting because a
-				landing page wanted one.
+		<!-- NO HEADING AND NO SECTION AROUND THE LIST. "Books" named what the
+		     page already is: the title says Bible, the tagline says what is
+		     under it, and then a heading announced the one thing on the page.
+		     With the heading gone the `<section aria-labelledby>` had nothing
+		     to be named by, and a landmark that announces itself as untitled
+		     is worse than no landmark — the picker's own OLD TESTAMENT and NEW
+		     TESTAMENT headings are what put this list in the outline, and they
+		     did that already. -->
+		<BookChapterPicker currentWorkId={workId} collapsible={false} />
 
-				Michelangelo's two hands are Genesis 2:7, the first thing that
-				happens in the first of the books above, and they do not touch:
-				what crosses the gap is a word, which is what a text is. On a
-				seam that reading does double duty, the gap being the one
-				between the Testaments as well. `landing-art.ts` holds the
-				credit and the case.
+		<!--
+			Michelangelo's two hands are Genesis 2:7 — the first thing that
+			happens in the first of the books above — and they do not touch:
+			what crosses the gap is a word, which is what a text is.
+			`landing-art.ts` holds the credit and the case.
 
-				Inside the `workId` guard with the list it divides, so a corpus
-				that failed to sync leaves no picture dividing nothing.
-			-->
-			<BookChapterPicker currentWorkId={workId} collapsible={false}>
-				{#snippet seam()}
-					<div class="seam-art">
-						<ArtFigure
-							art={BANNERS.scriptura}
-							credit={creditOf(BANNERS.scriptura)}
-							label={t('art.about')}
-							expandable
-						/>
-					</div>
-				{/snippet}
-			</BookChapterPicker>
-		</section>
+			IT CLOSES THE PAGE RATHER THAN DIVIDING THE LIST, which is where it
+			hung for part of 2026-09-11. A picture between the Testaments reads
+			on the seam and costs the list its continuity — 73 books are one
+			canon, and a band across the middle of them is a page break the
+			corpus does not have. `/bibliotheca` and `/quaestiones` close on
+			theirs for the same reason, and this page now has the same shape as
+			both.
+
+			Inside the `workId` guard with the list it follows, so a corpus that
+			failed to sync leaves no picture under nothing.
+		-->
+		<div class="tailpiece">
+			<ArtFigure
+				art={BANNERS.scriptura}
+				credit={creditOf(BANNERS.scriptura)}
+				label={t('art.about')}
+				expandable
+			/>
+		</div>
 	{/if}
 </div>
 
@@ -138,30 +140,31 @@
 	}
 
 	/*
-	 * A PICTURE IN THE MIDDLE OF A LIST IS A DIVIDER, AND A DIVIDER IS SHORT.
-	 * The other two bands close their page, so they may take the room a
-	 * tailpiece takes; this one stands between 46 books and 27 and everything
-	 * below it is still the index. At the column's full 69.5rem the file's own
-	 * 2.15:1 would draw it 32rem tall — a wall the reader has to scroll past
-	 * to reach Matthew.
+	 * A TAILPIECE MAY TAKE THE ROOM A TAILPIECE TAKES, which is what moving
+	 * the picture off the seam and down here bought. A divider had to stay
+	 * short — everything under it was still the index — and this has nothing
+	 * under it, so the band goes to 18rem where it was 13. At the column's
+	 * full 69.5rem the file's own 2.15:1 would still draw it 32rem, half a
+	 * page under a list somebody came to read, which is `/bibliotheca`'s
+	 * argument for 300px and holds here at a different number.
 	 *
 	 * WHICH BAND IS A SEPARATE CHOICE FROM HOW TALL, and centring gets it
-	 * wrong here. The slot is 5.3:1 against a 2.15:1 file, so `cover` shows
-	 * about a third of the panel's height — and the middle third is the two
-	 * hands, Adam's head, and God's ARM with his head cut off above the frame.
-	 * A band in which one of the two figures has a face and the other does not
-	 * reads as a crop that missed, whatever it was aiming at.
+	 * wrong at every height this slot allows. `cover` takes the middle, and
+	 * the middle of this panel is the two hands, Adam's head, and God's ARM
+	 * with his head above the frame — one figure with a face and one without,
+	 * which reads as a crop that missed whatever it was aiming at. Measured
+	 * rather than guessed: at 18rem centred, God is still decapitated.
 	 *
-	 * So the window is raised: `23%` of the overflow rather than the middle's
-	 * 50%, which brings God's head and beard down into the frame and takes the
-	 * sky instead. The hands then sit in the lower third, where the eye is
-	 * already going, and both faces are in. 13rem rather than 11 because at 11
-	 * the two heads and the hands do not fit between them at all — the height
-	 * is what the composition needs, and the position is which part of it.
+	 * So the window is raised to `23%` of the overflow rather than the
+	 * middle's 50%, which brings his head and beard down into the frame and
+	 * takes sky instead. What the extra 5rem of height then buys is the rest
+	 * of him — at 13rem the two heads and the hands only just fitted between
+	 * them, and here the mantle and the putti come back with room to spare.
+	 * The height is how much picture; the position is which picture.
 	 *
 	 * NO BREAKPOINT, which the other two both need and this one does not, and
-	 * the raised window costs nothing on a phone either. Below 27.9rem of
-	 * column — 13rem times the file's ratio — the box is narrower than the
+	 * the raised window costs nothing on a phone either. Below 38.7rem of
+	 * column — 18rem times the file's ratio — the box is narrower than the
 	 * scaled file is wide, so `cover` switches to cropping the ENDS: the
 	 * vertical overflow goes to zero, `--art-position`'s Y stops applying, and
 	 * the band becomes the whole height of the panel. A phone gets more
@@ -169,8 +172,9 @@
 	 * its shorter mobile band because its file is 4.21:1 and that crossover
 	 * never arrives.
 	 */
-	.seam-art {
-		--art-height: 13rem;
+	.tailpiece {
+		margin-block-start: 2.5rem;
+		--art-height: 18rem;
 		--art-position: center 23%;
 	}
 </style>

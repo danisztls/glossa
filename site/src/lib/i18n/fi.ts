@@ -231,7 +231,6 @@ export const fi: Dictionary = {
 	'bible.landing.title': 'Raamattu',
 	'bible.landing.tagline': 'Lue koko Raamattu, kirja kirjalta, luku luvulta.',
 	'bible.landing.random': 'Yllätä minut',
-	'bible.landing.books': 'Kirjat',
 	'bible.chapterUnavailable': 'Ei saatavilla tässä laitoksessa',
 	'bible.introduction': 'Johdanto',
 	'bible.introUnavailable': 'Ei vielä johdantoa tällä kielellä',

@@ -227,7 +227,6 @@ export const sk: Dictionary = {
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Čítajte celú Bibliu, knihu po knihe, kapitolu po kapitole.',
 	'bible.landing.random': 'Skúsiť šťastie',
-	'bible.landing.books': 'Knihy',
 	'bible.chapterUnavailable': 'Nedostupné v tomto vydaní',
 	'bible.introduction': 'Úvod',
 	'bible.introUnavailable': 'Úvod v tomto jazyku zatiaľ chýba',

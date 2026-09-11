@@ -235,7 +235,6 @@ export const sw: Dictionary = {
 	'bible.landing.title': 'Biblia',
 	'bible.landing.tagline': 'Soma Biblia nzima, kitabu kwa kitabu, sura kwa sura.',
 	'bible.landing.random': 'Nahisi Bahati',
-	'bible.landing.books': 'Vitabu',
 	'bible.chapterUnavailable': 'Haipo katika toleo hili',
 	'bible.introduction': 'Utangulizi',
 	'bible.introUnavailable': 'Bado hakuna utangulizi kwa lugha hii',

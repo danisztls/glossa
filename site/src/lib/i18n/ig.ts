@@ -237,7 +237,6 @@ export const ig: Dictionary = {
 	'bible.landing.title': 'Baịbụl',
 	'bible.landing.tagline': 'Gụọ Baịbụl niile, akwụkwọ n’akwụkwọ, isi n’isi.',
 	'bible.landing.random': 'Họrọ m ihe ọ bụla',
-	'bible.landing.books': 'Akwụkwọ',
 	'bible.chapterUnavailable': 'Adịghị na mbipụta a',
 	'bible.introduction': 'Mmalite okwu',
 	'bible.introUnavailable': 'Ọ dịghị mmalite okwu n’asụsụ a ka ọ dị ugbu a',

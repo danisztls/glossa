@@ -231,7 +231,6 @@ export const lv: Dictionary = {
 	'bible.landing.title': 'Bībele',
 	'bible.landing.tagline': 'Lasiet visu Bībeli, grāmatu pēc grāmatas, nodaļu pēc nodaļas.',
 	'bible.landing.random': 'Man paveiksies',
-	'bible.landing.books': 'Grāmatas',
 	'bible.chapterUnavailable': 'Nav pieejams šajā izdevumā',
 	'bible.introduction': 'Ievads',
 	'bible.introUnavailable': 'Ievads šajā valodā vēl nav pieejams',
