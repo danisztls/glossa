@@ -301,6 +301,32 @@ the topics explain themselves in our voice is a commentary with quotations in
 it**, which is a different site, and no threshold is defensible in the abstract
 except one low enough that crossing it has to be done on purpose in a diff.
 
+**If the site speaks, it cites**, and the field requires it: a topic with a note
+must also carry `editorial.sources`, rendered as apparatus under a rule at the
+foot of the block. This inverts the rest of the page and is meant to — a quoted
+unit hangs its number in the margin and needs no apparatus, where this hangs
+nothing because it addresses nothing, so it is the one paragraph whose claims a
+reader cannot trace by looking at the line they are on.
+
+**The automatic citation grammar is the wrong instrument here, measured rather
+than assumed.** `linkifyProse` is built for citations inside somebody else's
+text and refuses a bare siglum on purpose (`proseSiglumFalseLead`), so of the
+forms this note would want, only `(CIC, can. N)` resolves — `CCC 1385` and
+`CSDC 567` do not, parenthesised or not. A note written for that grammar would
+link its canons and not its Catechism paragraphs, which is a worse apparatus than
+none because the reader cannot see the rule. It would also have to write `CIC`
+where `/schola` teaches `Can.`, and in Portuguese `CIC` is what a reader expects
+to mean the _Catecismo_. So the sources line names its units in words and leans
+on the fact that every one of them is printed on the same page, a few
+centimetres below, with its number already a link.
+
+**Say what is not there.** The claim carrying the most weight on
+`associationes-massonicae` is that the old penalty was real, and the 1917 Code is
+not in this corpus — but the 1981 declaration quotes the canon and its penalty in
+its opening line, so the note points at that rather than asserting it, and the
+sources line says the Code itself is not reproduced here. **A source line that
+only lists what is present is an advertisement.**
+
 **What may go in it.** Only what can be checked against a text printed below it
 or against a date, and nothing about the people on the other side of the
 question. That second half is not delicacy: the page is read by the families of

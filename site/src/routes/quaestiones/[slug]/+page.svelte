@@ -214,6 +214,14 @@
 			{#each t(`quaestiones.${data.slug}.editorial`).split('\n\n') as paragraph (paragraph)}
 				<p>{paragraph}</p>
 			{/each}
+			<!-- THE ONE PARAGRAPH HERE THAT NOBODY ELSE'S AUTHORITY STANDS
+			     BEHIND IS THE ONE THAT OWES ITS SOURCES, which is the reverse
+			     of how the rest of the page works: a quoted unit carries its
+			     number and needs no apparatus, and this carries no number
+			     because it addresses none. Set as apparatus rather than as
+			     argument — muted, above a rule — so that it reads as the
+			     footing under the note and not as another sentence of it. -->
+			<p class="sources">{t(`quaestiones.${data.slug}.editorial.sources`)}</p>
 		</aside>
 	{/if}
 
@@ -358,6 +366,14 @@
 
 	.editorial p:last-child {
 		margin-bottom: 0;
+	}
+
+	.editorial .sources {
+		margin-top: 1rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--color-border);
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
 	}
 
 	/*

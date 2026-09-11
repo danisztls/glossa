@@ -245,6 +245,13 @@ describe('every topic is reachable and named', () => {
 			const flagged = source.topics[slug].editorial === true;
 			const written = Boolean(dictionary[`quaestiones.${slug}.editorial`]);
 			expect(written, `${slug}: editorial flag ${flagged}, string ${written}`).toBe(flagged);
+			// IF THE SITE SPEAKS, IT CITES. The note is the one paragraph here
+			// resting on nobody else's authority, so the line saying where its
+			// claims can be checked is part of the field rather than a nicety
+			// somebody remembers — required with the note and forbidden
+			// without it.
+			const sourced = Boolean(dictionary[`quaestiones.${slug}.editorial.sources`]);
+			expect(sourced, `${slug}: editorial ${flagged}, sources ${sourced}`).toBe(flagged);
 		}
 		// The heading is the whole disclosure — the site's paragraph sits under
 		// it where every other block sits under the name of the work it quotes

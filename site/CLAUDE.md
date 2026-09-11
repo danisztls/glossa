@@ -999,8 +999,12 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   dislodge — a canon does not print the penalties it declines to impose, so no
   quotation tells a reader that Freemasonry stopped meaning automatic
   excommunication in 1983. The disclosure is the heading, which names this site
-  where every other block names the work it quotes; two tests pair the flag with
-  its string in both directions and a third caps how many topics may carry one.
+  where every other block names the work it quotes, and **a note owes a
+  `editorial.sources` line** — the one paragraph resting on nobody else's
+  authority is the one that cannot be traced from the line it is on. Tests pair
+  the flag with both strings in both directions and cap how many topics carry
+  one. Do not reach for `linkifyProse` there: it refuses a bare siglum, so only
+  `(CIC, can. N)` would resolve and the Catechism paragraphs would not.
 - **A topic's summary is one the Catechism wrote**, never one composed here:
   `brief` names paragraphs flagged `in_brief` (548 of the 2,865, in all nine
   editions), so the short answer above the passages is still quotation with an
