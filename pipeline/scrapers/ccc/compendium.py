@@ -71,12 +71,14 @@ Known source limitations (see manifest notes / final report):
     docs/research/prayers.md for the survey that found this, and
     prayers.py's own docstring for the parsing details. PT alone also
     carries a bonus "Biblical Abbreviations" table that EN lacks
-    entirely; still unparsed, still not prayers. Part B (formulas of
-    Catholic doctrine) is also still unparsed -- simple title/body pairs
-    in both languages, but not prayers, deliberately out of scope for
-    prayers.py too. None of this is part of the 598-question schema;
-    deferred per corpus-schema.md's explicit allowance ("if
-    straightforward, else document and defer").
+    entirely; still unparsed, still not prayers. **Part B (formulas of
+    Catholic doctrine) IS parsed here since 2026-09-10**, into
+    `formulas.json` beside the questions, together with the Decalogue
+    table printed before question 434 -- see "THE APPENDIX'S PART B" below
+    for what they are and why nothing else could supply them. Neither is
+    part of the 598-question schema, which is why neither is in
+    `questions.json`. The four PDF editions' appendices are still
+    unread; `prayers.py` reads their Part A and nothing reads their Part B.
   - Sacred-art images and their commentary: out of scope per project spec,
     not investigated.
   - A single decorative epigraph (a set-off quotation attributed to Saint
@@ -525,6 +527,11 @@ class ScrapeState:
         self.gaps: list[tuple[int, int]] = []
         self.dropped_orphans: list[str] = []
         self.anomalies: list[str] = []
+        #: The appendix's Part B and the Decalogue table, both outside the
+        #: 598-question schema -- see "THE APPENDIX'S PART B" below. Empty for
+        #: the four PDF editions, which this pass does not read.
+        self.formulas: list[dict] = []
+        self.decalogue: dict | None = None
 
     def push_heading(self, kind: str, n: int | None, title: str) -> None:
         self.finalize_current()
@@ -1459,22 +1466,45 @@ MATCH_LABEL = {
 _REFS_LIKE_RE = re.compile(r"^[0-9,;:.\-\u2011\u2013\u2014\s]*$")
 _SV_REFS_RE = re.compile(r"^\(\s*KKK\s*([0-9,;:.\-\u2011\u2013\u2014\s]*)\)$")
 
+# `formulas` bounds Part B of the appendix, which begins where `end` cuts the
+# body off and which nothing read until 2026-09-10. Same shape as `start`/`end`
+# and found the same way, by a plain `find` in the decoded page, with the
+# START taken as the LAST occurrence for the reason the body's `at_block`
+# markers are: six editions print their appendix headings in the table of
+# contents as well.
+#
+# NINE OF THE TEN OPEN ON "B)" and Spanish opens on nothing — it prints the
+# section as `FÓRMULAS DE DOCTRINA CATÓLICA` with no letter, so a marker that
+# looked for one found the formulas of no edition but a heading in five.
+#
+# The END is what the edition prints AFTER the last formula and it is one of
+# three things: a biblical-abbreviations table (es, fr, hu, it, pt), the
+# copyright line (de, sl, sv), or the imprimatur (ro). English prints nothing
+# after it at all, which is what `None` means. The region is then cut back to
+# the last `<` before the marker, so a marker matched inside an attribute
+# (`<a name="ABREVIATURAS ...`) cannot leave half a tag standing as text.
 LANG_CONFIG = {
     "en": {
         "start": 'name="INTRODUCTION"',
         "end": 'name="APPENDIX"',
+        "formulas": {"start": 'name="B) FORMULAS OF CATHOLIC DOCTRINE"', "end": None},
         "title": "Compendium of the Catechism of the Catholic Church",
         "short_title": "Compendium",
     },
     "pt": {
         "start": 'name="INTRODU&Ccedil;&Atilde;O"',
         "end": 'name="AP&Ecirc;NDICE"',
+        "formulas": {
+            "start": 'name="B) F&Oacute;RMULAS DE DOUTRINA CAT&Oacute;LICA"',
+            "end": "ABREVIATURAS B&Iacute;BLICAS",
+        },
         "title": "Compêndio do Catecismo da Igreja Católica",
         "short_title": "Compêndio",
     },
     "de": {
         "start": "ERSTER TEIL",
         "end": "ANHANG",
+        "formulas": {"start": "B) FORMELN", "end": "Copyright 2005"},
         "at_block": True,
         "notes": (
             (
@@ -1488,6 +1518,10 @@ LANG_CONFIG = {
     "es": {
         "start": 'name="INTRODUCCI&Oacute;N"',
         "end": 'name="AP&Eacute;NDICE"',
+        "formulas": {
+            "start": 'name="F&Oacute;RMULAS  DE DOCTRINA CAT&Oacute;LICA"',
+            "end": 'name="ABREVIATURAS',
+        },
         "notes": (
             (
                 "Four questions are printed without a space after the number (Q523, Q530) "
@@ -1501,6 +1535,10 @@ LANG_CONFIG = {
     "fr": {
         "start": 'name="INTRODUCTION"',
         "end": 'name="APPENDICE"',
+        "formulas": {
+            "start": 'name="B) FORMULES DE LA DOCTRINE CATHOLIQUE"',
+            "end": "ABR&Eacute;VIATIONS BIBLIQUES",
+        },
         "notes": ("Chapters are numbered in Roman numerals, uniquely among the ten.",),
         "title": "Compendium du Catéchisme de l'Église catholique",
         "short_title": "Compendium",
@@ -1508,12 +1546,20 @@ LANG_CONFIG = {
     "hu": {
         "start": 'name="BEVEZET&Eacute;S"',
         "end": 'name="F&Uuml;GGEL&Eacute;K"',
+        "formulas": {
+            "start": "B) A KATOLIKUS TAN&Iacute;T&Aacute;S FORMUL&Aacute;I",
+            "end": "A Szent&iacute;r&aacute;s k&ouml;nyveinek",
+        },
         "title": "A Katolikus Egyház Katekizmusának Kompendiuma",
         "short_title": "Kompendium",
     },
     "it": {
         "start": 'name="INTRODUZIONE"',
         "end": 'name="APPENDICE"',
+        "formulas": {
+            "start": 'name="B) FORMULE DI DOTTRINA CATTOLICA"',
+            "end": "ABBREVIAZIONI BIBLICHE",
+        },
         "notes": (
             (
                 "Seven questions print the number, the reference line and the whole answer "
@@ -1531,6 +1577,7 @@ LANG_CONFIG = {
     "ro": {
         "start": "Partea &icirc;nt&acirc;i",
         "end": "Apendice",
+        "formulas": {"start": "B) Formule de ", "end": "Concordat cum originali"},
         "at_block": True,
         "refs_after": True,
         "italic_quotes": True,
@@ -1553,6 +1600,7 @@ LANG_CONFIG = {
     "sl": {
         "start": "PRVI DEL",
         "end": "DODATEK",
+        "formulas": {"start": "B) OBRAZCI", "end": "Copyright 2005"},
         "at_block": True,
         "notes": (
             (
@@ -1568,6 +1616,7 @@ LANG_CONFIG = {
     "sv": {
         "start": "F&Ouml;RSTA DELEN",
         "end": "APPENDIX",
+        "formulas": {"start": "B) KATOLSKA", "end": "Copyright 2005"},
         "at_block": True,
         "refs_after": True,
         "refs_shape": _SV_REFS_RE,
@@ -1674,6 +1723,9 @@ for _lang, _cfg in LANG_CONFIG.items():
     _cfg["work_id"] = f"compendium.{_lang}"
     _cfg["match_label"] = MATCH_LABEL[_lang]
     _cfg.setdefault("pdf", None)
+    # The four PDF editions print the same appendix and this pass does not
+    # read it -- see the manifest note written for them.
+    _cfg.setdefault("formulas", None)
     _cfg.setdefault("at_block", False)
     _cfg.setdefault("refs_after", False)
     _cfg.setdefault("italic_quotes", False)
@@ -1786,6 +1838,340 @@ def region(html_text: str, cfg: dict, lang: str) -> str:
     return html_text[start:end]
 
 
+# --------------------------------------------------------------------------
+# THE APPENDIX'S PART B, AND THE DECALOGUE TABLE
+# --------------------------------------------------------------------------
+#
+# Two things this scraper walked past for a year, both outside the
+# 598-question schema and both deferred when the body was first parsed (see
+# "Known source limitations" in the module docstring, which named Part B as
+# "simple title/body pairs ... deliberately out of scope").
+#
+# WHAT THEY ARE. Part B, "Formulas of Catholic Doctrine", is the Holy See's
+# own list of what a Catholic is asked to know by heart -- the two
+# commandments of love, the Golden Rule, the Beatitudes, the theological and
+# cardinal virtues, the gifts and fruits of the Holy Spirit, the precepts of
+# the Church, the two sets of works of mercy, the capital sins and the last
+# things. The Decalogue is printed separately, as a three-column table before
+# question 434: Exodus 20:2-17, Deuteronomy 5:6-21, and the numbered
+# catechetical formula a catechism class actually learns.
+#
+# WHY THEY ARE WORTH PARSING AND WHY NOTHING ELSE COULD SUPPLY THEM. The site
+# wanted the ten commandments, the capital sins and the virtues for a reader
+# who has just arrived, and the alternative was writing two dozen names as
+# interface strings in thirty-seven dictionaries -- our words for the
+# Church's list. These are the Church's own words, already in `raw/`, in ten
+# languages. **The Compendium's own parsed headings were tried first and are
+# not a substitute**: `structure.json` carries a heading per commandment, but
+# only five editions print those ten cleanly -- Swedish loses two to a fused
+# heading and Romanian and Lithuanian do not chapter the section that way at
+# all -- and a derivation that is right in half the corpus is a derivation
+# that has to be checked by hand in all of it.
+#
+# ORDER IS A PROPERTY OF THE EDITION, WHICH IS WHY NOTHING HERE IS KEYED.
+# Every other list in this corpus can be named the same thing in every
+# language; these cannot. The Italian edition prints the precepts of the
+# Church and the corporal works of mercy BEFORE the theological virtues,
+# where the other nine print them after, so a table of twelve keys in print
+# order would silently mislabel six Italian formulas. Each edition is stored
+# as it prints: its own headings, its own order, its own items. The site
+# renders the headings through the same prose linkifier every other surface
+# uses, so "The Beatitudes (Matthew 5:3-12)" becomes a link to Scripture
+# without anybody writing the address down.
+#
+# THE SOURCE'S OWN DEFECTS ARE REPRODUCED, NOT REPAIRED. French numbers its
+# twelve fruits 1-5 then 7-12, so that formula has eleven items under a
+# heading saying twelve; Slovenian prints its four last things as "smrt,
+# odba, pekeln, nebesa", two of them misspelt. Both are what vatican.va
+# serves. `validate` reports a count that disagrees with nothing -- there is
+# no expected-count table to disagree with -- and the manifest notes name
+# them, which is where a reader of the corpus will look.
+
+#: Markup comments, which Word left all over these pages and which carry text
+#: that is not printed: Slovenian's `<!--[if !supportLineBreakNewLine]-->`
+#: sits between a heading and its list and was read as the heading itself.
+_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
+
+#: Any tag, closing or not, with its name -- the scanner below needs to know
+#: which tag it just crossed, not what its attributes were.
+_TAG_RE = re.compile(r"<(/?)([a-zA-Z][\w:.-]*)[^>]*>")
+
+#: Tags that end a printed LINE. `<br/>` is the one that matters and the rest
+#: are structural: the Italian edition prints the whole of Part B as a single
+#: `<p>` broken by `<br/>`, the Slovenian sets five of its twelve formulas as
+#: `<ol><li>`, and the English gives every heading and every list a `<p>` of
+#: its own. One scan over lines reads all three.
+_LINE_TAGS = frozenset(
+    {"br", "p", "li", "tr", "td", "div", "table", "ol", "ul", "h1", "h2", "h3"}
+)
+
+#: An item's number at the head of a line, or inside one: English prints "3.
+#: Remember to keep holy the LORD'S day. 4. Honor your father and your
+#: mother." as one line. Not preceded by a digit or a stop, so a date or a
+#: Scripture reference cannot open an item.
+_ITEM_N_RE = re.compile(r"(?<![\d.])(\d{1,2})\s*\.\s+")
+
+#: A line longer than this is prose, not a heading. The longest heading in
+#: the appendix of any of the ten editions is well under it.
+APPENDIX_HEADING_MAX = 120
+
+#: How much may follow a heading's bold run and still be part of the heading.
+#: Six editions set the Scripture reference outside the `<b>` -- Portuguese
+#: prints `<b>A regra de ouro </b>(<i>Mt</i> 7, 12)` -- so a test for a
+#: wholly bold block finds ten of the twelve and folds the Golden Rule and
+#: the Beatitudes into the formula above them.
+APPENDIX_HEADING_TAIL_MAX = 40
+
+
+@dataclass
+class PrintedLine:
+    """One printed line of the appendix, and how much of it was set bold.
+
+    Boldness is the only signal all ten editions share for a formula's
+    heading, and it is not a property of a BLOCK here the way `is_sub_heading`
+    treats it in the body: Italian's headings are bold runs inside a paragraph
+    that also holds every item under them.
+    """
+
+    text: str
+    bold: str
+    #: Whether only `<br/>`s stand between this line and the one before it —
+    #: that is, whether the source set the two inside one block. It is the
+    #: difference between a heading broken across a line ("Le sette opere /
+    #: di misericordia corporale", one Italian heading) and two headings
+    #: printed one after another ("Section Two", "The Ten Commandments",
+    #: "Exodus 20:2-17", three English ones), which look identical to a rule
+    #: that only asks whether a heading has a body under it yet.
+    continues: bool = False
+    #: Which table cell the line was printed in, counted rather than named.
+    #: The Decalogue is a three-column table and Romanian sets each column
+    #: heading as two blocks in one cell -- `<b><i>Exod</i></b><p><b>20,2-17
+    #: </b></p>` -- so `continues` is false between them and they are still
+    #: one heading. Nothing outside a table has a cell of its own.
+    cell: int = 0
+
+    @property
+    def is_heading(self) -> bool:
+        return bool(
+            self.bold
+            and self.text.startswith(self.bold)
+            and len(self.text) <= APPENDIX_HEADING_MAX
+            and len(self.text) - len(self.bold) <= APPENDIX_HEADING_TAIL_MAX
+        )
+
+
+def printed_lines_bold(markup: str) -> list[PrintedLine]:
+    """The appendix's markup as printed lines, each with its bold part.
+
+    A single pass with a bold-depth counter rather than a block walk, because
+    a `<b>` here opens and closes across `<br/>`s -- Italian's "Le sette opere
+    <br/> di misericordia corporale" is one heading on two lines -- and any
+    regex that matched `<b>...</b>` whole would have to decide what to do with
+    the breaks inside it.
+    """
+    markup = _COMMENT_RE.sub(" ", markup)
+    out: list[PrintedLine] = []
+    buf: list[str] = []
+    bold_buf: list[str] = []
+    depth = 0
+    pos = 0
+    # Whether a block boundary has been crossed since the last line that had
+    # any text on it. An empty line between two real ones carries the answer
+    # forward rather than resetting it: `</b><br/></p>` is a block boundary
+    # with a soft break inside it.
+    crossed_block = False
+    cell = 0
+
+    def flush(hard: bool) -> None:
+        nonlocal crossed_block
+        text = collapse(ihtml.unescape("".join(buf)))
+        bold = collapse(ihtml.unescape("".join(bold_buf)))
+        buf.clear()
+        bold_buf.clear()
+        if text:
+            out.append(PrintedLine(text, bold, not crossed_block, cell))
+            crossed_block = hard
+        else:
+            crossed_block = crossed_block or hard
+
+    for m in _TAG_RE.finditer(markup):
+        chunk = markup[pos : m.start()]
+        pos = m.end()
+        buf.append(chunk)
+        if depth:
+            bold_buf.append(chunk)
+        closing, name = m.group(1), m.group(2).lower()
+        if name == "b":
+            depth = max(0, depth - 1) if closing else depth + 1
+        elif name in _LINE_TAGS:
+            flush(name != "br")
+            if name in ("td", "tr", "table"):
+                cell += 1
+    buf.append(markup[pos:])
+    flush(True)
+    return out
+
+
+def collapse(text: str) -> str:
+    """Printed text with its whitespace folded, as the block walk stores it."""
+    return re.sub(r"\s+", " ", text.replace("\xa0", " ")).strip()
+
+
+def group_formulas(
+    lines: list[PrintedLine], keep_empty: bool = False
+) -> list[tuple[str, list[str]]]:
+    """Headings and the lines printed under each, in the source's own order.
+
+    Two heading lines are ONE heading only where the source set them in one
+    block: Italian and Romanian break a long one across a `<br/>` inside the
+    same bold run. Two headings in two blocks are two headings even with
+    nothing between them, which is how "Section Two" and "The Ten
+    Commandments" stand over the Decalogue's first column.
+
+    `keep_empty` keeps a heading with nothing printed under it, which Part B
+    never wants and the Decalogue always does: Spanish sets that table
+    ROW-wise, so its three column headings are printed one after another and
+    every cell of all three columns falls under the last of them.
+    """
+    groups: list[tuple[list[str], list[PrintedLine]]] = []
+    cells: list[int] = []
+    for line in lines:
+        if line.is_heading:
+            same_cell = bool(cells) and line.cell == cells[-1] != 0
+            if groups and not groups[-1][1] and (line.continues or same_cell):
+                groups[-1][0].append(line.text)
+                continue
+            groups.append(([line.text], []))
+            cells.append(line.cell)
+        elif groups:
+            groups[-1][1].append(line)
+    return [(" ".join(heads), body) for heads, body in groups if body or keep_empty]
+
+
+def formula_items(body: list[PrintedLine]) -> dict:
+    """One formula's body, as numbered items where the source numbers them.
+
+    THE NUMERAL IS THE ITEM BOUNDARY AND THE LINE BREAK IS NOT. German sets
+    each commandment of love across three lines and Portuguese sets each
+    beatitude across two, so splitting on `<br/>` would give a list of
+    fragments; English packs two numbered items onto one line, so NOT
+    splitting inside a line would lose one of them. Joining the body and
+    cutting it at the numerals answers both.
+
+    An unnumbered formula keeps its lines as printed. That is not a failure
+    to parse: the Beatitudes and the Golden Rule are numbered in no edition,
+    Slovenian numbers nothing it sets as `<ol>` (the numerals are the
+    browser's), and Spanish marks its beatitudes with a dash. A block of
+    lines is what the source prints, and the site sets it as one.
+    """
+    joined = " ".join(line.text for line in body)
+    cuts = list(_ITEM_N_RE.finditer(joined))
+    numbered = [int(m.group(1)) for m in cuts]
+    if numbered and numbered[0] == 1 and numbered == sorted(set(numbered)):
+        items = [
+            collapse(
+                joined[
+                    m.end() : (
+                        cuts[i + 1].start() if i + 1 < len(cuts) else len(joined)
+                    )
+                ]
+            )
+            for i, m in enumerate(cuts)
+        ]
+        return {"numbered": True, "items": [x for x in items if x]}
+    # WHERE THE SOURCE NUMBERS NOTHING, A TABLE CELL IS STILL A BOUNDARY. The
+    # Hungarian Decalogue is ten cells of a three-column table with each
+    # commandment broken across four or five narrow lines and not a numeral in
+    # sight; read as lines it is 21 fragments, read as cells it is the ten
+    # commandments. Nothing outside a table has a cell, so this is inert for
+    # every formula in Part B.
+    by_cell: list[list[str]] = []
+    seen: list[int] = []
+    for line in body:
+        if (line.cell and (not seen or line.cell != seen[-1])) or not by_cell:
+            by_cell.append([])
+            seen.append(line.cell)
+        by_cell[-1].append(line.text)
+    if len(by_cell) > 1:
+        cells = [collapse(" ".join(part)) for part in by_cell]
+        return {"numbered": False, "items": [strip_item_mark(x) for x in cells if x]}
+    return {"numbered": False, "lines": [strip_item_mark(line.text) for line in body]}
+
+
+#: The mark Spanish sets before each beatitude, and Latin-1 editions' dashes.
+#: Stripped because it is a bullet the site draws itself; the em dash is the
+#: one Spanish actually prints (as a doubly encoded `&Acirc;&#x2014;`, which
+#: `strip_double_encoding` has already repaired by the time this runs).
+_ITEM_MARK_RE = re.compile(r"^[–—•-]\s+")
+
+
+def strip_item_mark(line: str) -> str:
+    return _ITEM_MARK_RE.sub("", line).strip()
+
+
+def parse_appendix(html_text: str, cfg: dict, lang: str) -> list[dict]:
+    """Part B of the appendix: every formula this edition prints, in order."""
+    bounds = cfg["formulas"]
+    start = html_text.rfind(bounds["start"])
+    if start == -1:
+        raise RuntimeError(
+            f"{lang}: Part B start marker {bounds['start']!r} not found -- "
+            "source page structure may have changed"
+        )
+    region_text = html_text[start:]
+    if bounds["end"] is not None:
+        end = region_text.find(bounds["end"], len(bounds["start"]))
+        if end == -1:
+            raise RuntimeError(
+                f"{lang}: Part B end marker {bounds['end']!r} not found after "
+                "the start -- source page structure may have changed"
+            )
+        # Back to the last tag opening, so a marker matched INSIDE an
+        # attribute (`<a name="ABREVIATURAS ...`) does not leave the rest of
+        # that tag standing in the region as text.
+        region_text = region_text[: region_text.rfind("<", 0, end)]
+    return [
+        {"heading": heading, **formula_items(body)}
+        for heading, body in group_formulas(printed_lines_bold(region_text))
+    ]
+
+
+def parse_decalogue(body: str) -> dict | None:
+    """The Decalogue table's catechetical column, and the two above it.
+
+    IT IS THE LAST BOLD HEADING BEFORE QUESTION 434, in every edition that
+    prints the table, and that is the whole rule. The table has three column
+    headings -- the two Scripture references and the catechetical formula --
+    and the third is always the last, so no per-edition marker is needed for a
+    table nine editions typeset nine ways.
+
+    Swedish prints no table at all (its section heading is followed straight
+    by question 434) and answers None, which is what an edition that does not
+    print something should answer.
+    """
+    lines = printed_lines_bold(body)
+    opens = [i for i, line in enumerate(lines) if re.match(r"43[34]\s*\.", line.text)]
+    if len(opens) < 2:
+        return None
+    columns = group_formulas(lines[opens[0] + 1 : opens[-1]], keep_empty=True)
+    # THE FORMULA IS THE LAST COLUMN THAT HAS ANYTHING UNDER IT, and the two
+    # headings before it are the Scripture pair. That is the one reading that
+    # holds across both layouts: English prints the table COLUMN-wise, so all
+    # three headings have cells under them, while Spanish prints it ROW-wise,
+    # so the three headings stand together and every cell of all three columns
+    # falls under the third. Counting back two from the formula is also what
+    # drops the section heading above the table, which German prints with its
+    # title unbolded underneath and therefore looks like a fourth column.
+    bodied = [i for i, (_, body_lines) in enumerate(columns) if body_lines]
+    if not bodied or bodied[-1] < 2:
+        # Fewer than three headings, so not this table. Swedish prints none at
+        # all, which is what an edition that prints no table should answer.
+        return None
+    at = bodied[-1]
+    heading, body_lines = columns[at]
+    return {"heading": heading, **formula_items(body_lines)}
+
+
 def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     cfg = LANG_CONFIG[lang]
     fetcher = make_fetcher(RAW_ROOT)
@@ -1800,6 +2186,11 @@ def run_scrape(lang: str) -> tuple[ScrapeState, Fetcher]:
     state.corrections = state_corrections
     state.corrections_applied = applied
     process_body(body, cfg, state)
+    # The two passes outside the 598-question schema, over the SAME corrected
+    # page the body was read from: a correction filed against the appendix has
+    # to reach it, and `apply_corrections` has already run.
+    state.formulas = parse_appendix(html_text, cfg, lang)
+    state.decalogue = parse_decalogue(body)
     return state, fetcher
 
 
@@ -2008,10 +2399,13 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
     cfg = LANG_CONFIG[lang]
     notes = [
         (
-            "The Appendix (common prayers, then formulas of Catholic doctrine) is not "
-            "part of the 598-question schema and is not parsed here; deferred per "
-            "corpus-schema.md's explicit allowance. Raw HTML is cached in full, so "
-            "nothing was lost. Sacred-art images and their commentary are out of scope "
+            "The Appendix is not part of the 598-question schema, so neither half of "
+            "it is in questions.json. Its Part A (common prayers) is parsed by "
+            "pipeline/scrapers/prayers.py into prayer.common; its Part B (formulas of "
+            "Catholic doctrine) and the Decalogue table printed before question 434 "
+            "are parsed here into formulas.json, each formula stored under the heading "
+            "and in the order THIS edition prints it -- the editions do not agree "
+            "about either. Sacred-art images and their commentary are out of scope "
             "per project spec and were not investigated."
         ),
         (
@@ -2061,14 +2455,53 @@ def build_manifest(lang: str, state: ScrapeState, retrieved_at: str) -> dict:
             "in 'GRÂCE' and 'ton ÂME'."
         ),
     ]
+    # WHAT THE APPENDIX PASS ACTUALLY FOUND, derived from the run rather than
+    # written down, because what these editions print differs and a sentence
+    # here would be true of one of them. The counts and the numbered/unnumbered
+    # split are the whole record: there is no expected shape to check against
+    # (see "THE APPENDIX'S PART B"), so the manifest is where a reader of the
+    # corpus learns that the French twelve fruits have eleven items.
+    if cfg["formulas"] is None:
+        notes.append(
+            "This edition's Appendix is not read. Part A (common prayers) is parsed "
+            "from the same PDF by pipeline/scrapers/prayers.py into prayer.common."
+            + lang
+            + "; Part B (formulas of Catholic doctrine) is read in none of the four "
+            "PDF editions, where the ten HTML editions have it in formulas.json."
+        )
+    else:
+        shapes = [
+            f"{len(f.get('items') or f.get('lines') or [])}"
+            f"{'n' if f['numbered'] else 'u'}"
+            for f in state.formulas
+        ]
+        if state.decalogue is None:
+            decalogue = "no Decalogue table is printed in this edition"
+        else:
+            rows = state.decalogue.get("items") or state.decalogue.get("lines") or []
+            kind = "item" if "items" in state.decalogue else "printed line"
+            decalogue = (
+                "the Decalogue table's catechetical column has "
+                f"{len(rows)} {kind}{'' if len(rows) == 1 else 's'}"
+            )
+        notes.append(
+            f"formulas.json holds the Appendix's Part B -- {len(state.formulas)} "
+            "formulas, stored under the headings and in the order THIS edition prints "
+            "them, which the ten editions do not agree about -- and the Decalogue "
+            f"table printed before question 434: {decalogue}. Item counts, with `n` "
+            "for a formula the source numbers and `u` for one it does not: "
+            + ", ".join(shapes)
+            + ". A count that disagrees with the heading above it is the source's "
+            "(French numbers its twelve fruits 1-5 then 7-12), and nothing here "
+            "repairs it."
+        )
     if lang in ("en", "pt"):
         notes.append(
             "The Appendix's Part A is separately parsed, from this same cached raw "
             "HTML, into prayer.common."
             + lang
             + " (pipeline/scrapers/prayers.py) -- see "
-            "that work's own manifest for its scope. Part B (formulas of Catholic "
-            "doctrine) remains unparsed: title/body pairs, but not prayers."
+            "that work's own manifest for its scope."
         )
         notes.append(
             "Four English answers (Q445, Q470, Q483, Q523) print their enumeration as a "
@@ -2123,20 +2556,37 @@ def write_outputs(lang: str, state: ScrapeState, retrieved_at: str) -> None:
     questions = [state.questions[n].to_dict() for n in sorted(state.questions)]
     manifest = build_manifest(lang, state, retrieved_at)
 
+    payloads: dict[str, object] = {
+        "manifest.json": manifest,
+        "structure.json": structure,
+        "questions.json": questions,
+        "corrections-applied.json": corrections_receipt(
+            LANG_CONFIG[lang]["work_id"],
+            state.corrections_applied,
+            state.corrections,
+            manifest["generated_at"],
+        ),
+    }
+    # A FIFTH FILE, AND ONLY WHERE THERE IS ONE. The appendix's Part B and the
+    # Decalogue table are outside the 598-question schema and outside
+    # `questions.json`, which is a list of questions and has nowhere to put a
+    # list of virtues; the four PDF editions have neither, and `remove` is
+    # what keeps a stale file from surviving an edition losing its appendix.
+    formulas = {
+        "work": LANG_CONFIG[lang]["work_id"],
+        "language": lang,
+        "generated_at": manifest["generated_at"],
+        "retrieved_at": retrieved_at,
+        "decalogue": state.decalogue,
+        "formulas": state.formulas,
+    }
+    if state.formulas or state.decalogue:
+        payloads["formulas.json"] = formulas
     write_stamped_json(
         out_dir,
-        {
-            "manifest.json": manifest,
-            "structure.json": structure,
-            "questions.json": questions,
-            "corrections-applied.json": corrections_receipt(
-                LANG_CONFIG[lang]["work_id"],
-                state.corrections_applied,
-                state.corrections,
-                manifest["generated_at"],
-            ),
-        },
+        payloads,
         manifest["generated_at"],
+        remove=() if "formulas.json" in payloads else ("formulas.json",),
     )
 
 
@@ -2169,6 +2619,26 @@ def print_summary(
     print(f"questions with nonempty ccc_refs: {refs_present}/{len(questions)}")
     print(f"quote blocks: {n_quote_blocks} ({n_with_attrib} with attribution)")
     print(f"source gaps recorded: {state.gaps}")
+    # THE APPENDIX'S PART B IS PRINTED AS A TABLE, NOT AS A COUNT, and that is
+    # the whole check there is on it: the editions disagree about the ORDER of
+    # these twelve formulas and about how many items each has, so there is no
+    # expected shape to gate on and the only thing that finds a mis-read
+    # heading is a person reading the headings beside their item counts. The
+    # French twelve fruits really do have eleven items.
+    if state.formulas:
+        print(f"appendix formulas: {len(state.formulas)}")
+        for formula in state.formulas:
+            n = len(formula.get("items") or formula.get("lines") or [])
+            shape = "items" if formula["numbered"] else "lines"
+            print(f"  [{n:>2} {shape}] {formula['heading']}")
+    if state.decalogue:
+        n = len(state.decalogue.get("items") or state.decalogue.get("lines") or [])
+        shape = "items" if "items" in state.decalogue else "lines"
+        print(f"decalogue: {n} {shape} under {state.decalogue['heading']!r}")
+        for item in state.decalogue.get("items") or state.decalogue.get("lines") or []:
+            print(f"  {item[:96]}")
+    else:
+        print("decalogue: this edition prints no table")
     print(
         f"dropped orphan blocks: {len(state.dropped_orphans)} -> {state.dropped_orphans}"
     )

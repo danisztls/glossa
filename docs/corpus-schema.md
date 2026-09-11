@@ -506,8 +506,46 @@ The Compendium of the CCC (2005) is Q&A-format: 598 numbered questions, each pri
 - `ccc_refs` stays a **raw verbatim string** per the store-raw principle; the phase-2 parser expands ranges into links. Empty string if a question prints none.
 - `structure.json` uses the same node schema as the CCC (parts/sections/chapters); the `paragraphs` field is the generic unit-number span described under "Catechism — `structure.json`" above and holds Compendium question numbers here, spanning questions 1–598 by number.
 - **The division scheme is the same in every edition and is asserted against each**: four parts, eight sections, twenty chapters, in that printed order. The scraper checks the labelled headings it found are a _subsequence_ of that scheme — a heading the work does not have, or one out of order, fails the run; a heading an edition does not print is recorded in `manifest.notes`, because there is nothing to invent it from. Nine of the ten carry the whole scheme. That was recorded as three editions _omitting_ headings until 2026-08-25, and two of the three were not omissions at all: the Swedish edition heads Part Two's sections `sektionen` where its other six are `avdelningen`, and the Italian numbers one chapter `CAPITOLO I` where its other nineteen spell the ordinal out. Both were read once the vocabulary widened. The one still short — `es`, Part Four's first section — is printed too, inside the same paragraph as the part's own title, where the walk reads it as the part's trailing lines; that is a gap in this parser, not in the edition, and it is written down here so it is not filed as a source omission a third time. The unnumbered `sub` nodes beneath a chapter do vary widely and legitimately by edition — 42 in Romanian against 109 in Slovenian.
-- The Compendium's Appendix A (common prayers, in Latin parallel) is parsed separately, from the same cached raw HTML, into `prayer.common.{lang}` — see "Prayers" below; **all fourteen editions are read, the four PDF-only ones included** — the appendix is set in two parallel columns on the page there, vernacular left and Latin right, and is read by geometry rather than by markup. **So is the Compendium's own BODY**, which prints the two Creeds at the head of Part One Section Two and the Our Father at the head of Part Four Section Two, vernacular beside Latin, in every edition. Appendix B (doctrinal formulas — virtues, precepts, capital sins, …) remains deferred: not prayers, out of scope for that work too; document its presence in `manifest.notes`.
+- The Compendium's Appendix A (common prayers, in Latin parallel) is parsed separately, from the same cached raw HTML, into `prayer.common.{lang}` — see "Prayers" below; **all fourteen editions are read, the four PDF-only ones included** — the appendix is set in two parallel columns on the page there, vernacular left and Latin right, and is read by geometry rather than by markup. **So is the Compendium's own BODY**, which prints the two Creeds at the head of Part One Section Two and the Our Father at the head of Part Four Section Two, vernacular beside Latin, in every edition. Appendix B is `formulas.json`, below.
 - The print edition's sacred-art images and their commentary are out of scope for v1 (note their existence in `manifest.notes`).
+
+## Compendium — `formulas.json`
+
+The appendix's **Part B, "Formulas of Catholic Doctrine"** — the Church's own list of what a Catholic is asked to know by heart — plus the **Decalogue table** printed before question 434, whose third column is the numbered catechetical formula. Written by `ccc/compendium.py` since 2026-09-10; deferred as "not prayers, out of scope" from the day the Compendium was first parsed until then. Neither is in the 598-question schema, which is why neither is in `questions.json`. Present for the ten HTML editions; the four PDF editions print the same appendix and nothing reads it, which their manifests say.
+
+```jsonc
+{
+  "work": "compendium.en",
+  "language": "en",
+  "decalogue": {
+    // absent where the edition prints no table (sv)
+    "heading": "A Traditional Catechetical Formula", // the edition's own
+    "numbered": true,
+    "items": [
+      "I am the LORD your God: you shall not have strange Gods before me.",
+      "…",
+    ],
+  },
+  "formulas": [
+    {
+      "heading": "The two commandments of love:",
+      "numbered": true,
+      "items": ["…"],
+    },
+    {
+      "heading": "The Beatitudes (Matthew 5:3-12):",
+      "numbered": false,
+      "lines": ["…"],
+    },
+  ],
+}
+```
+
+- **No key, and there cannot be one.** Every other numbered work in this corpus can be addressed the same way in every language; these cannot even be _named_ the same way. The editions disagree about the ORDER — Italian prints the precepts of the Church and the corporal works of mercy before the theological virtues, where the other nine print them after — so a table of twelve keys in print order silently mislabels six Italian formulas. Each edition is stored as it prints: its own headings, its own order, its own items. A consumer renders what it is given and names nothing.
+- **`items` and `lines` are exclusive, and the difference is what the SOURCE marked.** `items` is a list: the edition numbered them, or set each in its own table cell. `lines` is a block of printed lines with no item boundary in the source at all — the Beatitudes and the Golden Rule are numbered in no edition, and deciding where a beatitude ends is exactly the judgement there is nothing to make it with. `numbered` says whether the numerals the parse stripped should be redrawn.
+- **The source's own defects are reproduced.** French numbers its twelve fruits 1–5 then 7–12, so that formula has eleven items under a heading saying twelve; Slovenian prints its four last things as `smrt, odba, pekeln, nebesa`, two of them misspelt. There is no expected-count table to check against, so the run summary and `manifest.notes` print the headings beside their item counts, which is the whole check there is.
+
+## Prayers — `prayers.json`
 
 ## Prayers — `prayers.json`
 

@@ -1111,6 +1111,45 @@ so 0.17 looks like it lands on the first body line. `_in_furniture` reads
 `line.baseline`, which for poppler is the box bottom, so the head clears at ~89
 and the body at ~110.
 
+## The Compendium's Part B: formulas the editions do not agree about
+
+`compendium.py` writes `formulas.json` beside the questions — the appendix's
+formulas of Catholic doctrine and the Decalogue table before question 434, both
+outside the 598-question schema. Ten HTML editions; the four PDFs print the same
+appendix and nothing reads it.
+
+- **Order and heading are properties of the EDITION, so nothing is keyed.**
+  Italian prints the precepts of the Church and the corporal works of mercy
+  before the theological virtues, where the other nine print them after — a
+  table of twelve keys in print order mislabels six Italian formulas.
+  `docs/corpus-schema.md` has the shape.
+- **There is no expected shape to validate against, so the summary prints the
+  table.** French numbers its twelve fruits 1-5 then 7-12 and Slovenian
+  misspells two of its four last things; both are what vatican.va serves. Read
+  the headings beside their item counts, in the run summary and the manifest.
+- **Boldness is the only heading signal these ten share, and it is a property
+  of a LINE rather than of a block** — Italian sets the whole of Part B as one
+  `<p>` with the headings as bold runs inside it, so `is_sub_heading`'s block
+  test finds one heading in the edition. Six editions also set the Scripture
+  reference outside the `<b>`, which is why a wholly-bold test folds the Golden
+  Rule and the Beatitudes into the formula above them.
+- **Two heading lines are one heading only where the source set them in one
+  block or one table cell.** Romanian splits `Formula` / `catehetică` across two
+  `<p>`s inside one `<td>`; English prints `Section Two`, `The Ten
+Commandments` and `Exodus 20:2-17` as three separate blocks. Merging on
+  adjacency alone reads the section heading as part of the table's first column.
+- **The item boundary is the numeral, not the line break, and where the source
+  numbers nothing it is the table cell.** German sets each commandment of love
+  across three lines and English packs two numbered items onto one; Hungarian's
+  Decalogue is ten cells with no numeral in it, which reads as 21 fragments and
+  is ten commandments.
+- **The Compendium's own parsed headings are not a substitute for the Decalogue
+  table**, which is what was tried first: `structure.json` carries a heading per
+  commandment and only five editions print those ten cleanly — Swedish loses two
+  to a fused heading, Romanian and Lithuanian do not chapter the section that
+  way at all. A derivation right in half the corpus has to be checked by hand in
+  all of it.
+
 ## The Compendium of the Social Doctrine
 
 `csdc.{lang}`, ten of the twelve editions vatican.va publishes as HTML.
