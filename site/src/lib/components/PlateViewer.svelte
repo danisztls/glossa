@@ -86,6 +86,13 @@
 	 * picture competes with it. Sepia and light both keep their `--color-bg`
 	 * where it is load-bearing, which is behind the plate itself — see the
 	 * `isolation` note in the CSS.
+	 *
+	 * DARK IS THE MEANS AND NOT THE END, which is why the surround blurs where
+	 * the browser can and is only dimmed where it cannot. What has to stop is
+	 * the page COMPETING; making it vanish was the same declaration doing a
+	 * second job nobody asked for, and it cost the reader the one cue that
+	 * says they are standing over the page they came from. See the
+	 * `::backdrop` rules.
 	 */
 	import { tick } from 'svelte';
 	import Icon from '$lib/components/Icon.svelte';
@@ -456,9 +463,71 @@
 	 * is meant to be read through: the dim is the frame around the picture,
 	 * and at a third of black the page's own text stays legible enough behind
 	 * an engraving to compete with it.
+	 *
+	 * This is the FALLBACK, and it is written first and unconditionally so a
+	 * browser with no `backdrop-filter` gets a finished surround rather than a
+	 * degraded one.
 	 */
 	.plate-viewer::backdrop {
 		background: rgb(0 0 0 / 82%);
+	}
+
+	/*
+	 * AND WHERE THE BROWSER CAN BLUR, IT BLURS AND THE INK COMES BACK UP.
+	 *
+	 * Opacity was doing two jobs: stopping the page COMPETING, and hiding that
+	 * it is there at all. Only the first is wanted — a viewer that erases its
+	 * page reads as a new document, and the reader has to remember what they
+	 * pressed to get out of it. A blur separates the two: text stops being text
+	 * at about 12px of radius whatever it says, so the competition is gone at
+	 * any tint, and the tint is then free to be chosen for depth instead. 62%
+	 * is where the page reads as a lit surface some distance behind the
+	 * picture, which is what the cinema this is modelled on actually looks
+	 * like.
+	 *
+	 * `saturate(70%)` because blurring alone leaves the page's colour at full
+	 * strength smeared into large soft fields, and a dim accent-red wash behind
+	 * an engraving is a colour cast on the plate. Pulling the chroma down turns
+	 * it into light.
+	 *
+	 * IT IS A SUPPORTS QUERY AND NOT A BARE DECLARATION because the two halves
+	 * have to move together: a browser that ignored `backdrop-filter` but took
+	 * the 62% would be left with a surround too pale to frame anything, which
+	 * is worse than the fallback and invisible to whoever wrote it. `@supports`
+	 * is what welds the tint to the blur that justifies it.
+	 *
+	 * The prefix is Safari's, which shipped this behind `-webkit-` and still
+	 * needs it on the versions in the field; the unprefixed line follows so it
+	 * wins wherever both are understood.
+	 *
+	 * COST: this is one full-viewport filter, composited once. The page behind
+	 * a modal does not scroll and does not repaint, and zooming or panning the
+	 * plate moves layers ABOVE the backdrop — so nothing here is per-frame, and
+	 * the reader pays for it only on a picture they asked to open.
+	 */
+	@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+		.plate-viewer::backdrop {
+			background: rgb(0 0 0 / 62%);
+			-webkit-backdrop-filter: blur(18px) saturate(70%);
+			backdrop-filter: blur(18px) saturate(70%);
+		}
+	}
+
+	/*
+	 * A READER WHO ASKED FOR LESS TRANSPARENCY IS ASKING TO BE SPARED EXACTLY
+	 * THIS, so they get the opaque end of the trade rather than a weaker blur:
+	 * the setting is about seeing one layer at a time, and the answer to it is
+	 * a surround that is simply dark. It restates the full tint rather than
+	 * leaning on the cascade, because the `@supports` block above is the more
+	 * specific-looking of the two to anyone reading quickly and source order is
+	 * all that separates them.
+	 */
+	@media (prefers-reduced-transparency: reduce) {
+		.plate-viewer::backdrop {
+			background: rgb(0 0 0 / 94%);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+		}
 	}
 
 	.viewer-bar {

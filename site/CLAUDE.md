@@ -797,6 +797,16 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   either side stays the component's business, and **an adjacent-sibling rule
   stops matching the moment something may come between** (`.testament +
 .testament`).
+- **The viewer's surround BLURS where the browser can and is only dimmed where
+  it cannot.** Dark was the means and not the end: what has to stop is the page
+  competing, and opacity alone was also erasing the one cue saying the reader
+  is standing over the page they came from. Text stops being text at about 12px
+  of radius whatever it says, so the tint drops from 82% to 62% — welded to the
+  blur by `@supports`, since either half alone is worse than the fallback —
+  with `saturate(70%)` so a colour wash does not smear onto the plate, and
+  `prefers-reduced-transparency` getting the opaque end of the trade. One
+  full-viewport filter, composited once: the page under a modal does not
+  repaint, and zoom and pan move layers above the backdrop.
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition
