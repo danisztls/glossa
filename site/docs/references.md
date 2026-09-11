@@ -18,6 +18,38 @@ are Nahum and Acts. Rules that would guess (a bare `cf. 1212`, a commentary
 title naming the book it comments on) stay off until they can be read rather
 than inferred.
 
+**The Catechism does not linkify in its own prose, and neither does the
+Compendium.** Both are deliberate, by two separate mechanisms, and the pair is
+worth knowing before anybody sets out to "fix" it. `linkifyProse` runs three
+scans: a bare paragraph-number list behind a `cf.` trigger, a Scripture locator
+anywhere, and a document siglum with a locus inside a bracket. The first is
+**opt-in** (`RefsOpts.cccParagraphRefs`) because the print edition's self-
+references are absent from both vatican.va mirrors — the corpus holds zero
+in-prose `cf. <number>` mentions across both CCC editions and both Compendiums —
+and default-on produced 104 wrong links, every one in an encyclical where a bare
+number after `cf.` is a Scripture chapter continuing an earlier reference or a
+book number the tables do not know. The third never sees `CCC`, which is in the
+clause grammar `parseRefs` reads and not in the prose siglum table that `CIC`
+joined.
+
+**A grammar gap is only worth closing where the corpus has something for it to
+match, and that is a measurement rather than a judgement.** Adding `CCC` to the
+prose sigla is the obvious symmetry with `CIC` and it does not pay: scanned
+across all 383 works for the bracketed siglum-and-locus shape that scan accepts
+(2026-09-11), the whole corpus holds `CIC` 17 times — already linked — `KKK`
+three times and `CCC` twice. Five links, against a change to the one module the
+deploy gates a coverage baseline on. Run the scan before extending the grammar;
+the same question is what `REFERENCE_COVERAGE=verbose` answers from the other
+end, by printing what the grammar recognised nothing in.
+
+**So a sentence this site WRITES cannot be cited by leaning on the scanner.**
+`/quaestiones`' editorial note names its sources in words for that reason
+(`docs/topics.md`): written for the grammar it would link its canons and not its
+Catechism paragraphs, and an apparatus whose rule the reader cannot see is worse
+than none. In Portuguese it would also be a trap — the grammar's `CIC` is the
+_Codex Iuris Canonici_ where a Brazilian reader reads _Catecismo da Igreja
+Católica_, so `(CIC 1385)` would take them to a canon.
+
 **A citation naming several passages is several links, because an address
 holds one span.** `Ps 95:1-2, 6-7, 8-9` parses to the verse set it names and
 nothing was ever wrong about that; what was wrong is that a single link over

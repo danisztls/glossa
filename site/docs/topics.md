@@ -308,17 +308,12 @@ unit hangs its number in the margin and needs no apparatus, where this hangs
 nothing because it addresses nothing, so it is the one paragraph whose claims a
 reader cannot trace by looking at the line they are on.
 
-**The automatic citation grammar is the wrong instrument here, measured rather
-than assumed.** `linkifyProse` is built for citations inside somebody else's
-text and refuses a bare siglum on purpose (`proseSiglumFalseLead`), so of the
-forms this note would want, only `(CIC, can. N)` resolves — `CCC 1385` and
-`CSDC 567` do not, parenthesised or not. A note written for that grammar would
-link its canons and not its Catechism paragraphs, which is a worse apparatus than
-none because the reader cannot see the rule. It would also have to write `CIC`
-where `/schola` teaches `Can.`, and in Portuguese `CIC` is what a reader expects
-to mean the _Catecismo_. So the sources line names its units in words and leans
-on the fact that every one of them is printed on the same page, a few
-centimetres below, with its number already a link.
+**The automatic citation grammar is the wrong instrument for a sentence we
+wrote**, and `docs/references.md` holds why: of the forms this note would want,
+only `(CIC, can. N)` resolves, so it would link its canons and not its Catechism
+paragraphs. The sources line names its units in words instead, and leans on the
+fact that every one of them is printed a few centimetres below with its number
+already a link.
 
 **Say what is not there.** The claim carrying the most weight on
 `associationes-massonicae` is that the old penalty was real, and the 1917 Code is
