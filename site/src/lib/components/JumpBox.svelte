@@ -1132,7 +1132,13 @@
 	 * is, which is what the old `z-index: 100` was reaching for.
 	 */
 	dialog {
-		width: min(32rem, 90vw);
+		/* Wider than a menu because it is not one: a row here is a work's
+		   title, a section number and a mark, and the legend under it is nine
+		   rows of name-plus-specimen. At 32rem the titles were the half that
+		   gave way. The second term is what holds on a phone, where 92vw is
+		   the same 4vw gutter the 90 was reaching for on a screen this no
+		   longer has to fit. */
+		width: min(38rem, 92vw);
 		margin: 12vh auto auto;
 		/* The panel may reach to within a hair of the fold, and on a tall
 		   viewport that is most of the screen. Before this it could not: the
@@ -1543,7 +1549,20 @@
 		gap: 0.75rem;
 	}
 
+	/* ONE LINE, ELLIPSIZED — `.detail`'s rule, which the label needed more
+	   than the detail did: a document's own title is longer than this panel
+	   in every language, and a label that wraps takes the badge beside it
+	   down with it and leaves rows of three different heights under a cursor
+	   that moves by row.
+
+	   `min-inline-size: 0` is the half that does the work. A flex item will
+	   not shrink below its min-content width without it, so `overflow`
+	   clipped nothing and the label pushed the badge off the row instead. */
 	.label {
+		min-inline-size: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		font-size: 0.98rem;
 	}
 
