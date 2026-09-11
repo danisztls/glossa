@@ -1420,6 +1420,9 @@
 	.book h4 {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
+		/* Below a heading's bold: the card is one line of name over one line of
+		   description, and at 1.05rem the weight was doing the separating twice. */
+		font-weight: 600;
 		margin: 0 0 0.2rem;
 	}
 
