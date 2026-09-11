@@ -173,6 +173,24 @@
 	 * No row declares it: a work's mark is `WORK_ICONS[type]` and a place's is
 	 * `PLACE_ICONS[href]` (`$lib/work-icons.ts`), this page having been one of
 	 * the three tables that each chose the same glyphs separately.
+	 *
+	 * ## THE ORDER IS THE TWO COLUMNS AND NOT THE LIST (2026-09-11, by direction)
+	 *
+	 * Above 80rem the grid is two tracks filled row by row, so what a reader
+	 * sees is pairs: the Scriptures beside the Magisterium — the two the rest
+	 * of the shelf is read out of — and under each of them the volume that
+	 * gathers it, the Catechism under the first and the Social Doctrine under
+	 * the second. Read as one column on a phone the sequence is still source
+	 * before synthesis, which is what it was before.
+	 *
+	 * THE CATECHISM AND ITS COMPENDIUM ARE ONE ROW, which is the call
+	 * `shelves.ts` already made for the catalogue card and for its reason:
+	 * `/catechismus` indexes both, the Compendium having no index of its own,
+	 * so two rows were two names for one door. `ccc.landing.pairTitle` is the
+	 * name that card uses and is written in every language already, and the
+	 * row's sentence is the two it replaces with the Catechism's second
+	 * clause dropped — by direction, that clause being about what the book is
+	 * not.
 	 */
 	const WORKS = [
 		{
@@ -182,22 +200,16 @@
 			type: 'bible'
 		},
 		{
-			key: 'catechism',
-			titleKey: 'ccc.landing.title',
-			href: '/catechismus',
-			type: 'catechism'
-		},
-		{
-			key: 'compendium',
-			titleKey: 'compendium.landing.title',
-			href: '/catechismus',
-			type: 'compendium'
-		},
-		{
 			key: 'magisterium',
 			titleKey: 'nav.magisterium',
 			href: '/documenta',
 			type: 'document'
+		},
+		{
+			key: 'catechism',
+			titleKey: 'ccc.landing.pairTitle',
+			href: '/catechismus',
+			type: 'catechism'
 		},
 		{
 			key: 'social',

@@ -103,9 +103,7 @@ export const mt: Dictionary = {
 	'schola.what.scripture':
 		'L-Iskrittura kif tirċeviha l-Knisja, fiż-żewġ Testmenti. Kull ħaġa oħra hawn tinqara fid-dawl tagħha.',
 	'schola.what.catechism':
-		'Sinteżi ta’ dak li temmen il-Knisja Kattolika, f’volum wieħed. Mhuwiex hu stess sors: jiġbor l-Iskrittura, il-Padri, il-liturġija u t-tagħlim tal-Knisja, u kull paragrafu jgħid minn fejn ġej dak li jgħid.',
-	'schola.what.compendium':
-		'L-istess tagħlim imqiegħed bħala mistoqsijiet u tweġibiet, f’madwar wieħed minn kull għaxra fit-tul.',
+		'Sinteżi ta’ dak li temmen il-Knisja Kattolika, f’volum wieħed. L-istess tagħlim imqiegħed bħala mistoqsijiet u tweġibiet, f’madwar wieħed minn kull għaxra fit-tul.',
 	'schola.what.magisterium':
 		'Dak li l-papiet u l-konċilji fil-fatt kitbu — enċikliki, kostituzzjonijiet, digrieti, dikjarazzjonijiet — kull wieħed indirizzat lil mument partikolari u lil mistoqsija partikolari. Kull wieħed jingħaraf bl-ewwel kliem tiegħu bil-Latin.',
 	'schola.what.social':

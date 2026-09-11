@@ -128,9 +128,7 @@ export const tl: Dictionary = {
 	'schola.what.scripture':
 		'Ang Kasulatan gaya ng pagtanggap dito ng Simbahan, sa dalawang Tipan. Ang lahat ng iba rito ay binabasa sa liwanag nito.',
 	'schola.what.catechism':
-		'Isang buod ng pinaniniwalaan ng Simbahang Katoliko, sa iisang tomo. Hindi ito mismo ang pinagmulan: tinitipon nito ang Kasulatan, ang mga Ama, ang liturhiya at ang turo ng Simbahan, at sinasabi ng bawat bilang kung saan nagmula ang sinasabi nito.',
-	'schola.what.compendium':
-		'Ang mismong turo na inilahad sa tanong at sagot, mga ikasampung bahagi ng haba.',
+		'Isang buod ng pinaniniwalaan ng Simbahang Katoliko, sa iisang tomo. Ang mismong turo na inilahad sa tanong at sagot, mga ikasampung bahagi ng haba.',
 	'schola.what.magisterium':
 		'Ang aktuwal na isinulat ng mga papa at ng mga konsilyo — mga ensiklika, konstitusyon, dekreto, deklarasyon — bawat isa ay tumutugon sa isang tiyak na sandali at isang tiyak na suliranin. Bawat isa ay kilala sa unang mga salita nito sa Latin.',
 	'schola.what.social':

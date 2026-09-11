@@ -127,9 +127,7 @@ export const sw: Dictionary = {
 	'schola.what.scripture':
 		'Maandiko kama Kanisa linavyoyapokea, katika Maagano yote mawili. Kila kingine hapa husomwa katika nuru yake.',
 	'schola.what.catechism':
-		'Muhtasari wa yale Kanisa Katoliki linayoamini, katika juzuu moja. Lenyewe si chanzo: hukusanya Maandiko, Mababa, liturujia na mafundisho ya Kanisa, na kila kifungu husema yale yaliyosemwa yametoka wapi.',
-	'schola.what.compendium':
-		'Mafundisho yale yale yakiwekwa kwa maswali na majibu, kwa kama sehemu ya kumi ya urefu.',
+		'Muhtasari wa yale Kanisa Katoliki linayoamini, katika juzuu moja. Mafundisho yale yale yakiwekwa kwa maswali na majibu, kwa kama sehemu ya kumi ya urefu.',
 	'schola.what.magisterium':
 		'Yale ambayo mapapa na mitaguso wameandika hasa — waraka, katiba, amri, matamko — kila kimoja kikilenga wakati fulani na swali fulani. Kila kimoja hujulikana kwa maneno yake ya kwanza ya Kilatini.',
 	'schola.what.social':

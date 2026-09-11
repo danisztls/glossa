@@ -95,9 +95,7 @@ export const es: Dictionary = {
 	'schola.what.scripture':
 		'Las Escrituras tal como la Iglesia las recibe, en ambos Testamentos. Todo lo demás que hay aquí se lee a su luz.',
 	'schola.what.catechism':
-		'Un resumen de lo que cree la Iglesia Católica, en un solo volumen. No es él mismo una fuente: reúne la Escritura, los Padres, la liturgia y la enseñanza de la Iglesia, y cada párrafo dice de dónde viene lo que afirma.',
-	'schola.what.compendium':
-		'La misma enseñanza expuesta en preguntas y respuestas, con cerca de una décima parte de la extensión.',
+		'Un resumen de lo que cree la Iglesia Católica, en un solo volumen. La misma enseñanza expuesta en preguntas y respuestas, con cerca de una décima parte de la extensión.',
 	'schola.what.magisterium':
 		'Lo que los papas y los concilios han escrito realmente — encíclicas, constituciones, decretos, declaraciones — cada uno dirigido a un momento y a una cuestión determinados. Cada uno se conoce por sus palabras iniciales en latín.',
 	'schola.what.social':

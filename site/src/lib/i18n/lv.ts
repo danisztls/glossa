@@ -123,9 +123,7 @@ export const lv: Dictionary = {
 	'schola.what.scripture':
 		'Raksti tādi, kādus tos saņem Baznīca, abās Derībās. Viss pārējais šeit tiek lasīts to gaismā.',
 	'schola.what.catechism':
-		'Kopsavilkums tam, ko tic Katoliskā Baznīca, vienā sējumā. Pats tas nav avots: tas savāc Rakstus, tēvus, liturģiju un Baznīcas mācību, un katra rindkopa pasaka, no kurienes nāk tas, ko tā apgalvo.',
-	'schola.what.compendium':
-		'Tā pati mācība, izklāstīta jautājumos un atbildēs, apmēram desmitajā daļā apjoma.',
+		'Kopsavilkums tam, ko tic Katoliskā Baznīca, vienā sējumā. Tā pati mācība, izklāstīta jautājumos un atbildēs, apmēram desmitajā daļā apjoma.',
 	'schola.what.magisterium':
 		'Tas, ko pāvesti un koncili patiešām ir rakstījuši — enciklikas, konstitūcijas, dekrēti, deklarācijas — katrs adresēts noteiktam brīdim un noteiktam jautājumam. Katrs pazīstams pēc saviem pirmajiem latīņu vārdiem.',
 	'schola.what.social':

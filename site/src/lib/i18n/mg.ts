@@ -137,9 +137,7 @@ export const mg: Dictionary = {
 	'schola.what.scripture':
 		'Ny Soratra Masina araka ny andraisan’ny Fiangonana azy, amin’ny Testamenta roa. Ny zavatra rehetra hafa eto dia vakiana amin’ny fahazavany.',
 	'schola.what.catechism':
-		'Famintinana izay inoan’ny Fiangonana Katôlika, ao anaty boky iray. Tsy loharano izy: manangona ny Soratra Masina, ny Aba, ny litorjia sy ny fampianaran’ny Fiangonana, ary milaza ny andalana tsirairay hoe avy aiza izay lazainy.',
-	'schola.what.compendium':
-		'Izany fampianarana izany ihany amin’ny fanontaniana sy valiny, amin’ny ampahafolon’ny halavany eo ho eo.',
+		'Famintinana izay inoan’ny Fiangonana Katôlika, ao anaty boky iray. Izany fampianarana izany ihany amin’ny fanontaniana sy valiny, amin’ny ampahafolon’ny halavany eo ho eo.',
 	'schola.what.magisterium':
 		'Izay nosoratan’ny papa sy ny konsily marina tokoa — taratasy ansiklika, konstitosiona, dekre, fanambarana — samy natao ho amin’ny fotoana iray sy fanontaniana iray voafaritra. Samy fantatra amin’ny teny latina voalohany ao aminy izy ireo.',
 	'schola.what.social':

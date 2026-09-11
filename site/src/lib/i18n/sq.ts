@@ -124,9 +124,7 @@ export const sq: Dictionary = {
 	'schola.what.scripture':
 		'Shkrimet ashtu si i merr Kisha, në të dyja Besëlidhjet. Gjithçka tjetër këtu lexohet në dritën e tyre.',
 	'schola.what.catechism':
-		'Një përmbledhje e asaj që beson Kisha Katolike, në një vëllim të vetëm. Ai vetë nuk është burim: mbledh Shkrimin, Etërit, liturgjinë dhe mësimin e Kishës, dhe çdo numër thotë prej nga vjen ajo që pohon.',
-	'schola.what.compendium':
-		'I njëjti mësim i paraqitur në pyetje dhe përgjigje, në rreth një të dhjetën e gjatësisë.',
+		'Një përmbledhje e asaj që beson Kisha Katolike, në një vëllim të vetëm. I njëjti mësim i paraqitur në pyetje dhe përgjigje, në rreth një të dhjetën e gjatësisë.',
 	'schola.what.magisterium':
 		'Ajo që papët dhe koncilet kanë shkruar në të vërtetë — enciklika, kushtetuta, dekrete, deklarata — secila drejtuar një çasti të caktuar dhe një çështjeje të caktuar. Secila njihet nga fjalët e saj të para në latinisht.',
 	'schola.what.social':

@@ -92,9 +92,7 @@ export const sl: Dictionary = {
 	'schola.what.scripture':
 		'Sveto pismo, kakor ga Cerkev prejema, v obeh zavezah. Vse drugo tu se bere v njegovi luči.',
 	'schola.what.catechism':
-		'Povzetek tega, kar katoliška Cerkev veruje, v enem zvezku. Sam ni vir: zbira Sveto pismo, očete, bogoslužje in nauk Cerkve, in vsak člen pove, od kod je tisto, kar trdi.',
-	'schola.what.compendium':
-		'Isti nauk, podan v vprašanjih in odgovorih, v približno desetini obsega.',
+		'Povzetek tega, kar katoliška Cerkev veruje, v enem zvezku. Isti nauk, podan v vprašanjih in odgovorih, v približno desetini obsega.',
 	'schola.what.magisterium':
 		'Kar so papeži in koncili dejansko napisali — okrožnice, konstitucije, odloki, izjave — vsak naslovljen na določen trenutek in določeno vprašanje. Vsak je znan po svojih začetnih latinskih besedah.',
 	'schola.what.social':

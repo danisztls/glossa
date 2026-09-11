@@ -129,9 +129,7 @@ export const ig: Dictionary = {
 	'schola.what.scripture':
 		"Akwụkwọ Nsọ dị ka Chọọchị si anabata ya, n'Ọgbụgba Ndụ abụọ ahụ. Ihe niile ọzọ dị ebe a ka a na-agụ n'ìhè ha.",
 	'schola.what.catechism':
-		"Nchịkọta nke ihe Chọọchị Katọlik kweere, n'otu mpịakọta. Ya onwe ya abụghị isi mmalite: ọ na-achịkọta Akwụkwọ Nsọ, Nna Ochie, ememe ofufe na ozizi Chọọchị, paragraf ọ bụla na-akọwakwa ebe ihe ọ na-ekwu si bịa.",
-	'schola.what.compendium':
-		"Otu ozizi ahụ e depụtara n'ajụjụ na azịza, n'ihe dị ka otu ụzọ n'ụzọ iri nke ogologo ya.",
+		"Nchịkọta nke ihe Chọọchị Katọlik kweere, n'otu mpịakọta. Otu ozizi ahụ e depụtara n'ajụjụ na azịza, n'ihe dị ka otu ụzọ n'ụzọ iri nke ogologo ya.",
 	'schola.what.magisterium':
 		"Ihe ndị popu na kansụl dere n'ezie — akwụkwọ ozi ndị popu, iwu, ikike, nkwupụta — nke ọ bụla e zigara n'otu oge na otu ajụjụ. A maara nke ọ bụla site n'okwu mmalite ya n'asụsụ Latin.",
 	'schola.what.social':

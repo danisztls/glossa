@@ -91,9 +91,7 @@ export const sv: Dictionary = {
 	'schola.what.scripture':
 		'Skriften så som kyrkan tar emot den, i båda testamentena. Allt annat här läses i dess ljus.',
 	'schola.what.catechism':
-		'En sammanfattning av vad Katolska kyrkan tror, i en enda volym. Den är inte själv en källa: den samlar Skriften, fäderna, liturgin och kyrkans lära, och varje punkt säger varifrån det den påstår kommer.',
-	'schola.what.compendium':
-		'Samma lära framställd i frågor och svar, på ungefär en tiondel av längden.',
+		'En sammanfattning av vad Katolska kyrkan tror, i en enda volym. Samma lära framställd i frågor och svar, på ungefär en tiondel av längden.',
 	'schola.what.magisterium':
 		'Vad påvar och kyrkomöten faktiskt har skrivit — encyklikor, konstitutioner, dekret, deklarationer — vart och ett riktat till ett bestämt ögonblick och en bestämd fråga. Vart och ett är känt efter sina inledande ord på latin.',
 	'schola.what.social':

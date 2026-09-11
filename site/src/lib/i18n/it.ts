@@ -94,9 +94,7 @@ export const it: Dictionary = {
 	'schola.what.scripture':
 		'Le Scritture come la Chiesa le riceve, in entrambi i Testamenti. Tutto il resto qui si legge alla loro luce.',
 	'schola.what.catechism':
-		'Un riassunto di ciò che la Chiesa Cattolica crede, in un solo volume. Non è esso stesso una fonte: raccoglie la Scrittura, i Padri, la liturgia e l’insegnamento della Chiesa, e ogni numero dice da dove viene ciò che afferma.',
-	'schola.what.compendium':
-		'Lo stesso insegnamento esposto in domande e risposte, a circa un decimo della lunghezza.',
+		'Un riassunto di ciò che la Chiesa Cattolica crede, in un solo volume. Lo stesso insegnamento esposto in domande e risposte, a circa un decimo della lunghezza.',
 	'schola.what.magisterium':
 		'Ciò che i papi e i concili hanno effettivamente scritto — encicliche, costituzioni, decreti, dichiarazioni — ciascuno rivolto a un momento e a una questione determinati. Ciascuno è noto per le sue parole iniziali in latino.',
 	'schola.what.social':

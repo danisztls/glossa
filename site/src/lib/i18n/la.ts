@@ -95,9 +95,7 @@ export const la: Dictionary = {
 	'schola.what.scripture':
 		'Scripturae ut eas Ecclesia accipit, in utroque Testamento. Cetera omnia hic in earum lumine leguntur.',
 	'schola.what.catechism':
-		'Summa eorum quae Ecclesia Catholica credit, uno volumine. Non ipse fons est: Scripturam, Patres, liturgiam et Ecclesiae doctrinam colligit, et quisque numerus unde id quod dicit veniat indicat.',
-	'schola.what.compendium':
-		'Eadem doctrina interrogationibus et responsionibus exposita, decima fere parte brevior.',
+		'Summa eorum quae Ecclesia Catholica credit, uno volumine. Eadem doctrina interrogationibus et responsionibus exposita, decima fere parte brevior.',
 	'schola.what.magisterium':
 		'Quae Pontifices et Concilia revera scripserunt — litterae encyclicae, constitutiones, decreta, declarationes — quodque ad certum tempus certamque quaestionem directum. Quodque a primis verbis Latinis nominatur.',
 	'schola.what.social':

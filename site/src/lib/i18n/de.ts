@@ -95,8 +95,7 @@ export const de: Dictionary = {
 	'schola.what.scripture':
 		'Die Schrift, wie die Kirche sie empfängt, in beiden Testamenten. Alles andere hier wird in ihrem Licht gelesen.',
 	'schola.what.catechism':
-		'Eine Zusammenfassung dessen, was die Katholische Kirche glaubt, in einem Band. Er ist selbst keine Quelle: er sammelt die Schrift, die Väter, die Liturgie und die Lehre der Kirche, und jede Nummer sagt, woher stammt, was sie sagt.',
-	'schola.what.compendium': 'Dieselbe Lehre in Fragen und Antworten, etwa ein Zehntel so lang.',
+		'Eine Zusammenfassung dessen, was die Katholische Kirche glaubt, in einem Band. Dieselbe Lehre in Fragen und Antworten, etwa ein Zehntel so lang.',
 	'schola.what.magisterium':
 		'Was Päpste und Konzilien tatsächlich geschrieben haben — Enzykliken, Konstitutionen, Dekrete, Erklärungen — jeweils an einen bestimmten Augenblick und eine bestimmte Frage gerichtet. Jedes wird nach seinen lateinischen Anfangsworten benannt.',
 	'schola.what.social':

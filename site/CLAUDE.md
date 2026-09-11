@@ -591,8 +591,14 @@ Rationale in `site/docs/finding.md`.
   specimen chip of the notation until 2026-09-10; the box's empty panel prints
   that table now, on the legend-against-catalogue rule two bullets above, and a
   row there fills the field where an inert chip on a page could not.
-  `$lib/specimens.ts` keeps its three readers — the home page, the box, its own
-  test — and the `schola.cite.*` keys went out of every dictionary with the row.
+  `$lib/specimens.ts` is the box's and its own test's — and the `schola.cite.*`
+  keys went out of every dictionary with the row.
+- **A work with no index of its own is not a row.** The Catechism and its
+  Compendium are one, `ccc.landing.pairTitle`, because `/catechismus` indexes
+  both and two rows were two names for one door — the call `shelves.ts` had
+  already made for the catalogue card. **Above 80rem the order is read as
+  PAIRS**, the grid being two tracks filled row by row: a source beside a
+  source, and under each the volume that gathers it.
 - **A row listed here is a row the site HAS**, which is what `/quaestiones` and
   the census arriving on the page a year late say: a guide listing what existed
   when it was written is a guide that is quietly wrong. Questions is gated on

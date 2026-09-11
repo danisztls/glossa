@@ -119,9 +119,7 @@ export const cs: Dictionary = {
 	'schola.what.scripture':
 		'Písmo, jak je církev přijímá, v obou Zákonech. Všechno ostatní zde se čte v jeho světle.',
 	'schola.what.catechism':
-		'Shrnutí toho, čemu katolická církev věří, v jednom svazku. Sám není pramenem: shromažďuje Písmo, otce, liturgii a učení církve, a každý odstavec říká, odkud pochází to, co tvrdí.',
-	'schola.what.compendium':
-		'Totéž učení podané v otázkách a odpovědích, asi v desetinovém rozsahu.',
+		'Shrnutí toho, čemu katolická církev věří, v jednom svazku. Totéž učení podané v otázkách a odpovědích, asi v desetinovém rozsahu.',
 	'schola.what.magisterium':
 		'To, co papežové a koncily skutečně napsali — encykliky, konstituce, dekrety, deklarace — každý dokument obrácený k určité chvíli a určité otázce. Každý je znám podle svých úvodních latinských slov.',
 	'schola.what.social':

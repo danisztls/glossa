@@ -129,9 +129,7 @@ export const id: Dictionary = {
 	'schola.what.scripture':
 		'Kitab Suci sebagaimana diterima Gereja, dalam kedua Perjanjian. Segala sesuatu yang lain di sini dibaca dalam terangnya.',
 	'schola.what.catechism':
-		'Ringkasan apa yang diimani Gereja Katolik, dalam satu jilid. Ia sendiri bukan sumber: ia menghimpun Kitab Suci, para Bapa, liturgi dan ajaran Gereja, dan setiap nomor menyebutkan dari mana asal apa yang dikatakannya.',
-	'schola.what.compendium':
-		'Ajaran yang sama disajikan dalam tanya jawab, kira-kira sepersepuluh panjangnya.',
+		'Ringkasan apa yang diimani Gereja Katolik, dalam satu jilid. Ajaran yang sama disajikan dalam tanya jawab, kira-kira sepersepuluh panjangnya.',
 	'schola.what.magisterium':
 		'Apa yang sungguh-sungguh ditulis para paus dan konsili — ensiklik, konstitusi, dekret, deklarasi — masing-masing ditujukan kepada suatu saat tertentu dan suatu persoalan tertentu. Masing-masing dikenal menurut kata-kata pembukanya dalam bahasa Latin.',
 	'schola.what.social':

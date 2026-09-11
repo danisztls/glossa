@@ -121,9 +121,7 @@ export const nl: Dictionary = {
 	'schola.what.scripture':
 		'De Schrift zoals de Kerk haar ontvangt, in beide Testamenten. Al het andere hier wordt in haar licht gelezen.',
 	'schola.what.catechism':
-		'Een samenvatting van wat de Katholieke Kerk gelooft, in één band. Hij is zelf geen bron: hij verzamelt de Schrift, de Vaders, de liturgie en de leer van de Kerk, en elk nummer zegt waar vandaan komt wat het beweert.',
-	'schola.what.compendium':
-		'Dezelfde leer uiteengezet in vragen en antwoorden, op ongeveer een tiende van de lengte.',
+		'Een samenvatting van wat de Katholieke Kerk gelooft, in één band. Dezelfde leer uiteengezet in vragen en antwoorden, op ongeveer een tiende van de lengte.',
 	'schola.what.magisterium':
 		'Wat pausen en concilies werkelijk hebben geschreven — encyclieken, constituties, decreten, verklaringen — elk gericht tot een bepaald ogenblik en een bepaalde vraag. Elk is bekend naar zijn beginwoorden in het Latijn.',
 	'schola.what.social':

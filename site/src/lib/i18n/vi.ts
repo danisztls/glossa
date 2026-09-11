@@ -127,9 +127,7 @@ export const vi: Dictionary = {
 	'schola.what.scripture':
 		'Kinh Thánh như Hội Thánh lãnh nhận, trong cả hai Giao ước. Mọi thứ khác ở đây được đọc dưới ánh sáng của nó.',
 	'schola.what.catechism':
-		'Bản tóm lược điều Hội Thánh Công giáo tin, gói trong một cuốn. Tự nó không phải là nguồn: nó quy tụ Kinh Thánh, các giáo phụ, phụng vụ và giáo huấn của Hội Thánh, và mỗi số đều nói điều mình phát biểu đến từ đâu.',
-	'schola.what.compendium':
-		'Cùng một giáo huấn trình bày theo lối hỏi thưa, dài chừng một phần mười.',
+		'Bản tóm lược điều Hội Thánh Công giáo tin, gói trong một cuốn. Cùng một giáo huấn trình bày theo lối hỏi thưa, dài chừng một phần mười.',
 	'schola.what.magisterium':
 		'Những gì các giáo hoàng và các công đồng đã thực sự viết — thông điệp, hiến chế, sắc lệnh, tuyên ngôn — mỗi văn kiện ngỏ với một thời điểm và một vấn đề nhất định. Mỗi văn kiện được gọi theo những chữ Latinh mở đầu của nó.',
 	'schola.what.social':

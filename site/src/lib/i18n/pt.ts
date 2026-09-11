@@ -103,9 +103,7 @@ export const pt: Dictionary = {
 	'schola.what.scripture':
 		'As Escrituras tal como a Igreja as recebe, nos dois Testamentos. Tudo o mais que está aqui se lê à luz delas.',
 	'schola.what.catechism':
-		'Um resumo do que a Igreja Católica crê, num só volume. Não é ele próprio uma fonte: reúne a Escritura, os Padres, a liturgia e o ensinamento da Igreja, e cada parágrafo diz de onde vem o que afirma.',
-	'schola.what.compendium':
-		'O mesmo ensinamento exposto em perguntas e respostas, com cerca de um décimo da extensão.',
+		'Um resumo do que a Igreja Católica crê, num só volume. O mesmo ensinamento exposto em perguntas e respostas, com cerca de um décimo da extensão.',
 	'schola.what.magisterium':
 		'O que os papas e os concílios efetivamente escreveram — encíclicas, constituições, decretos, declarações — cada um dirigido a um momento e a uma questão determinados. Cada um é conhecido pelas suas palavras iniciais em latim.',
 	'schola.what.social':

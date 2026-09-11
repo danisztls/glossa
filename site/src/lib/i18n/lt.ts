@@ -119,9 +119,7 @@ export const lt: Dictionary = {
 	'schola.what.scripture':
 		'Šventasis Raštas, kaip jį priima Bažnyčia, abiejuose Testamentuose. Visa kita čia skaitoma jo šviesoje.',
 	'schola.what.catechism':
-		'Santrauka to, kuo tiki Katalikų Bažnyčia, viename tome. Pats jis nėra šaltinis: jis sutelkia Šventąjį Raštą, Tėvus, liturgiją ir Bažnyčios mokymą, ir kiekviena pastraipa nurodo, iš kur tai, ką ji teigia.',
-	'schola.what.compendium':
-		'Tas pats mokymas, išdėstytas klausimais ir atsakymais, maždaug dešimtadaliu apimties.',
+		'Santrauka to, kuo tiki Katalikų Bažnyčia, viename tome. Tas pats mokymas, išdėstytas klausimais ir atsakymais, maždaug dešimtadaliu apimties.',
 	'schola.what.magisterium':
 		'Tai, ką popiežiai ir susirinkimai iš tikrųjų parašė — enciklikos, konstitucijos, dekretai, deklaracijos — kiekvienas skirtas tam tikrai akimirkai ir tam tikram klausimui. Kiekvienas žinomas pagal savo pirmuosius lotyniškus žodžius.',
 	'schola.what.social':

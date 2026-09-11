@@ -119,9 +119,7 @@ export const hr: Dictionary = {
 	'schola.what.scripture':
 		'Pismo kako ga Crkva prima, u oba Zavjeta. Sve ostalo ovdje čita se u njegovu svjetlu.',
 	'schola.what.catechism':
-		'Sažetak onoga u što Katolička Crkva vjeruje, u jednom svesku. Sam nije vrelo: prikuplja Pismo, oce, bogoslužje i nauk Crkve, i svaki broj kaže odakle dolazi ono što tvrdi.',
-	'schola.what.compendium':
-		'Isti nauk izložen u pitanjima i odgovorima, otprilike u desetini duljine.',
+		'Sažetak onoga u što Katolička Crkva vjeruje, u jednom svesku. Isti nauk izložen u pitanjima i odgovorima, otprilike u desetini duljine.',
 	'schola.what.magisterium':
 		'Ono što su pape i sabori doista napisali — enciklike, konstitucije, dekreti, deklaracije — svaki upravljen određenom trenutku i određenom pitanju. Svaki je poznat po svojim početnim latinskim riječima.',
 	'schola.what.social':

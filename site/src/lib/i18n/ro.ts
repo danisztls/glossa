@@ -93,9 +93,7 @@ export const ro: Dictionary = {
 	'schola.what.scripture':
 		'Scripturile așa cum le primește Biserica, în ambele Testamente. Tot restul de aici se citește în lumina lor.',
 	'schola.what.catechism':
-		'Un rezumat a ceea ce crede Biserica Catolică, într-un singur volum. El însuși nu este izvor: adună Scriptura, Părinții, liturgia și învățătura Bisericii, și fiecare paragraf spune de unde vine ceea ce afirmă.',
-	'schola.what.compendium':
-		'Aceeași învățătură așezată în întrebări și răspunsuri, la cam a zecea parte din întindere.',
+		'Un rezumat a ceea ce crede Biserica Catolică, într-un singur volum. Aceeași învățătură așezată în întrebări și răspunsuri, la cam a zecea parte din întindere.',
 	'schola.what.magisterium':
 		'Ceea ce papii și conciliile au scris cu adevărat — enciclice, constituții, decrete, declarații — fiecare adresat unui moment anume și unei chestiuni anume. Fiecare este cunoscut după cuvintele lui de început în latină.',
 	'schola.what.social':

@@ -102,9 +102,7 @@ export const no: Dictionary = {
 	'schola.what.scripture':
 		'Skriften slik Kirken mottar den, i begge testamenter. Alt annet her leses i dens lys.',
 	'schola.what.catechism':
-		'En framstilling av det Den katolske kirke tror, i ett bind. Den er ikke selv en kilde: den samler Skriften, kirkefedrene, liturgien og Kirkens lære, og hvert avsnitt sier hvor det den sier kommer fra.',
-	'schola.what.compendium':
-		'Den samme læren lagt fram som spørsmål og svar, omtrent en tidel så langt.',
+		'En framstilling av det Den katolske kirke tror, i ett bind. Den samme læren lagt fram som spørsmål og svar, omtrent en tidel så langt.',
 	'schola.what.magisterium':
 		'Det pavene og konsilene faktisk har skrevet — encyklikaer, konstitusjoner, dekreter, erklæringer — hver rettet til et bestemt øyeblikk og et bestemt spørsmål. Hver er kjent ved sine åpningsord på latin.',
 	'schola.what.social':

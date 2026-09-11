@@ -92,9 +92,7 @@ export const pl: Dictionary = {
 	'schola.what.scripture':
 		'Pismo Święte, jak je Kościół przyjmuje, w obu Testamentach. Wszystko inne tutaj czyta się w jego świetle.',
 	'schola.what.catechism':
-		'Streszczenie tego, w co wierzy Kościół katolicki, w jednym tomie. Sam nie jest źródłem: zbiera Pismo, Ojców, liturgię i nauczanie Kościoła, a każdy punkt mówi, skąd pochodzi to, co głosi.',
-	'schola.what.compendium':
-		'Ta sama nauka wyłożona w pytaniach i odpowiedziach, mniej więcej dziesięciokrotnie krótsza.',
+		'Streszczenie tego, w co wierzy Kościół katolicki, w jednym tomie. Ta sama nauka wyłożona w pytaniach i odpowiedziach, mniej więcej dziesięciokrotnie krótsza.',
 	'schola.what.magisterium':
 		'To, co papieże i sobory rzeczywiście napisali — encykliki, konstytucje, dekrety, deklaracje — każde skierowane do określonej chwili i określonej sprawy. Każde znane jest po swoich pierwszych słowach po łacinie.',
 	'schola.what.social':

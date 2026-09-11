@@ -463,9 +463,7 @@ export const en: Dictionary = {
 	'schola.what.scripture':
 		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',
 	'schola.what.catechism':
-		'A summary of what the Catholic Church believes, in one volume. It is not itself a source: it gathers Scripture, the Fathers, the liturgy and the Church’s teaching, and every paragraph says where what it says comes from.',
-	'schola.what.compendium':
-		'The same teaching set out as questions and answers, at about a tenth the length.',
+		'A summary of what the Catholic Church believes, in one volume. The same teaching set out as questions and answers, at about a tenth the length.',
 	'schola.what.magisterium':
 		'What popes and councils have actually written — encyclicals, constitutions, decrees, declarations — each addressed to a particular moment and a particular question. Each is known by its opening words in Latin.',
 	'schola.what.social':

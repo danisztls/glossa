@@ -96,9 +96,7 @@ export const fr: Dictionary = {
 	'schola.what.scripture':
 		'Les Écritures telles que l’Église les reçoit, dans les deux Testaments. Tout le reste ici se lit à leur lumière.',
 	'schola.what.catechism':
-		'Un résumé de ce que croit l’Église catholique, en un seul volume. Il n’est pas lui-même une source : il rassemble l’Écriture, les Pères, la liturgie et l’enseignement de l’Église, et chaque numéro dit d’où vient ce qu’il avance.',
-	'schola.what.compendium':
-		'Le même enseignement exposé en questions et réponses, au dixième environ de la longueur.',
+		'Un résumé de ce que croit l’Église catholique, en un seul volume. Le même enseignement exposé en questions et réponses, au dixième environ de la longueur.',
 	'schola.what.magisterium':
 		'Ce que les papes et les conciles ont effectivement écrit — encycliques, constitutions, décrets, déclarations — chacun adressé à un moment et à une question déterminés. Chacun est connu par ses premiers mots latins.',
 	'schola.what.social':

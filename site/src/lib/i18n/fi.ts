@@ -123,9 +123,7 @@ export const fi: Dictionary = {
 	'schola.what.scripture':
 		'Raamattu sellaisena kuin kirkko sen vastaanottaa, molemmissa testamenteissa. Kaikki muu täällä luetaan sen valossa.',
 	'schola.what.catechism':
-		'Tiivistelmä siitä, mitä katolinen kirkko uskoo, yhtenä niteenä. Se ei itse ole lähde: se kokoaa Raamatun, isät, liturgian ja kirkon opetuksen, ja jokainen kohta kertoo mistä se on peräisin mitä se sanoo.',
-	'schola.what.compendium':
-		'Sama opetus esitettynä kysymyksinä ja vastauksina, noin kymmenesosan mitassa.',
+		'Tiivistelmä siitä, mitä katolinen kirkko uskoo, yhtenä niteenä. Sama opetus esitettynä kysymyksinä ja vastauksina, noin kymmenesosan mitassa.',
 	'schola.what.magisterium':
 		'Se mitä paavit ja kirkolliskokoukset ovat tosiasiassa kirjoittaneet — kiertokirjeitä, konstituutioita, dekreettejä, julistuksia — kukin osoitettu määrättyyn hetkeen ja määrättyyn kysymykseen. Kukin tunnetaan latinankielisistä alkusanoistaan.',
 	'schola.what.social':

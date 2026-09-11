@@ -93,9 +93,7 @@ export const hu: Dictionary = {
 	'schola.what.scripture':
 		'A Szentírás úgy, ahogyan az Egyház elfogadja, mindkét Szövetségben. Itt minden mást ennek fényében olvasunk.',
 	'schola.what.catechism':
-		'Annak összefoglalása, amit a Katolikus Egyház hisz, egyetlen kötetben. Maga nem forrás: összegyűjti a Szentírást, az atyákat, a liturgiát és az Egyház tanítását, és minden pont megmondja, honnan való, amit állít.',
-	'schola.what.compendium':
-		'Ugyanaz a tanítás kérdésekben és feleletekben, körülbelül tizedakkora terjedelemben.',
+		'Annak összefoglalása, amit a Katolikus Egyház hisz, egyetlen kötetben. Ugyanaz a tanítás kérdésekben és feleletekben, körülbelül tizedakkora terjedelemben.',
 	'schola.what.magisterium':
 		'Amit a pápák és a zsinatok valóban írtak — enciklikák, konstitúciók, dekrétumok, nyilatkozatok —, mindegyik egy meghatározott pillanathoz és egy meghatározott kérdéshez szólva. Mindegyiket latin kezdőszavairól nevezzük.',
 	'schola.what.social':
