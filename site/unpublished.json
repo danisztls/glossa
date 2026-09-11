@@ -64,6 +64,14 @@
 			"date": "2026-09-09",
 			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 25 in all eleven other editions: the whole 37 KB is unnumbered matter."
 		},
+		"cdf.catholics-who-join-masonic-associations.en": {
+			"date": "2026-09-11",
+			"reason": "Keeps 30% of its own page (502 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
+		},
+		"cdf.catholics-who-join-masonic-associations.fr": {
+			"date": "2026-09-11",
+			"reason": "Keeps 31% of its own page (675 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
+		},
 		"cdf.collaboration-of-men-and-women.hu": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 4 sections against 17 in the median edition of this document and one of them holds 51% of its 38 KB, i.e. this page's numbering was not recognised and most of its text was swept into one section. Its other editions are unaffected."

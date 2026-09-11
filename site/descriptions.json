@@ -78,10 +78,15 @@
 				"origin": "read"
 			}
 		},
-		"cdf.catholics-who-join-masonic-associations.en": {
-			"en": {
-				"text": "A confirmation and clarification issued after a private 1974 letter to some Episcopal Conferences — on how canon 2335 of the 1917 Code, which forbade Catholics under penalty of excommunication to enrol in Masonic or similar associations, was to be interpreted — became public and was read in ways the Congregation had not intended. Three numbered points answer it: the canonical discipline stands unmodified, neither the excommunication nor the other penalties are abrogated, and the earlier letter was a reminder of how penal law is interpreted in individual cases, not a permission for Episcopal Conferences to pronounce publicly on the nature of Masonic associations.",
+		"cdf.catholics-who-join-masonic-associations.pt": {
+			"pt": {
+				"text": "Confirmação e esclarecimento emitidos depois que uma carta reservada de 1974 a algumas Conferências Episcopais — sobre a interpretação do cân. 2335 do Código de 1917, que vetava aos católicos, sob pena de excomunhão, inscreverem-se em associações maçónicas e outras semelhantes — se tornou de domínio público e deu margem a interpretações erróneas e tendenciosas. Três pontos respondem: a disciplina canónica permanece em todo o seu vigor, não foi ab-rogada a excomunhão nem as outras penas previstas, e o que a carta dizia sobre a interpretação do cânone era um apelo aos princípios gerais de interpretação das leis penais para os casos de cada pessoa, e não uma autorização às Conferências Episcopais para se pronunciarem publicamente sobre a natureza das associações maçónicas.",
 				"origin": "read"
+			},
+			"en": {
+				"text": "A confirmation and clarification issued after a 1974 private letter to some Episcopal Conferences — on how canon 2335 of the 1917 Code, which forbade Catholics under penalty of excommunication to enrol in Masonic and similar associations, was to be interpreted — became public and gave rise to erroneous and tendentious readings. Three points answer it: the canonical discipline stands in full force, neither the excommunication nor the other penalties are abrogated, and what the letter said about interpreting the canon was a reminder of the general principles for interpreting penal law in individual cases, not a permission for Episcopal Conferences to pronounce publicly on the nature of Masonic associations.",
+				"origin": "translated",
+				"from": "pt"
 			}
 		},
 		"cdf.collaboration-of-men-and-women.en": {

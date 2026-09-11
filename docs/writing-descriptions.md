@@ -221,6 +221,31 @@ the claim both ways: a declared flag whose oracle still carries a `before` is a
 contradiction, and an edition with no sections whose oracle stays silent is
 reported until it says so.
 
+**`numbered` is a claim about the EDITION AS PARSED, not about the page.**
+`check_numbering_flag` reads `sections.json`, so a page that prints numbers
+whose parse lost them takes `numbered: false` — writing what the page shows
+gets the oracle rejected, and the reader who trusts the phrase "an edition that
+prints no paragraph numbers" writes it wrongly every time. The 1981 declaration
+on Catholics who join Masonic associations prints three points `1)` `2)` `3)`
+and its English edition stores none of them. Say so in `note` and say when to
+flip the flag.
+
+**`note` is where a reading goes that the heading list cannot carry.** The
+comparison only ever looks at headings, so everything else a reader notices
+while reading the page — that the emptiness is a real finding rather than a
+missed one, that another edition of the same document holds text this one does
+not, that the flag above is describing a defect — is invisible to `audit.py
+toc` and belongs in prose beside it. It is the difference between an oracle
+that records an answer and one that records why the answer is trustworthy.
+
+**An oracle also refuses what the parse INVENTED, and the empty list is how.**
+The three corrections below are all a reader adding what the page does not
+print; the inverse is just as common and is caught only by writing the empty
+list down. The 1983 declaration on Masonic associations sets its approval
+formula — "In an audience granted to the undersigned Cardinal Prefect…" — in
+bold, the only emphasised run in its body, and the parser read that chancery
+clause as a division. `headings: []` is what convicts it.
+
 **Never invent punctuation, and never invent a tier.** Three corrections have
 been filed against oracles already written, all of them the reader adding
 something the page does not print:
@@ -267,6 +292,19 @@ translating the English one. They are separate works with separate texts, and
 `descriptions.json` is keyed by work id for exactly that reason. Where a
 document has no Portuguese edition (common — Leo XIII is ~17% translated),
 there is simply no `.pt` entry.
+
+**English has the primacy and not the monopoly: read a sound edition.** The
+English edition is where a reading goes by default, and the default is off
+whenever that edition's parse is damaged — a description is prose about the
+work it is keyed to, so describing a whole document under a work holding a
+third of it promises a reader text the page will not show. Measure before
+assuming: `cdf.catholics-who-join-masonic-associations.en` stores 502
+characters where six sibling editions store 1,406 to 3,262, because its three
+points are written `1)` and the others' `1.`. The reading went under `.pt`,
+which holds the document whole, and English got a `translated` rendering of
+it — so the document is still summarized in English, from a text somebody
+actually read. Switch the damaged edition off in `unpublished.json` in the
+same commit, and say there what would bring it back.
 
 ### 5. Record the description
 
