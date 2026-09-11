@@ -953,6 +953,11 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   it has: CCC 2283 before the three paragraphs on the gravity of suicide is an
   arrangement, and an undisclosed one would be the gloss `docs/decisions.md`
   §Posture forbids.
+- **A topic's summary is one the Catechism wrote**, never one composed here:
+  `brief` names paragraphs flagged `in_brief` (548 of the 2,865, in all nine
+  editions), so the short answer above the passages is still quotation with an
+  address behind every number. The sync refuses a number the Catechism did not
+  flag, and one the topic's own spans already cover.
 - **A topic the corpus cannot answer properly does not ship**, and the gap is
   written down instead — the held set is in `docs/research/topics.md`, and
   `fiducia-supplicans` is the case that matters, since the three earlier

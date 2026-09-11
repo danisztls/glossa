@@ -1036,6 +1036,12 @@ export interface CccBlock {
  * rendered first. It exists because the Catechism's order is systematic and a
  * reader in trouble is not, and it REORDERS a span rather than trimming one:
  * every paragraph the spans name is still on the page.
+ *
+ * `brief` is the short answer, and the Catechism wrote it: the paragraphs it
+ * prints under its own IN BRIEF headings, which the corpus flags. Named where
+ * the passages run long, drawn from ANYWHERE in the work rather than from this
+ * topic's spans — an article's summary sits outside the span the topic took
+ * out of it — and never overlapping them.
  */
 export interface Topic {
 	doorway: string;
@@ -1045,6 +1051,9 @@ export interface Topic {
 	cluster: string;
 	ccc: [number, number][];
 	lead?: number;
+	/** CCC paragraphs flagged `in_brief`, printed above the passages as the
+	 *  short answer, in this list's order rather than the Catechism's. */
+	brief?: number[];
 	/** Spans of the Compendium of the Social Doctrine, quoted under the
 	 *  Catechism's. Named where the Compendium develops what the Catechism
 	 *  summarises — the public square, work, the economy — and absent on the

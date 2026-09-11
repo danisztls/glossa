@@ -82,6 +82,16 @@
 	 * is quotation, and there is no sentence of ours between them explaining
 	 * what the quotation means.
 	 *
+	 * THE SUMMARY IS NOT AN EXCEPTION TO THAT, and it is the place somebody
+	 * will look for one. A topic that runs long opens on the Catechism's own
+	 * IN BRIEF paragraphs, which is still quotation and still addressed —
+	 * every one of them is a number linking to `/catechismus/{n}` — because
+	 * the Church prints a short form of each of its articles and the corpus
+	 * carries the flag. A summary composed HERE would be the one thing this
+	 * page has never done: our voice, in the Catechism's place, at the top,
+	 * read by the reader in a hurry INSTEAD of the quotation and carried away
+	 * as the Church's.
+	 *
 	 * EACH BLOCK IS HEADED BY THE WORK IT QUOTES, which is what earns the
 	 * second and third of them. The Catechism, the Compendium and the Code
 	 * teach at different levels — a summary, its development, and the law —
@@ -171,6 +181,21 @@
 		<h1>{title}</h1>
 		<p class="question">{question}</p>
 	</header>
+
+	<!-- THE SHORT ANSWER COMES FIRST AND IS STILL SOMEBODY ELSE'S, drawn from
+	     the Catechism's own IN BRIEF runs. Rendered through the same snippet as
+	     everything below it, so each summary paragraph carries its number and
+	     its address; what this page chose is which of them and in what order,
+	     and the note says so. Most topics name none and this block is absent. -->
+	{#if edition && edition.brief.length > 0}
+		<section class="passages brief">
+			<h2 class="label">{t('quaestiones.brief.heading')}</h2>
+			<p class="note">{t('quaestiones.brief.blurb')}</p>
+			{#each edition.brief as paragraph (paragraph.n)}
+				{@render quoted(paragraph, hrefFor({ kind: 'ccc', n: paragraph.n }), lang, undefined)}
+			{/each}
+		</section>
+	{/if}
 
 	{#if edition}
 		<section class="passages">
@@ -265,6 +290,26 @@
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
 		margin: 0 0 1rem;
+	}
+
+	/*
+	 * THE SUMMARY IS MARKED AND NOT DECORATED. A block that reads exactly like
+	 * the body it summarises is not a summary to anybody scrolling, and the
+	 * heading that says which it is is the thing a reader in a hurry skips.
+	 * One rule down the inline start is the whole treatment: it costs no
+	 * colour and no second surface, and it is the site's existing mark for
+	 * apparatus set into the flow — `print.css` gives a margin note and a note
+	 * card the same 2px when paper takes them out of their own boxes. Logical
+	 * rather than `left`, so it moves to the other side in RTL.
+	 *
+	 * The heading is INSIDE the rule, which is what keeps the block one thing:
+	 * a rule starting under the label would read as a quotation the label
+	 * introduces, and this is not an introduction to the passages — it is the
+	 * short form of them.
+	 */
+	.brief {
+		border-inline-start: 2px solid var(--color-border);
+		padding-inline-start: 1.1rem;
 	}
 
 	.paragraph {

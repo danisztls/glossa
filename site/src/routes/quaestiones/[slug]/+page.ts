@@ -37,6 +37,11 @@ interface TopicLangData {
 	 *  one, then the spans in the file's own order. Resolved per language
 	 *  because the lead has to be found among THAT language's paragraphs. */
 	paragraphs: CccParagraph[];
+	/** The Catechism's own IN BRIEF paragraphs for this question, in the
+	 *  topic's order. Empty on every topic that names none, and short of an
+	 *  entry in an edition that lacks it — the block degrades rather than
+	 *  failing, since a summary is not the page's answer. */
+	brief: CccParagraph[];
 	/** The paragraph actually moved to the front, or `undefined` where the
 	 *  topic named none. Drives the page's disclosure that it has reordered. */
 	lead: number | undefined;
@@ -132,8 +137,18 @@ export const load: PageLoad = async ({ params, parent }) => {
 		// dropping the page.
 		const led = topic.lead !== undefined ? inFileOrder.find((p) => p.n === topic.lead) : undefined;
 
+		// Fetched ONE AT A TIME because a brief is a handful of scattered
+		// numbers rather than a run — an article's summary is not adjacent to
+		// the span the topic took out of that article, and the five on
+		// `beata-virgo` sit in three different parts of the work. Kept in the
+		// file's order, which is the answer's order and not the Catechism's.
+		const brief = (
+			await Promise.all((topic.brief ?? []).map((n) => getCccParagraphRangeAsync(lang, n, n)))
+		).flat();
+
 		byLang[lang] = {
 			paragraphs: led ? [led, ...inFileOrder.filter((p) => p.n !== led.n)] : inFileOrder,
+			brief,
 			lead: led?.n,
 			work
 		};

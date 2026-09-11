@@ -27,6 +27,7 @@ const source = JSON.parse(readFileSync('quaestiones.json', 'utf8')) as {
 			cluster: string;
 			ccc: [number, number][];
 			lead?: number;
+			brief?: number[];
 			csdc?: [number, number][];
 			canons?: [number, number][];
 		}
@@ -334,6 +335,10 @@ describe('quaestiones-review.json', () => {
 	/** The same statement the ledger's `anchors` field holds, from the source. */
 	const signature = (topic: (typeof source.topics)[string]): string => {
 		const parts: string[] = [];
+		// First, because it is what the page prints first. A grade is a claim
+		// about the page a reader meets, and a summary added or dropped above
+		// the passages changes that page as much as a span does.
+		if (topic.brief?.length) parts.push(`brief ${topic.brief.join(',')}`);
 		for (const [work, spans] of spansOf(topic)) {
 			if (spans.length === 0) continue;
 			parts.push(`${work} ${spans.map(([a, b]) => (a === b ? `${a}` : `${a}-${b}`)).join(',')}`);

@@ -259,6 +259,54 @@ on Sunday obligation, `collaboration-of-men-and-women` on gender, `mysterium-ecc
 on whether a dogmatic formula can be historically conditioned. Read the
 description before naming a document, and again before removing one.
 
+## The summary is the Catechism's, which is the only reason there is one
+
+A topic page prints no sentence of its own between its heading and its
+quotation, and the longest of them is sixteen paragraphs. Those two facts had
+been in tension since the file went past a dozen topics: a reader who arrives at
+_Why do Catholics give her so much?_ and meets the Immaculate Conception,
+the perpetual virginity, ten paragraphs of _Lumen Gentium_ on the Church's
+Marian doctrine and the Hail Mary line by line has been answered thoroughly and
+not briefly, and nothing on the page is willing to say the short version.
+
+**The Catechism says it.** Every article closes with a run of summary paragraphs
+under a heading of its own — IN BRIEF, EN BREF, Resumindo, KURZTEXTE — and the
+corpus already carries the flag: `in_brief` is true on 548 of the 2,865
+paragraphs, in all nine editions, because the Church wrote the short form in
+nine languages and this project did not have to. So `brief` is a list of
+paragraph numbers, the page opens on them, and the page has still never written
+a sentence about what a quotation means.
+
+**A summary composed here would have been the one thing this page has never
+done**, and it is worth being exact about why, because the arrangement that
+tempts it is the arrangement that makes it most dangerous: our voice, in the
+Catechism's place, above the quotation, read INSTEAD of the quotation by
+precisely the reader a summary is for, and carried away as the Church's. A
+number cannot do that. It resolves to text with an address behind it, and the
+reader can press 509 and land on the paragraph.
+
+**The editorial act is the selection, and it is `lead`'s size.** An IN BRIEF run
+summarises its ARTICLE, not the reader's question — 2680–2682 close the article
+on Christian prayer with the Father, the Son and the Spirit, and only the last of
+the three is about Mary — so the field is a list rather than a span, its order is
+the answer's rather than the work's, and the page discloses both in the same
+register the `lead` note uses. Two checks in `sync-corpus.mjs` keep it from
+becoming something else, and each is invisible on the rendered page:
+
+- **Every number must be a paragraph the Catechism itself flagged.** Without it,
+  `brief` is a field for quoting whichever paragraph reads best under a heading
+  claiming the Catechism summarised this, which is a heading that lies.
+- **No number may also be inside the topic's own `ccc` spans.** A paragraph
+  printed in the summary and again in the body is read twice, and the summary
+  stops being one. This is the ordinary case rather than a hazard: an article's
+  IN BRIEF sits outside the span a topic took out of that article, which is why
+  `brief` is drawn from anywhere in the work where `lead` may only name a
+  paragraph the topic already has.
+
+**Most topics want none.** A topic anchoring four paragraphs is read at one
+sitting and a summary over it is a heading over a repetition — `csdc`'s rule
+again. Name it where the passages run long and the reader arrived at a wall.
+
 ## `lead` is the judgment, and it is one field wide
 
 The Catechism's order is systematic; a reader in trouble is not. CCC 2280–2283

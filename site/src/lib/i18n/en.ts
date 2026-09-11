@@ -1729,6 +1729,19 @@ export const en: Dictionary = {
 	// of them held sixty topics across six shelves — "what people argue about"
 	// is true of every one of them and directs nobody.
 	'quaestiones.passages.heading': 'From the Catechism',
+	// THE SHORT ANSWER, AND NOT ONE WORD OF IT IS OURS. The Catechism closes
+	// each of its articles with a run of summary paragraphs under its own
+	// heading — IN BRIEF in English, Resumindo in Portuguese, KURZTEXTE in
+	// German — so a topic that runs long can open on a short form the Church
+	// wrote, in every language it wrote it in. The heading names the work
+	// like the other three do, and the blurb says the one thing the reader
+	// cannot see: that the selection is ours and the sentences are not. "the
+	// ones that answer this question" is the operative half and must survive
+	// translation — an article's summary is about the ARTICLE, and choosing
+	// among them is the same act as `lead`, disclosed the same way.
+	'quaestiones.brief.heading': 'The Catechism in brief',
+	'quaestiones.brief.blurb':
+		'The Catechism closes each of its articles with a summary of its own. These are the ones that answer this question; the passages they stand on are below.',
 	// SAID ONLY WHERE IT IS TRUE — the page renders it when the topic carries
 	// a `lead`, and nowhere else. It is the site admitting an arrangement of
 	// its own over somebody else's text, which docs/decisions.md §Posture

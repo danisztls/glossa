@@ -700,6 +700,14 @@ export const pt: Dictionary = {
 	// ordenar o arquivo e a ordem das prateleiras, mas já não encabeçam a
 	// página. Ver o comentário correspondente em `en.ts`.
 	'quaestiones.passages.heading': 'Do Catecismo',
+	// A resposta curta, e nenhuma palavra dela é nossa: são os parágrafos que
+	// o próprio Catecismo imprime sob «Resumindo» ao fim de cada artigo. Ver
+	// o comentário correspondente em `en.ts`; o que precisa sobreviver à
+	// tradução é «os que respondem a esta pergunta» — a escolha é nossa, as
+	// frases não.
+	'quaestiones.brief.heading': 'O Catecismo, resumindo',
+	'quaestiones.brief.blurb':
+		'O Catecismo fecha cada artigo com um resumo seu. Estes são os que respondem a esta pergunta; os parágrafos em que se apoiam vêm abaixo.',
 	// Só aparece onde é verdade — a página mostra esta frase quando o tema
 	// tem um `lead`, e em nenhum outro caso. “Nenhum foi deixado de fora” é a
 	// metade que precisa sobreviver à tradução: `lead` reordena e não corta.

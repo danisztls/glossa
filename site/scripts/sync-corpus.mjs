@@ -2951,6 +2951,12 @@ const distinctTags = tagVocabulary.length;
  *     looks exactly like a page nobody wrote a `lead` for. The judgement would
  *     be gone and the file would still claim it.
  *   - A span written backwards (`to` < `from`), which silently renders empty.
+ *   - A `brief` entry the Catechism did not flag `in_brief`, or one the topic's
+ *     own `ccc` spans already cover. The first is the field's whole guarantee —
+ *     it prints under a heading saying the Catechism summarised this, and a
+ *     paragraph picked because it read well would make that heading a lie. The
+ *     second is invisible in the other direction: the page renders, and one
+ *     paragraph is simply on it twice.
  *
  * A missing FILE is not an error, on the descriptions' terms: a corpus nobody
  * has written topics for is a perfectly good corpus, and `/quaestiones` simply
@@ -2968,6 +2974,13 @@ const topicClusters = quaestionesFile.clusters ?? {};
 			.map((manifest) => manifest.id.split('.')[1])
 	);
 	const knownCcc = new Set(Object.values(cccIndex).flatMap((value) => value.paragraphNumbers));
+	// The union across editions, as `knownCcc` is and for the same reason: the
+	// Catechism's IN BRIEF runs are the same 548 paragraphs in every edition
+	// that prints them, and an edition short one of them is the page's problem
+	// to degrade around, not the build's to fail on.
+	const knownInBrief = new Set(
+		cccEditions.flatMap(({ paragraphs }) => paragraphs.filter((p) => p.in_brief).map((p) => p.n))
+	);
 	const knownCanons = new Set(canonLawNumbers);
 	const knownSocialDoctrine = new Set(socialDoctrineNumbers);
 	const allowedDoorways = new Set(doorways);
@@ -3010,6 +3023,17 @@ const topicClusters = quaestionesFile.clusters ?? {};
 		}
 		if (topic.lead !== undefined && !covered.has(topic.lead)) {
 			problems.push(`${slug}: lead ${topic.lead} is outside this topic's own CCC spans`);
+		}
+		// `brief` is the opposite of `lead` on both counts: it is drawn from
+		// outside the topic's spans, and it must be a paragraph the CATECHISM
+		// marked as a summary rather than one this file liked.
+		for (const n of topic.brief ?? []) {
+			if (!knownInBrief.has(n)) {
+				problems.push(`${slug}: brief ${n} is not a paragraph the Catechism prints in brief`);
+			}
+			if (covered.has(n)) {
+				problems.push(`${slug}: brief ${n} is also in this topic's own CCC spans`);
+			}
 		}
 		// The Compendium of the Social Doctrine and the Code are checked
 		// exactly as the Catechism is and for its reason: a span naming a
