@@ -197,7 +197,7 @@
 				     same shape of list. -->
 				<ul class="index-list" data-link-preview="hover">
 					{#each shelf.topics as slug (slug)}
-						<li class="topic-row">
+						<li class="topic-row pointing-row">
 							<a class="topic-link" href={hrefFor({ kind: 'topic', slug })}>
 								{t(`quaestiones.${slug}.title`)}
 							</a>
@@ -458,97 +458,12 @@
 	 * two columns keep the same rhythm without one of them ending on a margin
 	 * the other does not have.
 	 */
+	/* The gutter mark and the hand that replaces it under the pointer are
+	   `.pointing-row` (styles/components.css), which `/preces` wears too;
+	   what is this page's is the cell the row is. */
 	.topic-row {
 		/* A grid item's default `min-width: auto` again, one level in. */
 		min-width: 0;
-		position: relative;
-		/* Wide enough for either mark: the manicule below is 1.088em of
-		   advance in EB Garamond, set at 0.9em, so it lands inside this with
-		   a little air. It was 1.5rem while the hand was a drawing sized in
-		   `rem` — a glyph is sized in the text's own em and needs no lane of
-		   its own. */
-		padding-inline-start: 1.1rem;
-	}
-
-	/*
-	 * THE MARK IS WHAT TELLS TWO CELLS APART where the grid does not. A row is
-	 * a title and a question under it, and at two or three columns the reader
-	 * is scanning across a field of them with only `gap` between one cell and
-	 * the next — so a second line of a wrapped question and the title of the
-	 * row below it start at the same edge and read as one another's
-	 * continuation. Hanging the mark outside the text gives every row one
-	 * point that only a beginning has.
-	 *
-	 * Drawn rather than a `list-style`, on the same grounds as the topic
-	 * page's list: `::marker` takes few properties, and this one has to hold
-	 * its place against a title that may wrap, in the muted colour so that the
-	 * question below it is still the quietest thing in the cell.
-	 */
-	.topic-row::before {
-		content: '⬝';
-		position: absolute;
-		inset-inline-start: 0;
-		color: var(--color-text-muted);
-	}
-
-	/*
-	 * THE MARGINAL HAND, ON THE ROW THE READER IS ABOUT TO FOLLOW. A manicule
-	 * is the mark a reader of a printed book drew beside the line they meant
-	 * to come back to, and it means one thing only: THIS one. That is exactly
-	 * what a row under the cursor is saying, and this page is the one surface
-	 * on the site where every line is a way out — so the mark that already
-	 * tells one cell from another becomes the mark that points at the cell
-	 * being chosen. The square is not replaced by a second idea; it grows a
-	 * hand for as long as the row is live.
-	 *
-	 * IT IS EB GARAMOND'S OWN, SHIPPED AS A SUBSET. `fonts.css` carries the
-	 * face, the recipe and the argument; what belongs here is that the mark is
-	 * a GLYPH and what that buys on this page. It sits on the baseline beside
-	 * the title at the title's own size, so the gutter is the one the square
-	 * always wanted and nothing is eyeballed onto the x-height; and the
-	 * resting page is exactly what it was before the mark existed. A drawing
-	 * had to be sized in `rem` against a widened lane and still read as a
-	 * mitten at seventeen pixels.
-	 *
-	 * IT KEEPS THE SQUARE'S COLOUR and names none of its own. The mark is one
-	 * mark in two forms, so it has no more business changing colour than a
-	 * letter has changing colour when the word it is in is hovered — and the
-	 * accent is already spoken for on this row by the title, which is a link
-	 * and carries `--color-link` at rest. A gutter mark that lit up as well
-	 * would be the row saying the same thing twice, in the louder of the two
-	 * places.
-	 *
-	 * `\fe0e` is the text-presentation selector, and it matters only if the
-	 * subset never arrives: our face is first in the stack and has the
-	 * codepoint, so it draws; a fallback that got as far as an emoji font
-	 * would otherwise put a colour cartoon in the gutter. It costs nothing —
-	 * a variation selector is default-ignorable in a face that has no entry
-	 * for it.
-	 *
-	 * U+261C AND NOT A FLIP. The site serves Arabic and Hebrew, where the
-	 * gutter is on the right and the text runs away to the left, so a
-	 * right-pointing hand points out of the page. This is the same
-	 * punchcutter's left-pointing manicule rather than this one mirrored — a
-	 * `scale: -1 1` reverses the cuff and the fingers' overlap along with the
-	 * direction.
-	 *
-	 * ON `:has()` AND NOT ON `.topic-row:hover`: the underline and the hand
-	 * are one event. The question under the title is not a link, and a hand
-	 * pointing at a row because the cursor crossed its second line promises a
-	 * click that does nothing there. A browser without `:has()` drops the rule
-	 * and keeps the square, as `zen.css` degrades.
-	 */
-	.topic-row:has(.topic-link:hover)::before,
-	.topic-row:has(.topic-link:focus-visible)::before {
-		content: '☞\fe0e';
-		font-family: 'EB Garamond Manicule', var(--font-serif);
-		/* 1.088em of advance at 1em, which would fill the gutter exactly. */
-		font-size: 0.9em;
-	}
-
-	:dir(rtl) .topic-row:has(.topic-link:hover)::before,
-	:dir(rtl) .topic-row:has(.topic-link:focus-visible)::before {
-		content: '☜\fe0e';
 	}
 
 	/*

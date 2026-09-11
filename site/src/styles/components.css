@@ -411,3 +411,69 @@
 	border-color: var(--color-apparatus);
 	box-shadow: inset 0 0 0 1px var(--color-apparatus);
 }
+
+/*
+ * THE ROW THAT IS A WAY OUT — a mark where it begins, and a hand while the
+ * reader is on it. `/quaestiones` over its topics and `/preces` over its
+ * prayers; both set their rows in columns, which is what makes the mark
+ * necessary rather than decorative.
+ *
+ * THE SQUARE TELLS TWO CELLS APART WHERE THE COLUMN DOES NOT. Across two or
+ * three columns there is only a gap between one cell and the next, so a
+ * wrapped title's second line and the title of the row below it start at the
+ * same edge and read as one another's continuation. Hanging the mark outside
+ * the text gives every row one point that only a beginning has. Drawn rather
+ * than a `list-style`: `::marker` takes few properties, and this one has to
+ * hold its place against a title that may wrap.
+ *
+ * THE MANICULE IS THE SAME MARK IN ITS OTHER FORM, not a second idea. A
+ * manicule is what a reader of a printed book drew beside the line they meant
+ * to come back to, and it means one thing only: THIS one — which is what a
+ * row under the cursor is saying. So it keeps the square's muted colour and
+ * names none of its own; the accent is already spoken for by the title, which
+ * is a link and carries `--color-link` at rest.
+ *
+ * IT IS EB GARAMOND'S OWN, SHIPPED AS A SUBSET (`fonts.css` carries the face
+ * and the recipe). A GLYPH and not a drawing: it sits on the baseline beside
+ * the title at the title's own size, so nothing is eyeballed onto the
+ * x-height and the gutter is the one the square already wanted. `\fe0e` is
+ * the text-presentation selector and matters only if the subset never
+ * arrives — a fallback reaching an emoji font would put a colour cartoon in
+ * the gutter.
+ *
+ * ON `:has(a:…)` AND NOT ON `:hover`: a row may be wider than its link and may
+ * carry prose that is not one. A hand pointing at a row because the cursor
+ * crossed dead space promises a click that does nothing there. A browser
+ * without `:has()` drops the rule and keeps the square.
+ *
+ * U+261C AND NOT A FLIP in RTL. The site serves Arabic and Hebrew, where the
+ * gutter is on the right and the text runs away to the left, so a
+ * right-pointing hand points out of the page — and `scale: -1 1` on the other
+ * glyph would reverse the cuff and the fingers' overlap with it.
+ */
+.pointing-row {
+	position: relative;
+	/* Wide enough for either mark: the manicule is 1.088em of advance in EB
+	   Garamond, set at 0.9em, so it lands inside this with a little air. */
+	padding-inline-start: 1.1rem;
+}
+
+.pointing-row::before {
+	content: '⬝';
+	position: absolute;
+	inset-inline-start: 0;
+	color: var(--color-text-muted);
+}
+
+.pointing-row:has(a:hover)::before,
+.pointing-row:has(a:focus-visible)::before {
+	content: '☞\fe0e';
+	font-family: 'EB Garamond Manicule', var(--font-serif);
+	/* 1.088em of advance at 1em, which would fill the gutter exactly. */
+	font-size: 0.9em;
+}
+
+:dir(rtl) .pointing-row:has(a:hover)::before,
+:dir(rtl) .pointing-row:has(a:focus-visible)::before {
+	content: '☜\fe0e';
+}

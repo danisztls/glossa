@@ -944,6 +944,16 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   subjects — and **the description carries no max-width**. Two attempts to fill
   the empty half a 60ch measure left in a 62rem track failed the same way, by
   moving things into it rather than letting the text have it.
+- **A row that is a way out takes `.pointing-row`** (styles/components.css):
+  a `⬝` where the row begins, growing into EB Garamond's manicule while the
+  pointer is on its LINK — `:has(a:hover)`, never `:hover`, or the hand
+  promises a click that dead space does not answer. `/quaestiones` and
+  `/preces` both set their rows in columns, which is what makes the mark
+  necessary: across columns a wrapped title's second line and the next row's
+  title start at the same edge. **A second copy of that content declaration
+  fails `pointing-row.test.ts`** — the mark, the `unicode-range` and the
+  family name have to agree, and where they come apart the gutter gets a
+  colour emoji and nothing else can see it.
 - **Every `<details>` takes `.fold`** (styles/components.css), and
   `disclosure.test.ts` scans the source for the ones that do not. Nine surfaces
   open one and they had reached three different marks — a chevron at the row's
