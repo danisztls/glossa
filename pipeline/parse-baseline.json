@@ -16,6 +16,70 @@
       "status": "validation-failed",
       "problems": 1
     },
+    "cdf.accidit-in-diversis.en": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.ardens-felicitatis.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.ardens-felicitatis.es": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "cdf.ardens-felicitatis.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.ardens-felicitatis.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.ardens-felicitatis.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.ardens-felicitatis.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.baptism-in-the-new-church.en": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "cdf.baptism-in-the-new-church.la": {
+      "status": "no-translation-stub",
+      "problems": 1
+    },
+    "cdf.catholics-who-join-masonic-associations.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.catholics-who-join-masonic-associations.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.catholics-who-join-masonic-associations.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.catholics-who-join-masonic-associations.sk": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.christi-ecclesia.la": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "cdf.christi-ecclesia.pl": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.clarification-on-procured-abortion.sk": {
+      "status": "validation-failed",
+      "problems": 1
+    },
     "cdf.collaboration-of-men-and-women.de": {
       "status": "validation-failed",
       "problems": 1
@@ -51,6 +115,10 @@
     "cdf.dignitas-personae.de": {
       "status": "validation-failed",
       "problems": 2
+    },
+    "cdf.dispensation-from-priestly-celibacy.en": {
+      "status": "validation-failed",
+      "problems": 1
     },
     "cdf.dominus-iesus.la": {
       "status": "validation-failed",
@@ -104,7 +172,23 @@
       "status": "validation-failed",
       "problems": 2
     },
+    "cdf.guidelines-on-sexual-abuse-of-minors.de": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.guidelines-on-sexual-abuse-of-minors.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.guidelines-on-sexual-abuse-of-minors.sk": {
+      "status": "validation-failed",
+      "problems": 2
+    },
     "cdf.homosexualitatis-problema.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.inde-ab-aliquot-annis.de": {
       "status": "validation-failed",
       "problems": 1
     },
@@ -160,11 +244,55 @@
       "status": "validation-failed",
       "problems": 6
     },
+    "cdf.mysterium-filii-dei.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.normae-de-delictis-reservatis.la": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "cdf.norms-on-alleged-supernatural-phenomena.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.opus-angelorum.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.opus-angelorum.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.opus-angelorum.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
     "cdf.pastoralis-actio.la": {
       "status": "validation-failed",
       "problems": 1
     },
     "cdf.pastoralis-actio.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.penalties-for-illicit-ordinations.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.penalties-for-illicit-ordinations.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.penalties-for-illicit-ordinations.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.penalties-for-illicit-ordinations.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.penalties-for-illicit-ordinations.pt": {
       "status": "validation-failed",
       "problems": 1
     },
@@ -180,13 +308,93 @@
       "status": "validation-failed",
       "problems": 1
     },
+    "cdf.preface-to-the-norms-on-presumed-apparitions.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
     "cdf.quaestio-de-abortu.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.responsa-on-the-doctrine-of-the-church.de": {
       "status": "validation-failed",
       "problems": 1
     },
     "cdf.responsum-ordinatio-sacerdotalis.pt": {
       "status": "validation-failed",
       "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.de": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.en": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.es": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.la": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.pl": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.revision-of-catechism-2267.vi": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.the-message-of-fatima.de": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.the-message-of-fatima.en": {
+      "status": "validation-failed",
+      "problems": 3
+    },
+    "cdf.the-message-of-fatima.es": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.the-message-of-fatima.fr": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.the-message-of-fatima.hu": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.the-message-of-fatima.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.the-message-of-fatima.pl": {
+      "status": "validation-failed",
+      "problems": 2
+    },
+    "cdf.the-message-of-fatima.pt": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.two-works-of-hans-kung.it": {
+      "status": "validation-failed",
+      "problems": 1
+    },
+    "cdf.two-works-of-hans-kung.pl": {
+      "status": "validation-failed",
+      "problems": 2
     },
     "constitution.fidei-depositum.it": {
       "status": "validation-failed",

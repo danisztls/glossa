@@ -402,7 +402,7 @@ STAGES: tuple[Stage, ...] = (
     # subset derived by the scraper, not a list typed here, for the reason
     # `PHASE2_LANGS` is: this index also offers Lithuanian and Malagasy, which
     # `DIVISIONS` has no labels for, and `--lang all` means every language the
-    # index OFFERS -- the acquisition run, not the parse. Which 25 of its 239
+    # index OFFERS -- the acquisition run, not the parse. Which of the index's
     # documents are written is `V.CDF_DOCUMENTS`, and the argument for that
     # selection is in its docblock.
     Stage(

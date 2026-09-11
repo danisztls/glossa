@@ -228,6 +228,28 @@ tag to a regex requiring a letter after the `<` — so Word's
 `<!--[if !supportFootnotes]-->` wrappers came back out of `html_to_text` as
 literal markup in the reader's prose.
 
+**A document whose first sentence names its own issuing body loses that
+sentence to the masthead.** `extract_document_header` reads down until the
+matter stops looking like a masthead, and the issuing body's name is the
+strongest thing it looks for — so a text opening `This Congregation for the
+Doctrine of the Faith has been asked…` reads as more masthead. The loss is
+invisible wherever the document is long enough to absorb it:
+`catholics-in-political-life.en` has carried an 840-character masthead holding
+its whole introductory paragraph since the family was first parsed, under a
+clean validation, because nothing downstream asks how far the cut reached. It
+became visible only where the document was two sentences long and the cut left
+110 characters, which is under the stub threshold.
+
+**A length threshold calibrated on one family cannot judge another's shortest
+document.** `STUB_CONTENT_MIN_CHARS` is 300 because the shortest genuine
+encyclical strips to 7,106 and the largest sampled stub to ~90 — true, and
+silent about a family that publishes two-sentence notifications. The Latin
+_Notification on the validity of Baptism conferred in The New Church_ is a
+complete, correctly parsed document of 285 characters, refused as a page with
+nothing on it. The number is not wrong; its evidence was drawn from documents
+of one kind, and a floor picked that way says nothing about a corpus that has
+since grown another.
+
 **`lt` is Latin on this host and `lit` is Lithuanian.** Third family to spring
 the trap (`ccc.py` documents it for `catechism_lt`, `VATII_LANG_FROM_URL` for
 the conciliar mirror) and the first where both readings are live on one index,

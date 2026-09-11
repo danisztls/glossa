@@ -563,9 +563,14 @@ carries and the first where the **selection** is a decision rather than an
 enumeration.
 
 - **The index is complete; the corpus is what narrows it.** `CDF_DOCUMENTS`
-  holds the 25 documents the corpus actually cites — measured, not judged. Re-run
-  that measurement before growing the table; the numbers belong in the commit,
-  not the docblock.
+  holds what either of two measurements admits — what the corpus cites by
+  paragraph number, and what the Holy See published in English and seven more
+  readable languages. Re-run a measurement before growing the table; the
+  numbers belong in the commit, not the docblock.
+- **The second criterion measures attention, not weight.** Wide translation is
+  what a notification about a famous theologian gets, so de Mello and Küng are
+  in on the same ground as _Fiducia Supplicans_. Neither criterion is the
+  other's verdict.
 - **The corpus slug is assigned, not read off the filename.** This family names
   files after the SUBJECT (`freedom-liberation` is _Libertatis Conscientia_,
   `eutanasia` is _Iura et Bona_), so `document_title`'s manufacture-from-slug is
@@ -588,6 +593,13 @@ enumeration.
   omits five major documents. All five are on the page. `raw/` is what the
   scraper reads, so `raw/` is what an argument about the source must be made
   from.
+- **A document opening `This Congregation…` loses its first sentence to the
+  masthead**, silently wherever the document is long enough to absorb it —
+  `catholics-in-political-life.en` has carried its whole introductory paragraph
+  as masthead since the family was first parsed (`docs/parsing.md`).
+- **`STUB_CONTENT_MIN_CHARS` was measured over encyclicals and this family is
+  shorter.** The Latin New Church notification is a complete parse of 285
+  characters, refused as a page carrying nothing.
 
 ### Three page conventions, two of them corpus-wide bugs
 
@@ -635,8 +647,8 @@ file says its entries are temporary; nothing enforces it.
 only, no document fetches. Derived rather than written down: the index gained
 six documents in 2025 alone. Four kinds of gap, four different decisions:
 
-- **214 of 239 documents are not selected.** Not a backlog. Re-run the citation
-  measurement, not this list, before adding one.
+- **Most of the index is not selected.** Not a backlog. Re-run a measurement,
+  not this list, before adding one; `discover-cdf` prints both counts.
 - **Two editions are not fetched at all**: Dignitas Infinita's `zh_cn` and
   `zh_tw`, linked as HTML. Chinese has no `DIVISIONS` entry, so a work tag would
   fetch two pages nothing can read.
