@@ -505,19 +505,46 @@ naturally the name is parenthetical, which is the source's own shape — `São
 Tomé e Príncipe` has no usable adjective, and `congolais` names the calendar of
 either Congo.
 
-**It is the name for a reader of that language, and everyone else is given the
-English one.** The propers under it already walk `celebrationName`'s chain —
-the reader's language, then English — so an English page about Brazil's
-calendar printed `Saint José de Anchieta, Priest` under a heading calling the
-calendar `Calendário Litúrgico Brasileiro`, and titled the tab the same.
-`CALENDAR_NAMES_EN` is the rows whose own language is not English, written out
-for the reason the endonyms are: `Liturgical Calendar` plus a territory from
-`Intl.DisplayNames` costs nothing and is wrong three times — the vicariates and
-the patriarchate are not the country their id spells — and it would put
-`Congo - Kinshasa` and `Hong Kong SAR China` into a title, in whatever wording
-the reader's browser shipped CLDR with. The edge still serves the endonym
-(`route-titles.mjs`), and the two disagree only for a reader who has chosen a
-language, whose whole page disagrees with it too.
+**It is the name for a reader of that language, and there are two more rungs
+under it.** The propers already walk `celebrationName`'s chain — the reader's
+language, then English — so an English page about Brazil's calendar printed
+`Saint José de Anchieta, Priest` under a heading calling the calendar
+`Calendário Litúrgico Brasileiro`, and titled the tab the same. What answers
+now is `calendarName`: the endonym to a reader of its language,
+`CALENDAR_NAMES_EN`'s written English to an English one, and
+`Kalendarz liturgiczny — Brazylia` to everyone else — `calendar.title` in the
+interface's own words, joined to the place the calendar belongs to. English
+keeps a written name because twenty-nine of these calendars are published in
+English already, and composing the other fifty-three would give one reader two
+shapes; no other interface language names more than a handful.
+
+**The composed rung is apposition, which is why it works where the tagline
+failed**: a label joined to a label needs no article. It costs what the slugs
+refused to spend — `Intl.DisplayNames` moves with the platform's CLDR, so the
+wording is the reader's browser's (`Congo - Kinshasa`), and two readers can see
+one calendar named two ways. An address could not afford that; a label on the
+page in front of one reader can.
+
+**Two things it must not reach for.** The territory, where the calendar is a
+jurisdiction: `ae` is the Vicariate of Southern Arabia and not the Emirates,
+`kw` Northern Arabia and not Kuwait, `ps` the Latin Patriarchate and not the
+Palestinian Territories, so `JURISDICTION_NAMES` names those three and the
+picker's own cells — where the same ids mean the reader's country — are left
+alone. And the ISO code, which is what `territoryName` answers where the
+platform has no name at all: Malagasy has none for Hong Kong, and
+`Kalandrie litorjika — HK` falls back to English rather than shipping the code.
+
+**A language the platform cannot name places in does not compose at all.**
+`Intl.DisplayNames` has no Latin data and does not say so — it answers in the
+browser's language — so a Latin reader would have met `Calendarium Liturgicum —
+Brasil` on a Brazilian machine and `— Brazil` on an American one. Every rung
+below the endonym is English there, the three written jurisdictions included:
+one calendar in Latin beside every other in English is not a language being
+served.
+
+The edge still serves the endonym (`route-titles.mjs`), and it and the page
+disagree only for a reader who has chosen a language, whose whole document
+disagrees with it too.
 
 **A name from `Intl.DisplayNames` is a label and can be nothing else**, which
 is what that table is still used for — the breadcrumb, and the picker's cells.

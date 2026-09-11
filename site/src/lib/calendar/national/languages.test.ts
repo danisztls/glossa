@@ -9,6 +9,7 @@ import {
 	CALENDAR_IDS,
 	CALENDAR_NAMES_EN,
 	CALENDAR_PAGES,
+	JURISDICTION_NAMES,
 	calendarName,
 	calendarPath,
 	territoryName
@@ -140,9 +141,26 @@ describe('CALENDAR_NAMES_EN', () => {
 	});
 });
 
+describe('JURISDICTION_NAMES', () => {
+	/** The picker asks the same three ids what country the reader lives in,
+	 *  and must keep getting the country. */
+	it('leaves the territory alone', () => {
+		for (const id of Object.keys(JURISDICTION_NAMES)) {
+			expect(territoryName(id, 'en'), id).not.toBe(JURISDICTION_NAMES[id]);
+		}
+		expect(territoryName('ae', 'en')).toBe('United Arab Emirates');
+	});
+
+	it('names only published calendars', () => {
+		for (const id of Object.keys(JURISDICTION_NAMES)) expect(CALENDAR_IDS, id).toContain(id);
+	});
+});
+
 describe('calendarName', () => {
+	const GENERAL = 'Liturgical Calendar';
+
 	it('gives the calendar its own name to a reader of its own language', () => {
-		expect(calendarName('br', 'pt')).toEqual({
+		expect(calendarName('br', 'pt', 'Calendário Litúrgico')).toEqual({
 			text: 'Calendário Litúrgico Brasileiro',
 			lang: 'pt'
 		});
@@ -150,30 +168,81 @@ describe('calendarName', () => {
 
 	/** The reported defect: an English page about Brazil's calendar, naming it
 	 *  in Portuguese under a heading and a hundred propers in English. */
-	it('gives English to every other reader', () => {
-		expect(calendarName('br', 'en')).toEqual({ text: 'Brazilian Liturgical Calendar', lang: 'en' });
-		expect(calendarName('br', 'pl')).toEqual({ text: 'Brazilian Liturgical Calendar', lang: 'en' });
+	it('gives an English reader the written English name', () => {
+		expect(calendarName('br', 'en', GENERAL)).toEqual({
+			text: 'Brazilian Liturgical Calendar',
+			lang: 'en'
+		});
 	});
 
-	/** A calendar published in English has one name and answers with it to
-	 *  everyone. */
+	/** Rung 3, and the reason it exists: English is not a Polish reader's
+	 *  language either. */
+	it('composes a name in the reader’s own language for everyone else', () => {
+		expect(calendarName('br', 'pl', 'Kalendarz liturgiczny')).toEqual({
+			text: 'Kalendarz liturgiczny — Brazylia',
+			lang: 'pl'
+		});
+	});
+
+	/** A calendar published in English has one name and answers with it to an
+	 *  English reader; a Polish one still gets Polish. */
 	it('leaves a calendar published in English alone', () => {
-		for (const lang of ['en', 'pl']) {
-			expect(calendarName('ca', lang)).toEqual({
-				text: 'Canadian Liturgical Calendar',
-				lang: 'en'
-			});
-		}
+		expect(calendarName('ca', 'en', GENERAL)).toEqual({
+			text: 'Canadian Liturgical Calendar',
+			lang: 'en'
+		});
+		expect(calendarName('ca', 'pl', 'Kalendarz liturgiczny')).toEqual({
+			text: 'Kalendarz liturgiczny — Kanada',
+			lang: 'pl'
+		});
 	});
 
-	/** Every answer is a name and every answer is marked, so a caller can set
-	 *  `lang` on it without asking which table it came from. */
+	/**
+	 * Latin is an interface language and `Intl.DisplayNames` has no data for it
+	 * — and does not say so, it answers in the BROWSER's language instead. So a
+	 * Latin reader takes English for every calendar rather than `Calendarium
+	 * Liturgicum — Brasil` on a Brazilian browser and `— Brazil` on an American
+	 * one. This asserts the platform's own fact as much as ours; a day ICU
+	 * learns Latin regions is a day to decide again.
+	 */
+	it('does not compose in a language the platform cannot name places in', () => {
+		expect(calendarName('br', 'la', 'Calendarium Liturgicum')).toEqual({
+			text: 'Brazilian Liturgical Calendar',
+			lang: 'en'
+		});
+		// The jurisdictions too, whose place name is written here and would have
+		// composed: one calendar in Latin beside every other in English is worse.
+		expect(calendarName('ae', 'la', 'Calendarium Liturgicum').lang).toBe('en');
+	});
+
+	/** The three calendars whose id is a stand-in: a composed name that reached
+	 *  for the territory would call the Vicariate of Southern Arabia the
+	 *  Emirates' calendar, and it is Oman's and Yemen's too. */
+	it('names a jurisdiction rather than one of its countries', () => {
+		expect(calendarName('ae', 'pl', 'Kalendarz liturgiczny').text).toBe(
+			'Kalendarz liturgiczny — Southern Arabia'
+		);
+		expect(calendarName('ps', 'pl', 'Kalendarz liturgiczny').text).toBe(
+			'Kalendarz liturgiczny — Jerusalem'
+		);
+	});
+
+	/**
+	 * Every answer is a name, every answer is marked so a caller can set `lang`
+	 * on it without asking which rung it came from, and none of them is a bare
+	 * ISO code — `territoryName`'s own fallback, which is a label in a picker
+	 * cell and a defect in a `<title>`.
+	 */
 	it('answers for every published calendar, in a language it declares', () => {
 		for (const id of CALENDAR_IDS) {
 			for (const lang of UI_LANGS) {
-				const { text, lang: nameLang } = calendarName(id, lang);
+				const { text, lang: nameLang } = calendarName(id, lang, 'Liturgical Calendar');
 				expect(text, id).toBeTruthy();
-				expect([CALENDAR_PAGES[id].lang, 'en'], id).toContain(nameLang);
+				// `territoryName`'s own fallback is the ISO code, which is a label in
+				// a picker cell and a defect in a `<title>`. Not `toContain`: Danish
+				// and Swedish name the United States `USA`.
+				expect(text.endsWith(id.toUpperCase()), id).toBe(false);
+				expect([CALENDAR_PAGES[id].lang, 'en', lang], id).toContain(nameLang);
 			}
 		}
 	});

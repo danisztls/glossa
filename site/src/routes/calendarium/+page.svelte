@@ -388,12 +388,15 @@
 	 * that is actually on screen.
 	 *
 	 * THE NAME FOLLOWS THE READER AND THE SENTENCE AROUND IT ALWAYS DID —
-	 * `Calendário Litúrgico Brasileiro` where the interface is Portuguese, and
-	 * `Brazilian Liturgical Calendar` where it is anything else, which is
-	 * `celebrationName`'s chain applied to the calendar those celebrations are
-	 * in (`languages.ts`). Until 2026-09-11 the endonym was the only answer,
-	 * and an English page about Brazil's calendar named it in Portuguese while
-	 * every proper under it read in English.
+	 * `Calendário Litúrgico Brasileiro` where the interface is Portuguese,
+	 * `Brazilian Liturgical Calendar` where it is English, and `Kalendarz
+	 * liturgiczny — Brazylia` where it is neither (`calendarName`, which owns
+	 * the three rungs and why each is where it is). Until 2026-09-11 the
+	 * endonym was the only answer, and an English page about Brazil's calendar
+	 * named it in Portuguese while every proper under it read in English.
+	 *
+	 * `t('calendar.title')` is passed in because `languages.ts` is read by the
+	 * edge worker and cannot import the interface store.
 	 *
 	 * `shell-head.ts` still composes the endonym for the edge, and the two
 	 * agree wherever the reader has not overruled the address: a crawler and a
@@ -406,7 +409,9 @@
 	 * Patriarchate's calendar, and that is what these name.
 	 */
 	let namedLayer = $derived(territory === 'general' ? undefined : TERRITORY_CALENDARS[territory]);
-	let named = $derived(namedLayer ? calendarName(namedLayer, lang) : undefined);
+	let named = $derived(
+		namedLayer ? calendarName(namedLayer, lang, t('calendar.title')) : undefined
+	);
 	let pageTitle = $derived(
 		named ? `${named.text} — ${t('home.title')}` : `${t('calendar.title')} — ${t('home.title')}`
 	);

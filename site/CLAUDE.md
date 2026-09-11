@@ -3206,11 +3206,17 @@ parses an id.
   German, and is not a word at all in Chinese, so composing one needs a grammar
   per language where a finished phrase needs a speaker once. It is what both
   the `<title>` and `calendar.national.tagline`'s `{name}` take.
-- **A reader of another language is given the English name** — `CALENDAR_NAMES_EN`,
-  which is `celebrationName`'s chain applied to the calendar its celebrations
-  are in, and marked `lang` where it is set in a sentence that is not English.
-  The edge keeps the endonym, and only a reader who has chosen a language sees
-  the two differ (`site/docs/calendar.md`).
+- **Everyone else gets one of two rungs under it** (`calendarName`): the
+  written English name where the reader is English (`CALENDAR_NAMES_EN`), and
+  `calendar.title` joined to the place otherwise — `Kalendarz liturgiczny —
+Brazylia`. Composing is safe here and not in a sentence, because a label
+  joined to a label needs no article. It must reach for the JURISDICTION and
+  not the territory on the three ids that are a vicariate or a patriarchate,
+  and must fall back to English rather than print the ISO code a platform with
+  no name for a territory returns — including for a whole language it cannot
+  name places in, which `Intl.DisplayNames` answers for in the browser's
+  language rather than admitting (Latin). The edge keeps the endonym
+  (`site/docs/calendar.md`).
 - **A name from `Intl.DisplayNames` can be a label and nothing else.** It is a
   bare nominative with no article, which is why the tagline built around one
   printed "as United States keeps it", "wie Schweiz ihn feiert", "tel que le

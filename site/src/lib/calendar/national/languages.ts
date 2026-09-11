@@ -52,8 +52,10 @@
  * the noun. A rule that composed them would need a grammar per language; a
  * finished phrase needs a speaker, once.
  *
- * IT IS THE NAME FOR A READER OF THAT LANGUAGE, and everyone else is given the
- * English one — `CALENDAR_NAMES_EN`, below, which carries the chain.
+ * IT IS THE NAME FOR A READER OF THAT LANGUAGE. Everyone else is given an
+ * English name where one is written (`CALENDAR_NAMES_EN`) and the interface's
+ * own words joined to the place otherwise — `calendarName`, below, carries the
+ * chain and why each rung is where it is.
  *
  * WHERE NO ADJECTIVE READS NATURALLY THE NAME IS PARENTHETICAL, which is the
  * source's own shape — GCatholic titles every feed `Liturgical Calendar 2026
@@ -264,13 +266,12 @@ export const CALENDAR_IDS: readonly string[] = Object.keys(CALENDAR_PAGES).sort(
  * would be a second English name for one calendar, and a missing row would
  * leave that calendar named in its own language on an English page.
  *
- * WRITTEN, NOT COMPOSED, for `CALENDAR_PAGES`' own reason at one remove.
- * `Liturgical Calendar` plus a territory from `Intl.DisplayNames` would cost
- * nothing and be wrong three times — the vicariates and the patriarchate are
- * not the country their id spells, so `ae` would name the Emirates a calendar
- * that is Oman's and Yemen's too — and it would put `Congo - Kinshasa` and
- * `Hong Kong SAR China` in a title, in whatever wording the reader's browser
- * shipped CLDR with that month.
+ * WRITTEN WHERE EVERY OTHER LANGUAGE IS COMPOSED (`calendarName`, rung 3),
+ * and what buys the exception is that a third of the table is already written
+ * English: twenty-nine of these calendars are PUBLISHED in it, so an English
+ * reader meets `Canadian Liturgical Calendar` either way, and composing the
+ * other fifty-three would give one reader two shapes for one kind of thing.
+ * No other interface language names more than a handful.
  *
  * THE DEMONYM WHERE ENGLISH HAS ONE THAT READS, the parenthetical where it
  * does not, which is the shape the table above already takes: `Bosnian
@@ -338,28 +339,129 @@ export const CALENDAR_NAMES_EN: Record<string, string> = {
 };
 
 /**
+ * What a calendar is OF, where that is not the territory its id spells.
+ *
+ * Eight of the calendars are a particular church's and three of those span
+ * several countries, so the id is a stand-in rather than a subject: `ae` is
+ * the Vicariate of Southern Arabia, which is Oman's and Yemen's calendar as
+ * much as the Emirates'; `kw` is Northern Arabia, over four countries; `ps`
+ * is the Latin Patriarchate of Jerusalem, over four more. `Intl.DisplayNames`
+ * answers `United Arab Emirates`, `Kuwait` and `Palestinian Territories` for
+ * them, each of which is a true name for a place and a false one for this
+ * calendar.
+ *
+ * SEPARATE FROM `SUBDIVISION_NAMES` AND FROM `territoryName`, because the
+ * picker asks the same three ids a different question. There `ae` is the
+ * country the reader lives in and `United Arab Emirates` is the right cell;
+ * only a calendar's NAME wants the jurisdiction. A row added to the
+ * subdivision table instead would have renamed the reader's own country.
+ *
+ * English-only, on `SUBDIVISION_NAMES`' terms: no platform table names a
+ * vicariate, these are what the source calls them, and a proper noun carried
+ * untranslated into another language's phrase is what every place name in the
+ * picker already does.
+ */
+export const JURISDICTION_NAMES: Record<string, string> = {
+	ae: 'Southern Arabia',
+	kw: 'Northern Arabia',
+	ps: 'Jerusalem'
+};
+
+/**
  * What to call a calendar to a reader, and which language the answer is in.
  *
- * TWO ANSWERS AND NOT FORTY. The calendar's own name where the reader is
- * reading in the language it was named in, English everywhere else — see
- * `CALENDAR_NAMES_EN` for why the middle option, a name composed per language
- * out of a territory, is not one.
+ * THREE RUNGS, IN THE ORDER OF WHAT EACH ONE COSTS THE READER:
+ *
+ * 1. the calendar's own name, where the reader reads the language it was
+ *    named in — a finished phrase, written by a speaker, and the only rung
+ *    that can carry a demonym that declines;
+ * 2. the English name, to an English reader — `Brazilian Liturgical
+ *    Calendar`, the same kind of phrase for the site's fallback language
+ *    (`CALENDAR_NAMES_EN`);
+ * 3. the interface's own words for the calendar, joined to the place it
+ *    belongs to — `Kalendarz liturgiczny — Brazylia`. Composed, and the one
+ *    rung that is: `calendar.title` is translated into every interface
+ *    language and `Intl.DisplayNames` knows nearly every territory in all of
+ *    them, so this is a name in the reader's language for a calendar nobody
+ *    has written them one of.
+ *
+ * THE PLACE IS SPELLED THE WAY THE PICKER SPELLS IT — `territoryName`, long
+ * form, administrative qualifiers and all (`SRA Hongkong (Chiny)`). The short
+ * form reads better for Hong Kong and abbreviates the United States to
+ * `É.-U.`, and either way it would be a second name for the place whose cell
+ * the reader just pressed.
+ *
+ * IT IS APPOSITION AND NOT A SENTENCE, which is what makes rung 3 safe where
+ * `calendar.national.tagline` records an earlier attempt failing: a territory
+ * dropped into running text printed `as United States keeps it` and `wie
+ * Schweiz ihn feiert`, because no rule can supply an article. A label joined
+ * to a label needs none.
+ *
+ * AND IT SPENDS WHAT THE SLUGS REFUSED TO. `Intl.DisplayNames` moves with the
+ * platform's CLDR, so rung 3 is the reader's browser's wording — `Congo -
+ * Kinshasa`, `Hong Kong SAR China` — and two readers can see the same calendar
+ * named two ways. An ADDRESS could not afford that and is written down
+ * (`CALENDAR_PAGES`); a label on a page in front of one reader can, and the
+ * alternative for thirty-eight languages is English.
+ *
+ * THE WORD IS PASSED IN RATHER THAN READ. This module is imported by
+ * `shell-head.ts` and so by the edge worker, and by `route-titles.mjs` in
+ * Node; `i18n.svelte.ts` negotiates a language at module scope. One import
+ * here would run that in both.
  *
  * THE LANGUAGE COMES BACK WITH THE NAME because the caller has to mark it:
  * `Brazilian Liturgical Calendar` inside a Polish paragraph is a foreign
  * phrase, and an unmarked one is hyphenated and pronounced as Polish.
  *
  * `/calendarium/brazil` is served by the edge with a Portuguese head and keeps
- * it, which this does not contradict: a reader who has not chosen a language
+ * it, which none of this contradicts: a reader who has not chosen a language
  * is given the address's own (`i18n.svelte.ts`, `initialLang`), so `lang` is
- * `pt` here and the name is the written one. It differs only for a reader who
- * HAS chosen, whose whole page is in that language by the time this is read.
+ * `pt` here and rung 1 answers. It differs only for a reader who HAS chosen,
+ * whose whole page is in that language by the time this is read.
  */
-export function calendarName(id: string, lang: string): { text: string; lang: string } {
+export function calendarName(
+	id: string,
+	lang: string,
+	/** The interface's own `calendar.title` — `Liturgical Calendar`, in `lang`. */
+	general: string
+): { text: string; lang: string } {
 	const page = CALENDAR_PAGES[id];
 	if (lang === page.lang) return { text: page.name, lang: page.lang };
-	const english = CALENDAR_NAMES_EN[id];
-	return english ? { text: english, lang: 'en' } : { text: page.name, lang: page.lang };
+	// `page.name` only where there is no English row, which is where the name
+	// above IS English (`CALENDAR_NAMES_EN`, asserted both ways).
+	const english = { text: CALENDAR_NAMES_EN[id] ?? page.name, lang: 'en' };
+	if (lang === 'en') return english;
+	// AND RUNG 3 FALLS BACK TOO, twice, because the platform's answer can be
+	// worse than English. A language it cannot name places in at all takes
+	// English for EVERY calendar, the three written jurisdictions included —
+	// one calendar in Latin beside every other in English is not a language
+	// being served. And `territoryName` returns the ISO code where CLDR has no
+	// name for one territory in a language it otherwise knows: Malagasy has
+	// none for Hong Kong, and `Kalandrie litorjika — HK` is not a name. Which
+	// those are is the browser's business and changes under us, so it is a
+	// condition tested at the point of use and not a list kept here.
+	if (!namesPlacesIn(lang)) return english;
+	const place = JURISDICTION_NAMES[id] ?? territoryName(id, lang);
+	return place === id.toUpperCase() ? english : { text: `${general} — ${place}`, lang };
+}
+
+/**
+ * Whether the platform can name a place in this language at all.
+ *
+ * LATIN IS THE ONE INTERFACE LANGUAGE IT CANNOT, and a `la` reader is the
+ * reason this is asked rather than assumed: `Intl.DisplayNames` does not throw
+ * for an unsupported locale, it answers in the BROWSER'S — the failure mode
+ * `territoryName` records for `zht`, which `bcp47` fixes and nothing fixes
+ * here. Composing anyway would put `Calendarium Liturgicum — Brasil` in front
+ * of a Latin reader whose browser is Brazilian and `— Brazil` in front of one
+ * whose browser is American. English is at least the same for both.
+ */
+function namesPlacesIn(lang: string): boolean {
+	try {
+		return Intl.DisplayNames.supportedLocalesOf([bcp47(lang)]).length > 0;
+	} catch {
+		return false;
+	}
 }
 
 /** Slug -> calendar id, which is the direction an address is read in. */
