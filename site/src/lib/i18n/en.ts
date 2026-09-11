@@ -542,6 +542,10 @@ export const en: Dictionary = {
 	// would search for are their own, and an example term would be written in
 	// one language for readers of thirty-seven.
 	'jumpbox.scope': 'Inside one work',
+	// The chip's own control, and its whole accessible name after the work's:
+	// "Catechism — remove filter". The visible `×` is `aria-hidden`, so this
+	// is the only thing saying what pressing it does.
+	'jumpbox.scopeRemove': 'Remove filter',
 	'jumpbox.hint': 'Press / or Ctrl+K to jump to a reference',
 	'jumpbox.noMatch': 'No match',
 	// The suggestion listbox's accessible name. The box has no visible

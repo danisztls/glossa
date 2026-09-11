@@ -41,7 +41,11 @@
 	import type { TopicIndex } from '$lib/types';
 	import { ensureAllIndexes, type BibleBookMeta } from '$lib/corpus-index';
 	import { content } from '$lib/content.svelte';
-	import type { parseSectionFilter as parseScopeFn, suggest as suggestFn } from '$lib/suggest';
+	import type {
+		parseSectionFilter as parseScopeFn,
+		SectionFilter,
+		suggest as suggestFn
+	} from '$lib/suggest';
 	import { highlight } from '$lib/highlight';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { isOverlayOpen, isTypingTarget } from '$lib/shortcuts';
@@ -53,7 +57,28 @@
 	const DEFAULT_CCC_LANG = 'en';
 
 	let open = $state(false);
-	let query = $state('');
+	/**
+	 * THE FIELD IS A TOKEN AND A TERM, NOT ONE STRING.
+	 *
+	 * A scope is one recognised value, always leading, and never usefully
+	 * edited a character at a time — which is what a token is. Holding it as
+	 * text inside the input meant the reader could see `ccc:` and had no way
+	 * to tell it apart from the words beside it, and the only ways to draw it
+	 * as a chip in place are pixel tricks: an overlay behind transparent text,
+	 * matched declaration for declaration to the input's own metrics and
+	 * scrolled in step with it. Lifting it out of the value costs an `input`
+	 * event handler and buys a real element, which can be styled, labelled,
+	 * announced and pressed.
+	 *
+	 * `typed` is what the two would have been as one string, and it is what
+	 * `suggest` and the parser both read — so the box's grammar is unchanged
+	 * and a reader who pastes `ccc: church` gets the same answer as one who
+	 * typed it. What is NOT composed is the string the highlighter marks with:
+	 * the scope is not what any row was matched on.
+	 */
+	let term = $state('');
+	let scope: SectionFilter | undefined = $state();
+	const typed = $derived(scope ? `${scope.word}: ${term}` : term);
 	let notFound = $state(false);
 	/** Index into `suggestions`, or -1 for "nothing chosen yet". Enter then
 	 *  falls through to the parser, which is the behaviour that predates the
@@ -181,7 +206,7 @@
 		// `fuzzyReady`. The value itself says nothing this expression wants.
 		void fuzzyReady;
 		return open && suggester
-			? suggester(query, {
+			? suggester(typed, {
 					lang: i18n.lang,
 					bibleWorkId: content.workIdFor('bible'),
 					cccLang: content.langFor('catechism'),
@@ -251,10 +276,47 @@
 	 * answer at all, so below that an empty list is still the field warming up
 	 * and not a refusal.
 	 */
-	const scope = $derived(query.trim() && parseScope ? parseScope(query) : undefined);
-	const scopeEmpty = $derived(
-		scope !== undefined && scope.rest.length >= 2 && suggestions.length === 0
+	const scopeEmpty = $derived(scope !== undefined && term.length >= 2 && suggestions.length === 0);
+
+	/**
+	 * A chip names the WORK where it can and the reader's own word where it
+	 * cannot. `cic:` is the Catechism and the Code at once — the ambiguity
+	 * `SECTIONS` admits on purpose — and a chip resolving it to one of them
+	 * would be the confident guess that table refuses to make; a chip reading
+	 * both names, or all four of `c:`, is a paragraph. So the rule is: one
+	 * section, its name; several, what was typed.
+	 */
+	const scopeLabel = $derived(
+		scope === undefined ? '' : scope.names.length === 1 ? scope.names[0] : `${scope.word}:`
 	);
+
+	/**
+	 * Recognise a scope the reader has just finished typing, and take it out
+	 * of the field.
+	 *
+	 * Run from `input` alone, so nothing the component assigns can re-trigger
+	 * it — Tab completion and the legend's rows set the term directly. A
+	 * second scope typed over a first REPLACES it, which is the only reading
+	 * of `ccc: can:` that is not an error message.
+	 */
+	function recogniseScope() {
+		if (!parseScope) return;
+		const found = parseScope(term, i18n.lang);
+		if (!found) return;
+		scope = found;
+		term = found.rest;
+	}
+
+	/** The chip's own control, and Backspace into it from an empty field. The
+	 *  word is NOT put back in the field: it parses again on the next
+	 *  keystroke, so restoring it would re-form the chip the reader had just
+	 *  taken off. */
+	function dropScope() {
+		scope = undefined;
+		active = -1;
+		notFound = false;
+		inputEl?.focus();
+	}
 
 	/**
 	 * A specimen goes into the FIELD and nowhere else.
@@ -271,11 +333,15 @@
 	 * the end.
 	 */
 	function fillExample(text: string) {
-		query = text;
+		term = text;
 		active = -1;
 		notFound = false;
+		// The legend's last row is a scope (`ccc:`), so the same press that
+		// teaches the form arms the filter and leaves the caret where the
+		// reader types. Every other row parses as no scope and is unaffected.
+		recogniseScope();
 		inputEl?.focus();
-		queueMicrotask(() => inputEl?.setSelectionRange(query.length, query.length));
+		queueMicrotask(() => inputEl?.setSelectionRange(term.length, term.length));
 	}
 
 	// The active row cannot outlive the list it indexes: a keystroke that
@@ -403,14 +469,30 @@
 		if (suggestions.length === 0) return;
 		if (e.key === 'Tab' && !e.shiftKey && active >= 0) {
 			e.preventDefault();
-			query = suggestions[active].completion;
+			// The TERM, not the field: a completion is a row's own text and the
+			// chip is not part of any row, so completing under a scope keeps
+			// the reader inside the work they narrowed to.
+			term = suggestions[active].completion;
 			// The list re-derives from the new text, so the old index would name
 			// a different row — and the completed query is itself a query, whose
 			// own first row may now be something else. Nothing stays chosen.
 			active = -1;
 			// The caret goes to the end: a completion is a prefix the reader is
 			// about to extend, and browsers otherwise keep the old selection.
-			queueMicrotask(() => inputEl?.setSelectionRange(query.length, query.length));
+			queueMicrotask(() => inputEl?.setSelectionRange(term.length, term.length));
+			return;
+		}
+		// Backspace out of an empty field takes the chip, which is how every
+		// token field behaves and the only way off it without the mouse.
+		if (
+			e.key === 'Backspace' &&
+			scope &&
+			term === '' &&
+			inputEl?.selectionStart === 0 &&
+			inputEl?.selectionEnd === 0
+		) {
+			e.preventDefault();
+			dropScope();
 			return;
 		}
 		if (e.key === 'ArrowDown') {
@@ -499,7 +581,7 @@
 			return;
 		}
 
-		const ref = parseReference(query);
+		const ref = parseReference(typed);
 		notFound = false;
 
 		if (ref.kind === 'ccc') {
@@ -580,6 +662,7 @@
 	function onInput() {
 		notFound = false;
 		active = -1;
+		recogniseScope();
 	}
 </script>
 
@@ -636,21 +719,58 @@
 				collapsed, and saying otherwise sends a screen-reader user
 				looking for a listbox that is not rendered.
 			-->
-			<input
-				bind:this={inputEl}
-				bind:value={query}
-				oninput={onInput}
-				onkeydown={onInputKeydown}
-				type="text"
-				role="combobox"
-				aria-expanded={suggestions.length > 0}
-				aria-controls="jump-listbox"
-				aria-autocomplete="list"
-				aria-activedescendant={active >= 0 ? optionId(active) : undefined}
-				placeholder={t('jumpbox.field')}
-				autocomplete="off"
-				spellcheck="false"
-			/>
+			<div class="field">
+				<!--
+					THE SCOPE, AS A THING RATHER THAN AS TEXT. It is a `<button>`
+					because it does something — pressing it takes the filter off —
+					and because that is what reaches a reader who does not know
+					about Backspace. The `×` is `aria-hidden`: the button's own
+					label already says what the press does, and a screen reader
+					announcing "times" after the work's name says nothing.
+
+					IT IS TABBABLE, unlike everything else in this panel, and it
+					can be because it sits BEFORE the input: forward Tab out of
+					an empty field still leaves the modal, which is the escape
+					hatch `onInputKeydown` refuses to take, and Shift+Tab is what
+					reaches the chip. `showModal()` would focus it as the first
+					focusable descendant; `openBox` puts focus in the input by
+					hand and always did, for exactly this reason.
+
+					`aria-describedby` on the field is what keeps the chip from
+					being a silent change. Focus never leaves the input, so a
+					token appearing beside it would otherwise be a character
+					vanishing from the value with nothing said; pointing the
+					field's description at the chip gives the scope a name in the
+					one place the reader is.
+				-->
+				{#if scope}
+					<button
+						type="button"
+						id="jump-scope"
+						class="scope-chip"
+						onclick={dropScope}
+						aria-label={`${scopeLabel} — ${t('jumpbox.scopeRemove')}`}
+					>
+						{scopeLabel}<span aria-hidden="true">×</span>
+					</button>
+				{/if}
+				<input
+					bind:this={inputEl}
+					bind:value={term}
+					aria-describedby={scope ? 'jump-scope' : undefined}
+					oninput={onInput}
+					onkeydown={onInputKeydown}
+					type="text"
+					role="combobox"
+					aria-expanded={suggestions.length > 0}
+					aria-controls="jump-listbox"
+					aria-autocomplete="list"
+					aria-activedescendant={active >= 0 ? optionId(active) : undefined}
+					placeholder={t('jumpbox.field')}
+					autocomplete="off"
+					spellcheck="false"
+				/>
+			</div>
 		</form>
 
 		<!--
@@ -679,7 +799,7 @@
 			by name, which is what the lead sentence above the rows says, and
 			an invented shape would teach a form that does not exist.
 		-->
-		{#if query.trim() === '' && examples.length > 0}
+		{#if term.trim() === '' && !scope && examples.length > 0}
 			<div class="examples">
 				<p class="examples-lead">{t('jumpbox.searches')}</p>
 				<ul class="examples-list">
@@ -762,7 +882,7 @@
 									a leading space in front of every label.
 								-->
 								<span class="label"
-									>{#each highlight( suggestion.label, query, { loose: true } ) as segment}{#if segment.hit}<mark
+									>{#each highlight( suggestion.label, term, { loose: true } ) as segment}{#if segment.hit}<mark
 												>{segment.text}</mark
 											>{:else}{segment.text}{/if}{/each}</span
 								>
@@ -776,7 +896,7 @@
 									coincidence drawn as evidence.
 								-->
 								<span class="detail"
-									>{#each highlight(suggestion.detail, query) as segment}{#if segment.hit}<mark
+									>{#each highlight(suggestion.detail, term) as segment}{#if segment.hit}<mark
 												>{segment.text}</mark
 											>{:else}{segment.text}{/if}{/each}</span
 								>
@@ -790,7 +910,7 @@
 		<!-- `scopeEmpty` says why the second condition is live where the first
 		     waits for Enter. -->
 		{#if notFound || scopeEmpty}
-			<p class="not-found">{t('jumpbox.noMatch')}: “{query}”</p>
+			<p class="not-found">{t('jumpbox.noMatch')}: “{term}”</p>
 		{/if}
 
 		<!--
@@ -819,7 +939,7 @@
 			{#if active >= 0}
 				<span><kbd>Tab</kbd>{t('jumpbox.key.complete')}</span>
 			{/if}
-			{#if query.trim() !== ''}
+			{#if term.trim() !== ''}
 				<span><kbd>Enter</kbd>{t('jumpbox.key.go')}</span>
 			{/if}
 			<span><kbd>Esc</kbd>{t('ui.close')}</span>
@@ -924,14 +1044,70 @@
 	   in the right direction in every theme without needing a per-theme value —
 	   warmer and slightly darker on light and sepia, lighter on dark — so the
 	   field reads as a distinct surface either way. */
-	input {
-		width: 100%;
-		font-size: 1.1rem;
+	.field {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
 		padding: 0.5rem 0.6rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
+	}
+
+	/* The input carries none of the field's chrome any more: the box it is
+	   drawn in is `.field`, which holds the chip beside it. What it keeps is
+	   the type — a control resets its own font, and inheriting is what puts
+	   the chip and the words the reader types on one baseline at one size. */
+	input {
+		flex: 1 1 auto;
+		min-inline-size: 0;
+		font: inherit;
+		font-size: 1.1rem;
+		padding: 0;
+		border: 0;
+		background: none;
 		color: var(--color-text);
+	}
+
+	input:focus {
+		outline: none;
+	}
+
+	/*
+	 * THE SCOPE CHIP: a filter, drawn as the one thing in the field that is
+	 * not text.
+	 *
+	 * `flex: 0 0 auto` and a `max-inline-size`, because the name is a work's
+	 * and some of them are long — it ellipsises rather than pushing the field
+	 * the reader is typing in off the panel.
+	 */
+	.scope-chip {
+		flex: 0 0 auto;
+		max-inline-size: 40%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+		padding: 0.1rem 0.4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-bg);
+		color: var(--color-text-muted);
+		font-size: 0.9rem;
+		font-family: var(--font-sans);
+		cursor: pointer;
+	}
+
+	.scope-chip:hover,
+	.scope-chip:focus-visible {
+		color: var(--color-text);
+		border-color: var(--color-apparatus);
+	}
+
+	.scope-chip span {
+		color: var(--color-text-muted);
 	}
 
 	/*
@@ -939,6 +1115,12 @@
 	 * bordered text field on the site does — `.menu-filter` (styles/menus.css),
 	 * `/documenta`'s `.doc-search` and `/quaestiones`' `.topic-search` carry
 	 * these same four declarations.
+	 *
+	 * ON THE WRAPPER AND `:focus-within`, WHICH THE OTHER THREE DO NOT NEED.
+	 * This is the only field on the site with something in it that is not
+	 * text: the scope chip is a real element, so the bordered box is `.field`
+	 * and the input inside it is bare. Left on the input, the ring would be
+	 * drawn around the words and not around the box the reader sees.
 	 *
 	 * `app.css`'s `:focus-visible` is a 2px outline at a 2px offset. That is
 	 * correct for buttons and links, which are focused in RESPONSE to the
@@ -962,7 +1144,7 @@
 	 * focus colour, so high-contrast mode keeps a real ring even though the
 	 * shadow below is dropped there.
 	 */
-	input:focus-visible {
+	.field:focus-within {
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);

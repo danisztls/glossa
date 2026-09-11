@@ -647,6 +647,8 @@ describe('suggest', () => {
 			it('reads a section word, a colon, and the rest', () => {
 				expect(parseSectionFilter('ccc: church')).toEqual({
 					paths: ['/catechismus'],
+					names: ['Catechism'],
+					word: 'ccc',
 					rest: 'church'
 				});
 			});
@@ -684,11 +686,26 @@ describe('suggest', () => {
 				expect(parseSectionFilter('catechsim: church')).toBeUndefined();
 			});
 
-			it('is nothing with nothing after the colon', () => {
-				// `ccc:` is a keyword with a stop on it, which `sectionForm`
-				// drops — so the bare form already reaches the landing page.
-				expect(parseSectionFilter('ccc:')).toBeUndefined();
-				expect(hrefs('ccc:')).toContain('/catechismus');
+			/**
+			 * A COLON WITH NOTHING AFTER IT IS STILL A SCOPE. It was read as a
+			 * keyword with a stop on it — `sectionForm` drops the stop, so
+			 * `ccc:` reached the Catechism's landing page and looked right —
+			 * but the same string went to `titleSuggestions` too, whose loose
+			 * tier answered it with two magisterial documents. The one state in
+			 * which the reader has said WHERE they are looking was the state
+			 * that answered from somewhere else.
+			 */
+			it('arms on the colon alone', () => {
+				expect(parseSectionFilter('ccc:')?.rest).toBe('');
+			});
+
+			it('answers an armed scope with the work it armed on, and nothing else', () => {
+				installFuzzyRanker();
+				expect(hrefs('ccc:')).toEqual(['/catechismus']);
+			});
+
+			it('answers an ambiguous one with each work it could mean', () => {
+				expect(hrefs('cic:').sort()).toEqual(['/catechismus', '/ius-canonicum']);
 			});
 
 			it('keeps an exact word over the prefixes of the same length', () => {

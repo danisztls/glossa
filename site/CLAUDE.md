@@ -517,6 +517,13 @@ Rationale in `site/docs/finding.md`.
   misspelled section is not a filter. A row is filed by the longest
   `SECTIONS.path` its href sits under, never by `SuggestionKind` — `heading`
   belongs to three sections. It narrows the merged list and no producer.
+- **An armed scope is a CHIP in the field, and the colon alone arms it.**
+  `ccc:` read as a keyword also went to the loose title tier, which answered
+  it with two magisterial documents; it now answers with that section's
+  landing row and nothing else. The chip is a real element rather than styled
+  text — `JumpBox` holds a token and a term and recomposes them for
+  `suggest`, `.field` carries the border the input used to, and the chip is
+  the one tabbable control in the panel because it sits before the input.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

@@ -1341,22 +1341,40 @@ function matchSections(text: string): { section: SectionWords; score: 0 | 1 | 2 
  * deliberate ambiguity this table documents at length, preserved: it scopes to
  * the Catechism AND the Code, rather than guessing at the reader's language.
  *
- * Nothing follows the colon, nothing is returned: `ccc:` is a section keyword
- * with a stop on it, which `sectionForm` drops, so the bare form already
- * reaches that section's landing page and needs no branch here.
+ * ## A scope with nothing typed after it is still a scope
+ *
+ * `ccc:` was read as a section KEYWORD with a stop on it — `sectionForm` drops
+ * the stop, so the bare form reached the Catechism's landing page and the
+ * colon was doing nothing. It looked equivalent and was not: the same string
+ * also went to `titleSuggestions`, whose loose tier answered `ccc:` with
+ * *Pastores Gregis* and *Ut Unum Sint*, so the one state in which the reader
+ * has unambiguously said WHERE they are looking was the state that answered
+ * with two documents from somewhere else.
+ *
+ * So an empty rest is a filter with `rest: ''`, and `suggest` answers it with
+ * that section's landing row and nothing else: the scope is armed, and the row
+ * says which work it is armed on.
  */
 export interface SectionFilter {
 	/** The landing paths of the sections named — `SECTIONS[].path`, which is
 	 *  also what `sectionPathOf` files a row under. */
 	paths: string[];
-	/** The query with the scope taken off. Never empty, and normalised the
-	 *  way `suggest` normalises its input. */
+	/** What they are called, for a surface that has to show the reader what
+	 *  their scope resolved to. In `paths` order. */
+	names: string[];
+	/** The word the reader put left of the colon, as they wrote it. What a
+	 *  surface holding the scope apart from the term recomposes with, so the
+	 *  string `suggest` reads is the one that would have been typed. */
+	word: string;
+	/** The query with the scope taken off, normalised the way `suggest`
+	 *  normalises its input. Empty where the reader has typed the colon and
+	 *  stopped. */
 	rest: string;
 }
 
-const SCOPE_RE = /^([^:]+):\s*(\S.*)$/;
+const SCOPE_RE = /^([^:]+):\s*(.*)$/;
 
-export function parseSectionFilter(input: string): SectionFilter | undefined {
+export function parseSectionFilter(input: string, lang?: string): SectionFilter | undefined {
 	const match = SCOPE_RE.exec(input.trim());
 	if (!match) return undefined;
 	const needle = sectionForm(match[1]);
@@ -1364,8 +1382,11 @@ export function parseSectionFilter(input: string): SectionFilter | undefined {
 	const sections = literalSections(needle);
 	if (sections.size === 0) return undefined;
 	const top = Math.max(...sections.values());
+	const named = [...sections.entries()].filter(([, score]) => score === top).map(([s]) => s);
 	return {
-		paths: [...sections.entries()].filter(([, score]) => score === top).map(([s]) => s.path),
+		paths: named.map((s) => s.path),
+		names: named.map((s) => tr(s.titleKey, lang ?? i18n.lang)),
+		word: match[1].trim(),
 		rest: match[2].trim().replace(/\s+/g, ' ')
 	};
 }
@@ -1378,6 +1399,8 @@ export function parseSectionFilter(input: string): SectionFilter | undefined {
  * Compendium and not the Catechism — and that pair is the one the table
  * already argues about under `path`.
  */
+const SECTION_BY_PATH = new Map(SECTIONS.map((section) => [section.path, section]));
+
 function sectionPathOf(href: string): string | undefined {
 	const path = href.replace(/[#?].*$/, '');
 	let best: string | undefined;
@@ -1386,6 +1409,21 @@ function sectionPathOf(href: string): string | undefined {
 		if (best === undefined || base.length > best.length) best = base;
 	}
 	return best;
+}
+
+/** A section's own index page as a row. Two callers: a keyword that named it,
+ *  and a scope with nothing typed after it yet. */
+function landingRow(section: SectionWords, score: number, order: number, ctx: Context): Scored {
+	const name = tr(section.titleKey, ctx.lang);
+	return {
+		href: section.path,
+		kind: 'section',
+		label: name,
+		completion: name,
+		badge: name,
+		score,
+		order
+	};
 }
 
 function cccRow(n: number, score: number, order: number, ctx: Context): Scored {
@@ -1527,22 +1565,19 @@ function numberedWorkSuggestions(query: string, ctx: Context): Scored[] {
 			// offer the same index under two names.
 			if (landed.has(section.path)) continue;
 			landed.add(section.path);
-			out.push({
-				href: section.path,
-				kind: 'section',
-				label: tr(section.titleKey, ctx.lang),
-				completion: tr(section.titleKey, ctx.lang),
-				badge: tr(section.titleKey, ctx.lang),
-				// A landing page is the coarsest thing the box can offer, so a
-				// PREFIX of one sits at the bottom of the list and a loose reading
-				// of one sits below that. Its full NAME does not: "Prayers" typed
-				// in full is the prayers section, not a Summa question whose title
-				// contains the word — which is what it resolved to at the landing
-				// band, and which made Tab move the reader's own chosen row down
-				// the list they picked it from.
-				score: exactName ? SCORE.titleExact + 1 : score === 1 ? SCORE.landing : SCORE.landingFuzzy,
-				order: order++
-			});
+			// A landing page is the coarsest thing the box can offer, so a
+			// PREFIX of one sits at the bottom of the list and a loose reading
+			// of one sits below that. Its full NAME does not: "Prayers" typed
+			// in full is the prayers section, not a Summa question whose title
+			// contains the word — which is what it resolved to at the landing
+			// band, and which made Tab move the reader's own chosen row down
+			// the list they picked it from.
+			const landing = exactName
+				? SCORE.titleExact + 1
+				: score === 1
+					? SCORE.landing
+					: SCORE.landingFuzzy;
+			out.push(landingRow(section, landing, order++, ctx));
 			continue;
 		}
 
@@ -2215,10 +2250,22 @@ export function suggest(input: string, opts: SuggestOpts = {}): Suggestion[] {
 	// made deliberately: `ccc: 27` has to reach the exactly-numbered tier of
 	// `numberedWorkSuggestions`, which is the branch for a query with no
 	// keyword at all.
-	const filter = parseSectionFilter(typed);
+	const filter = parseSectionFilter(typed, opts.lang);
 	const query = filter ? filter.rest : typed;
 	const scope = filter && new Set(filter.paths);
 	const ctx = resolveContext(opts, filter !== undefined);
+
+	// An armed scope with nothing typed into it. Every producer would answer
+	// nothing, so the landing row is the answer: it names the work the reader
+	// has just narrowed to, which is the only thing there is to say yet.
+	if (filter && !query) {
+		return filter.paths
+			.map((path) => SECTION_BY_PATH.get(path))
+			.filter((section): section is SectionWords => section !== undefined)
+			.map((section, index) => landingRow(section, SCORE.titleExact, index, ctx))
+			.slice(0, ctx.limit)
+			.map(({ score: _score, order: _order, ...suggestion }) => suggestion);
+	}
 
 	const rows = [
 		...exactReference(query, ctx),

@@ -1223,6 +1223,48 @@ own rule about ranking rather than routing held to under a filter: `ccc: 27`
 has to reach the tier for a query with NO keyword in it, and dispatching on the
 section would never have got there.
 
+**A colon with nothing after it is still a scope, and reading it as a keyword
+was not merely equivalent.** `ccc:` used to reach the Catechism's landing page
+through `sectionForm`, which drops the stop — so it looked right — while the
+same string also went to `titleSuggestions`, whose loose tier answered it with
+_Pastores Gregis_ and _Ut Unum Sint_. **The one state in which the reader has
+unambiguously said WHERE they are looking was the state that answered from
+somewhere else.** An armed scope with an empty term now answers with that
+section's landing row and nothing else: the filter is on, and the row names the
+work it is on.
+
+**The scope is a TOKEN in the field, not text in it.** It is one recognised
+value, always leading, never usefully edited a character at a time — and held
+as text the reader could see `ccc:` with nothing to tell it from the words
+beside it. The alternatives to lifting it out of the value are pixel tricks: an
+overlay behind transparent input text, matched declaration for declaration to
+the input's metrics and scrolled in step with it. **Lifting it out costs one
+`input` handler and buys a real element** — one that can be styled, labelled,
+announced and pressed. `typed` recomposes the two for `suggest` and the parser,
+so a reader who pastes `ccc: church` gets what one who typed it gets; what is
+NOT recomposed is the string the highlighter marks with, the scope being no
+part of what any row matched.
+
+**A chip names the WORK where it can and the reader's own word where it
+cannot.** `cic:` is the Catechism and the Code at once, and a chip resolving it
+to one of them is the confident guess `SECTIONS` refuses to make; a chip
+reading both names, or all four of `c:`, is a paragraph. One section, its name;
+several, what was typed.
+
+**The chip is the one tabbable thing in the panel, and it can be because it
+sits BEFORE the input.** Forward Tab out of an empty field still leaves the
+modal — the escape hatch `onInputKeydown` declines to take — and Shift+Tab is
+what reaches the chip; Backspace at position 0 takes it too, which is how every
+token field behaves. `aria-describedby` points the field at it, because focus
+never leaves the input and a token forming beside it would otherwise be
+characters vanishing from the value with nothing said.
+
+**The bordered box moved to a wrapper for it.** `.field` carries the border,
+the radius and the ground, `:focus-within` carries the ring, and the input
+inside is bare — the other three bordered fields on the site (`.menu-filter`,
+`.doc-search`, `.topic-search`) keep those four declarations on the input
+itself, because this is the only field with something in it that is not text.
+
 **An empty scoped list is an answer, so it says so while the reader types.**
 Everywhere else the box stays silent on no match, because nothing matching `chu`
 is what typing looks like; a scope has a subject, and silence to `ccc: church`
