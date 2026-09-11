@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { hrefFor } from '$lib/address';
+	import { citationFor } from '$lib/citation-label';
 	import ProseBlocks from '$lib/components/ProseBlocks.svelte';
 	import { content } from '$lib/content.svelte';
 	import { sidenoteRoom } from '$lib/sidenotes.svelte';
-	import { t } from '$lib/i18n.svelte';
+	import { i18n, t } from '$lib/i18n.svelte';
+	import { editorialSourceAddresses, editorialSourceLine, sourceLinks } from '$lib/topic-sources';
 	import type { CccParagraph, DocumentSection } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -131,6 +133,28 @@
 	const shelfHref = $derived(`/quaestiones#${data.topic.doorway}-${data.topic.cluster}`);
 
 	/**
+	 * The note's footing: the dictionary's own sentence with this topic's
+	 * sources spliced into it as links.
+	 *
+	 * `$derived` ALL THE WAY DOWN, because every input moves under the reader.
+	 * `citationFor` reads the interface dictionary for the siglum and the
+	 * reader's own content language for a document's title, and the list's
+	 * punctuation is the interface language's — so a note whose links were
+	 * resolved once at load would keep one reader's language after another
+	 * chose differently, which is the defect `+page.ts` records for the
+	 * passages themselves.
+	 */
+	const sourceLine = $derived(
+		data.topic.editorialSources
+			? editorialSourceLine(
+					t(`quaestiones.${data.slug}.editorial.sources`),
+					sourceLinks(editorialSourceAddresses(data.topic.editorialSources), citationFor),
+					i18n.lang
+				)
+			: []
+	);
+
+	/**
 	 * A DOCUMENT IS NAMED IN THE EDITION THE READER WOULD OPEN, not in
 	 * English. `content.documentWorkIdFor` is the same resolver the link
 	 * itself goes through, so the title on this page and the title on the page
@@ -220,8 +244,20 @@
 			     number and needs no apparatus, and this carries no number
 			     because it addresses none. Set as apparatus rather than as
 			     argument — muted, above a rule — so that it reads as the
-			     footing under the note and not as another sentence of it. -->
-			<p class="sources">{t(`quaestiones.${data.slug}.editorial.sources`)}</p>
+			     footing under the note and not as another sentence of it.
+
+			     THE CITATIONS IN IT ARE LINKS AND THE PARAGRAPHS ABOVE ARE
+			     NOT, deliberately: a footing is scanned for the one unit a
+			     reader wants to check, and a paragraph of argument dotted with
+			     links is read as a list of links. They carry no
+			     `data-link-preview`, which is how a citation says it is one
+			     (`citation-links.ts`) — so each peeks on hover and on tap
+			     without this surface having to remember the feature exists. -->
+			<p class="sources">
+				{#each sourceLine as part, p (p)}{#if 'link' in part}<a href={part.link.href}
+							>{part.link.label}</a
+						>{:else}{part.text}{/if}{/each}
+			</p>
 		</aside>
 	{/if}
 
@@ -374,6 +410,30 @@
 		border-top: 1px solid var(--color-border);
 		font-size: 0.85rem;
 		color: var(--color-text-muted);
+	}
+
+	/*
+	 * `RefText`'s `.ref-link` treatment, restated rather than borrowed: that
+	 * class is scoped to its own component, and a class name reached across a
+	 * Svelte boundary is silently unstyled (`site/CLAUDE.md`).
+	 *
+	 * QUIET FOR THIS LINE'S OWN REASON AS WELL. The footing is muted type, and
+	 * eight citations in `--color-link` would be the brightest thing in the
+	 * note — an apparatus outshouting the paragraph it supports. The underline
+	 * is what says `link` at rest, which is also what keeps it a link under
+	 * `data-mono`, where there is no colour to spend.
+	 */
+	.editorial .sources a {
+		color: inherit;
+		text-decoration: underline;
+		text-decoration-color: var(--color-border);
+		text-underline-offset: 0.15em;
+	}
+
+	.editorial .sources a:hover,
+	.editorial .sources a:focus-visible {
+		color: var(--color-link);
+		text-decoration-color: currentColor;
 	}
 
 	/*

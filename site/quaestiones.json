@@ -138,6 +138,22 @@
 		"nobody else's authority stands behind. Write what can be checked against the texts printed",
 		"below it, and nothing about the people on the other side of the question.",
 		"",
+		"WHICH IS WHY `editorialSources` IS REQUIRED WITH IT AND FORBIDDEN WITHOUT IT. The note is",
+		"the one paragraph on the site that cannot be traced from the line it sits on -- every other",
+		"block is headed by the work it quotes and every unit in it carries its own number -- so it",
+		"carries a footing naming where each of its claims can be checked, and the units are NUMBERS",
+		"here rather than words inside the sentence. The sentence itself is still a translated string",
+		"and still says what is NOT there; what it no longer does is spell the citations, which the",
+		"page writes from these addresses through `citationFor` and prints as links, in the reader's",
+		"own language and in the order the blocks below appear. `{sources}` is where they go.",
+		"",
+		"EVERY UNIT MUST BE ONE THIS TOPIC ALREADY ANCHORS, and sync-corpus.mjs exits 1 otherwise.",
+		"That is not tidiness: the line's own claim is that all of it is printed or linked on this",
+		"page, and a check is the only thing that keeps that true while the anchors move under it.",
+		"A source the corpus does not hold is therefore unsayable here and belongs in the sentence,",
+		"which is what the 1917 Code's clause is doing -- the note leans on a text this library has",
+		"not got, and the honest place to say so is prose.",
+		"",
 		"`brief` IS A TL;DR THE CATECHISM WROTE ITSELF. Every article of the Catechism ends with a",
 		"run of summary paragraphs printed under its own heading -- IN BRIEF, EN BREF, Resumindo,",
 		"KURZTEXTE -- and the corpus already carries the flag: `in_brief` on 548 of the 2,865",
@@ -1370,6 +1386,14 @@
 			"doorway": "ordinary",
 			"cluster": "practice",
 			"editorial": true,
+			"editorialSources": {
+				"ccc": [1385, 2088],
+				"canons": [6, 915, 1315, 1374],
+				"documents": [
+					"declaration-on-masonic-associations",
+					"catholics-who-join-masonic-associations"
+				]
+			},
 			"ccc": [
 				[2088, 2088],
 				[1385, 1385]

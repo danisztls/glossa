@@ -3042,9 +3042,10 @@ const topicClusters = quaestionesFile.clusters ?? {};
 		// not any one edition — three editions of the Compendium and two of the
 		// Code are short a number their siblings print, and the page skips a
 		// language that cannot answer rather than failing the build.
+		const anchored = { ccc: covered, csdc: new Set(), canons: new Set() };
 		for (const [what, spanList, known] of [
-			['CSDC', topic.csdc, knownSocialDoctrine],
-			['canon', topic.canons, knownCanons]
+			['csdc', topic.csdc, knownSocialDoctrine],
+			['canons', topic.canons, knownCanons]
 		]) {
 			for (const span of spanList ?? []) {
 				const [from, to] = span;
@@ -3053,6 +3054,7 @@ const topicClusters = quaestionesFile.clusters ?? {};
 					continue;
 				}
 				for (let n = from; n <= to; n++) {
+					anchored[what].add(n);
 					if (!known.has(n)) problems.push(`${slug}: ${what} ${n} is not in this build`);
 				}
 			}
@@ -3060,6 +3062,48 @@ const topicClusters = quaestionesFile.clusters ?? {};
 		for (const document of topic.documents ?? []) {
 			if (!knownDocuments.has(document)) {
 				problems.push(`${slug}: document ${JSON.stringify(document)} names no document`);
+			}
+		}
+		/*
+		 * THE NOTE'S FOOTING CITES ONLY WHAT THE PAGE ALREADY PRINTS, and that
+		 * is the whole of what this checks. The line's own sentence claims
+		 * every unit in it is printed or linked on this page; the units are
+		 * addresses rather than words precisely so the claim can be enforced
+		 * instead of proofread, and the way it would otherwise go wrong is
+		 * silent — a span edited here leaves the footing citing a passage the
+		 * reader can no longer find below it.
+		 *
+		 * BOTH DIRECTIONS, like the flag's own pair of tests: a note with no
+		 * sources is the paragraph on this site that most owes them, and
+		 * sources with no note are a footing under nothing.
+		 */
+		const sources = topic.editorialSources;
+		if (Boolean(topic.editorial) !== Boolean(sources)) {
+			problems.push(
+				`${slug}: editorial ${Boolean(topic.editorial)} and editorialSources ${Boolean(sources)} — ` +
+					`a note owes its sources and sources without a note foot nothing`
+			);
+		}
+		for (const [field, set] of [
+			['ccc', anchored.ccc],
+			['csdc', anchored.csdc],
+			['canons', anchored.canons]
+		]) {
+			for (const n of sources?.[field] ?? []) {
+				if (!set.has(n)) {
+					problems.push(
+						`${slug}: editorialSources ${field} ${n} is not anchored by this topic, ` +
+							`so the note would cite what the page does not print`
+					);
+				}
+			}
+		}
+		for (const document of sources?.documents ?? []) {
+			if (!(topic.documents ?? []).includes(document)) {
+				problems.push(
+					`${slug}: editorialSources document ${JSON.stringify(document)} is not in this ` +
+						`topic's own documents`
+				);
 			}
 		}
 	}

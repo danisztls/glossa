@@ -7,6 +7,7 @@ import { sectionFor } from './usage-device';
 import { SETS } from './usage-schema';
 import { en } from './i18n/en';
 import { foldForSearch } from './topic-search';
+import { SOURCES_PLACEHOLDER } from './topic-sources';
 import type { Dictionary } from './i18n.svelte';
 
 /**
@@ -29,8 +30,15 @@ const source = JSON.parse(readFileSync('quaestiones.json', 'utf8')) as {
 			lead?: number;
 			brief?: number[];
 			editorial?: boolean;
+			editorialSources?: {
+				ccc?: number[];
+				csdc?: number[];
+				canons?: number[];
+				documents?: string[];
+			};
 			csdc?: [number, number][];
 			canons?: [number, number][];
+			documents?: string[];
 		}
 	>;
 };
@@ -252,6 +260,17 @@ describe('every topic is reachable and named', () => {
 			// without it.
 			const sourced = Boolean(dictionary[`quaestiones.${slug}.editorial.sources`]);
 			expect(sourced, `${slug}: editorial ${flagged}, sources ${sourced}`).toBe(flagged);
+			// AND THE SENTENCE HAS TO LEAVE ROOM FOR THEM. The citations are
+			// spliced at `{sources}`, so a translation that dropped the
+			// placeholder publishes the footing's prose with no apparatus in
+			// it — which reads as a finished sentence and is the one failure
+			// here nothing else can see.
+			if (flagged) {
+				const line = dictionary[`quaestiones.${slug}.editorial.sources`];
+				expect(line, `${slug}: sources line without ${SOURCES_PLACEHOLDER}`).toContain(
+					SOURCES_PLACEHOLDER
+				);
+			}
 		}
 		// The heading is the whole disclosure — the site's paragraph sits under
 		// it where every other block sits under the name of the work it quotes
@@ -270,6 +289,37 @@ describe('every topic is reachable and named', () => {
 	it('keeps the site’s own voice exceptional', () => {
 		const flagged = slugs.filter((slug) => source.topics[slug].editorial);
 		expect(flagged.length, `editorial on: ${flagged.join(', ')}`).toBeLessThanOrEqual(5);
+	});
+
+	/** THE FOOTING MAY CITE ONLY WHAT THE PAGE PRINTS, which is the sentence's
+	 *  own claim and is enforced rather than proofread. `sync-corpus.mjs`
+	 *  checks it too and is the gate that matters; this is here because the
+	 *  failure it catches is an edit to the ANCHORS, and somebody moving a
+	 *  span runs the tests long before they run a sync. */
+	it('foots a note only on units the topic itself anchors', () => {
+		for (const slug of slugs) {
+			const topic = source.topics[slug];
+			const sources = topic.editorialSources;
+			if (!sources) continue;
+			const anchored = (spans: [number, number][] | undefined) => {
+				const held = new Set<number>();
+				for (const [from, to] of spans ?? []) for (let n = from; n <= to; n++) held.add(n);
+				return held;
+			};
+			const held: Record<string, Set<number>> = {
+				ccc: anchored(topic.ccc),
+				csdc: anchored(topic.csdc),
+				canons: anchored(topic.canons)
+			};
+			for (const field of ['ccc', 'csdc', 'canons'] as const) {
+				for (const n of sources[field] ?? []) {
+					expect(held[field].has(n), `${slug}: sources ${field} ${n} is not anchored`).toBe(true);
+				}
+			}
+			for (const document of sources.documents ?? []) {
+				expect(topic.documents ?? [], `${slug}: sources document ${document}`).toContain(document);
+			}
+		}
 	});
 
 	/** THE DOORWAYS ARE NOT NAMED IN ANY DICTIONARY, deliberately: they sort

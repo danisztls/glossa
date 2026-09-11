@@ -311,9 +311,35 @@ reader cannot trace by looking at the line they are on.
 **The automatic citation grammar is the wrong instrument for a sentence we
 wrote**, and `docs/references.md` holds why: of the forms this note would want,
 only `(CIC, can. N)` resolves, so it would link its canons and not its Catechism
-paragraphs. The sources line names its units in words instead, and leans on the
-fact that every one of them is printed a few centimetres below with its number
-already a link.
+paragraphs.
+
+**WHICH IS A FACT ABOUT THE SCANNER AND WAS READ AS A FACT ABOUT THE LINE**
+(2026-09-11). The sources line named its units in words for a fortnight on that
+reasoning, and the reasoning does not reach: `linkifyProse` is careful because it
+reads somebody else's text, where what a number IS has to be inferred. We wrote
+this note. Nothing here is inferred — `editorialSources` names the units, so each
+is an `Address` before it is a word, `citationFor` writes the label in the
+reader's own language, and the page prints them as links
+(`src/lib/topic-sources.ts`). The Portuguese trap goes with it, and is worth
+seeing turned around: a reader there is offered `CIC 1385` for the Catechism and
+`Cân. 1374` for the canon and neither can be read as the other, because **the
+ambiguity that made the scanner unusable in that language is an ambiguity only a
+scanner can have.**
+
+**The units are numbers and the sentence is still a translated string.** A
+translator carries the clause and never the citations — `{sources}` is where they
+go, `Intl.ListFormat` supplies the punctuation between them, and a translation
+that drops the placeholder is refused by the test rather than shipped as a
+finished-looking sentence with no apparatus in it. What that buys beyond the
+links is the check: **every unit must be one the topic already anchors**, so the
+line's own claim — that all of it is printed or linked on this page — is true by
+construction instead of by proofreading. Move a span and the sync says so.
+
+**The running paragraphs stay plain, and that is a decision rather than a
+leftover.** A footing is scanned for the one unit a reader wants to check; a
+paragraph of argument dotted with links is read as a list of links. The note's one
+forward reference stays in words — "CCC 1385, printed below" — because the page
+prints that paragraph a few centimetres down with its number already a link.
 
 **Say what is not there.** The claim carrying the most weight on
 `associationes-massonicae` is that the old penalty was real, and the 1917 Code is

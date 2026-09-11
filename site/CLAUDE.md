@@ -1006,8 +1006,16 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
   `editorial.sources` line** — the one paragraph resting on nobody else's
   authority is the one that cannot be traced from the line it is on. Tests pair
   the flag with both strings in both directions and cap how many topics carry
-  one. Do not reach for `linkifyProse` there: it refuses a bare siglum, so only
-  `(CIC, can. N)` would resolve and the Catechism paragraphs would not.
+  one.
+- **That footing's citations are ADDRESSES, not words, and the page links
+  them.** `editorialSources` names the units, `citationFor` labels each in the
+  reader's own language, and the sentence keeps only its prose around
+  `{sources}` (`src/lib/topic-sources.ts`). Every unit must be one the topic
+  already anchors, or the sync exits 1 — which is what makes the line's own
+  claim, that all of it is printed or linked on this page, true by construction.
+  `linkifyProse` is still the wrong instrument and the reason has narrowed: it
+  is careful because it reads somebody else's text and has to INFER what a
+  number is, and none of that applies to a sentence written here.
 - **A topic's summary is one the Catechism wrote**, never one composed here:
   `brief` names paragraphs flagged `in_brief` (548 of the 2,865, in all nine
   editions), so the short answer above the passages is still quotation with an

@@ -1043,6 +1043,16 @@ export interface CccBlock {
  * topic's spans — an article's summary sits outside the span the topic took
  * out of it — and never overlapping them.
  */
+/** A topic's editorial note's sources, by the work each unit belongs to.
+ *  Bare numbers rather than spans: a footing cites units, and a range would
+ *  invite the note to cite more than it leaned on. */
+export interface EditorialSources {
+	ccc?: number[];
+	csdc?: number[];
+	canons?: number[];
+	documents?: string[];
+}
+
 export interface Topic {
 	doorway: string;
 	/** The shelf inside the doorway. Scoped to `doorway`: the same key under a
@@ -1059,6 +1069,12 @@ export interface Topic {
 	 *  topic page carrying no sentence of ours, and `site/quaestiones.json`
 	 *  states the test a topic has to pass to earn it. */
 	editorial?: boolean;
+	/** The units that note's claims can be checked against, linked under it.
+	 *  Required with `editorial` and forbidden without it; every unit must be
+	 *  one this topic already anchors, which is what makes the line's own
+	 *  claim — that all of it is printed or linked on this page — true by
+	 *  construction rather than by proofreading (`src/lib/topic-sources.ts`). */
+	editorialSources?: EditorialSources;
 	/** Spans of the Compendium of the Social Doctrine, quoted under the
 	 *  Catechism's. Named where the Compendium develops what the Catechism
 	 *  summarises — the public square, work, the economy — and absent on the

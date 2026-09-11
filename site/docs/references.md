@@ -42,13 +42,18 @@ deploy gates a coverage baseline on. Run the scan before extending the grammar;
 the same question is what `REFERENCE_COVERAGE=verbose` answers from the other
 end, by printing what the grammar recognised nothing in.
 
-**So a sentence this site WRITES cannot be cited by leaning on the scanner.**
-`/quaestiones`' editorial note names its sources in words for that reason
-(`docs/topics.md`): written for the grammar it would link its canons and not its
-Catechism paragraphs, and an apparatus whose rule the reader cannot see is worse
-than none. In Portuguese it would also be a trap — the grammar's `CIC` is the
-_Codex Iuris Canonici_ where a Brazilian reader reads _Catecismo da Igreja
-Católica_, so `(CIC 1385)` would take them to a canon.
+**So a sentence this site WRITES cannot be cited by leaning on the scanner —
+which is not the same as saying it cannot be cited.** `/quaestiones`' editorial
+note is the only such sentence, and written for the grammar it would link its
+canons and not its Catechism paragraphs; in Portuguese it would be worse than
+that, the grammar's `CIC` being the _Codex Iuris Canonici_ where a Brazilian
+reader reads _Catecismo da Igreja Católica_, so `(CIC 1385)` would take them to a
+canon. **Every one of those objections is about INFERENCE, and this site knows
+what it wrote.** The note's footing carries addresses rather than words and
+`citationFor` labels them, so the links are exact, the siglum is the reader's
+own, and neither the grammar nor its cautions are involved
+(`src/lib/topic-sources.ts`, `docs/topics.md`). **The rule to take from it: where
+the citations are OURS, name the unit and not the string.**
 
 **A citation naming several passages is several links, because an address
 holds one span.** `Ps 95:1-2, 6-7, 8-9` parses to the verse set it names and
