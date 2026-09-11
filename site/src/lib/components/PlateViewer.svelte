@@ -544,6 +544,12 @@
 	 * appearances, so `--color-text-muted` would be an unreadable brown on
 	 * light and sepia. Thumb-sized regardless of pointer — on a phone in fit
 	 * form the picture fills the stage and this row is the whole surround.
+	 *
+	 * The drop-shadow is the caption's text-shadow for a glyph, and it is here
+	 * for the same reason: the blurred scrim lets a light page through, so
+	 * every fixed light value in this view is now a wager on what is behind
+	 * it. `filter` and not `text-shadow`, an `Icon` being an `<svg>` whose
+	 * strokes take `currentColor` and no text decoration at all.
 	 */
 	.viewer-button {
 		display: inline-flex;
@@ -558,6 +564,7 @@
 		color: rgb(255 255 255 / 78%);
 		font-size: 1.15rem;
 		cursor: pointer;
+		filter: drop-shadow(0 1px 2px rgb(0 0 0 / 70%));
 	}
 
 	.viewer-button:hover {
@@ -711,6 +718,24 @@
 	 * credit is simply shown: this is the one view of a plate where the
 	 * attribution costs the reader no tap and no page.
 	 */
+	/*
+	 * THE CAPTION'S GROUND STOPPED BEING A CONSTANT when the backdrop learned
+	 * to blur, and this shadow is what makes it one again.
+	 *
+	 * At 82% black the scrim was near enough to black whatever page was under
+	 * it, so white at a percentage was a contrast ratio somebody could compute
+	 * once. At 62% and blurred, 38% of the page comes through — and the page
+	 * is `--color-bg`, which is nearly white in the light theme. The credit
+	 * was set at 55% white against the old ground and went to almost nothing
+	 * against the new one; **a fixed colour over a variable ground is not a
+	 * colour choice, it is a wager on the page behind it.**
+	 *
+	 * A shadow is the fix rather than a darker scrim, because it costs the
+	 * blur nothing and holds at any tint: two lines of small type carry their
+	 * own dark ground with them wherever the page is light. It is declared
+	 * here and inherited by the title, the credit and the link alike, so the
+	 * three cannot drift apart.
+	 */
 	.viewer-caption {
 		flex: none;
 		display: flex;
@@ -721,6 +746,7 @@
 		font-family: var(--font-sans);
 		text-align: center;
 		text-wrap: pretty;
+		text-shadow: 0 1px 3px rgb(0 0 0 / 85%);
 	}
 
 	.viewer-title {
@@ -730,13 +756,22 @@
 		color: rgb(255 255 255 / 88%);
 	}
 
+	/*
+	 * 85% AND NOT 55%, which is what it was while the scrim was 82% black. The
+	 * credit was set a step below the title on purpose — the title names the
+	 * plate and the credit is apparatus under it — but 33 points of white was
+	 * a hierarchy priced against a near-black ground, and on the blurred one
+	 * it is the difference between readable and not. The step is 3 points now
+	 * and the SIZE carries the rest of it: 0.75rem against the title's 0.85,
+	 * in a different case. Rank by type where contrast is scarce.
+	 */
 	.viewer-credit {
 		font-size: 0.75rem;
 		line-height: 1.4;
 		/* Two lines separated by a newline in the string, exactly as the card
 		   in the reading column and the colophon both set it. */
 		white-space: pre-line;
-		color: rgb(255 255 255 / 55%);
+		color: rgb(255 255 255 / 85%);
 	}
 
 	/*
@@ -746,9 +781,12 @@
 	 *
 	 * The colours are white at a percentage and NOT `--color-accent`, which is
 	 * every other link on the site. The caption sits on the viewer's own dark
-	 * scrim in both themes — the title and the credit beside it are already
-	 * white at 88% and 55% for that reason — and an accent tuned against the
-	 * page's background is not the same colour against this one.
+	 * scrim in both themes — the title and the credit beside it are white at
+	 * 88% and 85% for that reason — and an accent tuned against the page's
+	 * background is not the same colour against this one.
+	 *
+	 * `color: inherit` is why this line needed no change when the credit's own
+	 * alpha moved: the link IS the credit, so it is one number in one place.
 	 */
 	.source-link {
 		color: inherit;

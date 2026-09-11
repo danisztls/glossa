@@ -820,6 +820,17 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   `prefers-reduced-transparency` getting the opaque end of the trade. One
   full-viewport filter, composited once: the page under a modal does not
   repaint, and zoom and pan move layers above the backdrop.
+- **Blurring the scrim made every fixed light value in that view a wager on
+  the page behind it.** At 82% black the ground was near-black whatever was
+  under it, so white at a percentage was a ratio somebody computed once; at
+  62% and blurred, 38% of a nearly-white `--color-bg` comes through and the
+  credit set at 55% went to almost nothing. **A fixed colour over a variable
+  ground is not a colour choice.** The caption carries its own dark ground
+  (`text-shadow`, inherited by title, credit and link together) and the bar's
+  glyphs the same as a `filter: drop-shadow`, an `<svg>` taking no text
+  decoration — and where contrast is scarce, rank by TYPE rather than by
+  alpha: the credit is 3 points below the title now and a size and a case
+  below it, where it used to be 33.
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition
