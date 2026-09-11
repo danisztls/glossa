@@ -741,7 +741,14 @@
 	 * its colour, and a dark shadow under dark text is a halo rather than a
 	 * contrast — the shadow only started earning its place once the colour was
 	 * fixed below. Tight and at 70%, matching the bar's glyphs: a heavier one
-	 * under 0.75rem type reads as fuzz.
+	 * under small type reads as fuzz.
+	 *
+	 * **THE CAPTION'S SIZE IS SET HERE AND THE TWO LINES ARE RELATIVE TO IT**,
+	 * so there is one number rather than two that can drift apart. It was two,
+	 * both in `rem` and both small: this is a line of type under a picture
+	 * filling the viewport, not an annotation in a margin, and 0.75rem was the
+	 * size a caption takes when it is copied from somewhere it had a column
+	 * around it.
 	 */
 	.viewer-caption {
 		flex: none;
@@ -751,13 +758,22 @@
 		gap: 0.15rem;
 		padding: 0.6rem 1rem 1rem;
 		font-family: var(--font-sans);
+		font-size: 1rem;
 		text-align: center;
 		text-wrap: pretty;
 		text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
 	}
 
+	/*
+	 * `em`, so the step above the credit is a RATIO and survives the caption
+	 * being resized. It was 0.85rem over 0.75, which is this same 1.13 — the
+	 * title has to stay the larger of the two, since it names the plate and
+	 * the credit is apparatus under it, and a credit grown past its own title
+	 * is the hierarchy upside down. A landing page's painting passes no title
+	 * at all and the credit is then the only line here.
+	 */
 	.viewer-title {
-		font-size: 0.85rem;
+		font-size: 1.13em;
 		font-variant-caps: small-caps;
 		letter-spacing: 0.04em;
 		color: rgb(255 255 255 / 88%);
@@ -767,13 +783,13 @@
 	 * 85% AND NOT 55%, which is what it was while the scrim was 82% black. The
 	 * credit was set a step below the title on purpose — the title names the
 	 * plate and the credit is apparatus under it — but 33 points of white was
-	 * a hierarchy priced against a near-black ground, and on the blurred one
-	 * it is the difference between readable and not. The step is 3 points now
-	 * and the SIZE carries the rest of it: 0.75rem against the title's 0.85,
-	 * in a different case. Rank by type where contrast is scarce.
+	 * a hierarchy priced against a near-black ground, and it read as grey on
+	 * grey once the credit's colour was fixed to apply at all. The step is 3
+	 * points now and the TYPE carries the rest of it: a size below the title,
+	 * and a different case. Rank by type where contrast is scarce.
 	 */
 	.viewer-credit {
-		font-size: 0.75rem;
+		font-size: 1em;
 		line-height: 1.4;
 		/* Two lines separated by a newline in the string, exactly as the card
 		   in the reading column and the colophon both set it. */
