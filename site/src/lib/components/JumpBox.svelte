@@ -719,7 +719,7 @@
 				collapsed, and saying otherwise sends a screen-reader user
 				looking for a listbox that is not rendered.
 			-->
-			<div class="field">
+			<div class="jump-field">
 				<!--
 					THE SCOPE, AS A THING RATHER THAN AS TEXT. It is a `<button>`
 					because it does something — pressing it takes the filter off —
@@ -751,7 +751,7 @@
 						onclick={dropScope}
 						aria-label={`${scopeLabel} — ${t('jumpbox.scopeRemove')}`}
 					>
-						{scopeLabel}<span aria-hidden="true">×</span>
+						<span class="scope-name">{scopeLabel}</span><span aria-hidden="true">×</span>
 					</button>
 				{/if}
 				<input
@@ -1044,7 +1044,18 @@
 	   in the right direction in every theme without needing a per-theme value —
 	   warmer and slightly darker on light and sepia, lighter on dark — so the
 	   field reads as a distinct surface either way. */
-	.field {
+	/*
+	 * `.jump-field` AND NOT `.field`, which is taken. `styles/menus.css` owns
+	 * a global `.field` — the settings panel's row template, a COLUMN — and a
+	 * component-scoped rule of the same name does not replace it: the two have
+	 * equal specificity, so every declaration this one does not make is the
+	 * global's. It never said `flex-direction`, so the chip stacked above the
+	 * input and `align-items: center` centred the pair. **A scoped rule and a
+	 * global rule of the same name compose rather than compete**, which is the
+	 * silent half of the warning that file already carries about reusing its
+	 * class names.
+	 */
+	.jump-field {
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;
@@ -1084,9 +1095,6 @@
 	.scope-chip {
 		flex: 0 0 auto;
 		max-inline-size: 40%;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
 		display: flex;
 		align-items: center;
 		gap: 0.3rem;
@@ -1106,7 +1114,19 @@
 		border-color: var(--color-apparatus);
 	}
 
-	.scope-chip span {
+	/* The ellipsis needs a box of its own: `text-overflow` does nothing on a
+	   flex container, and the chip has to be one to sit the `×` beside the
+	   name. A work's short name is short in English and is not in every
+	   language. */
+	.scope-name {
+		min-inline-size: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.scope-chip span[aria-hidden] {
+		flex: 0 0 auto;
 		color: var(--color-text-muted);
 	}
 
@@ -1144,7 +1164,7 @@
 	 * focus colour, so high-contrast mode keeps a real ring even though the
 	 * shadow below is dropped there.
 	 */
-	.field:focus-within {
+	.jump-field:focus-within {
 		outline: 2px solid transparent;
 		outline-offset: 2px;
 		border-color: var(--color-apparatus);
