@@ -57,7 +57,7 @@ export const fr: Dictionary = {
 		'L’ensemble du corpus, rayon par rayon — avec l’endroit où vous vous êtes arrêté et ce que vous avez marqué.',
 	'schola.landing.title': 'Par où commencer',
 	'schola.landing.tagline':
-		'Un guide bref de ce qui se trouve ici : ce qu’est chacun de ces livres, comment s’écrit une citation, comment trouver un passage, et des ordres de lecture que l’Église a proposés.',
+		'Un guide bref de ce qui se trouve ici : ce qu’est chacun de ces livres, les dix commandements et les autres listes que l’Église demande à un catholique de connaître, et par où commencer la lecture.',
 	'schola.start.heading': 'Vous découvrez le catholicisme ?',
 	'schola.start.body': 'Commencez par l’',
 	'schola.start.bodyAfter':
@@ -93,42 +93,38 @@ export const fr: Dictionary = {
 		'Non un récit : cent cinquante prières et chants. Lisez-en un à la fois, dans n’importe quel ordre. L’Église les prie encore chaque jour.',
 	'schola.bible.bothWays':
 		'Vous reconnaîtrez des choses, et c’est le but plutôt qu’une coïncidence. L’Église lit les livres anciens à la lumière du Christ et les récents à la lumière de ce qui a précédé — chaque moitié explique l’autre, et c’est pourquoi aucune ne se lit seule.',
-	'schola.books.heading': 'Ce qui est ici, et comment cela s’identifie',
+	'schola.books.heading': 'Ce qui est ici',
 	'schola.books.lede':
-		'Chacun de ces livres est d’un genre différent, et chacun se désigne par un numéro qui lui est propre. Les exemples montrent la forme : tapez-en un semblable dans la case de recherche et vous arrivez au passage.',
-	'schola.cite.label': 'S’identifie',
+		'Chacun de ces livres est d’un genre différent, et la ligne en dessous dit lequel. Ouvrez la case de recherche en haut de la page pour voir comment on désigne chacun, et pour arriver directement à un passage.',
 	'schola.what.scripture':
 		'Les Écritures telles que l’Église les reçoit, dans les deux Testaments. Tout le reste ici se lit à leur lumière.',
-	'schola.cite.scripture':
-		'livre, chapitre et verset, dans les abréviations qu’imprime votre propre édition',
 	'schola.what.catechism':
 		'Un résumé de ce que croit l’Église catholique, en un seul volume. Il n’est pas lui-même une source : il rassemble l’Écriture, les Pères, la liturgie et l’enseignement de l’Église, et chaque numéro dit d’où vient ce qu’il avance.',
-	'schola.cite.catechism':
-		'par numéro, courant sans interruption de la première page à la dernière',
 	'schola.what.compendium':
 		'Le même enseignement exposé en questions et réponses, au dixième environ de la longueur.',
-	'schola.cite.compendium': 'par numéro de question',
 	'schola.what.magisterium':
 		'Ce que les papes et les conciles ont effectivement écrit — encycliques, constitutions, décrets, déclarations — chacun adressé à un moment et à une question déterminés. Chacun est connu par ses premiers mots latins.',
-	'schola.cite.magisterium': 'par le nom du document, puis un numéro de section à l’intérieur',
 	'schola.what.social':
 		'L’enseignement de l’Église sur le travail, la propriété, la famille, la politique et la paix, recueilli de ces documents en un seul livre.',
-	'schola.cite.social': 'par numéro, sous le sigle que l’ouvrage emploie pour lui-même',
 	'schola.what.law':
 		'Du droit et non de la doctrine. Il dit ce que l’Église exige, et il est amendé.',
-	'schola.cite.law': 'par canon, nom que portent ses unités numérotées',
 	'schola.what.doctors':
 		'Les théologiens que l’Église a déclarés Docteurs. Cela ne porte aucune autorité officielle, si grand que soit l’auteur.',
-	'schola.cite.doctors': 'par partie, puis question — les divisions propres à la Somme',
 	'schola.what.prayers': 'Les paroles que l’Église prie, avec le latin à côté.',
-	'schola.cite.prayers': 'par leur nom ; il n’y a pas de numéros à citer',
 	'schola.places.heading': 'Non des textes, mais des lieux de ce site',
 	'schola.what.library':
 		'Toutes les œuvres du site en une liste, groupées par sujet et non par genre.',
+	'schola.what.questions':
+		'Une entrée pour qui arrive avec une question et sans référence. Chaque question rassemble les passages qui y répondent — le Catéchisme d’abord — et chaque mot en est celui de l’Église même.',
 	'schola.what.calendar':
 		'Le jour liturgique — temps, couleur, et qui est fêté — pour le pays dont vous suivez le calendrier.',
 	'schola.what.bookmarks':
 		'Les passages que vous avez marqués, et où vous vous êtes arrêté dans chaque œuvre. Les deux restent dans ce navigateur et ne sont envoyés nulle part.',
+	'schola.what.census':
+		'Ce que cette bibliothèque contient et jusqu’où elle va — combien d’œuvres, en quelles langues, et combien de chacune un lecteur de votre propre langue peut réellement atteindre.',
+	'schola.formulas.heading': 'Les dix commandements, et le reste de ce qui s’apprend par cœur',
+	'schola.formulas.lede':
+		'Pas un résumé de ce site : ce sont les listes que l’Église elle-même imprime à la fin de l’Abrégé, pour quiconque est instruit dans la foi. Chaque mot ci-dessous est cité de votre propre édition.',
 	'ccc.noCounterpart': 'Pas de correspondance dans l’autre ouvrage',
 	'jumpbox.placeholder': 'Aller à… (p. ex. jean 3,16, ccc 1234)',
 	'jumpbox.short': 'Rechercher',

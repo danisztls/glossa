@@ -84,7 +84,7 @@ export const nl: Dictionary = {
 		'De hele collectie, plank voor plank — met waar u gebleven was en wat u hebt gemarkeerd.',
 	'schola.landing.title': 'Waar te beginnen',
 	'schola.landing.tagline':
-		'Een korte gids bij wat hier staat: wat elk van deze boeken is, hoe een verwijzing ernaar wordt geschreven, hoe u een plaats vindt, en leesordes die de Kerk heeft voorgesteld.',
+		'Een korte gids bij wat hier staat: wat elk van deze boeken is, de tien geboden en de andere lijsten die de Kerk een katholiek vraagt te kennen, en waar u kunt beginnen met lezen.',
 	'schola.start.heading': 'Nieuw in het katholieke geloof?',
 	'schola.start.body': 'Begin met het ',
 	'schola.start.bodyAfter':
@@ -118,41 +118,37 @@ export const nl: Dictionary = {
 		'Geen verhaal: honderdvijftig gebeden en liederen. Lees er één tegelijk, in welke volgorde ook. De Kerk bidt ze nog elke dag.',
 	'schola.bible.bothWays':
 		'U zult dingen herkennen, en dat is de bedoeling en geen toeval. De Kerk leest de oudere boeken in het licht van Christus en de nieuwere in het licht van wat eraan voorafging — elke helft verklaart de andere, en daarom wordt geen van beide alleen gelezen.',
-	'schola.books.heading': 'Wat hier staat, en hoe het wordt aangeduid',
+	'schola.books.heading': 'Wat hier staat',
 	'schola.books.lede':
-		'Elk hiervan is een andere soort boek, en naar elk wordt met een eigen getal verwezen. De voorbeelden tonen de vorm: typ er zo een in het zoekvak en u komt bij de plaats uit.',
-	'schola.cite.label': 'Aangeduid',
+		'Elk hiervan is een andere soort boek, en de regel eronder zegt welke soort. Open het zoekvak bovenaan de pagina om te zien hoe naar elk ervan wordt verwezen, en om rechtstreeks bij een passage uit te komen.',
 	'schola.what.scripture':
 		'De Schrift zoals de Kerk haar ontvangt, in beide Testamenten. Al het andere hier wordt in haar licht gelezen.',
-	'schola.cite.scripture': 'boek, hoofdstuk en vers, in de afkortingen die uw eigen uitgave drukt',
 	'schola.what.catechism':
 		'Een samenvatting van wat de Katholieke Kerk gelooft, in één band. Hij is zelf geen bron: hij verzamelt de Schrift, de Vaders, de liturgie en de leer van de Kerk, en elk nummer zegt waar vandaan komt wat het beweert.',
-	'schola.cite.catechism':
-		'op nummer, onafgebroken doorlopend van de eerste bladzijde tot de laatste',
 	'schola.what.compendium':
 		'Dezelfde leer uiteengezet in vragen en antwoorden, op ongeveer een tiende van de lengte.',
-	'schola.cite.compendium': 'op vraagnummer',
 	'schola.what.magisterium':
 		'Wat pausen en concilies werkelijk hebben geschreven — encyclieken, constituties, decreten, verklaringen — elk gericht tot een bepaald ogenblik en een bepaalde vraag. Elk is bekend naar zijn beginwoorden in het Latijn.',
-	'schola.cite.magisterium':
-		'op de naam van het document, dan een nummer van een onderdeel daarbinnen',
 	'schola.what.social':
 		'De leer van de Kerk over arbeid, eigendom, het gezin, de politiek en de vrede, uit die documenten in één boek verzameld.',
-	'schola.cite.social': 'op nummer, onder de afkorting die het werk voor zichzelf gebruikt',
 	'schola.what.law': 'Recht en geen leer. Het zegt wat de Kerk vereist, en het wordt gewijzigd.',
-	'schola.cite.law': 'op canon, zoals zijn genummerde eenheden heten',
 	'schola.what.doctors':
 		'De theologen die de Kerk tot kerkleraar heeft uitgeroepen. Het draagt geen ambtelijk gezag, hoe groot de schrijver ook is.',
-	'schola.cite.doctors': 'op deel, dan kwestie — de eigen indelingen van de Summa',
 	'schola.what.prayers': 'De woorden die de Kerk bidt, met het Latijn ernaast.',
-	'schola.cite.prayers': 'op naam; er zijn geen nummers om aan te halen',
 	'schola.places.heading': 'Geen teksten, maar plaatsen op deze site',
 	'schola.what.library':
 		'Alle werken van de site in één lijst, gegroepeerd naar onderwerp en niet naar soort.',
+	'schola.what.questions':
+		'Een ingang voor wie een vraag heeft en geen verwijzing. Elk onderwerp verzamelt de passages die het beantwoorden — eerst de Catechismus — en elk woord daarvan is van de Kerk zelf.',
 	'schola.what.calendar':
 		'De liturgische dag — tijd, kleur en wie wordt gevierd — voor het land waarvan u de kalender volgt.',
 	'schola.what.bookmarks':
 		'Plaatsen die u gemarkeerd hebt, en waar u in elk werk het laatst gebleven bent. Beide blijven in deze browser en worden nergens heen gestuurd.',
+	'schola.what.census':
+		'Wat deze bibliotheek bevat en hoe ver zij reikt — hoeveel werken, in welke talen, en hoeveel daarvan iemand die uw taal leest werkelijk kan bereiken.',
+	'schola.formulas.heading': 'De tien geboden, en wat er verder uit het hoofd wordt geleerd',
+	'schola.formulas.lede':
+		'Geen samenvatting van deze site: dit zijn de lijsten die de Kerk zelf achterin het Compendium afdrukt, voor iedereen die in het geloof wordt onderwezen. Elk woord hieronder is aangehaald uit uw eigen uitgave ervan.',
 	'ccc.noCounterpart': 'Geen tegenhanger in het andere werk',
 	'jumpbox.placeholder': 'Ga naar… (bv. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Zoeken',

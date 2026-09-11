@@ -54,7 +54,7 @@ export const sl: Dictionary = {
 		'Celotna zbirka, polica za polico — z mestom, kjer ste ostali, in tem, kar ste označili.',
 	'schola.landing.title': 'Kje začeti',
 	'schola.landing.tagline':
-		'Kratek vodnik po tem, kar je tu: kaj je vsaka od teh knjig, kako se zapiše navedba zanjo, kako najti odlomek, in beriva, ki jih je Cerkev predlagala.',
+		'Kratek vodnik po tem, kar je tu: kaj je vsaka od teh knjig, deset božjih zapovedi in drugi seznami, ki naj bi jih poznal vsak katoličan, in kje začeti brati.',
 	'schola.start.heading': 'Novi v katolištvu?',
 	'schola.start.body': 'Najboljši začetek je ',
 	'schola.start.bodyAfter':
@@ -89,39 +89,37 @@ export const sl: Dictionary = {
 		'Ne pripoved: sto petdeset molitev in pesmi. Berite po eno, v poljubnem redu. Cerkev jih moli vsak dan še danes.',
 	'schola.bible.bothWays':
 		'Marsikaj boste prepoznali, in prav to je namen, ne naključje. Cerkev bere starejše knjige v luči Kristusa in novejše v luči tega, kar je bilo prej — vsaka polovica pojasnjuje drugo, in zato se nobena ne bere sama.',
-	'schola.books.heading': 'Kaj je tu in kako se označuje',
+	'schola.books.heading': 'Kaj je tu',
 	'schola.books.lede':
-		'Vsaka od teh knjig je druge vrste, in na vsako se sklicuje z lastno številko. Zgledi kažejo obliko: vtipkajte kaj takega v iskalno polje in pristanete pri odlomku.',
-	'schola.cite.label': 'Označuje se',
+		'Vsaka od teh je druga vrsta knjige, vrstica pod njo pa pove, katera. Odprite iskalno polje na vrhu strani, da vidite, kako se na vsako sklicuje, in da pridete naravnost do odlomka.',
 	'schola.what.scripture':
 		'Sveto pismo, kakor ga Cerkev prejema, v obeh zavezah. Vse drugo tu se bere v njegovi luči.',
-	'schola.cite.scripture': 'knjiga, poglavje in vrstica, v okrajšavah, ki jih tiska vaša izdaja',
 	'schola.what.catechism':
 		'Povzetek tega, kar katoliška Cerkev veruje, v enem zvezku. Sam ni vir: zbira Sveto pismo, očete, bogoslužje in nauk Cerkve, in vsak člen pove, od kod je tisto, kar trdi.',
-	'schola.cite.catechism': 'po številki člena, ki teče neprekinjeno od prve strani do zadnje',
 	'schola.what.compendium':
 		'Isti nauk, podan v vprašanjih in odgovorih, v približno desetini obsega.',
-	'schola.cite.compendium': 'po številki vprašanja',
 	'schola.what.magisterium':
 		'Kar so papeži in koncili dejansko napisali — okrožnice, konstitucije, odloki, izjave — vsak naslovljen na določen trenutek in določeno vprašanje. Vsak je znan po svojih začetnih latinskih besedah.',
-	'schola.cite.magisterium': 'po imenu dokumenta, nato po številki razdelka v njem',
 	'schola.what.social':
 		'Nauk Cerkve o delu, lastnini, družini, politiki in miru, zbran iz teh dokumentov v eno knjigo.',
-	'schola.cite.social': 'po številki člena, pod kratico, ki jo delo rabi zase',
 	'schola.what.law': 'Pravo in ne nauk. Pove, kaj Cerkev zahteva, in se spreminja.',
-	'schola.cite.law': 'po kanonu, kakor se imenujejo njegove oštevilčene enote',
 	'schola.what.doctors':
 		'Teologi, ki jih je Cerkev razglasila za učitelje. Ne nosi nobene uradne avtoritete, naj bo pisec še tako velik.',
-	'schola.cite.doctors': 'po delu, nato vprašanju — lastnih razdelitvah Summe',
 	'schola.what.prayers': 'Besede, s katerimi Cerkev moli, z latinščino ob njih.',
-	'schola.cite.prayers': 'po imenu; ni številk za navajanje',
 	'schola.places.heading': 'Ne besedila, ampak kraji na tem spletišču',
 	'schola.what.library':
 		'Vsa dela spletišča v enem seznamu, razvrščena po predmetu in ne po vrsti.',
+	'schola.what.questions':
+		'Vstop za bralca, ki ima vprašanje, ne pa navedbe. Vsako vprašanje zbere odlomke, ki nanj odgovarjajo — najprej iz Katekizma — in vsaka beseda v njih je Cerkve same.',
 	'schola.what.calendar':
 		'Bogoslužni dan — čas, barva in kdo se obhaja — za deželo, katere koledar se držite.',
 	'schola.what.bookmarks':
 		'Odlomki, ki ste jih označili, in kje ste nazadnje ostali pri vsakem delu. Oboje ostaja v tem brskalniku in se nikamor ne pošilja.',
+	'schola.what.census':
+		'Kaj hrani ta knjižnica in kako daleč sega — koliko del, v katerih jezikih, in koliko od vsakega dela je bralcu v njegovem jeziku dejansko dosegljivo.',
+	'schola.formulas.heading': 'Deset božjih zapovedi in kaj drugega se uči na pamet',
+	'schola.formulas.lede':
+		'Ne povzetek tega spletišča: to so seznami, ki jih Cerkev sama natisne na koncu Kompendija, za vsakogar, ki se uči vere. Vsaka beseda spodaj je navedena iz vaše lastne izdaje Kompendija.',
 	'ccc.noCounterpart': 'Ni ustreznika v drugem delu',
 	'jumpbox.placeholder': 'Skoči na… (npr. janez 3,16, ccc 1234)',
 	'jumpbox.short': 'Iskanje',

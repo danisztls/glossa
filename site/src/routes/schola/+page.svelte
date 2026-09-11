@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
-	 * `/schola` — a short guide to the site: what is on it, how each work is
-	 * cited, and orders for reading.
+	 * `/schola` — a short guide to the site: what is on it, what the Church
+	 * asks a Catholic to know by heart, and orders for reading.
 	 *
 	 * ## The reader this is for, and why nothing else on the site was them
 	 *
@@ -12,7 +12,8 @@
 	 * shorter book, or that the Summa is not magisterial. With §1 they are
 	 * "plausibly most of the traffic". Every other page here answers an
 	 * address. This one answers neither an address nor a question: it says what
-	 * is on the shelf and what a citation of it looks like.
+	 * is on the shelf, and what the Church itself prints for a reader who has
+	 * to start somewhere.
 	 *
 	 * **AND IT NO LONGER EXPLAINS THE CHROME** (2026-09-07). Its first section
 	 * did, and those rows are the sheet the `?` button opens now — `$lib/help.ts`
@@ -20,41 +21,30 @@
 	 * guide to the controls printed on a page of its own has to describe
 	 * controls the reader cannot see while they read it; in the sheet they are
 	 * read beside the page they are on, and only the ones that page HAS are
-	 * drawn. What this page kept is what it was always better at: the works,
-	 * their citation forms, and the three destinations that are not texts.
+	 * drawn.
 	 *
 	 * `Learn` pointed at `/catechismus` from the day the bar was rebuilt until
 	 * this page existed, which was a label doing work the page behind it did
 	 * not do — `/catechismus` is a table of divisions, and a reader who cannot
 	 * name a division cannot use one.
 	 *
-	 * ## THE REFERENCE SYSTEM IS THE PART NOBODY ELSE TEACHES
+	 * ## THE CITATION FORMS WERE HERE AND ARE IN THE JUMP BOX (by direction)
 	 *
-	 * The corpus is addressed by number — `CCC 1`, `Comp. 1`, `Can. 1`,
-	 * `STh I, 1` — and the jump box reads every one of those notations
-	 * (`suggest.ts`). A reader who has never seen a citation of the Catechism
-	 * does not know that the number is a PARAGRAPH and runs unbroken from the
-	 * first page to the last, and no page on this site said so. That is the
-	 * whole of §5's "vocabulary of the corpus itself", and it is what the books
-	 * section below exists to state: one sentence on what a work is, one on
-	 * what its numbered unit is called, and a specimen of the notation.
+	 * Every row carried a second line — "Identified by paragraph number,
+	 * running unbroken from the first page to the last" — and a specimen chip
+	 * of the notation at its trailing edge, eight of them in a column down the
+	 * grid. That column was this page's own lesson for a while, and it is the
+	 * jump box's empty panel now: the box prints one row per work out of
+	 * `$lib/specimens.ts`, and a row there FILLS THE FIELD, which is the thing
+	 * an inert chip on a catalogue page could never do. **A legend prints the
+	 * form a reader types; a catalogue prints the form the work prints**, and
+	 * the reader who needs the notation is the reader already in the box.
 	 *
-	 * **THE SPECIMEN IS A SHAPE AND NOT A REFERENCE** (2026-09-05, by
-	 * direction). Each was a live link, existence-checked against the corpus,
-	 * so `CCC 1` could be followed to paragraph 1 — which taught the wrong
-	 * lesson twice over: it sent a reader who was reading a CATALOGUE into the
-	 * middle of a work they had not chosen, and it made the number look
-	 * significant when the only thing this column teaches is the form. The
-	 * numbers are representative now, the chips are inert, and the lede sends
-	 * the reader to type one into the jump box, which is where a notation is
-	 * actually worth something.
-	 *
-	 * The Bible's is still DERIVED rather than written down, because its form
-	 * is the one that changes by language: the abbreviation comes from this
-	 * language's own citation table (`bookAbbrev`), falling back to the
-	 * reader's edition's name for the book, and the chapter/verse separator
-	 * from the same grammar the parser uses — so a Portuguese reader is shown
-	 * `Jo 3,16` and not somebody else's colon.
+	 * `specimens.ts` is untouched and still has three readers — the home page,
+	 * the jump box, and its own test. Only this page's copy went, and with it
+	 * the `schola.cite.*` keys in every dictionary. What each row keeps is what
+	 * a catalogue is for: a name that opens the work, and one sentence saying
+	 * what kind of thing it is.
 	 *
 	 * ## THE SOURCED ROUTES WERE HERE AND ARE GONE (2026-09-05)
 	 *
@@ -114,16 +104,21 @@
 	 * that LIST and the two that ADVISE, which is the one place on the page
 	 * where the voice changes and the only change nothing else marks.
 	 */
-	import { getBook, getDocumentManifest, listWorksOfType } from '$lib/corpus';
+	import {
+		getBook,
+		getDocumentManifest,
+		hasTopics,
+		listWorksOfType,
+		loadFormulas
+	} from '$lib/corpus';
 	import { hrefFor } from '$lib/address';
-	import { citationSpecimens } from '$lib/specimens';
 	import { content } from '$lib/content.svelte';
 	import { BANNERS, type Artwork } from '$lib/landing-art';
 	import ArtFigure from '$lib/components/ArtFigure.svelte';
 	import Icon from '$lib/components/Icon.svelte';
 	import type { IconName } from '$lib/components/Icon.svelte';
 	import { t } from '$lib/i18n.svelte';
-	import type { WorkType } from '$lib/types';
+	import type { Formula, Formulas, WorkType } from '$lib/types';
 
 	// The identification, plus the one interface word in it. Composed here and
 	// passed down for the reason `Plate.svelte` gives about its own credit: the
@@ -133,26 +128,25 @@
 
 	// --- The reader's own Bible ----------------------------------------------
 	//
-	// The only edition this page resolves, and it resolves two things out of
-	// it: the abbreviation and separator the citation specimen is drawn with,
-	// and the names and chapter counts of the books the reading suggestion
-	// offers. Nothing else on the page addresses a text any more.
+	// The only edition this page resolves, and it resolves one thing out of
+	// it: the names and chapter counts of the books the reading suggestion
+	// offers. It drew the citation specimen's abbreviation and separator too
+	// until the specimens came off this page; nothing else here addresses a
+	// text.
 	const bibleWorkId = $derived(content.workIdFor('bible'));
-	const bibleLang = $derived(content.langFor('bible'));
 
 	/**
 	 * THE BOOKS, BY WHAT KIND OF THING THEY HOLD — which is the axis
 	 * `/bibliotheca` deliberately does not sort on. That page is the catalogue
-	 * and groups by subject; this one answers "what am I looking at, what
-	 * authority does it carry, and what does a citation of it look like",
-	 * which is where §5 stops.
+	 * and groups by subject; this one answers "what am I looking at and what
+	 * authority does it carry", which is where §5 stops.
 	 *
 	 * FLAT, one row per work, where this was six shelves with the Compendium
 	 * of the Catechism, the Compendium of the Social Doctrine and the Summa
 	 * nested under the shelf they belong to. Nesting is right for a catalogue
-	 * and wrong here: a nested work got its parent's definition and no
-	 * citation form of its own, and those three are precisely the works a
-	 * newcomer has heard named and cannot place.
+	 * and wrong here: a nested work got its parent's definition and no line of
+	 * its own, and those three are precisely the works a newcomer has heard
+	 * named and cannot place.
 	 *
 	 * Each is titled by the key its own landing page is titled by, so no name
 	 * on this page is written twice.
@@ -244,11 +238,21 @@
 	 * press; the guide answers "what does this control do" and this section
 	 * answers "what is on this site".
 	 *
-	 * They carry no specimen and no "Identified" line, having no notation to
-	 * teach: a calendar is addressed by a date and a bookmark by whatever the
-	 * reader marked. That absence is the reason they are a group of their own
-	 * under the eight rather than eleven rows in one grid — a row missing the
-	 * one line every other row has reads as a row with something wrong with it.
+	 * They are a group of their own under the works because a work is
+	 * something to read and none of these is: two are other ways into the
+	 * same shelves, one is a day, one is what the reader themselves marked,
+	 * and the last is a count of the rest.
+	 *
+	 * ORDER IS WHAT THEY OPEN ONTO, widest first — the whole holding, then a
+	 * way into it by subject, then the day, then what the reader brought, then
+	 * the arithmetic over all of it. The home page's own bed runs the same way
+	 * (`ShelfGrid.svelte`) and the two agree by that rule rather than by
+	 * copying.
+	 *
+	 * EACH IS TITLED BY THE KEY ITS OWN DESTINATION IS TITLED BY, which is
+	 * what keeps a door and the page behind it from being called two different
+	 * things. `/quaestiones`' name is still English in every dictionary but
+	 * two, and it reads as English here for exactly as long as it does there.
 	 */
 	const PLACES = [
 		{
@@ -256,6 +260,12 @@
 			icon: 'book-open' as IconName,
 			titleKey: 'nav.library',
 			href: '/bibliotheca'
+		},
+		{
+			key: 'questions',
+			icon: 'circle-help' as IconName,
+			titleKey: 'quaestiones.landing.title',
+			href: '/quaestiones'
 		},
 		{
 			key: 'calendar',
@@ -268,6 +278,12 @@
 			icon: 'bookmark' as IconName,
 			titleKey: 'bookmark.library',
 			href: '/signata'
+		},
+		{
+			key: 'census',
+			icon: 'chart-column' as IconName,
+			titleKey: 'census.title',
+			href: '/bibliotheca/census'
 		}
 	] as const;
 
@@ -275,26 +291,106 @@
 	const works = $derived(WORKS.filter((work) => has(work.type)));
 
 	/**
-	 * THE SPECIMEN BESIDE EACH WORK, AND IT IS A SHAPE RATHER THAN A REFERENCE.
+	 * ## THE ONE SECTION HERE WHOSE WORDS ARE THE CHURCH'S OWN
 	 *
-	 * These were links until 2026-09-05, each existence-checked against the
-	 * corpus so that following `CCC 1` landed on paragraph 1. Two things were
-	 * wrong with that. A reader working down a catalogue was being offered a
-	 * door into the middle of a work they had not chosen; and `1` is a
-	 * meaningful citation, so the column read as eight recommendations rather
-	 * than as eight examples of a form. `schola.books.lede` sends the reader to
-	 * type one of these into the jump box, which is the one place a notation is
-	 * worth having — and that box prints the same table in its own empty state
-	 * now, which is what lifted the table out of this file.
+	 * The Compendium ends with an appendix, and its Part B is the Holy See's
+	 * own list of what a Catholic is asked to know by heart: the two
+	 * commandments of love, the Golden Rule, the Beatitudes, the theological
+	 * and cardinal virtues, the gifts and fruits of the Holy Spirit, the
+	 * precepts of the Church, the two sets of works of mercy, the capital sins
+	 * and the last things. The Decalogue is printed just before question 434,
+	 * as the numbered formula a catechism class learns. `ccc/compendium.py`
+	 * reads both (2026-09-10); `sync-corpus.mjs` writes one file per edition.
 	 *
-	 * `$lib/specimens.ts` holds the rest of the argument: why the numbers are
-	 * representative, why the sigla come out of the dictionary, why prayers get
-	 * none. Its keys are this page's own `WORKS` keys, having been taken from
-	 * them.
+	 * **WHY IT IS PARSED AND NOT WRITTEN.** A reader nine months into becoming
+	 * Catholic wants the ten commandments and the seven capital sins, and the
+	 * cheap way to give them is two dozen interface strings — our words for
+	 * the Church's list, in thirty-seven dictionaries, drifting. These are the
+	 * Church's words, in the reader's own edition, and the section costs a
+	 * heading and a lede.
+	 *
+	 * **NOTHING HERE IS NAMED, ORDERED OR TRANSLATED BY THIS PAGE.** Every
+	 * heading is the edition's, every order is the edition's, and the editions
+	 * disagree about both — Italian prints the precepts of the Church and the
+	 * corporal works of mercy before the theological virtues. So there is no
+	 * key to select on, no sentence of ours against a formula, and no way for
+	 * this page to be found saying something the appendix does not.
+	 *
+	 * **IT REPORTS, SO IT SITS ABOVE THE PICTURE.** The hinge below divides
+	 * the sections that LIST from the two that ADVISE, and a printed list of
+	 * the Church's own formulas is on the listing side of that line.
+	 *
+	 * TEN EDITIONS OF FOURTEEN. The four vatican.va publishes only as a PDF
+	 * print the same appendix and nothing has read it, so a reader whose
+	 * Compendium is Russian gets this section silently absent — which is also
+	 * what a failed fetch gets, and deliberately: this is one section of a page
+	 * that is whole without it, where `/bibliotheca/census` is a page that is
+	 * nothing without its numbers and therefore says so.
 	 */
-	const specimens = $derived.by((): Record<string, string | undefined> =>
-		Object.fromEntries(citationSpecimens(bibleWorkId, bibleLang).map((row) => [row.key, row.text]))
+	let appendix = $state<Formulas | undefined>(undefined);
+	const compendiumLang = $derived(content.langFor('compendium'));
+	$effect(() => {
+		const lang = compendiumLang;
+		let stale = false;
+		appendix = undefined;
+		if (!lang) return;
+		loadFormulas(lang).then(
+			(value) => {
+				if (!stale) appendix = value;
+			},
+			() => {}
+		);
+		return () => {
+			stale = true;
+		};
+	});
+
+	/** The Decalogue first, then Part B in the order the edition prints it. It
+	 *  is first because it is the list a newcomer came for and the one every
+	 *  other formula is read against, not because the appendix puts it there —
+	 *  the appendix prints it a hundred questions earlier. */
+	const formulas = $derived(
+		appendix ? [...(appendix.decalogue ? [appendix.decalogue] : []), ...appendix.formulas] : []
 	);
+
+	/**
+	 * **THE HEADINGS ARE NOT LINKIFIED**, and six of them print a Scripture
+	 * reference — "The Beatitudes (Matthew 5:3-12)" — that the site's prose
+	 * linkifier would turn into a door onto Matthew 5 without being asked.
+	 * Two reasons, and the first is this page's own precedent: the citation
+	 * specimens beside the works above were links until somebody noticed they
+	 * sent a reader working down a CATALOGUE into the middle of a work they
+	 * had not chosen. A reference printed inside a heading is that again.
+	 *
+	 * The second is what it would cost. `refHref` validates an address before
+	 * it mints one, which reads the Summa and document registries as well as
+	 * the Bible's — so a page that calls it owes all three
+	 * (`index-priming.test.ts` asserts exactly this, and failed on the version
+	 * of this section that did). That is 214 KB fetched before first paint, on
+	 * the page written for the reader least likely to wait for it.
+	 */
+
+	/**
+	 * Whether a formula is set across the grid rather than in one column of
+	 * it. The precepts of the Church are five sentences and the Beatitudes
+	 * nine; the cardinal virtues are four words. A column wide enough for the
+	 * first wastes two thirds of itself on the second, and the source is what
+	 * says which is which — the longest thing it prints.
+	 */
+	const LONG_ITEM = 64;
+	const isWide = (formula: Formula) =>
+		(formula.items ?? formula.lines ?? []).some((row) => row.length > LONG_ITEM);
+
+	/**
+	 * Questions is the one row here that is gated, and `ShelfGrid.svelte`'s
+	 * card is gated on the same test for the same reason: a build with no
+	 * topic list opens `/quaestiones` onto `quaestiones.landing.none`, and a
+	 * door onto that sentence is worse than no door. The other four are
+	 * unconditional — the Library and the Census draw whatever the corpus
+	 * holds, including nothing, and Bookmarks and the Calendar need no corpus
+	 * at all.
+	 */
+	const places = $derived(PLACES.filter((place) => place.key !== 'questions' || hasTopics()));
 
 	/**
 	 * ## THE ONE READING PATH THIS PAGE PROPOSES RATHER THAN REPORTS
@@ -421,54 +517,20 @@
 					<div class="book-text">
 						<h4><a href={work.href}>{t(work.titleKey)}</a></h4>
 						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
-						<!--
-							THE SPECIMEN IS ON THE "CITED AS" ROW, and it sat on the title
-							line until 2026-09-06. Both put it on the trailing edge — the
-							column of notations down the grid is the point, and it is the
-							page's whole lesson in one sweep — but on the title line it was
-							a chip beside a work's NAME, which is the one thing on the row
-							it is not an example of. Here it stands at the end of the
-							sentence that says what its number counts, which is the pair a
-							reader has to hold together: `CCC 1234` and "by paragraph
-							number, running unbroken from the first page to the last".
-
-							The label and the clause are still a sentence and the chip
-							does not break it, because the chip is not IN it — it is
-							pushed to the far edge of the same line. The label was a
-							label, then a chip, then an em dash, then a clause once, which
-							wrapped badly and read as nothing.
-
-							The chip is not a link and the row's heading is: one door per
-							row, and it opens on the work rather than on a paragraph of
-							it. The row runs for every work, including the one with no
-							specimen — prayers are cited by name, and that sentence is the
-							whole answer for them.
-						-->
-						<p class="book-cite">
-							<span>
-								<span class="cite-label">{t('schola.cite.label')}</span>
-								{t(`schola.cite.${work.key}`)}
-							</span>
-							{#if specimens[work.key]}
-								<span class="cite-example">{specimens[work.key]}</span>
-							{/if}
-						</p>
 					</div>
 				</li>
 			{/each}
 		</ul>
 
 		<!--
-			THE THREE THAT ARE PAGES RATHER THAN TEXTS. They were rows in the
-			chrome guide above until 2026-09-06 and did not belong there: a
-			reader looking for the Library wants somewhere to go, not a button.
-			Here they answer the section's own question — what is on this site —
-			and the group heading is what says they answer the other half of it,
-			"and how it is cited", with nothing.
+			THE PAGES THAT ARE NOT TEXTS. They were rows in the chrome guide
+			above until 2026-09-06 and did not belong there: a reader looking
+			for the Library wants somewhere to go, not a button. Here they
+			answer the section's own question — what is on this site.
 		-->
 		<h3 class="group">{t('schola.places.heading')}</h3>
 		<ul class="book-grid places">
-			{#each PLACES as place (place.key)}
+			{#each places as place (place.key)}
 				<li class="book">
 					<span class="book-icon"><Icon name={place.icon} /></span>
 					<div class="book-text">
@@ -479,6 +541,62 @@
 			{/each}
 		</ul>
 	</section>
+
+	<!--
+		THE FORMULAS OF CATHOLIC DOCTRINE — the Compendium's own appendix, and
+		the only section on this page whose every word is the Church's. The
+		script's own note says why it is parsed rather than written and why
+		nothing here is named, ordered or selected by us.
+
+		DRAWN ONLY WHEN THERE IS SOMETHING TO DRAW, with no message where there
+		is not: four of the fourteen editions are PDFs whose appendix nothing
+		has read, and a sentence apologising for that would be this page
+		explaining its own pipeline to a reader nine months into the faith.
+	-->
+	{#if formulas.length > 0}
+		<section aria-labelledby="formulas-heading">
+			<h2 id="formulas-heading">{t('schola.formulas.heading')}</h2>
+			<p class="section-lede">{t('schola.formulas.lede')}</p>
+			<ul class="formulas">
+				{#each formulas as formula (formula.heading)}
+					<li class="formula" class:wide={isWide(formula)}>
+						<h3>{formula.heading}</h3>
+						<!--
+							THREE SHAPES, AND THE SOURCE CHOOSES. A numbered list where
+							the edition numbered it — the numerals are redrawn because
+							the parse strips them, so they are the list's own and cannot
+							come apart from the items. A plain list where the edition
+							set each item apart without numbering it (Slovenian's
+							`<ol><li>`, Hungarian's table cells). And a block of lines
+							where the source marks no item boundary at all: the
+							Beatitudes are numbered in no edition, and nine lines of
+							"Blessed are…" are a passage, not a list. Reading them as
+							one would be this page deciding where a beatitude ends,
+							which is exactly what it has nothing to decide it with.
+						-->
+						{#if formula.items && formula.numbered}
+							<ol class="formula-items">
+								{#each formula.items as item, i (i)}
+									<li>{item}</li>
+								{/each}
+							</ol>
+						{:else if formula.items}
+							<ul class="formula-items plain">
+								{#each formula.items as item, i (i)}
+									<li>{item}</li>
+								{/each}
+							</ul>
+						{:else}
+							<p class="formula-lines">
+								{#each formula.lines ?? [] as line, i (i)}{#if i > 0}<br />{/if}{line}{/each}
+							</p>
+						{/if}
+					</li>
+				{/each}
+			</ul>
+		</section>
+	{/if}
+
 	<!--
 		THE PICTURE IS THE HINGE, AND IT WAS THE MASTHEAD UNTIL 2026-09-06.
 
@@ -969,6 +1087,87 @@
 	}
 
 	/*
+	 * THE FORMULAS, AND THE SOURCE SETS THE COLUMN WIDTH.
+	 *
+	 * Thirteen lists whose items run from one word to a sentence: the cardinal
+	 * virtues are `Prudence Justice Fortitude Temperance` and the precepts of
+	 * the Church are five clauses of forty words. One grid of equal columns
+	 * wide enough for the second wastes two thirds of every track on the first,
+	 * and a column narrow enough for the first breaks the second into ribbons.
+	 * So a formula whose longest row passes `LONG_ITEM` takes the whole grid
+	 * and the rest take one column — the measurement is the edition's own text,
+	 * which is what keeps it true in ten languages nobody here reads.
+	 *
+	 * `auto-fill` and a 15rem track: four columns of short lists at the full
+	 * landing width, two at tablet, one on a phone. No card, no border, no
+	 * fill — this is a reference list like the catalogue above it, and the
+	 * argument there against boxes holds here twice over, because these lists
+	 * are neither doors nor choices. A heading and the air under it are the
+	 * whole structure.
+	 */
+	.formulas {
+		list-style: none;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+		gap: 1.5rem 2rem;
+		margin: 0;
+		padding: 0;
+	}
+
+	.formula.wide {
+		grid-column: 1 / -1;
+	}
+
+	/*
+	 * The heading is the edition's own and may be long — "Le sette opere di
+	 * misericordia corporale" — so it wraps, and a wrapped line of it must not
+	 * read as two entries. Serif at the size the stage titles take, and a rule
+	 * under it rather than around the block, which is the same answer the
+	 * catalogue rows give.
+	 */
+	.formula h3 {
+		font-family: var(--font-serif);
+		font-size: 1.02rem;
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+		padding-block-end: 0.35rem;
+		border-block-end: 1px solid var(--color-border);
+		text-wrap: balance;
+	}
+
+	.formula-items {
+		margin: 0;
+		padding-inline-start: 1.4rem;
+		font-size: 0.92rem;
+		line-height: 1.5;
+	}
+
+	.formula-items li {
+		margin-block-end: 0.25rem;
+	}
+
+	/* Where the source numbered nothing, nothing is numbered: a disc marks the
+	   items apart without claiming an order the edition does not print. */
+	.formula-items.plain {
+		list-style: disc;
+	}
+
+	/*
+	 * A BLOCK OF LINES IS SET AS LINES, which is the one place on this page
+	 * that a `<br>` is the right element: the Beatitudes carry no item boundary
+	 * in any edition, and the line breaks are the only structure the source
+	 * actually marks. A hanging indent so a line too long for the column reads
+	 * as a continuation rather than as the next line of the passage.
+	 */
+	.formula-lines {
+		margin: 0;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		padding-inline-start: 1.1rem;
+		text-indent: -1.1rem;
+	}
+
+	/*
 	 * TWO COLUMNS AT THE SITE'S OWN READING BREAKPOINT and one below it.
 	 * `80rem` is where `layout.css` hands the reading grid its aside; reusing
 	 * it rather than inventing a number keeps the site to one idea of "wide".
@@ -1102,11 +1301,10 @@
 	}
 
 	/*
-	 * A GROUP INSIDE A SECTION: the bar a control lives on, or the fact that a
-	 * row has no citation form. Serif like every other heading here, but
-	 * without `section h2`'s rule — a second horizontal line one level down
-	 * would divide the section it is inside, which is the opposite of what a
-	 * subheading does.
+	 * A GROUP INSIDE A SECTION: here, the rows that are pages rather than
+	 * works. Serif like every other heading here, but without `section h2`'s
+	 * rule — a second horizontal line one level down would divide the section
+	 * it is inside, which is the opposite of what a subheading does.
 	 */
 	.group {
 		font-family: var(--font-serif);
@@ -1150,65 +1348,6 @@
 		font-size: 0.9rem;
 	}
 
-	/*
-	 * The sentence and its specimen on one line, the specimen pushed to the
-	 * trailing edge so the notations form a column of their own down the grid.
-	 * Baselines, not boxes: a sentence at 0.8rem and a chip with its own
-	 * padding have different box heights, and agreeing on the line they sit on
-	 * is what makes the pair read as one row rather than as two things.
-	 *
-	 * `gap` is generous because the two are not a phrase — the sentence ends,
-	 * and the specimen is an exhibit beside it.
-	 */
-	.book-cite {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 1rem;
-		margin: 0.5rem 0 0;
-		font-size: 0.8rem;
-		color: var(--color-text-muted);
-	}
-
-	.cite-label {
-		font-variant-caps: small-caps;
-		letter-spacing: 0.04em;
-	}
-
-	.cite-example {
-		flex: 0 0 auto;
-		padding: 0.1rem 0.4rem;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
-		text-decoration: none;
-		border-radius: var(--radius-sm);
-		/*
-		 * MUTED, AND IT WORE THE ACCENT FOR A DAY. The chip is on the "Identified"
-		 * row now, and that row is 0.8rem of `--color-text-muted` — so an accent
-		 * chip was the loudest thing on the quietest line of the card, shouting
-		 * a sentence it is only the exhibit for. Its own colour is the row's:
-		 * the label, the clause and the specimen are one line and read as one.
-		 *
-		 * WHAT MAKES IT FINDABLE IS THE BOX, NOT THE COLOUR. It is drawn as
-		 * something to type, in the idiom the shortcut sheet's keycaps already
-		 * use — the interface face on the page's own ground inside a hairline —
-		 * and a column of those down the trailing edge is a column whether or
-		 * not it is coloured. A specimen is not a control, and a chip loud
-		 * enough to be one reads as a button to press.
-		 *
-		 * NOT A MONOSPACE, which is the other way a reader might be told "this
-		 * is notation": the site has exactly two faces and `docs/reading.md`
-		 * splits them on authorship, so a third introduced for eight scraps
-		 * would be a new axis to maintain everywhere. Tabular figures for the
-		 * same reason the stage numerals have them.
-		 */
-		color: var(--color-text-muted);
-		border: 1px solid var(--color-border);
-		background: var(--color-bg-elevated);
-	}
-
 	/* The pictures print themselves — `ArtFigure` carries its own print rules,
 	   including turning its caption control back into the line it opens. */
 	@media print {
@@ -1219,10 +1358,6 @@
 		}
 
 		.pick {
-			background: none;
-		}
-
-		.cite-example {
 			background: none;
 		}
 	}

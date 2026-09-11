@@ -89,7 +89,7 @@ export const zht: Dictionary = {
 	'library.landing.tagline': '全部書目，一架一架——連同你讀到的地方和你標記的內容。',
 	'schola.landing.title': '從何處入手',
 	'schola.landing.tagline':
-		'對此處所有內容的簡要指引：這些書各是什麼，其引文如何書寫，如何找到一處經文，以及教會所提出的閱讀次第。',
+		'對此處所有內容的簡要指引：這些書各是什麼，十誡及教會要求天主教徒知曉的其他清單，以及從何處開始閱讀。',
 	'schola.start.heading': '初次接觸天主教？',
 	'schola.start.body': '最好的起點是',
 	'schola.start.bodyAfter':
@@ -121,33 +121,31 @@ export const zht: Dictionary = {
 		'不是故事：一百五十篇祈禱與歌詠。一次讀一篇，次序不拘。教會至今每日仍以此祈禱。',
 	'schola.bible.bothWays':
 		'您會認出一些東西，這正是用意所在，而非巧合。教會在基督的光中讀較古的書卷，又在此前所有的光中讀較新的書卷——兩半彼此解釋，因此沒有一半是獨自閱讀的。',
-	'schola.books.heading': '此處有什麼，以及如何標識',
+	'schola.books.heading': '此處有什麼',
 	'schola.books.lede':
-		'這些各是不同種類的書，各以自己的編號被引用。示例顯示其形式：照樣在搜尋框中鍵入，便可抵達那一處。',
-	'schola.cite.label': '標識',
+		'這些各是不同種類的書，其下的文字說明是哪一種。請打開本頁頂端的搜尋框，可查看各書如何被引用，並直接抵達某一處。',
 	'schola.what.scripture': '教會所領受的聖經，包括新舊兩約。此處其餘一切都在其光中閱讀。',
-	'schola.cite.scripture': '書卷、章與節，用您自己的版本所印的簡稱',
 	'schola.what.catechism':
 		'天主教會所信的撮要，合為一冊。它本身不是源頭：它匯集聖經、教父、禮儀與教會的訓導，而每一條都指明其所言出自何處。',
-	'schola.cite.catechism': '按條目編號，自首頁至末頁連續不斷',
 	'schola.what.compendium': '同一道理以問答陳述，篇幅約為十分之一。',
-	'schola.cite.compendium': '按問題編號',
 	'schola.what.magisterium':
 		'教宗與大公會議實際所寫的——通諭、憲章、法令、宣言——各自針對特定的時刻與特定的問題。每一份都以其拉丁文起首之語為名。',
-	'schola.cite.magisterium': '按文獻名稱，再按其中的節次編號',
 	'schola.what.social': '教會關於勞動、財產、家庭、政治與和平的訓導，自那些文獻中輯成一書。',
-	'schola.cite.social': '按條目編號，並冠以該書自用的簡稱',
 	'schola.what.law': '是法律而非教義。它規定教會所要求的，並且會被修訂。',
-	'schola.cite.law': '按條，此即其編號單位之名',
 	'schola.what.doctors': '教會所冊封為聖師的神學家。無論作者何等偉大，這都不具官方權威。',
-	'schola.cite.doctors': '按部，再按題——《神學大全》自身的分法',
 	'schola.what.prayers': '教會所祈禱的言辭，旁附拉丁文。',
-	'schola.cite.prayers': '按名稱；無編號可引',
 	'schola.places.heading': '不是文本，而是本站的去處',
 	'schola.what.library': '本站所有作品彙為一表，按主題而非按種類分組。',
+	'schola.what.questions':
+		'為持有問題卻沒有引處的讀者提供的入口。每個問題都彙集了回答它的段落——首先是《教理》——其中每一個字都出自教會本身。',
 	'schola.what.calendar': '禮儀日——節期、顏色與所紀念者——依您所遵循之國家的日曆。',
 	'schola.what.bookmarks':
 		'您所標記的經文，以及您在每部作品中上次讀到之處。二者都保存在此瀏覽器中，不發往任何地方。',
+	'schola.what.census':
+		'本書庫收藏了什麼，覆蓋範圍有多廣——有多少部作品，涉及哪些語言，以及您自己語言的讀者實際能讀到每部作品的多少。',
+	'schola.formulas.heading': '十誡，以及還要背誦的其他內容',
+	'schola.formulas.lede':
+		'這並非本站的撮要：這些是教會本身印於《簡編》末尾的清單，供任何正在學習教理的人使用。以下每一個字都逐字引自您所用的版本。',
 	'ccc.noCounterpart': '另一部作品中無相應內容',
 	'jumpbox.placeholder': '前往…（例：若 3:16、ccc 1234）',
 	'jumpbox.short': '搜尋',

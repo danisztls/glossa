@@ -85,7 +85,7 @@ export const sq: Dictionary = {
 		'I gjithë korpusi, raft pas rafti — bashkë me vendin ku e latë dhe me atë që keni shënuar.',
 	'schola.landing.title': 'Nga t’ia nisni',
 	'schola.landing.tagline':
-		'Një udhërrëfyes i shkurtër për atë që gjendet këtu: çfarë është secili prej këtyre librave, si shkruhet një referencë për të, si gjendet një pasazh, dhe radhë leximi që Kisha ka propozuar.',
+		'Një udhërrëfyes i shkurtër për atë që gjendet këtu: çfarë është secili prej këtyre librave, Dhjetë Urdhërimet dhe listat e tjera që Kisha kërkon t’i njohë çdo katolik, dhe ku të fillohet leximi.',
 	'schola.start.heading': 'I ri në katolicizëm?',
 	'schola.start.body': 'Fillimi më i mirë është ',
 	'schola.start.bodyAfter':
@@ -121,39 +121,37 @@ export const sq: Dictionary = {
 		'Jo një rrëfim: njëqind e pesëdhjetë lutje dhe këngë. Lexoni një nga një, në çfarëdo radhe. Kisha i lutet ende çdo ditë.',
 	'schola.bible.bothWays':
 		'Do të njihni gjëra, dhe kjo është qëllimi e jo një rastësi. Kisha i lexon librat më të vjetër në dritën e Krishtit dhe ata më të rinj në dritën e asaj që erdhi më parë — secila gjysmë shpjegon tjetrën, dhe prandaj asnjëra nuk lexohet vetëm.',
-	'schola.books.heading': 'Çfarë gjendet këtu, dhe si identifikohet',
+	'schola.books.heading': 'Çfarë gjendet këtu',
 	'schola.books.lede':
-		'Secili prej tyre është një lloj tjetër libri, dhe secilit i referohemi me një numër të vetin. Shembujt tregojnë formën: shkruani një të tillë në kutinë e kërkimit dhe mbërrini te pasazhi.',
-	'schola.cite.label': 'Identifikohet',
+		'Secili prej tyre është një lloj tjetër libri, dhe rreshti poshtë tregon cilin lloj. Hapni kutinë e kërkimit në krye të kësaj faqeje për të parë si i referohemi secilit, dhe për të mbërritur drejt e te një pasazh.',
 	'schola.what.scripture':
 		'Shkrimet ashtu si i merr Kisha, në të dyja Besëlidhjet. Gjithçka tjetër këtu lexohet në dritën e tyre.',
-	'schola.cite.scripture': 'libri, kapitulli dhe vargu, në shkurtesat që shtyp botimi juaj',
 	'schola.what.catechism':
 		'Një përmbledhje e asaj që beson Kisha Katolike, në një vëllim të vetëm. Ai vetë nuk është burim: mbledh Shkrimin, Etërit, liturgjinë dhe mësimin e Kishës, dhe çdo numër thotë prej nga vjen ajo që pohon.',
-	'schola.cite.catechism': 'sipas numrit, që rrjedh pa ndërprerje nga faqja e parë te e fundit',
 	'schola.what.compendium':
 		'I njëjti mësim i paraqitur në pyetje dhe përgjigje, në rreth një të dhjetën e gjatësisë.',
-	'schola.cite.compendium': 'sipas numrit të pyetjes',
 	'schola.what.magisterium':
 		'Ajo që papët dhe koncilet kanë shkruar në të vërtetë — enciklika, kushtetuta, dekrete, deklarata — secila drejtuar një çasti të caktuar dhe një çështjeje të caktuar. Secila njihet nga fjalët e saj të para në latinisht.',
-	'schola.cite.magisterium': 'sipas emrit të dokumentit, pastaj një numri seksioni brenda tij',
 	'schola.what.social':
 		'Mësimi i Kishës për punën, pronën, familjen, politikën dhe paqen, mbledhur prej atyre dokumenteve në një libër të vetëm.',
-	'schola.cite.social': 'sipas numrit, nën siglën që vepra përdor për vetveten',
 	'schola.what.law': 'Ligj e jo doktrinë. Thotë çfarë kërkon Kisha, dhe ndryshohet.',
-	'schola.cite.law': 'sipas kanonit, siç quhen njësitë e tij të numëruara',
 	'schola.what.doctors':
 		'Teologët që Kisha i ka shpallur Doktorë. Nuk mbart asnjë autoritet zyrtar, sado i madh të jetë autori.',
-	'schola.cite.doctors': 'sipas pjesës, pastaj çështjes — ndarjet e vetë Summa-s',
 	'schola.what.prayers': 'Fjalët me të cilat lutet Kisha, me latinishten pranë.',
-	'schola.cite.prayers': 'sipas emrit; nuk ka numra për të cituar',
 	'schola.places.heading': 'Jo tekste, por vende të kësaj faqeje',
 	'schola.what.library':
 		'Të gjitha veprat e faqes në një listë, të grupuara sipas lëndës e jo sipas llojit.',
+	'schola.what.questions':
+		'Një hyrje për lexuesin që ka një pyetje dhe pa asnjë referencë. Secila mbledh pasazhet që i përgjigjen atij — Katekizmi i pari — dhe çdo fjalë e tyre është e vetë Kishës.',
 	'schola.what.calendar':
 		'Dita liturgjike — koha, ngjyra dhe kush kremtohet — për vendin kalendarin e të cilit ndiqni.',
 	'schola.what.bookmarks':
 		'Pasazhet që keni shënuar, dhe ku e latë së fundi në secilën vepër. Të dyja mbeten në këtë shfletues dhe nuk dërgohen askund.',
+	'schola.what.census':
+		'Çfarë përmban kjo bibliotekë dhe sa larg shtrihet — sa vepra, në cilat gjuhë, dhe sa nga secila mund të arrijë vërtet një lexues i gjuhës suaj.',
+	'schola.formulas.heading': 'Dhjetë Urdhërimet, dhe çfarë tjetër mësohet përmendsh',
+	'schola.formulas.lede':
+		'Jo një përmbledhje e kësaj faqeje: këto janë listat që vetë Kisha i shtyp në fund të Përmbledhjes, për këdo që po mësohet në besim. Çdo fjalë më poshtë është marrë fjalë për fjalë nga botimi juaj i saj.',
 	'ccc.noCounterpart': 'Pa pjesë përkatëse në veprën tjetër',
 	'jumpbox.placeholder': 'Shko te… (p.sh. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Kërko',

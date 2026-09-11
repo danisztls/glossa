@@ -89,7 +89,7 @@ export const tl: Dictionary = {
 		'Ang buong koleksiyon, istante bawat istante — kasama ang huling binasa mo at ang mga minarkahan mo.',
 	'schola.landing.title': 'Saan magsisimula',
 	'schola.landing.tagline':
-		'Isang maikling patnubay sa kung ano ang narito: kung ano ang bawat isa sa mga aklat na ito, paano isinusulat ang sanggunian dito, paano makakita ng isang bahagi, at mga ayos ng pagbabasa na iminungkahi ng Simbahan.',
+		'Isang maikling patnubay sa kung ano ang narito: kung ano ang bawat isa sa mga aklat na ito, ang Sampung Utos ng Diyos at ang iba pang mga talaan na nais ng Simbahan na malaman ng bawat Katoliko, at kung saan magsisimulang magbasa.',
 	'schola.start.heading': 'Bago sa Katolisismo?',
 	'schola.start.body': 'Ang pinakamainam na simula ay ang ',
 	'schola.start.bodyAfter':
@@ -125,42 +125,38 @@ export const tl: Dictionary = {
 		'Hindi salaysay: isang daan at limampung panalangin at awit. Isa-isahin ninyo, sa anumang ayos. Dinarasal pa rin ito ng Simbahan araw-araw.',
 	'schola.bible.bothWays':
 		'May makikilala kayong mga bagay, at iyon ang layunin at hindi pagkakataon lamang. Binabasa ng Simbahan ang mas lumang mga aklat sa liwanag ni Kristo at ang mas bago sa liwanag ng nauna — bawat kalahati ay nagpapaliwanag sa isa, at kaya walang isa man sa kanila ang binabasang mag-isa.',
-	'schola.books.heading': 'Ano ang narito, at paano ito tinutukoy',
+	'schola.books.heading': 'Ano ang narito',
 	'schola.books.lede':
-		'Bawat isa sa mga ito ay ibang uri ng aklat, at bawat isa ay tinutukoy sa pamamagitan ng sariling bilang. Ipinapakita ng mga halimbawa ang anyo: mag-type ng ganoon sa kahon ng paghahanap at mararating ninyo ang bahagi.',
-	'schola.cite.label': 'Tinutukoy',
+		'Bawat isa sa mga ito ay ibang uri ng aklat, at sinasabi ng linya sa ilalim nito kung anong uri. Buksan ang kahon ng paghahanap sa itaas ng pahinang ito upang makita kung paano tinutukoy ang bawat isa, at upang direktang marating ang isang bahagi.',
 	'schola.what.scripture':
 		'Ang Kasulatan gaya ng pagtanggap dito ng Simbahan, sa dalawang Tipan. Ang lahat ng iba rito ay binabasa sa liwanag nito.',
-	'schola.cite.scripture':
-		'aklat, kabanata at talata, sa mga daglat na inililimbag ng sarili ninyong edisyon',
 	'schola.what.catechism':
 		'Isang buod ng pinaniniwalaan ng Simbahang Katoliko, sa iisang tomo. Hindi ito mismo ang pinagmulan: tinitipon nito ang Kasulatan, ang mga Ama, ang liturhiya at ang turo ng Simbahan, at sinasabi ng bawat bilang kung saan nagmula ang sinasabi nito.',
-	'schola.cite.catechism': 'ayon sa bilang, tuloy-tuloy mula sa unang pahina hanggang sa huli',
 	'schola.what.compendium':
 		'Ang mismong turo na inilahad sa tanong at sagot, mga ikasampung bahagi ng haba.',
-	'schola.cite.compendium': 'ayon sa bilang ng tanong',
 	'schola.what.magisterium':
 		'Ang aktuwal na isinulat ng mga papa at ng mga konsilyo — mga ensiklika, konstitusyon, dekreto, deklarasyon — bawat isa ay tumutugon sa isang tiyak na sandali at isang tiyak na suliranin. Bawat isa ay kilala sa unang mga salita nito sa Latin.',
-	'schola.cite.magisterium': 'ayon sa pangalan ng dokumento, saka sa bilang ng bahagi sa loob nito',
 	'schola.what.social':
 		'Ang turo ng Simbahan tungkol sa paggawa, ari-arian, pamilya, pulitika at kapayapaan, tinipon mula sa mga dokumentong iyon sa iisang aklat.',
-	'schola.cite.social':
-		'ayon sa bilang, sa ilalim ng daglat na ginagamit ng akda para sa sarili nito',
 	'schola.what.law':
 		'Batas at hindi doktrina. Sinasabi nito ang hinihingi ng Simbahan, at ito ay sinusugan.',
-	'schola.cite.law': 'ayon sa kanon, ang tawag sa mga bilang nitong yunit',
 	'schola.what.doctors':
 		'Ang mga teologong ipinahayag ng Simbahan na mga Doktor. Wala itong opisyal na awtoridad, gaano man kadakila ang may-akda.',
-	'schola.cite.doctors': 'ayon sa bahagi, saka sa tanong — ang sariling paghahati ng Summa',
 	'schola.what.prayers': 'Ang mga salitang idinarasal ng Simbahan, kasama ang Latin sa tabi.',
-	'schola.cite.prayers': 'ayon sa pangalan; walang bilang na masisipi',
 	'schola.places.heading': 'Hindi mga teksto, kundi mga pook sa pahinang ito',
 	'schola.what.library':
 		'Lahat ng akda ng pook na ito sa iisang talaan, pinagpangkat ayon sa paksa at hindi ayon sa uri.',
+	'schola.what.questions':
+		'Isang paraan ng pagpasok para sa mambabasang may tanong ngunit walang sanggunian. Tinitipon ng bawat isa ang mga bahaging sumasagot dito — ang Katesismo muna — at bawat salita nito ay sa Simbahan mismo.',
 	'schola.what.calendar':
 		'Ang araw ng liturhiya — panahon, kulay, at kung sino ang ginugunita — para sa bansang sinusunod ninyo ang kalendaryo.',
 	'schola.what.bookmarks':
 		'Ang mga bahaging minarkahan ninyo, at kung saan kayo huling tumigil sa bawat akda. Parehong nananatili sa browser na ito at hindi ipinapadala kahit saan.',
+	'schola.what.census':
+		'Kung ano ang taglay ng aklatang ito at gaano ito kalawak — ilang akda, sa aling mga wika, at gaano karami sa bawat isa ang aktuwal na maaabot ng mambabasa ng sarili ninyong wika.',
+	'schola.formulas.heading': 'Ang Sampung Utos ng Diyos, at ang iba pang isinasaulo',
+	'schola.formulas.lede':
+		'Hindi buod ng pook na ito: ito ang mga talaang inilalathala mismo ng Simbahan sa dulo ng Kompendyo, para sa sinumang tinuturuan ng pananampalataya. Bawat salita sa ibaba ay sinipi mula sa inyong sariling edisyon nito.',
 	'ccc.noCounterpart': 'Walang katumbas sa kabilang akda',
 	'jumpbox.placeholder': 'Pumunta sa… (hal. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Maghanap',

@@ -92,7 +92,7 @@ export const ig: Dictionary = {
 		'Nchịkọta ahụ dum, shelf n’otu n’otu — tinyere ebe ị kwụsịrị na ihe ị kara aka.',
 	'schola.landing.title': 'Ebe ị ga-amalite',
 	'schola.landing.tagline':
-		"Nduzi dị mkpirikpi banyere ihe dị ebe a: ihe akwụkwọ ọ bụla n'ime ndị a bụ, otú e si ede nrụtụaka ya, otú i si achọta akụkụ, na usoro ọgụgụ ndị Chọọchị tụpụtara.",
+		"Nduzi dị mkpirikpi banyere ihe dị ebe a: ihe akwụkwọ ọ bụla n'ime ndị a bụ, Iwu Iri Chineke na ndepụta ndị ọzọ Chọọchị chọrọ ka onye Katọlik mara, na ebe ọ ga-esi malite ịgụ.",
 	'schola.start.heading': 'Ị bụ ọhụrụ na okpukpe Katọlik?',
 	'schola.start.body': 'Mmalite kacha mma bụ ',
 	'schola.start.bodyAfter':
@@ -126,40 +126,37 @@ export const ig: Dictionary = {
 		"Ọ bụghị akụkọ: ekpere na abụ narị na iri ise. Gụọ otu n'otu, n'usoro ọ bụla. Chọọchị ka na-ekpe ha kwa ụbọchị.",
 	'schola.bible.bothWays':
 		"Ị ga-amata ihe ụfọdụ, nke ahụ bụkwa ebumnuche ọ bụghị ihe mberede. Chọọchị na-agụ akwụkwọ ndị ochie n'ìhè Kraịst, na-agụkwa ndị ọhụrụ n'ìhè nke ihe buru ụzọ — akụkụ ọ bụla na-akọwa ibe ya, ọ bụkwa ya mere na a naghị agụ nke ọ bụla naanị ya.",
-	'schola.books.heading': 'Ihe dị ebe a, na otú e si amata ya',
+	'schola.books.heading': 'Ihe dị ebe a',
 	'schola.books.lede':
-		"Nke ọ bụla n'ime ndị a bụ ụdị akwụkwọ dị iche, a na-arụtụkwa aka na nke ọ bụla site na nọmba nke ya. Ihe atụ na-egosi ụdị ya: pịnye otu dị ka ya n'igbe nchọta, ị ga-erute akụkụ ahụ.",
-	'schola.cite.label': 'A na-amata ya',
+		"Nke ọ bụla n'ime ndị a bụ ụdị akwụkwọ dị iche, ahịrị dị n'okpuru ya na-akọwa ụdị ọ bụ. Meghee igbe nchọta dị n'elu ibe ahụ ka ị hụ otú e si arụtụ aka na nke ọ bụla, na iji jeruo akụkụ ozugbo.",
 	'schola.what.scripture':
 		"Akwụkwọ Nsọ dị ka Chọọchị si anabata ya, n'Ọgbụgba Ndụ abụọ ahụ. Ihe niile ọzọ dị ebe a ka a na-agụ n'ìhè ha.",
-	'schola.cite.scripture': "akwụkwọ, isi na amaokwu, n'ụdị mkpirisi mbipụta nke gị na-ebipụta",
 	'schola.what.catechism':
 		"Nchịkọta nke ihe Chọọchị Katọlik kweere, n'otu mpịakọta. Ya onwe ya abụghị isi mmalite: ọ na-achịkọta Akwụkwọ Nsọ, Nna Ochie, ememe ofufe na ozizi Chọọchị, paragraf ọ bụla na-akọwakwa ebe ihe ọ na-ekwu si bịa.",
-	'schola.cite.catechism':
-		"site na nọmba paragraf, nke na-aga n'usoro na-akwụsịghị site na peeji mbụ ruo nke ikpeazụ",
 	'schola.what.compendium':
 		"Otu ozizi ahụ e depụtara n'ajụjụ na azịza, n'ihe dị ka otu ụzọ n'ụzọ iri nke ogologo ya.",
-	'schola.cite.compendium': 'site na nọmba ajụjụ',
 	'schola.what.magisterium':
 		"Ihe ndị popu na kansụl dere n'ezie — akwụkwọ ozi ndị popu, iwu, ikike, nkwupụta — nke ọ bụla e zigara n'otu oge na otu ajụjụ. A maara nke ọ bụla site n'okwu mmalite ya n'asụsụ Latin.",
-	'schola.cite.magisterium': "site n'aha akwụkwọ ahụ, wee bụrụ nọmba akụkụ dị n'ime ya",
 	'schola.what.social':
 		"Ozizi Chọọchị banyere ọrụ, ihe onwunwe, ezinụlọ, ndọrọndọrọ ọchịchị na udo, nke a chịkọtara site n'akwụkwọ ndị ahụ n'otu akwụkwọ.",
-	'schola.cite.social': "site na nọmba paragraf, n'okpuru mkpirisi nke ọrụ ahụ na-akpọ onwe ya",
 	'schola.what.law': 'Iwu ọ bụghị ozizi. Ọ na-ekwu ihe Chọọchị chọrọ, a na-agbanwekwa ya.',
-	'schola.cite.law': 'site na kanọn, nke bụ aha a na-akpọ akụkụ ya ndị nwere nọmba',
 	'schola.what.doctors':
 		"Ndị ọkà mmụta okpukpe ndị Chọọchị kpọrọ Ndị Ozizi. Ọ naghị ebu ikike gọọmentị Chọọchị, n'agbanyeghị ka onye dere ya si dị ukwuu.",
-	'schola.cite.doctors': "site n'akụkụ, wee bụrụ ajụjụ — nkewa nke Summa n'onwe ya",
 	'schola.what.prayers': "Okwu ndị Chọọchị ji ekpe ekpere, ya na Latin dị n'akụkụ ya.",
-	'schola.cite.prayers': "site n'aha; ọ dịghị nọmba a ga-ehota",
 	'schola.places.heading': 'Ọ bụghị ederede, kama ebe ndị dị na saịtị a',
 	'schola.what.library':
 		"Ọrụ niile nke saịtị a n'otu ndepụta, e kewara ha site n'isiokwu ọ bụghị site n'ụdị.",
+	'schola.what.questions':
+		"Ọnụ ụzọ maka onye na-eweta ajụjụ ma ọ dịghị ntụaka. Nke ọ bụla na-achịkọta akụkụ ndị na-aza ya — Katakizim buru ụzọ — okwu ha niile bụkwa nke Chọọchị n'onwe ya.",
 	'schola.what.calendar':
 		'Ụbọchị ememe — oge, agba, na onye a na-echeta — maka obodo nke ị na-eso kalenda ya.',
 	'schola.what.bookmarks':
 		"Akụkụ ndị i kara akara, na ebe ị kwụsịrị n'ikpeazụ n'ọrụ ọ bụla. Ha abụọ na-anọgide n'ihe nchọgharị a, a naghịkwa eziga ha ebe ọ bụla.",
+	'schola.what.census':
+		"Ihe ọbá akwụkwọ a nwere na oke ọ na-eru — ọrụ ole dị, n'asụsụ ole, na ole n'ime ha ka onye na-agụ n'asụsụ gị nwere ike iru n'ezie.",
+	'schola.formulas.heading': 'Iwu Iri Chineke, na ihe ndị ọzọ a na-amụta n’isi',
+	'schola.formulas.lede':
+		"Ọ bụghị nchịkọta nke saịtị a: ndị a bụ ndepụta ndị Chọọchị n'onwe ya bipụtara na ngwụcha Nchịkọta ahụ, nye onye ọ bụla a na-akụziri okwukwe. E si n'akwụkwọ gị wepụta okwu ọ bụla dị n'okpuru a n'ụzọ kpọmkwem.",
 	'ccc.noCounterpart': 'Ọ dịghị ihe yiri ya n’ọrụ nke ọzọ ahụ.',
 	'jumpbox.placeholder': 'Gaa na… (dka. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Chọọ',

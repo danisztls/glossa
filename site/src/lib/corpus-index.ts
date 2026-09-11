@@ -649,6 +649,18 @@ const realCensusUrls = import.meta.glob('./corpus-data/index/census.json', {
 	import: 'default'
 }) as Record<string, string>;
 
+// The Compendium's appendix: `index/formulas.{lang}.json`, the formulas of
+// Catholic doctrine and the Decalogue table, one file per edition. A URL and
+// not an eager inline on the same rule as the census — one page draws them,
+// and a list of the seven capital sins validates no address. Ten files for the
+// ten editions vatican.va publishes as HTML; the four PDF editions have the
+// same appendix in print and nothing has read it.
+const realFormulasUrls = import.meta.glob('./corpus-data/index/formulas.*.json', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+}) as Record<string, string>;
+
 /**
  * True once corpus-data/ has been synced from a real corpus checkout —
  * except under vitest, which always uses the fixtures.
@@ -1223,6 +1235,19 @@ export function quaestionesLocation(): ContentLocation | undefined {
 export function censusLocation(): ContentLocation | undefined {
 	const relPath = 'index/census.json';
 	const url = realCensusUrls[`./corpus-data/${relPath}`];
+	return url ? { relPath, url } : undefined;
+}
+
+/**
+ * Where `lang`'s appendix formulas live, or undefined for an edition that has
+ * none — the four PDF editions and the fixtures. Not an error, and not a
+ * fallback either: these are one edition's own headings in its own order, so a
+ * reader whose Compendium is Belarusian is shown no formulas rather than
+ * somebody else's.
+ */
+export function formulasLocation(lang: string): ContentLocation | undefined {
+	const relPath = `index/formulas.${lang}.json`;
+	const url = realFormulasUrls[`./corpus-data/${relPath}`];
 	return url ? { relPath, url } : undefined;
 }
 

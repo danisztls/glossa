@@ -58,7 +58,7 @@ export const la: Dictionary = {
 		'Corpus totum, pluteus post pluteum — cum loco ubi desiisti et iis quae notasti.',
 	'schola.landing.title': 'Unde incipiendum',
 	'schola.landing.tagline':
-		'Brevis index eorum quae hic habentur: quid sit quisque horum librorum, quomodo eius locus citetur, quomodo locus inveniatur, et ordines legendi quos Ecclesia proposuit.',
+		'Brevis index eorum quae hic habentur: quid sit quisque horum librorum, Decalogus et ceterae enumerationes quas Ecclesia catholicum scire postulat, et unde legere incipiendum sit.',
 	'schola.start.heading': 'Estne tibi nova fides catholica?',
 	'schola.start.body': 'Optimum initium est ',
 	'schola.start.bodyAfter':
@@ -92,39 +92,37 @@ export const la: Dictionary = {
 		'Non narratio: centum quinquaginta preces et cantica. Unum tantum lege, quolibet ordine. Ecclesia haec cotidie adhuc orat.',
 	'schola.bible.bothWays':
 		'Agnosces quaedam, idque propositum est, non casus. Ecclesia libros antiquiores in lumine Christi legit et recentiores in lumine eorum quae praecesserunt — utraque pars alteram explicat, ideoque neutra sola legitur.',
-	'schola.books.heading': 'Quae hic sint, et quomodo designentur',
+	'schola.books.heading': 'Quae hic sint',
 	'schola.books.lede':
-		'Horum quisque diversum librorum genus est, et quisque proprio numero designatur. Exempla formam ostendunt: tale quid in capsam quaerendi inscribe et ad locum pervenies.',
-	'schola.cite.label': 'Designatur',
+		'Horum quisque diversum librorum genus est, et versus infra positus quod genus dicit. Capsam quaerendi in summa pagina aperi ut videas quomodo quisque designetur, et ut recta ad locum pervenias.',
 	'schola.what.scripture':
 		'Scripturae ut eas Ecclesia accipit, in utroque Testamento. Cetera omnia hic in earum lumine leguntur.',
-	'schola.cite.scripture': 'libro, capite et versu, iis compendiis quae tua editio imprimit',
 	'schola.what.catechism':
 		'Summa eorum quae Ecclesia Catholica credit, uno volumine. Non ipse fons est: Scripturam, Patres, liturgiam et Ecclesiae doctrinam colligit, et quisque numerus unde id quod dicit veniat indicat.',
-	'schola.cite.catechism': 'numero, a prima usque ad ultimam paginam continuo',
 	'schola.what.compendium':
 		'Eadem doctrina interrogationibus et responsionibus exposita, decima fere parte brevior.',
-	'schola.cite.compendium': 'numero interrogationis',
 	'schola.what.magisterium':
 		'Quae Pontifices et Concilia revera scripserunt — litterae encyclicae, constitutiones, decreta, declarationes — quodque ad certum tempus certamque quaestionem directum. Quodque a primis verbis Latinis nominatur.',
-	'schola.cite.magisterium': 'nomine documenti, deinde numero sectionis intra illud',
 	'schola.what.social':
 		'Doctrina Ecclesiae de labore, dominio, familia, re publica et pace, ex illis documentis in unum librum collecta.',
-	'schola.cite.social': 'numero, sub siglo quo opus se ipsum designat',
 	'schola.what.law': 'Ius potius quam doctrina. Quid Ecclesia exigat dicit, et emendatur.',
-	'schola.cite.law': 'canone, quo nomine eius partes numeratae appellantur',
 	'schola.what.doctors':
 		'Theologi quos Ecclesia Doctores nominavit. Nullam auctoritatem publicam fert, quantuscumque sit auctor.',
-	'schola.cite.doctors': 'parte, deinde quaestione — divisionibus ipsius Summae',
 	'schola.what.prayers': 'Verba quibus Ecclesia orat, Latino iuxta posito.',
-	'schola.cite.prayers': 'nomine; nulli sunt numeri citandi',
 	'schola.places.heading': 'Non textus, sed loca huius sedis',
 	'schola.what.library':
 		'Omnia sedis opera uno indice, secundum res potius quam secundum genus digesta.',
+	'schola.what.questions':
+		'Aditus ei qui quaestionem tenet, non locum. Quaeque loca colligit quae ei respondent — Catechismo primo — et omne eorum verbum ipsius Ecclesiae est.',
 	'schola.what.calendar':
 		'Dies liturgicus — tempus, color, et quis colatur — pro ea regione cuius calendarium sequeris.',
 	'schola.what.bookmarks':
 		'Loci quos signasti, et ubi in quoque opere ultimo desiisti. Utraque in hoc navigatro manent nec usquam mittuntur.',
+	'schola.what.census':
+		'Quid haec bibliotheca teneat et quo usque pertingat — quot opera, quibus linguis, et quantum ex quoque lector tuae ipsius linguae revera attingere possit.',
+	'schola.formulas.heading': 'Decalogus, et quae alia memoriter discuntur',
+	'schola.formulas.lede':
+		'Non huius sedis summarium: hae sunt enumerationes quas Ecclesia ipsa in Compendii fine imprimit, cuivis qui in fide instituitur. Omne verbum infra ex tua ipsius editione ad verbum descriptum est.',
 	'ccc.noCounterpart': 'Nihil respondens in altero opere',
 	// `ioannes` and `ccc` are what the parser actually accepts, not a
 	// translation of the English example: the Clementine's own abbreviations

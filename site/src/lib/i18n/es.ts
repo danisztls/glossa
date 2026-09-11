@@ -57,7 +57,7 @@ export const es: Dictionary = {
 		'Todo el corpus, estante por estante — con dónde lo dejó y lo que ha marcado.',
 	'schola.landing.title': 'Por dónde empezar',
 	'schola.landing.tagline':
-		'Una guía breve de lo que hay aquí: qué es cada uno de estos libros, cómo se escribe una cita suya, cómo encontrar un pasaje, y órdenes de lectura que la Iglesia ha propuesto.',
+		'Una guía breve de lo que hay aquí: qué es cada uno de estos libros, los diez mandamientos y las demás listas que la Iglesia pide que un católico conozca, y por dónde empezar a leer.',
 	'schola.start.heading': '¿Nuevo en el catolicismo?',
 	'schola.start.body': 'Empieza por el ',
 	'schola.start.bodyAfter':
@@ -92,41 +92,37 @@ export const es: Dictionary = {
 		'No es un relato: son ciento cincuenta oraciones y cantos. Lee uno cada vez, en cualquier orden. La Iglesia sigue rezándolos a diario.',
 	'schola.bible.bothWays':
 		'Reconocerás cosas, y eso es lo que se busca, no una coincidencia. La Iglesia lee los libros antiguos a la luz de Cristo y los nuevos a la luz de lo que vino antes — cada mitad explica la otra, y por eso ninguna se lee sola.',
-	'schola.books.heading': 'Qué hay aquí, y cómo se identifica',
+	'schola.books.heading': 'Qué hay aquí',
 	'schola.books.lede':
-		'Cada uno de estos es una clase distinta de libro, y a cada uno se le remite por un número propio. Los ejemplos muestran la forma: escribe uno así en la caja de búsqueda y llegas al pasaje.',
-	'schola.cite.label': 'Se identifica',
+		'Cada uno de estos es una clase distinta de libro, y la línea debajo dice cuál. Abre la caja de búsqueda en la parte superior de la página para ver cómo se remite a cada uno, y para llegar directo a un pasaje.',
 	'schola.what.scripture':
 		'Las Escrituras tal como la Iglesia las recibe, en ambos Testamentos. Todo lo demás que hay aquí se lee a su luz.',
-	'schola.cite.scripture':
-		'libro, capítulo y versículo, en las abreviaturas que imprime tu propia edición',
 	'schola.what.catechism':
 		'Un resumen de lo que cree la Iglesia Católica, en un solo volumen. No es él mismo una fuente: reúne la Escritura, los Padres, la liturgia y la enseñanza de la Iglesia, y cada párrafo dice de dónde viene lo que afirma.',
-	'schola.cite.catechism': 'por número de párrafo, corrido desde la primera página hasta la última',
 	'schola.what.compendium':
 		'La misma enseñanza expuesta en preguntas y respuestas, con cerca de una décima parte de la extensión.',
-	'schola.cite.compendium': 'por número de pregunta',
 	'schola.what.magisterium':
 		'Lo que los papas y los concilios han escrito realmente — encíclicas, constituciones, decretos, declaraciones — cada uno dirigido a un momento y a una cuestión determinados. Cada uno se conoce por sus palabras iniciales en latín.',
-	'schola.cite.magisterium':
-		'por el nombre del documento, y luego un número de sección dentro de él',
 	'schola.what.social':
 		'La enseñanza de la Iglesia sobre el trabajo, la propiedad, la familia, la política y la paz, recogida de esos documentos en un solo libro.',
-	'schola.cite.social': 'por número de párrafo, bajo la sigla que la obra usa para sí misma',
 	'schola.what.law': 'Derecho y no doctrina. Dice lo que la Iglesia exige, y se enmienda.',
-	'schola.cite.law': 'por canon, que es como se llaman sus unidades numeradas',
 	'schola.what.doctors':
 		'Los teólogos a quienes la Iglesia ha declarado Doctores. No lleva autoridad oficial, por grande que sea su autor.',
-	'schola.cite.doctors': 'por parte, y luego cuestión — las divisiones propias de la Suma',
 	'schola.what.prayers': 'Las palabras que la Iglesia reza, con el latín al lado.',
-	'schola.cite.prayers': 'por su nombre; no hay números que citar',
 	'schola.places.heading': 'No textos, sino lugares de este sitio',
 	'schola.what.library':
 		'Todas las obras del sitio en una lista, agrupadas por materia y no por clase.',
+	'schola.what.questions':
+		'Una entrada para quien llega con una pregunta y sin referencia. Cada pregunta reúne los pasajes que la responden —el Catecismo primero— y cada palabra de ellos es de la Iglesia misma.',
 	'schola.what.calendar':
 		'El día litúrgico — tiempo, color y a quién se celebra — para el país cuyo calendario sigues.',
 	'schola.what.bookmarks':
 		'Pasajes que has marcado, y dónde lo dejaste por última vez en cada obra. Ambos se guardan en este navegador y no se envían a ninguna parte.',
+	'schola.what.census':
+		'Lo que esta biblioteca contiene y hasta dónde llega —cuántas obras, en qué lenguas, y cuánto de cada una puede alcanzar de verdad un lector de tu propia lengua.',
+	'schola.formulas.heading': 'Los diez mandamientos, y lo demás que se aprende de memoria',
+	'schola.formulas.lede':
+		'No es un resumen de este sitio: son las listas que la propia Iglesia imprime al final del Compendio, para quien está siendo instruido en la fe. Cada palabra de abajo está citada de tu propia edición.',
 	'ccc.noCounterpart': 'Sin correspondencia en la otra obra',
 	'jumpbox.placeholder': 'Ir a… (p. ej. juan 3,16, ccc 1234)',
 	'jumpbox.short': 'Buscar',

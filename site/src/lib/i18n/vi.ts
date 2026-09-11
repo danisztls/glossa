@@ -88,7 +88,7 @@ export const vi: Dictionary = {
 		'Toàn bộ kho sách, từng kệ một — cùng với chỗ bạn đang đọc dở và những gì bạn đã đánh dấu.',
 	'schola.landing.title': 'Bắt đầu từ đâu',
 	'schola.landing.tagline':
-		'Một chỉ dẫn ngắn về những gì có ở đây: mỗi cuốn sách này là gì, một trưng dẫn nó được viết thế nào, tìm một đoạn ra sao, và những thứ tự đọc mà Hội Thánh đã đề nghị.',
+		'Một chỉ dẫn ngắn về những gì có ở đây: mỗi cuốn sách này là gì, Mười Điều Răn và những danh mục khác mà Hội Thánh muốn mỗi người Công giáo biết, và nên bắt đầu đọc từ đâu.',
 	'schola.start.heading': 'Mới biết đến Công giáo?',
 	'schola.start.body': 'Khởi đầu tốt nhất là ',
 	'schola.start.bodyAfter':
@@ -124,39 +124,37 @@ export const vi: Dictionary = {
 		'Không phải một câu chuyện: một trăm năm mươi lời kinh và bài ca. Hãy đọc từng bài, theo thứ tự nào cũng được. Hội Thánh vẫn đọc những bài này mỗi ngày.',
 	'schola.bible.bothWays':
 		'Bạn sẽ nhận ra nhiều điều, và đó là chủ ý chứ không phải tình cờ. Hội Thánh đọc các sách cổ hơn dưới ánh sáng Đức Kitô và các sách mới hơn dưới ánh sáng những gì đi trước — mỗi nửa giải thích nửa kia, và vì thế không nửa nào được đọc riêng một mình.',
-	'schola.books.heading': 'Ở đây có gì, và được xác định thế nào',
+	'schola.books.heading': 'Ở đây có gì',
 	'schola.books.lede':
-		'Mỗi cuốn trong số này là một loại sách khác nhau, và mỗi cuốn được quy chiếu bằng một con số riêng. Các thí dụ cho thấy dạng thức: gõ một dạng như thế vào ô tìm và bạn tới đúng đoạn.',
-	'schola.cite.label': 'Xác định',
+		'Mỗi cuốn trong số này là một loại sách khác nhau, và dòng chữ bên dưới cho biết là loại nào. Hãy mở ô tìm kiếm ở đầu trang này để xem mỗi cuốn được quy chiếu thế nào, và để đi thẳng tới một đoạn.',
 	'schola.what.scripture':
 		'Kinh Thánh như Hội Thánh lãnh nhận, trong cả hai Giao ước. Mọi thứ khác ở đây được đọc dưới ánh sáng của nó.',
-	'schola.cite.scripture': 'sách, chương và câu, theo các chữ tắt mà bản in của bạn dùng',
 	'schola.what.catechism':
 		'Bản tóm lược điều Hội Thánh Công giáo tin, gói trong một cuốn. Tự nó không phải là nguồn: nó quy tụ Kinh Thánh, các giáo phụ, phụng vụ và giáo huấn của Hội Thánh, và mỗi số đều nói điều mình phát biểu đến từ đâu.',
-	'schola.cite.catechism': 'theo số, chạy liền một mạch từ trang đầu đến trang cuối',
 	'schola.what.compendium':
 		'Cùng một giáo huấn trình bày theo lối hỏi thưa, dài chừng một phần mười.',
-	'schola.cite.compendium': 'theo số câu hỏi',
 	'schola.what.magisterium':
 		'Những gì các giáo hoàng và các công đồng đã thực sự viết — thông điệp, hiến chế, sắc lệnh, tuyên ngôn — mỗi văn kiện ngỏ với một thời điểm và một vấn đề nhất định. Mỗi văn kiện được gọi theo những chữ Latinh mở đầu của nó.',
-	'schola.cite.magisterium': 'theo tên văn kiện, rồi một số mục bên trong nó',
 	'schola.what.social':
 		'Giáo huấn của Hội Thánh về lao động, sở hữu, gia đình, chính trị và hòa bình, gom từ các văn kiện ấy vào một cuốn.',
-	'schola.cite.social': 'theo số, dưới chữ tắt mà tác phẩm dùng cho chính nó',
 	'schola.what.law': 'Luật chứ không phải đạo lý. Nó nói điều Hội Thánh đòi hỏi, và được tu chính.',
-	'schola.cite.law': 'theo điều, tên gọi các đơn vị đánh số của nó',
 	'schola.what.doctors':
 		'Các nhà thần học được Hội Thánh tuyên phong là Tiến sĩ. Điều đó không mang thẩm quyền chính thức, dù tác giả lớn đến đâu.',
-	'schola.cite.doctors': 'theo phần, rồi vấn đề — những phân chia riêng của bộ Tổng luận',
 	'schola.what.prayers': 'Những lời Hội Thánh cầu nguyện, có tiếng Latinh bên cạnh.',
-	'schola.cite.prayers': 'theo tên; không có số nào để trưng dẫn',
 	'schola.places.heading': 'Không phải bản văn, mà là những nơi trên trang này',
 	'schola.what.library':
 		'Mọi tác phẩm của trang trong một danh mục, nhóm theo chủ đề chứ không theo loại.',
+	'schola.what.questions':
+		'Một lối vào cho người đọc đang có một câu hỏi mà không có trưng dẫn. Mỗi câu hỏi gom lại những đoạn trả lời cho nó — trước hết là Sách Giáo lý — và mỗi lời trong đó đều thuộc về chính Hội Thánh.',
 	'schola.what.calendar':
 		'Ngày phụng vụ — mùa, màu, và ai được kính nhớ — cho quốc gia mà bạn theo lịch của họ.',
 	'schola.what.bookmarks':
 		'Những đoạn bạn đã đánh dấu, và nơi bạn dừng lại lần cuối trong mỗi tác phẩm. Cả hai được giữ trong trình duyệt này và không gửi đi đâu cả.',
+	'schola.what.census':
+		'Thư viện này có những gì và vươn xa đến đâu — bao nhiêu tác phẩm, bằng những ngôn ngữ nào, và người đọc bằng chính ngôn ngữ của bạn thực sự có thể tiếp cận được bao nhiêu phần của mỗi tác phẩm.',
+	'schola.formulas.heading': 'Mười Điều Răn, và những gì khác được học thuộc lòng',
+	'schola.formulas.lede':
+		'Đây không phải là bản tóm lược của trang này: đây là những danh mục mà chính Hội Thánh in ở cuối Bản Toát yếu, dành cho bất cứ ai đang được dạy giáo lý. Mỗi lời dưới đây đều được trích từ chính ấn bản của bạn.',
 	'ccc.noCounterpart': 'Không có phần tương ứng trong tác phẩm kia',
 	'jumpbox.placeholder': 'Đi tới… (vd. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Tìm',

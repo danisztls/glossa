@@ -98,7 +98,7 @@ export const mg: Dictionary = {
 		'Ny fitambarany manontolo, isaky ny talantalana — miaraka amin’izay nijanonanao sy izay nomarihinao.',
 	'schola.landing.title': 'Aiza no hanombohana',
 	'schola.landing.tagline':
-		'Torolàlana fohy momba izay eto: inona avy ireo boky ireo, ahoana no anoratana ny fanondroana azy, ahoana no ahitana andalana, ary filaharam-pamakiana natolotry ny Fiangonana.',
+		'Torolàlana fohy momba izay eto: inona avy ireo boky ireo, ny Didy folo sy ireo lisitra hafa angatahin’ny Fiangonana ho fantatry ny katolika, ary izay hanombohana famakiana.',
 	'schola.start.heading': 'Vaovao aminao ve ny finoana katolika?',
 	'schola.start.body': 'Ny fiandohana tsara indrindra dia ny ',
 	'schola.start.bodyAfter':
@@ -134,43 +134,37 @@ export const mg: Dictionary = {
 		'Tsy tantara: vavaka sy hira dimam-polo amby zato. Vakio tsirairay, na amin’ny filaharana inona na inona. Mbola vakin’ny Fiangonana isan’andro izy ireo.',
 	'schola.bible.bothWays':
 		'Hahafantatra zavatra ianao, ary izany no tanjona fa tsy kisendrasendra. Ny Fiangonana mamaky ny boky taloha amin’ny fahazavan’i Kristy ary ny vaovao kokoa amin’ny fahazavan’izay teo aloha — samy manazava ny hafa ny antsasany tsirairay, ka izany no tsy amakiana na dia iray aza irery.',
-	'schola.books.heading': 'Izay eto, sy ny fomba anondroana azy',
+	'schola.books.heading': 'Izay eto',
 	'schola.books.lede':
-		'Samy karazana boky hafa avy ireo, ary samy tondroina amin’ny laharana manokana. Ny ohatra dia mampiseho ny endriny: soraty ao amin’ny boaty fikarohana ny toy izany dia ho tonga eo amin’ilay andalana ianao.',
-	'schola.cite.label': 'Tondroina',
+		'Samy karazana boky hafa avy ireo, ary ny tsipika eo ambaniny no milaza hoe karazany inona. Sokafy ny boaty fikarohana eo an-tampon’ny pejy mba hahitana ny fomba fanondroana ny tsirairay, ary handeha mivantana any amin’ny andalana iray.',
 	'schola.what.scripture':
 		'Ny Soratra Masina araka ny andraisan’ny Fiangonana azy, amin’ny Testamenta roa. Ny zavatra rehetra hafa eto dia vakiana amin’ny fahazavany.',
-	'schola.cite.scripture':
-		'boky, toko ary andininy, amin’ny fanafohezana vitan’ny famoahana anananao',
 	'schola.what.catechism':
 		'Famintinana izay inoan’ny Fiangonana Katôlika, ao anaty boky iray. Tsy loharano izy: manangona ny Soratra Masina, ny Aba, ny litorjia sy ny fampianaran’ny Fiangonana, ary milaza ny andalana tsirairay hoe avy aiza izay lazainy.',
-	'schola.cite.catechism':
-		'araka ny laharan’andalana, mitohy tsy tapaka hatramin’ny pejy voalohany ka hatramin’ny farany',
 	'schola.what.compendium':
 		'Izany fampianarana izany ihany amin’ny fanontaniana sy valiny, amin’ny ampahafolon’ny halavany eo ho eo.',
-	'schola.cite.compendium': 'araka ny laharam-panontaniana',
 	'schola.what.magisterium':
 		'Izay nosoratan’ny papa sy ny konsily marina tokoa — taratasy ansiklika, konstitosiona, dekre, fanambarana — samy natao ho amin’ny fotoana iray sy fanontaniana iray voafaritra. Samy fantatra amin’ny teny latina voalohany ao aminy izy ireo.',
-	'schola.cite.magisterium':
-		'araka ny anaran’ny antontan-taratasy, avy eo ny laharan’ny fizarana ao anatiny',
 	'schola.what.social':
 		'Ny fampianaran’ny Fiangonana momba ny asa, ny fananana, ny fianakaviana, ny politika sy ny fandriampahalemana, nangonina avy amin’ireo antontan-taratasy ho boky iray.',
-	'schola.cite.social':
-		'araka ny laharan’andalana, ambanin’ny fanafohezana ampiasain’ny asa soratra ho azy',
 	'schola.what.law': 'Lalàna fa tsy fampianarana. Milaza izay takin’ny Fiangonana izy, ary ovaina.',
-	'schola.cite.law': 'araka ny kanôna, izay anaran’ny fizarany misy laharana',
 	'schola.what.doctors':
 		'Ireo teôlôjiana nantsoin’ny Fiangonana hoe Mpampianatra. Tsy mitondra fahefana ofisialy izany, na dia lehibe toy inona aza ny mpanoratra.',
-	'schola.cite.doctors': 'araka ny fizarana, avy eo ny fanontaniana — ny fizaran’ny Somà ihany',
 	'schola.what.prayers': 'Ny teny ivavahan’ny Fiangonana, miaraka amin’ny latina eo anilany.',
-	'schola.cite.prayers': 'araka ny anarana; tsy misy laharana hotondroina',
 	'schola.places.heading': 'Tsy lahatsoratra, fa toerana amin’ity tranonkala ity',
 	'schola.what.library':
 		'Ny asa soratra rehetra eto amin’ny lisitra iray, voasokajy araka ny lohahevitra fa tsy araka ny karazana.',
+	'schola.what.questions':
+		'Fidirana ho an’izay manana fanontaniana ihany fa tsy fanondroana. Ny tsirairay dia manangona ny andalana mamaly azy io — ny Katesizy no voalohany — ary ny teny rehetra ao aminy dia an’ny Fiangonana ihany.',
 	'schola.what.calendar':
 		'Ny andro litorjika — vanim-potoana, loko, ary izay ankalazaina — ho an’ny firenena arahinao ny tetiandrony.',
 	'schola.what.bookmarks':
 		'Ny andalana nomarihinao, sy ny toerana nijanonanao farany tamin’ny asa soratra tsirairay. Samy mijanona ao amin’ity navigateur ity izy ireo ary tsy alefa na aiza na aiza.',
+	'schola.what.census':
+		'Izay ananan’ity tranomboky ity, sy hatraiza no tratrany — firy ny asa soratra, amin’ny fiteny inona, ary hafiriana amin’ireny no azon’ny mpamaky ny fiteninao ho tratrarina marina tokoa.',
+	'schola.formulas.heading': 'Ny Didy folo, sy izay hafa ianarana tsianjery',
+	'schola.formulas.lede':
+		'Tsy famintinan’ity tranonkala ity: ireto no lisitra navoakan’ny Fiangonana mihitsy any amin’ny faran’ny Famintinana, ho an’izay mianatra ny finoana. Ny teny rehetra eto ambany dia nalaina avy amin’ny famoahana ananao.',
 	'ccc.noCounterpart': 'Tsy misy mifanandrify aminy ao amin’ny asa soratra hafa',
 	'jumpbox.placeholder': 'Mankanesa any… (ohatra: joany 3:16, ccc 1234)',
 	'jumpbox.short': 'Karohy',

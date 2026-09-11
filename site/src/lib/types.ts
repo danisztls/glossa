@@ -1320,6 +1320,44 @@ export interface Census {
 	unread?: { ibidem: number; other: number };
 }
 
+// --- The Compendium's appendix: the formulas of Catholic doctrine ----------
+//
+// Part B of the appendix — the Holy See's own list of what a Catholic is asked
+// to know by heart — plus the Decalogue table printed before question 434.
+// Both are outside the 598-question schema, which is why neither is a
+// `CompendiumQuestion`; `ccc/compendium.py`'s "THE APPENDIX'S PART B" holds the
+// argument, and `sync-corpus.mjs` writes one file per edition.
+
+/**
+ * One formula as its own edition prints it.
+ *
+ * **THERE IS NO KEY AND THERE CANNOT BE ONE.** The ten editions disagree about
+ * the ORDER — Italian prints the precepts of the Church and the corporal works
+ * of mercy before the theological virtues, where the other nine print them
+ * after — so a stable name per formula would mislabel six Italian rows. The
+ * heading is the edition's own and the order is the edition's own, which is
+ * why nothing on the site names one of these: it renders what it is given.
+ *
+ * `items` and `lines` are exclusive and the difference is what the source
+ * marked. `items` is a list: the source numbered them, or set each in its own
+ * table cell. `lines` is a block of printed lines with no item boundary in the
+ * source at all — the Beatitudes and the Golden Rule are numbered in no
+ * edition. `numbered` says whether to draw the numerals the parse stripped.
+ */
+export interface Formula {
+	heading: string;
+	numbered: boolean;
+	items?: string[];
+	lines?: string[];
+}
+
+/** One edition's appendix. `decalogue` is absent where the edition prints no
+ *  Decalogue table, which the Swedish does not. */
+export interface Formulas {
+	decalogue?: Formula;
+	formulas: Formula[];
+}
+
 // --- Documents (encyclicals, conciliar texts, curial documents) ------------
 //
 // docs/corpus-schema.md §Documents: `structure.json` reuses `StructureNode`

@@ -82,7 +82,7 @@ export const da: Dictionary = {
 		'Hele samlingen, hylde for hylde — med hvor du slap, og hvad du har markeret.',
 	'schola.landing.title': 'Hvor man begynder',
 	'schola.landing.tagline':
-		'En kort vejledning i, hvad der er her: hvad hver af disse bøger er, hvordan en henvisning til den skrives, hvordan man finder et sted, og læseordener, som Kirken har foreslået.',
+		'En kort vejledning i, hvad der er her: hvad hver af disse bøger er, de ti bud og de andre lister, som Kirken ønsker at enhver katolik kender, og hvor man begynder at læse.',
 	'schola.start.heading': 'Ny i den katolske tro?',
 	'schola.start.body': 'Begynd med ',
 	'schola.start.bodyAfter':
@@ -116,39 +116,37 @@ export const da: Dictionary = {
 		'Ikke en fortælling: hundrede og halvtreds bønner og sange. Læs én ad gangen, i hvilken som helst orden. Kirken beder dem stadig hver dag.',
 	'schola.bible.bothWays':
 		'Du vil genkende ting, og det er meningen snarere end et tilfælde. Kirken læser de ældre bøger i Kristi lys og de nyere i lyset af det, der gik forud — hver halvdel forklarer den anden, og derfor læses ingen af dem alene.',
-	'schola.books.heading': 'Hvad der er her, og hvordan det identificeres',
+	'schola.books.heading': 'Hvad der er her',
 	'schola.books.lede':
-		'Hver af disse er en anden slags bog, og hver henvises der til med sit eget tal. Eksemplerne viser formen: skriv et lignende i søgefeltet, og du lander på stedet.',
-	'schola.cite.label': 'Identificeres',
+		'Hver af disse er en anden slags bog, og linjen under den siger hvilken. Åbn søgefeltet øverst på siden for at se, hvordan der henvises til hver enkelt, og for at komme direkte til et sted.',
 	'schola.what.scripture':
 		'Skriften, som Kirken modtager den, i begge testamenter. Alt andet her læses i dens lys.',
-	'schola.cite.scripture': 'bog, kapitel og vers, i de forkortelser din egen udgave trykker',
 	'schola.what.catechism':
 		'Et sammendrag af, hvad Den Katolske Kirke tror, i ét bind. Den er ikke selv en kilde: den samler Skriften, fædrene, liturgien og Kirkens lære, og hvert nummer siger, hvor det, den siger, kommer fra.',
-	'schola.cite.catechism': 'efter nummer, løbende ubrudt fra første side til sidste',
 	'schola.what.compendium':
 		'Den samme lære fremstillet i spørgsmål og svar, i omtrent en tiendedel af længden.',
-	'schola.cite.compendium': 'efter spørgsmålsnummer',
 	'schola.what.magisterium':
 		'Hvad paver og kirkemøder faktisk har skrevet — encyklikaer, konstitutioner, dekreter, erklæringer — hvert rettet til et bestemt øjeblik og et bestemt spørgsmål. Hvert kendes på sine indledende ord på latin.',
-	'schola.cite.magisterium': 'efter dokumentets navn, dernæst et afsnitsnummer inde i det',
 	'schola.what.social':
 		'Kirkens lære om arbejde, ejendom, familien, politik og fred, samlet ud af de dokumenter i én bog.',
-	'schola.cite.social': 'efter nummer, under den forkortelse værket bruger om sig selv',
 	'schola.what.law': 'Ret og ikke lære. Den siger, hvad Kirken kræver, og den ændres.',
-	'schola.cite.law': 'efter canon, som dens nummererede enheder kaldes',
 	'schola.what.doctors':
 		'De teologer, Kirken har udnævnt til kirkelærere. Det bærer ingen officiel myndighed, hvor stor forfatteren end er.',
-	'schola.cite.doctors': 'efter del, dernæst spørgsmål — Summaens egne inddelinger',
 	'schola.what.prayers': 'De ord, Kirken beder, med latinen ved siden af.',
-	'schola.cite.prayers': 'efter navn; der er ingen numre at citere',
 	'schola.places.heading': 'Ikke tekster, men steder på dette websted',
 	'schola.what.library':
 		'Alle webstedets værker i én liste, grupperet efter emne og ikke efter art.',
+	'schola.what.questions':
+		'En indgang for en læser med et spørgsmål og ingen henvisning. Hvert spørgsmål samler de steder, der besvarer det — Katekismen først — og hvert ord i dem er Kirkens eget.',
 	'schola.what.calendar':
 		'Den liturgiske dag — tid, farve og hvem der fejres — for det land, hvis kalender du følger.',
 	'schola.what.bookmarks':
 		'Steder, du har markeret, og hvor du sidst slap i hvert værk. Begge dele bliver i denne browser og sendes ingen steder hen.',
+	'schola.what.census':
+		'Hvad dette bibliotek rummer, og hvor langt det rækker — hvor mange værker, på hvilke sprog, og hvor meget af hvert en læser af dit eget sprog faktisk kan nå.',
+	'schola.formulas.heading': 'De ti bud, og hvad man ellers lærer udenad',
+	'schola.formulas.lede':
+		'Ikke et sammendrag fra dette websted: det er de lister, som Kirken selv trykker bagest i Kompendiet, til enhver, der undervises i troen. Hvert ord nedenfor er citeret fra din egen udgave af det.',
 	'ccc.noCounterpart': 'Intet modstykke i det andet værk',
 	'jumpbox.placeholder': 'Gå til… (f.eks. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Søg',

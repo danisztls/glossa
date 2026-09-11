@@ -55,7 +55,7 @@ export const hu: Dictionary = {
 		'A teljes gyűjtemény, polcról polcra — azzal együtt, hol hagyta abba, és mit jelölt meg.',
 	'schola.landing.title': 'Hol kezdje',
 	'schola.landing.tagline':
-		'Rövid útmutató ahhoz, ami itt van: mi az egyes könyvek mivolta, hogyan írjuk le a rájuk való hivatkozást, hogyan találunk meg egy helyet, és milyen olvasási rendeket ajánlott az Egyház.',
+		'Rövid útmutató ahhoz, ami itt van: mi az egyes könyvek mivolta, a Tízparancsolat és a többi lista, amelyet az Egyház elvár, hogy egy katolikus tudjon, és honnan kezdje az olvasást.',
 	'schola.start.heading': 'Új Önnek a katolikus hit?',
 	'schola.start.body': 'Kezdje ezzel: ',
 	'schola.start.bodyAfter':
@@ -90,40 +90,37 @@ export const hu: Dictionary = {
 		'Nem történet: százötven imádság és ének. Egyszerre egyet olvasson, bármilyen sorrendben. Az Egyház mind a mai napig naponta imádkozza őket.',
 	'schola.bible.bothWays':
 		'Ismerős dolgokra fog bukkanni, és ez a lényeg, nem véletlen egybeesés. Az Egyház a régebbi könyveket Krisztus fényében olvassa, az újabbakat pedig annak fényében, ami előttük volt — mindegyik fél magyarázza a másikat, s ezért egyiket sem olvassuk magában.',
-	'schola.books.heading': 'Mi van itt, és hogyan azonosítjuk',
+	'schola.books.heading': 'Mi van itt',
 	'schola.books.lede':
-		'Mindegyikük másfajta könyv, és mindegyikre saját számmal hivatkozunk. A példák a formát mutatják: írjon be egy hasonlót a keresőmezőbe, és a helyre jut.',
-	'schola.cite.label': 'Azonosítása',
+		'Mindegyikük másfajta könyv, és az alatta lévő sor megmondja, melyik. Nyissa meg a keresőmezőt az oldal tetején, hogy lássa, hogyan hivatkozunk mindegyikre, és hogy egyenesen egy helyre jusson.',
 	'schola.what.scripture':
 		'A Szentírás úgy, ahogyan az Egyház elfogadja, mindkét Szövetségben. Itt minden mást ennek fényében olvasunk.',
-	'schola.cite.scripture':
-		'könyv, fejezet és vers, a saját kiadása által nyomtatott rövidítésekkel',
 	'schola.what.catechism':
 		'Annak összefoglalása, amit a Katolikus Egyház hisz, egyetlen kötetben. Maga nem forrás: összegyűjti a Szentírást, az atyákat, a liturgiát és az Egyház tanítását, és minden pont megmondja, honnan való, amit állít.',
-	'schola.cite.catechism': 'pontszám szerint, megszakítás nélkül az első laptól az utolsóig',
 	'schola.what.compendium':
 		'Ugyanaz a tanítás kérdésekben és feleletekben, körülbelül tizedakkora terjedelemben.',
-	'schola.cite.compendium': 'kérdésszám szerint',
 	'schola.what.magisterium':
 		'Amit a pápák és a zsinatok valóban írtak — enciklikák, konstitúciók, dekrétumok, nyilatkozatok —, mindegyik egy meghatározott pillanathoz és egy meghatározott kérdéshez szólva. Mindegyiket latin kezdőszavairól nevezzük.',
-	'schola.cite.magisterium': 'a dokumentum neve, majd egy azon belüli pontszám szerint',
 	'schola.what.social':
 		'Az Egyház tanítása a munkáról, a tulajdonról, a családról, a politikáról és a békéről, ezekből a dokumentumokból egy könyvbe gyűjtve.',
-	'schola.cite.social': 'pontszám szerint, azzal a rövidítéssel, amelyet a mű önmagára használ',
 	'schola.what.law': 'Jog, nem tanítás. Azt mondja meg, mit követel az Egyház, és módosítják.',
-	'schola.cite.law': 'kánon szerint — így hívják a számozott egységeit',
 	'schola.what.doctors':
 		'A teológusok, akiket az Egyház egyháztanítónak nyilvánított. Nem hordoz hivatalos tekintélyt, bármilyen nagy is a szerzője.',
-	'schola.cite.doctors': 'rész, majd kérdés szerint — a Summa saját tagolása',
 	'schola.what.prayers': 'A szavak, amelyekkel az Egyház imádkozik, a latinnal mellettük.',
-	'schola.cite.prayers': 'név szerint; nincsenek idézhető számok',
 	'schola.places.heading': 'Nem szövegek, hanem helyek ezen az oldalon',
 	'schola.what.library':
 		'Az oldal minden műve egy listában, tárgy szerint csoportosítva, nem műfaj szerint.',
+	'schola.what.questions':
+		'Bejárat annak, akinek kérdése van, de nincs hivatkozása. Mindegyik összegyűjti a rá válaszoló szakaszokat — elsőként a Katekizmusból —, és minden szavuk magáé az Egyházé.',
 	'schola.what.calendar':
 		'A liturgikus nap — időszak, szín és kit ünneplünk — annak az országnak a naptára szerint, amelyet követ.',
 	'schola.what.bookmarks':
 		'A megjelölt helyek, és az, hol hagyta abba utoljára az egyes műveket. Mindkettő ebben a böngészőben marad, és sehová sem küldjük el.',
+	'schola.what.census':
+		'Mit tartalmaz ez a könyvtár, és milyen messzire ér el — hány mű, hány nyelven, és mennyihez tud valójában hozzáférni egy saját nyelvén olvasó.',
+	'schola.formulas.heading': 'A Tízparancsolat, és amit még könyv nélkül tanulunk',
+	'schola.formulas.lede':
+		'Nem ennek az oldalnak az összefoglalása: ezek azok a felsorolások, amelyeket maga az Egyház nyomtat a Kompendium végén, bárki számára, akit a hitre tanítanak. Az alábbi minden szó az Ön saját kiadásából van szó szerint idézve.',
 	'ccc.noCounterpart': 'Nincs megfelelője a másik műben',
 	'jumpbox.placeholder': 'Ugrás… (pl. jános 3,16, ccc 1234)',
 	'jumpbox.short': 'Keresés',

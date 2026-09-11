@@ -134,6 +134,7 @@ import type {
 	DocumentManifest,
 	CccAbbreviation,
 	Census,
+	Formulas,
 	DocumentAppendixUnit,
 	DocumentSection,
 	Prayer,
@@ -216,6 +217,7 @@ import {
 	documentTagsLocation,
 	quaestionesLocation,
 	censusLocation,
+	formulasLocation,
 	prayerContentLocation,
 	prayerMetasByLang,
 	prayerStructures,
@@ -975,6 +977,27 @@ export async function loadCensus(): Promise<Census | undefined> {
 	const location = censusLocation();
 	if (!location) return undefined;
 	return readContent<Census>(location);
+}
+
+/**
+ * The Compendium's appendix for one edition — the formulas of Catholic
+ * doctrine and the Decalogue table (`Formulas`).
+ *
+ * `undefined` for an edition that has none, which is the four vatican.va
+ * publishes only as a PDF and the fixtures. **No fallback chain**, where
+ * `getCompendiumQuestion` has one: a question is the same question in every
+ * edition and these are one edition's own headings in its own order, so a
+ * reader whose Compendium is Russian is shown nothing here rather than the
+ * Italian appendix under a Russian page.
+ *
+ * One request, issued by `/schola` alone.
+ */
+export async function loadFormulas(lang: string): Promise<Formulas | undefined> {
+	await ensureContentIndex();
+	if (!USE_REAL_CORPUS) return undefined;
+	const location = formulasLocation(lang);
+	if (!location) return undefined;
+	return readContent<Formulas>(location);
 }
 
 /**

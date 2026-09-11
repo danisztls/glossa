@@ -539,26 +539,27 @@ Rationale in `site/docs/finding.md`.
 
 ### `/schola` and the chrome guide
 
-- **`/schola` teaches the citation, which nothing else on the site does.** One
-  row per work, flat, each with what the work is, what its numbered unit is
-  called, and a specimen of the notation. The heading and row label say
-  IDENTIFIED, not CITED — "cite" is a word that reader does not have yet; the
-  keys stay `schola.cite.*`, which is the right name for a string. **The label
-  and the clause under it are one sentence**: every value opens with the
-  preposition, so the label is the participle that reads into it.
-- **A specimen is a shape and not a reference.** They were existence-checked
-  links, which was a sound guard on the wrong thing: `CCC 1` is a meaningful
-  citation, so a column of lowest numbers offered eight doors into the middle of
-  works the reader had not chosen. The numbers are representative (`CCC 1234`,
-  `Can. 123`) and the chips are inert; prayers get none, having no notation.
-  The table is `$lib/specimens.ts`, read by this page, the home page and the
-  jump box's legend — the three surfaces that teach a notation, since the help
-  sheet stopped.
-  Four indexes went with the predicates — `/schola` primes `bible` alone, and
-  **`index-priming.test.ts` only catches priming too LITTLE**, so over-priming
-  has to be pruned by hand. The Bible's specimen stays derived from `bookAbbrev`
-  and `grammarSurface`, so a Portuguese reader reads `Jo 3,16`; the OSIS ids
-  there are lower-case (`john`), and the other spelling fails by drawing nothing.
+- **`/schola` is a catalogue, and the citation forms are in the jump box.** One
+  row per work, flat, each with a name that opens the work and one sentence
+  saying what kind of thing it is. Every row carried a second line and a
+  specimen chip of the notation until 2026-09-10, and the box's empty panel
+  prints that table now: **a legend prints the form a reader TYPES, a catalogue
+  prints the form the work PRINTS**, and a row in the box fills the field where
+  an inert chip on a page could not. `$lib/specimens.ts` keeps its three
+  readers — the home page, the box, its own test — and the `schola.cite.*` keys
+  went out of every dictionary with the row.
+- **A row listed here is a row the site HAS**, which is what `/quaestiones` and
+  the census arriving on the page a year late say: a guide listing what existed
+  when it was written is a guide that is quietly wrong. Questions is gated on
+  `hasTopics()`, `ShelfGrid`'s own test, because a door onto
+  `quaestiones.landing.none` is worse than no door.
+- **`/schola` primes `bible` alone, and linkifying anything on it costs two
+  more indexes.** `refHref` validates an address before it mints one, reading
+  the Summa and document registries as well as the Bible's — so the page that
+  calls it owes all three (214 KB before first paint), which
+  `index-priming.test.ts` asserts and which the appendix section below was
+  written against. **`index-priming.test.ts` only catches priming too LITTLE**,
+  so over-priming has to be pruned by hand.
 - **The chrome guide is the sheet `?` opens**, `Help.svelte` over `$lib/help.ts`,
   and the button is named Help rather than Keyboard shortcuts. A guide printed on
   a page of its own describes controls the reader cannot see while reading it, so
@@ -583,10 +584,35 @@ Rationale in `site/docs/finding.md`.
   install button is the one left: a heading naming the bar every page carries,
   standing over one row, sends a reader looking for a list that is not there.
 - **Nothing in that guide is a page.** Library, Calendar and Bookmarks are
-  addresses, not controls, and are a group under `/schola`'s works carrying a
-  `what` line and no `cite` line. What the sheet holds is exactly what no link
-  can reach.
+  addresses, not controls, and are a group under `/schola`'s works. What the
+  sheet holds is exactly what no link can reach.
 - **Headings run h2 section, h3 group, h4 row**, on the page and in the sheet.
+
+### The formulas of Catholic doctrine
+
+- **The one section on the site whose every word is the Church's, and it cost
+  two keys.** The Compendium's appendix prints the ten commandments, the
+  theological and cardinal virtues, the seven capital sins, the Beatitudes, the
+  works of mercy and the rest; `compendium.py` parses it, `sync-corpus.mjs`
+  writes `index/formulas.{lang}.json`, and the section renders it. The
+  alternative was two dozen names as interface strings in thirty-seven
+  dictionaries — our words for the Church's list, drifting.
+- **Nothing there is named, ordered or selected by the site**, because nothing
+  can be: the editions disagree about the order and about how many items a
+  formula has, so `formulas.json` carries no key (`docs/corpus-schema.md`). A
+  heading is the edition's, an order is the edition's, and the section has no
+  way to be found saying something the appendix does not.
+- **It reports, so it sits above the picture** — the hinge divides the sections
+  that LIST from the two that ADVISE.
+- **The headings are not linkified**, and six of them print a Scripture
+  reference. That is the specimens' lesson a second time — a reference inside a
+  heading on a catalogue page is a door into the middle of a work the reader
+  did not choose — and it is also what keeps the page at one primed index.
+- **A reader whose edition has none gets no section and no sentence.** Four of
+  the fourteen are PDFs nothing has read; a line apologising for that would be
+  this page explaining its own pipeline. `/bibliotheca/census` says so because
+  that page is nothing without its numbers; this is one section of a page that
+  is whole without it.
 
 ### The reading suggestion
 
@@ -626,9 +652,9 @@ Rationale in `site/docs/finding.md`.
   breaks against a wall the page never draws. **Leading carries a long line
   where a cap would fence it** — 1.62 on the running prose. The other landing
   pages still measure their prose.
-- **The picture is the hinge, not the masthead**: it sits between the two
-  sections that LIST and the two that ADVISE, the one place on the page where
-  the voice changes. `/bibliotheca` keeps the same component as a masthead.
+- **The picture is the hinge, not the masthead**: it sits between the sections
+  that LIST and the two that ADVISE, the one place on the page where the voice
+  changes. `/bibliotheca` keeps the same component as a masthead.
 
 ### Pictures
 

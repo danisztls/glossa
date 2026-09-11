@@ -85,7 +85,7 @@ export const fi: Dictionary = {
 		'Koko kokoelma, hylly hyllyltä — ja mihin jäit ja mitä olet merkinnyt.',
 	'schola.landing.title': 'Mistä aloittaa',
 	'schola.landing.tagline':
-		'Lyhyt opas siihen, mitä täällä on: mikä kukin näistä kirjoista on, miten viittaus siihen kirjoitetaan, miten kohta löydetään, ja lukujärjestyksiä, joita kirkko on esittänyt.',
+		'Lyhyt opas siihen, mitä täällä on: mikä kukin näistä kirjoista on, kymmenen käskyä ja muut luettelot, jotka kirkko haluaa jokaisen katolilaisen tuntevan, sekä mistä aloittaa lukeminen.',
 	'schola.start.heading': 'Onko katolisuus sinulle uutta?',
 	'schola.start.body': 'Paras aloitus on tämä: ',
 	'schola.start.bodyAfter':
@@ -120,39 +120,37 @@ export const fi: Dictionary = {
 		'Ei kertomus: sataviisikymmentä rukousta ja laulua. Lue yksi kerrallaan, missä järjestyksessä tahansa. Kirkko rukoilee näitä yhä joka päivä.',
 	'schola.bible.bothWays':
 		'Tunnistat asioita, ja se on tarkoitus eikä sattuma. Kirkko lukee vanhemmat kirjat Kristuksen valossa ja uudemmat sen valossa mikä tuli ennen — kumpikin puolisko selittää toista, ja siksi kumpaakaan ei lueta yksin.',
-	'schola.books.heading': 'Mitä täällä on, ja miten se yksilöidään',
+	'schola.books.heading': 'Mitä täällä on',
 	'schola.books.lede':
-		'Jokainen näistä on eri laji kirja, ja jokaiseen viitataan omalla numerollaan. Esimerkit näyttävät muodon: kirjoita sellainen hakukenttään, niin päädyt kohtaan.',
-	'schola.cite.label': 'Yksilöidään',
+		'Jokainen näistä on eri laji kirja, ja sen alla oleva rivi kertoo mikä. Avaa sivun yläreunan hakukenttä nähdäksesi, miten kuhunkin viitataan, ja päästäksesi suoraan kohtaan.',
 	'schola.what.scripture':
 		'Raamattu sellaisena kuin kirkko sen vastaanottaa, molemmissa testamenteissa. Kaikki muu täällä luetaan sen valossa.',
-	'schola.cite.scripture': 'kirja, luku ja jae, niillä lyhenteillä joita oma laitoksesi painaa',
 	'schola.what.catechism':
 		'Tiivistelmä siitä, mitä katolinen kirkko uskoo, yhtenä niteenä. Se ei itse ole lähde: se kokoaa Raamatun, isät, liturgian ja kirkon opetuksen, ja jokainen kohta kertoo mistä se on peräisin mitä se sanoo.',
-	'schola.cite.catechism': 'kohdan numeron mukaan, juoksevana ensimmäiseltä sivulta viimeiselle',
 	'schola.what.compendium':
 		'Sama opetus esitettynä kysymyksinä ja vastauksina, noin kymmenesosan mitassa.',
-	'schola.cite.compendium': 'kysymyksen numeron mukaan',
 	'schola.what.magisterium':
 		'Se mitä paavit ja kirkolliskokoukset ovat tosiasiassa kirjoittaneet — kiertokirjeitä, konstituutioita, dekreettejä, julistuksia — kukin osoitettu määrättyyn hetkeen ja määrättyyn kysymykseen. Kukin tunnetaan latinankielisistä alkusanoistaan.',
-	'schola.cite.magisterium': 'asiakirjan nimen mukaan, sitten sen sisäisen jakson numeron mukaan',
 	'schola.what.social':
 		'Kirkon opetus työstä, omistuksesta, perheestä, politiikasta ja rauhasta, koottuna noista asiakirjoista yhdeksi kirjaksi.',
-	'schola.cite.social': 'kohdan numeron mukaan, sen lyhenteen alla jota teos käyttää itsestään',
 	'schola.what.law': 'Oikeutta eikä oppia. Se sanoo mitä kirkko vaatii, ja sitä muutetaan.',
-	'schola.cite.law': 'kaanonin mukaan, joksi sen numeroituja yksiköitä kutsutaan',
 	'schola.what.doctors':
 		'Ne teologit, jotka kirkko on nimennyt kirkonopettajiksi. Se ei kanna virallista arvovaltaa, olipa tekijä kuinka suuri tahansa.',
-	'schola.cite.doctors': 'osan mukaan, sitten kysymyksen — Summan omat jaottelut',
 	'schola.what.prayers': 'Ne sanat, joilla kirkko rukoilee, latina vierellään.',
-	'schola.cite.prayers': 'nimeltä; numeroita ei ole viitattavaksi',
 	'schola.places.heading': 'Ei tekstejä, vaan paikkoja tällä sivustolla',
 	'schola.what.library':
 		'Kaikki sivuston teokset yhtenä luettelona, ryhmiteltyinä aiheen eikä lajin mukaan.',
+	'schola.what.questions':
+		'Sisäänkäynti lukijalle, jolla on kysymys mutta ei viitettä. Jokainen kysymys kerää kohdat, jotka vastaavat siihen — ensin katekismuksesta — ja jokainen niiden sana on kirkon omaa.',
 	'schola.what.calendar':
 		'Liturginen päivä — aika, väri ja ketä vietetään — sen maan mukaan, jonka kalenteria noudatat.',
 	'schola.what.bookmarks':
 		'Kohdat jotka olet merkinnyt, ja mihin viimeksi jäit kussakin teoksessa. Molemmat pysyvät tässä selaimessa eikä niitä lähetetä minnekään.',
+	'schola.what.census':
+		'Mitä tämä kirjasto sisältää ja miten pitkälle se ulottuu — montako teosta, millä kielillä, ja kuinka paljon kustakin oman kielesi lukija todella tavoittaa.',
+	'schola.formulas.heading': 'Kymmenen käskyä ja muu ulkoa opittava',
+	'schola.formulas.lede':
+		'Ei tämän sivuston yhteenveto: nämä ovat luetteloita, jotka kirkko itse painaa Kompendiumin loppuun, kaikille uskoon opetettaville. Jokainen sana alla on lainattu omasta laitoksestasi.',
 	'ccc.noCounterpart': 'Ei vastinetta toisessa teoksessa',
 	'jumpbox.placeholder': 'Siirry… (esim. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Haku',

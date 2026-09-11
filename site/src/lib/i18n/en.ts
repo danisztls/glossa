@@ -364,8 +364,13 @@ export const en: Dictionary = {
 	// `CHROME_PATHS` — see `route-manifest.ts`, which holds `/calendarium` and
 	// `/catechismus/compendium` out by the same gate.
 	'schola.landing.title': 'Where to begin',
+	// NAMES WHAT IS ON THE PAGE, in the order the page has it, and it named two
+	// things that are not on it any more: how a citation is written (the jump
+	// box's own panel teaches that now) and how to find a passage (the `?`
+	// sheet). What replaced them is the appendix's formulas, which is the one
+	// thing here a reader is likely to have been sent looking for.
 	'schola.landing.tagline':
-		'A short guide to what is here: what each of these books is, how a citation of it is written, how to find a passage, and orders for reading that the Church has set out.',
+		'A short guide to what is here: what each of these books is, the ten commandments and the other lists the Church asks a Catholic to know, and where to start reading.',
 	// THE ONE PLACE THIS SITE SPEAKS FOR ITSELF. It has a heading of its own
 	// now — the reader's own question — where it was a stray paragraph under
 	// the page's tagline with a line of small print beneath saying whose advice
@@ -441,53 +446,36 @@ export const en: Dictionary = {
 		'Not a story: a hundred and fifty prayers and songs. Read one at a time, in any order. The Church still prays these every day.',
 	'schola.bible.bothWays':
 		'You will recognise things, and that is the point rather than a coincidence. The Church reads the older books in the light of Christ and the newer ones in the light of what came before — each half explains the other, which is why neither is read alone.',
-	// WHAT EACH WORK IS, AND WHAT ITS NUMBER MEANS. Two sentences per work: the
-	// first is what kind of thing it is and what authority it carries, the
-	// second is what a citation of it names. The heading above each is the key
-	// its own landing page is titled by, and the specimen beside it is written
-	// in `SPECIMENS` — a shape, not a reference to anything.
+	// WHAT EACH WORK IS. ONE sentence per row, and it was two: what kind of
+	// thing this is and what authority it carries. The heading above each is
+	// the key its own landing page is titled by, so no name here is written
+	// twice.
 	//
-	// A citation is the part nothing else on the site teaches. A reader who has
-	// never seen one does not know that `CCC 1234` names a PARAGRAPH running
-	// unbroken through the whole work, or that the Code numbers canons and not
-	// pages — and the jump box reads every one of these notations back, which
-	// is what the lede sends them to do with one.
-	//
-	// IDENTIFIED, NOT CITED (2026-09-07, by direction). "Cite" is the word for
-	// what these numbers are for and it is a word the reader this section is
-	// written for does not have yet — `audiences.md` §5 stops at the vocabulary
-	// of the corpus, and the label was part of that vocabulary. The keys stay
-	// `schola.cite.*`: the works ARE cited by these numbers, which is a fact
-	// about the world and the right name for the strings; the label is what the
-	// reader reads.
-	//
-	// **THE LABEL AND THE CLAUSE UNDER IT ARE ONE SENTENCE.** Every
-	// `schola.cite.*` value opens with the preposition — "by paragraph number",
-	// "by canon" — so the label has to be the participle that reads into it:
-	// "Identified" + "by paragraph number". Translate the pair together, and
-	// keep whichever half of the preposition your language puts where.
-	'schola.books.heading': 'What is here, and how it is identified',
+	// THE SECOND SENTENCE WAS THE CITATION FORM AND IT IS IN THE JUMP BOX NOW
+	// (by direction). Every row carried "Identified by paragraph number,
+	// running unbroken from the first page to the last" and a specimen chip of
+	// the notation; the box's empty panel prints the same table out of
+	// `$lib/specimens.ts`, and a row there fills the FIELD rather than sitting
+	// inert on a catalogue page. A legend prints the form a reader types, a
+	// catalogue prints the form the work prints, and the reader who wants the
+	// notation is already in the box. The `schola.cite.*` keys went out of
+	// every dictionary with the row: a translated value nothing reads is a
+	// line the next translator keeps true for nobody.
+	'schola.books.heading': 'What is here',
 	'schola.books.lede':
-		'Each of these is a different kind of book, and each is referred to by a number of its own. The examples show the form: type one like it into the search box and you land on the passage.',
-	'schola.cite.label': 'Identified',
+		'Each of these is a different kind of book, and the line under it says which kind. Open the search box at the top of the page to see how each one is referred to, and to go straight to a passage.',
 	'schola.what.scripture':
 		'The Scriptures as the Church receives them, in both Testaments. Everything else here is read in their light.',
-	'schola.cite.scripture': 'book, chapter and verse, in the abbreviations your own edition prints',
 	'schola.what.catechism':
 		'A summary of what the Catholic Church believes, in one volume. It is not itself a source: it gathers Scripture, the Fathers, the liturgy and the Church’s teaching, and every paragraph says where what it says comes from.',
-	'schola.cite.catechism': 'by paragraph number, running unbroken from the first page to the last',
 	'schola.what.compendium':
 		'The same teaching set out as questions and answers, at about a tenth the length.',
-	'schola.cite.compendium': 'by question number',
 	'schola.what.magisterium':
 		'What popes and councils have actually written — encyclicals, constitutions, decrees, declarations — each addressed to a particular moment and a particular question. Each is known by its opening words in Latin.',
-	'schola.cite.magisterium': 'by the document’s name, then a section number inside it',
 	'schola.what.social':
 		'The Church’s teaching on work, property, the family, politics and peace, gathered out of those documents into one book.',
-	'schola.cite.social': 'by paragraph number, under the siglum the work uses for itself',
 	'schola.what.law':
 		'Law rather than doctrine. It states what the Church requires, and it is amended.',
-	'schola.cite.law': 'by canon, which is what its numbered units are called',
 	// The second sentence is `doctores.landing.tagline`'s, word for word, and
 	// deliberately not a paraphrase of it: two surfaces making the same claim
 	// about the same works in two wordings is two sentences to keep true, and
@@ -497,24 +485,59 @@ export const en: Dictionary = {
 	// has to say what a Doctor IS, which is the whole reason a guide exists.
 	'schola.what.doctors':
 		'The theologians the Church has named Doctors. Their works are not infallible or final.',
-	'schola.cite.doctors': 'by part, then question — the Summa’s own divisions',
 	'schola.what.prayers': 'The words the Church prays, with the Latin beside them.',
-	'schola.cite.prayers': 'by name; there are no numbers to cite',
 
-	// THE THREE THAT ARE PAGES AND NOT TEXTS, so they take a `what` line and no
-	// `cite` line at all: a calendar is addressed by a date and a bookmark by
-	// whatever the reader marked, and inventing a notation for either would
-	// teach a citation form that does not exist. They were rows in the chrome
+	// THE ROWS THAT ARE PAGES AND NOT TEXTS. They were rows in the chrome
 	// guide above until 2026-09-06; a reader looking for the Library wants
 	// somewhere to go rather than a button, which is the section they are in
-	// now. Each is titled by the key its own destination is labelled by.
+	// now. Each is titled by the key its own destination is labelled by, so
+	// only the sentence under it is written here.
+	//
+	// FIVE, AND THEY WERE THREE (2026-09-10, by direction): Questions and the
+	// Census are on the site and were not on the one page that says what is on
+	// the site. A guide that lists what existed when it was written is a guide
+	// that is quietly wrong.
 	'schola.places.heading': 'Not texts, but places on this site',
 	'schola.what.library':
 		'Every work on the site in one list, grouped by subject rather than by kind.',
+	// SAYS WHOSE THE WORDS ARE, which is the promise `quaestiones.landing.
+	// tagline` makes at length on the page itself. A door onto a page of
+	// answers has to say in the same breath that the answers are quoted and
+	// not written, or it promises the site's own opinion.
+	'schola.what.questions':
+		'A way in for a reader holding a question and no reference. Each one gathers the passages that answer it — the Catechism first — and every word of them is the Church’s own.',
 	'schola.what.calendar':
 		'The liturgical day — season, colour, and who is kept — for the country whose calendar you follow.',
 	'schola.what.bookmarks':
 		'Passages you have marked, and where you last left off in each work. Both are kept in this browser and are not sent anywhere.',
+	// WHAT IT IS FOR, not what it contains. A count is not interesting; what a
+	// reader wants from it is whether this library has their language and how
+	// much of it, which is the one thing on that page no other page answers.
+	'schola.what.census':
+		'What this library holds and how far it reaches — how many works, in which languages, and how much of each a reader of your own language can actually get to.',
+
+	// THE FORMULAS OF CATHOLIC DOCTRINE — the Compendium's own appendix, read
+	// out of the reader's own edition. TWO KEYS FOR A WHOLE SECTION, and that
+	// is the point of it: every heading it draws and every word under one is
+	// the Holy See's, in the language the reader chose their Compendium in, so
+	// the alternative — two dozen names in thirty-seven dictionaries, ours and
+	// drifting — was never worth considering. `routes/schola/+page.svelte` has
+	// the argument.
+	//
+	// THE HEADING NAMES THE DECALOGUE because that is the list a reader
+	// arrives looking for, and it is the one item in the section that the
+	// section's own contents cannot advertise: a reader scanning for "the ten
+	// commandments" will not recognise "A Traditional Catechetical Formula",
+	// which is what the English edition calls them.
+	//
+	// THE LEDE SAYS WHOSE THE WORDS ARE, in the same breath as what the list
+	// is. Everything else on this page that is not ours says so
+	// (`quaestiones`' tagline, the `†` marks in the Bible section); a page
+	// printing the seven capital sins without a word about where they come
+	// from reads as the site's own catechism.
+	'schola.formulas.heading': 'The ten commandments, and what else is learnt by heart',
+	'schola.formulas.lede':
+		'Not a summary of this site: these are the lists the Church itself prints at the end of the Compendium, for anyone being taught the faith. Every word below is quoted from your own edition of it.',
 	// The placeholder in a paired index row where one of the two works has
 	// nothing at that division — see `CatechismIndex.svelte` on why the gap is
 	// drawn rather than closed.

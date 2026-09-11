@@ -977,6 +977,7 @@ const cccIndex = {}; // lang -> { structure, abbreviations, paragraphNumbers }
 const cccEditions = []; // [{ lang, work, paragraphs }] -- input to the xref pass
 const documentEditions = []; // [{ slug, lang, work, sections }] -- ditto, per document edition
 const compendiumIndex = {}; // lang -> { structure }
+const compendiumFormulas = {}; // lang -> { decalogue?, formulas } -- the appendix's Part B
 const compendiumEditions = []; // [{ lang, work, questions }] -- input to the condensation vote
 const compendiumQuestionNumbers = []; // canonical URL existence, across languages
 const summaIndex = {}; // lang -> { structure, questions } -- metadata only, never article text
@@ -2045,6 +2046,29 @@ for (const workId of workIds) {
 	if (workId.startsWith('compendium.')) {
 		const lang = workId.slice('compendium.'.length);
 		const structure = readJson(path.join(workDir, 'structure.json'));
+
+		/**
+		 * THE APPENDIX'S FORMULAS, AND THEY ARE NOT QUESTIONS. `formulas.json`
+		 * is the Compendium's Part B — the Holy See's own list of what a
+		 * Catholic is asked to know by heart — plus the Decalogue table printed
+		 * before question 434. Neither is in the 598-question schema, which is
+		 * why the scraper writes a fifth file rather than inventing question
+		 * numbers for them (`ccc/compendium.py`, "THE APPENDIX'S PART B").
+		 *
+		 * PRESENT FOR TEN EDITIONS OF FOURTEEN — the four vatican.va publishes
+		 * only as a PDF have the same appendix and nothing reads it — so the
+		 * file is optional here the way `abbreviations.json` is for the
+		 * Catechism, and a language with no entry is a language whose reader
+		 * simply does not get that section of `/schola`.
+		 */
+		const formulasPath = path.join(workDir, 'formulas.json');
+		if (existsSync(formulasPath)) {
+			const parsed = readJson(formulasPath);
+			compendiumFormulas[lang] = {
+				decalogue: parsed.decalogue ?? undefined,
+				formulas: parsed.formulas ?? []
+			};
+		}
 
 		const questions = readJson(path.join(workDir, 'questions.json'));
 		// Existence numbers move to the INDEX tier with the chunk split, the
@@ -3119,6 +3143,21 @@ writeJson(
 	path.join(indexDir, 'compendium-index.json'),
 	mapValues(compendiumIndex, (v) => ({ ...v, questionNumbers: compactRun(v.questionNumbers) }))
 );
+/**
+ * The appendix's formulas, ONE FILE PER LANGUAGE and deliberately not one file
+ * keyed by language, on `descriptions.{lang}.json`'s rule: `/schola` draws one
+ * reader's edition and nobody wants the other nine. Each is a few kilobytes;
+ * all ten together are not.
+ *
+ * They are not in `compendium-index.json` for the same reason. That file is
+ * primed on every reading route (`index-priming.ts`) because an address has to
+ * be validated before a link is minted, and a list of virtues validates
+ * nothing — putting it there would charge every reader of the Catechism for a
+ * page they are not on.
+ */
+for (const [lang, value] of Object.entries(compendiumFormulas)) {
+	writeJson(path.join(indexDir, `formulas.${lang}.json`), value);
+}
 writeJson(
 	path.join(indexDir, 'document-index.json'),
 	mapValues(documentIndex, (v) => ({ ...v, sectionNumbers: compactRun(v.sectionNumbers) }))

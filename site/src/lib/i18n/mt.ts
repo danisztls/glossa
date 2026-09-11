@@ -65,7 +65,7 @@ export const mt: Dictionary = {
 	'library.landing.tagline': 'Il-korpus kollu, xkaffa xkaffa, u dak li mmarkajt fih.',
 	'schola.landing.title': 'Minn fejn tibda',
 	'schola.landing.tagline':
-		'Gwida qasira għal dak li hawn: x’inhu kull wieħed minn dawn il-kotba, kif tinkiteb ċitazzjoni tiegħu, kif issib silta, u ordnijiet ta’ qari li l-Knisja stess fasslet.',
+		'Gwida qasira għal dak li hawn: x’inhu kull wieħed minn dawn il-kotba, l-Għaxar Kmandamenti u l-listi l-oħra li l-Knisja titlob li Kattoliku jkun jaf, u minn fejn tibda taqra.',
 	'schola.start.heading': 'Ġdid għall-Kattoliċiżmu?',
 	'schola.start.body': 'Ibda bil-',
 	'schola.start.bodyAfter':
@@ -100,40 +100,37 @@ export const mt: Dictionary = {
 		'Mhux rakkont: mija u ħamsin talba u għanja. Aqra waħda kull darba, fi kwalunkwe ordni. Il-Knisja għadha titlobhom kuljum.',
 	'schola.bible.bothWays':
 		'Se tagħraf affarijiet, u dak huwa l-punt aktar milli koinċidenza. Il-Knisja taqra l-kotba eqdem fid-dawl ta’ Kristu u dawk ġodda fid-dawl ta’ dak li ġie qabel — kull nofs jispjega l-ieħor, u għalhekk l-ebda wieħed ma jinqara waħdu.',
-	'schola.books.heading': 'X’hemm hawn, u kif jiġi identifikat',
+	'schola.books.heading': 'X’hemm hawn',
 	'schola.books.lede':
-		'Kull wieħed minn dawn huwa xorta differenti ta’ ktieb, u kull wieħed jissejjaħ b’numru tiegħu. L-eżempji juru l-forma: ittajpja waħda bħalhom fil-kaxxa tat-tfittxija u tasal fis-silta.',
-	'schola.cite.label': 'Jiġi identifikat',
+		'Kull wieħed minn dawn huwa xorta differenti ta’ ktieb, u l-linja taħtu tgħid liema xorta. Iftaħ il-kaxxa tat-tfittxija fin-naħa ta’ fuq tal-paġna biex tara kif jissemma kull wieħed, u biex tasal dritt għal silta.',
 	'schola.what.scripture':
 		'L-Iskrittura kif tirċeviha l-Knisja, fiż-żewġ Testmenti. Kull ħaġa oħra hawn tinqara fid-dawl tagħha.',
-	'schola.cite.scripture': 'ktieb, kapitlu u vers, bit-taqsiriet li tistampa l-edizzjoni tiegħek',
 	'schola.what.catechism':
 		'Sinteżi ta’ dak li temmen il-Knisja Kattolika, f’volum wieħed. Mhuwiex hu stess sors: jiġbor l-Iskrittura, il-Padri, il-liturġija u t-tagħlim tal-Knisja, u kull paragrafu jgħid minn fejn ġej dak li jgħid.',
-	'schola.cite.catechism':
-		'bin-numru tal-paragrafu, li jibqa’ sejjer bla qtugħ mill-ewwel paġna sal-aħħar',
 	'schola.what.compendium':
 		'L-istess tagħlim imqiegħed bħala mistoqsijiet u tweġibiet, f’madwar wieħed minn kull għaxra fit-tul.',
-	'schola.cite.compendium': 'bin-numru tal-mistoqsija',
 	'schola.what.magisterium':
 		'Dak li l-papiet u l-konċilji fil-fatt kitbu — enċikliki, kostituzzjonijiet, digrieti, dikjarazzjonijiet — kull wieħed indirizzat lil mument partikolari u lil mistoqsija partikolari. Kull wieħed jingħaraf bl-ewwel kliem tiegħu bil-Latin.',
-	'schola.cite.magisterium': 'bl-isem tad-dokument, imbagħad numru ta’ taqsima ġewwa fih',
 	'schola.what.social':
 		'It-tagħlim tal-Knisja dwar ix-xogħol, il-proprjetà, il-familja, il-politika u l-paċi, miġbur minn dawk id-dokumenti fi ktieb wieħed.',
-	'schola.cite.social': 'bin-numru tal-paragrafu, taħt is-siglum li x-xogħol juża għalih innifsu',
 	'schola.what.law': 'Liġi aktar milli duttrina. Tgħid x’titlob il-Knisja, u tiġi emendata.',
-	'schola.cite.law': 'bil-kanoni, li hu kif jissejħu l-unitajiet numerati tiegħu',
 	'schola.what.doctors':
 		'It-teologi li l-Knisja semmiet Dutturi. Ma jġorr l-ebda awtorità uffiċjali, ikun kemm ikun kbir l-awtur tiegħu.',
-	'schola.cite.doctors': 'bil-parti, imbagħad il-kwistjoni — id-diviżjonijiet tas-Summa nnifisha',
 	'schola.what.prayers': 'Il-kliem li titlob il-Knisja, bil-Latin ħdejh.',
-	'schola.cite.prayers': 'bl-isem; m’hemmx numri x’tiċċita',
 	'schola.places.heading': 'Mhux testi, imma postijiet f’dan is-sit',
 	'schola.what.library':
 		'Kull xogħol fis-sit f’lista waħda, miġbur skont is-suġġett aktar milli skont ix-xorta.',
+	'schola.what.questions':
+		'Mod kif tidħol għal min għandu mistoqsija u l-ebda ċitazzjoni. Kull waħda tiġbor is-siltiet li jwieġbuha — l-ewwel il-Katekiżmu — u kull kelma tagħhom hija tal-Knisja stess.',
 	'schola.what.calendar':
 		'Il-jum liturġiku — staġun, kulur, u min jiġi mfakkar — għall-pajjiż li tal-kalendarju tiegħu timxi.',
 	'schola.what.bookmarks':
 		'Siltiet li mmarkajt, u fejn wasalt f’kull xogħol. It-tnejn jinżammu f’dan il-browser u ma jintbagħtu mkien.',
+	'schola.what.census':
+		'X’għandha din il-librerija u kemm tasal ’il bogħod — kemm-il xogħol, b’liema lingwi, u kemm minn kull wieħed jista’ tabilħaqq jilħaq min jaqra bil-lingwa tiegħek.',
+	'schola.formulas.heading': 'L-Għaxar Kmandamenti, u dak li jitgħallem bl-amment',
+	'schola.formulas.lede':
+		'Mhux sommarju ta’ dan is-sit: dawn huma l-listi li l-Knisja stess tistampa fl-aħħar tal-Kompendju, għal min qed jitgħallem il-fidi. Kull kelma hawn taħt hija kkwotata mill-edizzjoni tiegħek stess.',
 	'ccc.noCounterpart': 'L-ebda korrispondent fix-xogħol l-ieħor',
 	'jumpbox.placeholder': 'Aqbeż għal… (eż. john 3:16, ccc 1234)',
 	'jumpbox.short': 'Fittex',

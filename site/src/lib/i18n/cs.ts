@@ -82,7 +82,7 @@ export const cs: Dictionary = {
 		'Celý korpus, polici po polici — s tím, kde jste přestali, a s tím, co jste si označili.',
 	'schola.landing.title': 'Kde začít',
 	'schola.landing.tagline':
-		'Krátký průvodce tím, co je zde: co je každá z těchto knih, jak se zapisuje odkaz na ni, jak najít místo, a pořádky čtení, které církev navrhla.',
+		'Krátký průvodce tím, co je zde: co je každá z těchto knih, desatero a další seznamy, které má podle církve znát každý katolík, a kde začít se čtením.',
 	'schola.start.heading': 'Nový v katolictví?',
 	'schola.start.body': 'Nejlepší začátek je ',
 	'schola.start.bodyAfter':
@@ -116,40 +116,37 @@ export const cs: Dictionary = {
 		'Ne vyprávění: sto padesát modliteb a písní. Čtěte po jedné, v libovolném pořadí. Církev se je dodnes modlí každý den.',
 	'schola.bible.bothWays':
 		'Budete poznávat věci, a o to jde, není to náhoda. Církev čte starší knihy ve světle Kristově a novější ve světle toho, co bylo předtím — každá polovina vysvětluje druhou, a proto se žádná nečte sama.',
-	'schola.books.heading': 'Co je zde a jak se to označuje',
+	'schola.books.heading': 'Co je zde',
 	'schola.books.lede':
-		'Každá z těchto knih je jiného druhu a na každou se odkazuje vlastním číslem. Příklady ukazují tvar: napište podobný do vyhledávacího pole a dostanete se na místo.',
-	'schola.cite.label': 'Označuje se',
+		'Každá z těchto knih je jiného druhu, a řádek pod ní říká jakého. Otevřete vyhledávací pole v horní části stránky a uvidíte, jak se na každou odkazuje, a dostanete se rovnou na místo.',
 	'schola.what.scripture':
 		'Písmo, jak je církev přijímá, v obou Zákonech. Všechno ostatní zde se čte v jeho světle.',
-	'schola.cite.scripture': 'kniha, kapitola a verš, ve zkratkách, které tiskne vaše vydání',
 	'schola.what.catechism':
 		'Shrnutí toho, čemu katolická církev věří, v jednom svazku. Sám není pramenem: shromažďuje Písmo, otce, liturgii a učení církve, a každý odstavec říká, odkud pochází to, co tvrdí.',
-	'schola.cite.catechism':
-		'podle čísla odstavce, běžícího bez přerušení od první stránky k poslední',
 	'schola.what.compendium':
 		'Totéž učení podané v otázkách a odpovědích, asi v desetinovém rozsahu.',
-	'schola.cite.compendium': 'podle čísla otázky',
 	'schola.what.magisterium':
 		'To, co papežové a koncily skutečně napsali — encykliky, konstituce, dekrety, deklarace — každý dokument obrácený k určité chvíli a určité otázce. Každý je znám podle svých úvodních latinských slov.',
-	'schola.cite.magisterium': 'podle názvu dokumentu, pak čísla oddílu v něm',
 	'schola.what.social':
 		'Učení církve o práci, vlastnictví, rodině, politice a míru, shromážděné z těch dokumentů do jedné knihy.',
-	'schola.cite.social': 'podle čísla odstavce, pod zkratkou, kterou dílo užívá samo pro sebe',
 	'schola.what.law': 'Právo, ne nauka. Říká, co církev vyžaduje, a bývá měněno.',
-	'schola.cite.law': 'podle kánonu, tak se jmenují jeho číslované jednotky',
 	'schola.what.doctors':
 		'Teologové, které církev prohlásila za učitele. Nenese to žádnou úřední autoritu, jakkoli velký je jeho autor.',
-	'schola.cite.doctors': 'podle části, pak otázky — vlastního členění Sumy',
 	'schola.what.prayers': 'Slova, jimiž se církev modlí, s latinou vedle.',
-	'schola.cite.prayers': 'podle názvu; není co citovat čísly',
 	'schola.places.heading': 'Ne texty, nýbrž místa na tomto webu',
 	'schola.what.library':
 		'Všechna díla webu v jednom seznamu, seskupená podle předmětu, ne podle druhu.',
+	'schola.what.questions':
+		'Vstup pro čtenáře, který má otázku, ale ne odkaz. Každá otázka shromažďuje místa, která na ni odpovídají — nejprve z katechismu — a každé jejich slovo patří samotné církvi.',
 	'schola.what.calendar':
 		'Liturgický den — období, barva a kdo se slaví — pro zemi, jejímž kalendářem se řídíte.',
 	'schola.what.bookmarks':
 		'Místa, která jste si označili, a kde jste naposledy skončili v každém díle. Obojí zůstává v tomto prohlížeči a nikam se neodesílá.',
+	'schola.what.census':
+		'Co tato knihovna obsahuje a jak daleko sahá — kolik děl, v jakých jazycích, a kolik z každého je čtenáři ve vašem jazyce skutečně dostupné.',
+	'schola.formulas.heading': 'Desatero a co dalšího se učí zpaměti',
+	'schola.formulas.lede':
+		'Není to shrnutí tohoto webu: jsou to seznamy, které sama církev tiskne na konci kompendia, pro každého, kdo je učen víře. Každé slovo níže je citováno z vašeho vlastního vydání.',
 	'ccc.noCounterpart': 'Nemá protějšek v druhém díle',
 	'jumpbox.placeholder': 'Přejít na… (např. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Hledat',

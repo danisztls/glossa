@@ -85,7 +85,7 @@ export const lv: Dictionary = {
 		'Viss krājums, plaukts pēc plaukta — kopā ar to, kur apstājāties, un to, ko esat atzīmējis.',
 	'schola.landing.title': 'Ar ko sākt',
 	'schola.landing.tagline':
-		'Īss ceļvedis pa to, kas šeit ir: kas ir katra no šīm grāmatām, kā raksta atsauci uz to, kā atrast vietu, un lasīšanas kārtības, ko Baznīca ir piedāvājusi.',
+		'Īss ceļvedis pa to, kas šeit ir: kas ir katra no šīm grāmatām, desmit baušļi un citi saraksti, ko Baznīca prasa zināt katram katolim, un no kurienes sākt lasīt.',
 	'schola.start.heading': 'Vai katolicisms jums ir jauns?',
 	'schola.start.body': 'Vislabākais sākums ir ',
 	'schola.start.bodyAfter':
@@ -120,40 +120,37 @@ export const lv: Dictionary = {
 		'Nav stāsts: simt piecdesmit lūgšanu un dziesmu. Lasiet pa vienai, jebkurā secībā. Baznīca tās joprojām lūdz katru dienu.',
 	'schola.bible.bothWays':
 		'Jūs atpazīsiet lietas, un tā ir jēga, nevis sakritība. Baznīca senākās grāmatas lasa Kristus gaismā un jaunākās — tā gaismā, kas bija pirms tam: katra puse skaidro otru, un tāpēc neviena netiek lasīta viena pati.',
-	'schola.books.heading': 'Kas šeit ir un kā to apzīmē',
+	'schola.books.heading': 'Kas šeit ir',
 	'schola.books.lede':
-		'Katra no šīm ir cita veida grāmata, un uz katru atsaucas ar savu skaitli. Piemēri rāda formu: ierakstiet līdzīgu meklēšanas laukā, un jūs nonāksiet pie vietas.',
-	'schola.cite.label': 'Apzīmē',
+		'Katra no šīm ir cita veida grāmata, un rinda zem tās pasaka, kāda tieši. Atveriet meklēšanas lauku lapas augšpusē, lai redzētu, kā uz katru atsaucas, un lai nokļūtu tieši pie vietas.',
 	'schola.what.scripture':
 		'Raksti tādi, kādus tos saņem Baznīca, abās Derībās. Viss pārējais šeit tiek lasīts to gaismā.',
-	'schola.cite.scripture': 'grāmata, nodaļa un pants, tajos saīsinājumos, ko drukā jūsu izdevums',
 	'schola.what.catechism':
 		'Kopsavilkums tam, ko tic Katoliskā Baznīca, vienā sējumā. Pats tas nav avots: tas savāc Rakstus, tēvus, liturģiju un Baznīcas mācību, un katra rindkopa pasaka, no kurienes nāk tas, ko tā apgalvo.',
-	'schola.cite.catechism':
-		'pēc rindkopas numura, kas rit nepārtraukti no pirmās lappuses līdz pēdējai',
 	'schola.what.compendium':
 		'Tā pati mācība, izklāstīta jautājumos un atbildēs, apmēram desmitajā daļā apjoma.',
-	'schola.cite.compendium': 'pēc jautājuma numura',
 	'schola.what.magisterium':
 		'Tas, ko pāvesti un koncili patiešām ir rakstījuši — enciklikas, konstitūcijas, dekrēti, deklarācijas — katrs adresēts noteiktam brīdim un noteiktam jautājumam. Katrs pazīstams pēc saviem pirmajiem latīņu vārdiem.',
-	'schola.cite.magisterium': 'pēc dokumenta nosaukuma, tad iedaļas numura tajā',
 	'schola.what.social':
 		'Baznīcas mācība par darbu, īpašumu, ģimeni, politiku un mieru, savākta no tiem dokumentiem vienā grāmatā.',
-	'schola.cite.social': 'pēc rindkopas numura, zem tā saīsinājuma, ko darbs lieto pats sev',
 	'schola.what.law': 'Tiesības, nevis mācība. Tās saka, ko Baznīca prasa, un tiek grozītas.',
-	'schola.cite.law': 'pēc kanona — tā sauc tās numurētās vienības',
 	'schola.what.doctors':
 		'Teologi, kurus Baznīca ir nosaukusi par Baznīcas doktoriem. Tas nenes nekādu oficiālu autoritāti, lai cik liels būtu autors.',
-	'schola.cite.doctors': 'pēc daļas, tad jautājuma — pašas Summas dalījums',
 	'schola.what.prayers': 'Vārdi, ar kuriem Baznīca lūdzas, ar latīņu valodu blakus.',
-	'schola.cite.prayers': 'pēc nosaukuma; nav numuru, ko citēt',
 	'schola.places.heading': 'Ne teksti, bet vietas šajā vietnē',
 	'schola.what.library':
 		'Visi vietnes darbi vienā sarakstā, sagrupēti pēc priekšmeta, nevis pēc veida.',
+	'schola.what.questions':
+		'Ieeja lasītājam, kam ir jautājums, bet nav atsauces. Katrs no tiem apkopo fragmentus, kas uz to atbild — vispirms no katehisma — un katrs to vārds ir pašas Baznīcas.',
 	'schola.what.calendar':
 		'Liturģiskā diena — laiks, krāsa un kas tiek svinēts — tai valstij, kuras kalendāram sekojat.',
 	'schola.what.bookmarks':
 		'Vietas, ko esat atzīmējis, un kur pēdējoreiz palikāt katrā darbā. Abas paliek šajā pārlūkā un netiek nekur sūtītas.',
+	'schola.what.census':
+		'Ko šī bibliotēka satur un cik tālu tā sniedzas — cik darbu tajā ir, kādās valodās, un cik daudz no katra jūsu paša valodas lasītājs patiesībā var sasniegt.',
+	'schola.formulas.heading': 'Desmit baušļi, un kas vēl tiek mācīts no galvas',
+	'schola.formulas.lede':
+		'Tā nav šīs vietnes kopsavilkums: šie ir saraksti, ko pati Baznīca iespiež Kompendija beigās ikvienam, kas tiek mācīts ticībā. Katrs zemāk esošais vārds ir burtiski citēts no jūsu paša izdevuma.',
 	'ccc.noCounterpart': 'Nav atbilsmes otrā darbā',
 	'jumpbox.placeholder': 'Pāriet uz… (piem. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Meklēt',

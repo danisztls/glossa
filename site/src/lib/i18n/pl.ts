@@ -54,7 +54,7 @@ export const pl: Dictionary = {
 		'Cały zbiór, półka po półce — wraz z miejscem, w którym przerwałeś, i tym, co zaznaczyłeś.',
 	'schola.landing.title': 'Od czego zacząć',
 	'schola.landing.tagline':
-		'Krótki przewodnik po tym, co tu jest: czym jest każda z tych ksiąg, jak zapisuje się jej odsyłacz, jak znaleźć fragment, i porządki czytania, które Kościół zaproponował.',
+		'Krótki przewodnik po tym, co tu jest: czym jest każda z tych ksiąg, dziesięć przykazań i inne wykazy, które Kościół każe znać katolikowi, oraz od czego zacząć czytanie.',
 	'schola.start.heading': 'Nowy w katolicyzmie?',
 	'schola.start.body': 'Zacznij od ',
 	'schola.start.bodyAfter':
@@ -89,40 +89,37 @@ export const pl: Dictionary = {
 		'Nie opowieść: sto pięćdziesiąt modlitw i pieśni. Czytaj po jednym, w dowolnej kolejności. Kościół wciąż odmawia je codziennie.',
 	'schola.bible.bothWays':
 		'Będziesz rozpoznawał rzeczy, i o to właśnie chodzi, a nie o zbieg okoliczności. Kościół czyta księgi starsze w świetle Chrystusa, a nowsze w świetle tego, co było przedtem — każda połowa tłumaczy drugą, i dlatego żadnej nie czyta się osobno.',
-	'schola.books.heading': 'Co tu jest i jak się to oznacza',
+	'schola.books.heading': 'Co tu jest',
 	'schola.books.lede':
-		'Każda z tych ksiąg jest innego rodzaju i do każdej odsyła się własnym numerem. Przykłady pokazują postać: wpisz podobny w pole wyszukiwania, a trafisz na miejsce.',
-	'schola.cite.label': 'Oznaczane',
+		'Każda z tych ksiąg jest innego rodzaju, a linia pod nią mówi, jakiego. Otwórz pole wyszukiwania na górze strony, by zobaczyć, jak się do każdej z nich odsyła, i trafić prosto do fragmentu.',
 	'schola.what.scripture':
 		'Pismo Święte, jak je Kościół przyjmuje, w obu Testamentach. Wszystko inne tutaj czyta się w jego świetle.',
-	'schola.cite.scripture': 'księga, rozdział i werset, w skrótach, które drukuje Twoje wydanie',
 	'schola.what.catechism':
 		'Streszczenie tego, w co wierzy Kościół katolicki, w jednym tomie. Sam nie jest źródłem: zbiera Pismo, Ojców, liturgię i nauczanie Kościoła, a każdy punkt mówi, skąd pochodzi to, co głosi.',
-	'schola.cite.catechism':
-		'według numeru punktu, biegnącego bez przerwy od pierwszej strony do ostatniej',
 	'schola.what.compendium':
 		'Ta sama nauka wyłożona w pytaniach i odpowiedziach, mniej więcej dziesięciokrotnie krótsza.',
-	'schola.cite.compendium': 'według numeru pytania',
 	'schola.what.magisterium':
 		'To, co papieże i sobory rzeczywiście napisali — encykliki, konstytucje, dekrety, deklaracje — każde skierowane do określonej chwili i określonej sprawy. Każde znane jest po swoich pierwszych słowach po łacinie.',
-	'schola.cite.magisterium': 'według nazwy dokumentu, a potem numeru punktu w nim',
 	'schola.what.social':
 		'Nauczanie Kościoła o pracy, własności, rodzinie, polityce i pokoju, zebrane z tych dokumentów w jedną księgę.',
-	'schola.cite.social': 'według numeru punktu, pod skrótem, którym dzieło samo się określa',
 	'schola.what.law': 'Prawo, a nie doktryna. Mówi, czego Kościół wymaga, i bywa nowelizowane.',
-	'schola.cite.law': 'według kanonu, bo tak nazywają się jego numerowane jednostki',
 	'schola.what.doctors':
 		'Teologowie, których Kościół ogłosił Doktorami. Nie niesie to żadnej urzędowej powagi, jakkolwiek wielki byłby autor.',
-	'schola.cite.doctors': 'według części, potem kwestii — własnych podziałów Sumy',
 	'schola.what.prayers': 'Słowa, którymi Kościół się modli, z łaciną obok.',
-	'schola.cite.prayers': 'po nazwie; nie ma numerów do cytowania',
 	'schola.places.heading': 'Nie teksty, lecz miejsca na tej stronie',
 	'schola.what.library':
 		'Wszystkie dzieła strony w jednym wykazie, pogrupowane według przedmiotu, a nie rodzaju.',
+	'schola.what.questions':
+		'Wejście dla kogoś, kto ma pytanie, a nie ma odsyłacza. Każde z nich zbiera fragmenty, które na nie odpowiadają — najpierw z Katechizmu — a każde ich słowo należy do samego Kościoła.',
 	'schola.what.calendar':
 		'Dzień liturgiczny — okres, kolor i kogo się wspomina — dla kraju, którego kalendarz zachowujesz.',
 	'schola.what.bookmarks':
 		'Fragmenty, które zaznaczyłeś, i miejsce, na którym ostatnio stanąłeś w każdym dziele. Jedno i drugie zostaje w tej przeglądarce i nigdzie nie jest wysyłane.',
+	'schola.what.census':
+		'Co ma ta biblioteka i jak daleko sięga — ile dzieł, w jakich językach, i ile z każdego może naprawdę osiągnąć ktoś, kto czyta w twoim własnym języku.',
+	'schola.formulas.heading': 'Dziesięć przykazań i to, czego jeszcze uczy się na pamięć',
+	'schola.formulas.lede':
+		'To nie streszczenie tej strony: to wykazy, które sam Kościół drukuje na końcu Kompendium, dla każdego, kto jest nauczany wiary. Każde słowo poniżej zostało zacytowane z twojego własnego wydania.',
 	'ccc.noCounterpart': 'Brak odpowiednika w drugim dziele',
 	'jumpbox.placeholder': 'Przejdź do… (np. jan 3,16, ccc 1234)',
 	'jumpbox.short': 'Szukaj',

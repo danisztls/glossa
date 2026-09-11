@@ -56,7 +56,7 @@ export const de: Dictionary = {
 		'Der ganze Bestand, Regal für Regal — mit der Stelle, an der Sie aufgehört haben, und dem, was Sie markiert haben.',
 	'schola.landing.title': 'Wo anfangen',
 	'schola.landing.tagline':
-		'Ein kurzer Wegweiser durch das, was hier steht: was jedes dieser Bücher ist, wie man es zitiert, wie man eine Stelle findet, und Leseordnungen, die die Kirche vorgelegt hat.',
+		'Ein kurzer Wegweiser durch das, was hier steht: was jedes dieser Bücher ist, die Zehn Gebote und die anderen Listen, von denen die Kirche möchte, dass ein Katholik sie kennt, und wo man mit dem Lesen beginnt.',
 	'schola.start.heading': 'Neu im katholischen Glauben?',
 	'schola.start.body': 'Beginnen Sie mit dem ',
 	'schola.start.bodyAfter':
@@ -92,40 +92,37 @@ export const de: Dictionary = {
 		'Keine Erzählung: hundertfünfzig Gebete und Lieder. Lesen Sie eines nach dem anderen, in beliebiger Reihenfolge. Die Kirche betet sie bis heute täglich.',
 	'schola.bible.bothWays':
 		'Sie werden Dinge wiedererkennen, und das ist der Sinn und kein Zufall. Die Kirche liest die älteren Bücher im Licht Christi und die neueren im Licht dessen, was vorher war — jede Hälfte erklärt die andere, und darum wird keine allein gelesen.',
-	'schola.books.heading': 'Was hier steht, und wie es identifiziert wird',
+	'schola.books.heading': 'Was hier steht',
 	'schola.books.lede':
-		'Jedes davon ist eine andere Art Buch, und auf jedes wird mit einer eigenen Zahl verwiesen. Die Beispiele zeigen die Form: tippen Sie eines davon in das Suchfeld, und Sie landen bei der Stelle.',
-	'schola.cite.label': 'Identifiziert',
+		'Jedes davon ist eine andere Art Buch, und die Zeile darunter sagt, welche. Öffnen Sie das Suchfeld oben auf der Seite, um zu sehen, wie auf jedes verwiesen wird, und um direkt zu einer Stelle zu gelangen.',
 	'schola.what.scripture':
 		'Die Schrift, wie die Kirche sie empfängt, in beiden Testamenten. Alles andere hier wird in ihrem Licht gelesen.',
-	'schola.cite.scripture':
-		'Buch, Kapitel und Vers, in den Abkürzungen, die Ihre eigene Ausgabe druckt',
 	'schola.what.catechism':
 		'Eine Zusammenfassung dessen, was die Katholische Kirche glaubt, in einem Band. Er ist selbst keine Quelle: er sammelt die Schrift, die Väter, die Liturgie und die Lehre der Kirche, und jede Nummer sagt, woher stammt, was sie sagt.',
-	'schola.cite.catechism': 'nach Nummer, durchlaufend von der ersten bis zur letzten Seite',
 	'schola.what.compendium': 'Dieselbe Lehre in Fragen und Antworten, etwa ein Zehntel so lang.',
-	'schola.cite.compendium': 'nach Fragenummer',
 	'schola.what.magisterium':
 		'Was Päpste und Konzilien tatsächlich geschrieben haben — Enzykliken, Konstitutionen, Dekrete, Erklärungen — jeweils an einen bestimmten Augenblick und eine bestimmte Frage gerichtet. Jedes wird nach seinen lateinischen Anfangsworten benannt.',
-	'schola.cite.magisterium': 'nach dem Namen des Dokumentes, dann einer Abschnittsnummer darin',
 	'schola.what.social':
 		'Die Lehre der Kirche über Arbeit, Eigentum, Familie, Politik und Frieden, aus jenen Dokumenten in einem Buch gesammelt.',
-	'schola.cite.social': 'nach Nummer, unter dem Kürzel, das das Werk für sich selbst verwendet',
 	'schola.what.law':
 		'Recht und nicht Lehre. Es sagt, was die Kirche fordert, und es wird geändert.',
-	'schola.cite.law': 'nach Canon, so heißen seine nummerierten Einheiten',
 	'schola.what.doctors':
 		'Die Theologen, die die Kirche zu Lehrern erklärt hat. Es trägt keine amtliche Autorität, so groß sein Verfasser auch sei.',
-	'schola.cite.doctors': 'nach Teil, dann Quaestio — den eigenen Gliedern der Summe',
 	'schola.what.prayers': 'Die Worte, die die Kirche betet, mit dem Lateinischen daneben.',
-	'schola.cite.prayers': 'nach dem Namen; es gibt keine Nummern zu zitieren',
 	'schola.places.heading': 'Keine Texte, sondern Orte auf dieser Seite',
 	'schola.what.library':
 		'Alle Werke der Seite in einer Liste, nach Sachgebiet geordnet und nicht nach Gattung.',
+	'schola.what.questions':
+		'Ein Zugang für einen Leser, der eine Frage hat und keinen Verweis. Jede Frage sammelt die Stellen, die sie beantworten — zuerst aus dem Katechismus —, und jedes Wort darin ist das der Kirche selbst.',
 	'schola.what.calendar':
 		'Der liturgische Tag — Zeit, Farbe und wessen gedacht wird — für das Land, dessen Kalender Sie folgen.',
 	'schola.what.bookmarks':
 		'Stellen, die Sie gemerkt haben, und wo Sie in jedem Werk zuletzt aufgehört haben. Beides bleibt in diesem Browser und wird nirgendwohin gesendet.',
+	'schola.what.census':
+		'Was diese Bibliothek enthält und wie weit sie reicht — wie viele Werke, in welchen Sprachen, und wie viel davon ein Leser Ihrer Sprache tatsächlich erreichen kann.',
+	'schola.formulas.heading': 'Die Zehn Gebote, und was sonst noch auswendig gelernt wird',
+	'schola.formulas.lede':
+		'Keine Zusammenfassung von dieser Seite: das sind die Listen, die die Kirche selbst am Ende des Kompendiums abdruckt, für jeden, der im Glauben unterwiesen wird. Jedes Wort unten ist aus Ihrer eigenen Ausgabe zitiert.',
 	'ccc.noCounterpart': 'Keine Entsprechung im anderen Werk',
 	'jumpbox.placeholder': 'Springe zu… (z. B. johannes 3,16, ccc 1234)',
 	'jumpbox.short': 'Suchen',

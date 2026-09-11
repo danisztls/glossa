@@ -90,7 +90,7 @@ export const id: Dictionary = {
 		'Seluruh koleksi, rak demi rak — beserta tempat Anda berhenti dan apa yang Anda tandai.',
 	'schola.landing.title': 'Mulai dari mana',
 	'schola.landing.tagline':
-		'Panduan singkat atas apa yang ada di sini: apa masing-masing kitab ini, bagaimana rujukan kepadanya ditulis, bagaimana menemukan suatu bagian, dan urutan bacaan yang telah diusulkan Gereja.',
+		'Panduan singkat atas apa yang ada di sini: apa masing-masing kitab ini, Sepuluh Perintah Allah dan daftar-daftar lain yang menurut Gereja perlu diketahui seorang Katolik, dan dari mana mulai membaca.',
 	'schola.start.heading': 'Baru mengenal Katolik?',
 	'schola.start.body': 'Awal yang paling baik adalah ',
 	'schola.start.bodyAfter':
@@ -126,42 +126,38 @@ export const id: Dictionary = {
 		'Bukan kisah: seratus lima puluh doa dan nyanyian. Bacalah satu per satu, dalam urutan mana pun. Gereja masih mendoakannya setiap hari.',
 	'schola.bible.bothWays':
 		'Anda akan mengenali banyak hal, dan itulah maksudnya, bukan kebetulan. Gereja membaca kitab-kitab yang lebih tua dalam terang Kristus dan yang lebih baru dalam terang apa yang mendahuluinya — masing-masing paruh menjelaskan yang lain, dan karena itu tak satu pun dibaca sendirian.',
-	'schola.books.heading': 'Apa yang ada di sini, dan bagaimana dikenali',
+	'schola.books.heading': 'Apa yang ada di sini',
 	'schola.books.lede':
-		'Masing-masing ini adalah jenis kitab yang berbeda, dan masing-masing dirujuk dengan nomornya sendiri. Contoh-contohnya menunjukkan bentuknya: ketik yang serupa di kotak pencarian dan Anda tiba pada bagian itu.',
-	'schola.cite.label': 'Dikenali',
+		'Masing-masing ini adalah jenis kitab yang berbeda, dan baris di bawahnya menyebutkan jenis itu. Buka kotak pencarian di bagian atas halaman untuk melihat bagaimana masing-masing dirujuk, dan untuk langsung menuju suatu bagian.',
 	'schola.what.scripture':
 		'Kitab Suci sebagaimana diterima Gereja, dalam kedua Perjanjian. Segala sesuatu yang lain di sini dibaca dalam terangnya.',
-	'schola.cite.scripture': 'kitab, bab dan ayat, dalam singkatan yang dicetak edisi Anda sendiri',
 	'schola.what.catechism':
 		'Ringkasan apa yang diimani Gereja Katolik, dalam satu jilid. Ia sendiri bukan sumber: ia menghimpun Kitab Suci, para Bapa, liturgi dan ajaran Gereja, dan setiap nomor menyebutkan dari mana asal apa yang dikatakannya.',
-	'schola.cite.catechism':
-		'menurut nomor, berjalan tanpa putus dari halaman pertama sampai terakhir',
 	'schola.what.compendium':
 		'Ajaran yang sama disajikan dalam tanya jawab, kira-kira sepersepuluh panjangnya.',
-	'schola.cite.compendium': 'menurut nomor pertanyaan',
 	'schola.what.magisterium':
 		'Apa yang sungguh-sungguh ditulis para paus dan konsili — ensiklik, konstitusi, dekret, deklarasi — masing-masing ditujukan kepada suatu saat tertentu dan suatu persoalan tertentu. Masing-masing dikenal menurut kata-kata pembukanya dalam bahasa Latin.',
-	'schola.cite.magisterium': 'menurut nama dokumen, lalu nomor bagian di dalamnya',
 	'schola.what.social':
 		'Ajaran Gereja tentang kerja, milik, keluarga, politik dan perdamaian, dihimpun dari dokumen-dokumen itu ke dalam satu kitab.',
-	'schola.cite.social':
-		'menurut nomor, di bawah singkatan yang dipakai karya itu untuk dirinya sendiri',
 	'schola.what.law':
 		'Hukum dan bukan ajaran. Ia menyatakan apa yang dituntut Gereja, dan ia diubah dari waktu ke waktu.',
-	'schola.cite.law': 'menurut kanon, sebutan bagi satuan-satuannya yang bernomor',
 	'schola.what.doctors':
 		'Para teolog yang telah dinyatakan Gereja sebagai Pujangga. Itu tidak membawa wewenang resmi, betapapun besar penulisnya.',
-	'schola.cite.doctors': 'menurut bagian, lalu persoalan — pembagian Summa itu sendiri',
 	'schola.what.prayers': 'Kata-kata yang didoakan Gereja, dengan bahasa Latin di sampingnya.',
-	'schola.cite.prayers': 'menurut nama; tidak ada nomor untuk dikutip',
 	'schola.places.heading': 'Bukan teks, melainkan tempat-tempat di situs ini',
 	'schola.what.library':
 		'Semua karya situs ini dalam satu daftar, dikelompokkan menurut pokok dan bukan menurut jenis.',
+	'schola.what.questions':
+		'Pintu masuk bagi pembaca yang memegang pertanyaan dan bukan rujukan. Setiap pertanyaan menghimpun bagian-bagian yang menjawabnya — Katekismus lebih dahulu — dan setiap katanya adalah milik Gereja sendiri.',
 	'schola.what.calendar':
 		'Hari liturgi — masa, warna, dan siapa yang diperingati — bagi negara yang kalendernya Anda ikuti.',
 	'schola.what.bookmarks':
 		'Bagian-bagian yang telah Anda tandai, dan di mana Anda terakhir berhenti dalam tiap karya. Keduanya disimpan di peramban ini dan tidak dikirim ke mana pun.',
+	'schola.what.census':
+		'Apa yang dimiliki perpustakaan ini dan seberapa jauh jangkauannya — berapa banyak karya, dalam bahasa apa saja, dan berapa banyak dari masing-masing yang benar-benar dapat dijangkau pembaca dalam bahasa Anda sendiri.',
+	'schola.formulas.heading': 'Sepuluh Perintah Allah, dan apa lagi yang dihafalkan',
+	'schola.formulas.lede':
+		'Bukan ringkasan situs ini: inilah daftar-daftar yang dicetak Gereja sendiri di akhir Kompendium, bagi siapa pun yang sedang diajar imannya. Setiap kata di bawah ini dikutip dari edisi Anda sendiri.',
 	'ccc.noCounterpart': 'Tidak ada padanan dalam karya lainnya',
 	'jumpbox.placeholder': 'Lompat ke… (mis. jn 3:16, ccc 1234)',
 	'jumpbox.short': 'Cari',

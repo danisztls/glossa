@@ -54,7 +54,7 @@ export const sv: Dictionary = {
 		'Hela samlingen, hylla för hylla — med var du slutade och vad du har markerat.',
 	'schola.landing.title': 'Var man börjar',
 	'schola.landing.tagline':
-		'En kort vägledning till vad som finns här: vad var och en av dessa böcker är, hur en hänvisning till den skrivs, hur man hittar ett ställe, och läsordningar som kyrkan har föreslagit.',
+		'En kort vägledning till vad som finns här: vad var och en av dessa böcker är, tio Guds bud och de andra listor Kyrkan vill att en katolik ska kunna, och var man börjar läsa.',
 	'schola.start.heading': 'Ny i katolsk tro?',
 	'schola.start.body': 'Börja med ',
 	'schola.start.bodyAfter':
@@ -88,39 +88,37 @@ export const sv: Dictionary = {
 		'Ingen berättelse: hundrafemtio böner och sånger. Läs en i taget, i vilken ordning som helst. Kyrkan ber dem alltjämt varje dag.',
 	'schola.bible.bothWays':
 		'Du kommer att känna igen saker, och det är meningen snarare än en tillfällighet. Kyrkan läser de äldre böckerna i Kristi ljus och de nyare i ljuset av det som kom före — varje hälft förklarar den andra, och därför läses ingen av dem ensam.',
-	'schola.books.heading': 'Vad som finns här, och hur det anges',
+	'schola.books.heading': 'Vad som finns här',
 	'schola.books.lede':
-		'Var och en av dessa är ett slags bok för sig, och var och en hänvisas till med ett eget nummer. Exemplen visar formen: skriv ett sådant i sökrutan så hamnar du på stället.',
-	'schola.cite.label': 'Anges',
+		'Var och en av dessa är ett slags bok för sig, och raden under den säger vilket slag. Öppna sökrutan högst upp på sidan för att se hur var och en anges, och för att komma direkt till ett ställe.',
 	'schola.what.scripture':
 		'Skriften så som kyrkan tar emot den, i båda testamentena. Allt annat här läses i dess ljus.',
-	'schola.cite.scripture': 'bok, kapitel och vers, i de förkortningar din egen utgåva trycker',
 	'schola.what.catechism':
 		'En sammanfattning av vad Katolska kyrkan tror, i en enda volym. Den är inte själv en källa: den samlar Skriften, fäderna, liturgin och kyrkans lära, och varje punkt säger varifrån det den påstår kommer.',
-	'schola.cite.catechism': 'efter punktnummer, löpande obrutet från första sidan till sista',
 	'schola.what.compendium':
 		'Samma lära framställd i frågor och svar, på ungefär en tiondel av längden.',
-	'schola.cite.compendium': 'efter frågenummer',
 	'schola.what.magisterium':
 		'Vad påvar och kyrkomöten faktiskt har skrivit — encyklikor, konstitutioner, dekret, deklarationer — vart och ett riktat till ett bestämt ögonblick och en bestämd fråga. Vart och ett är känt efter sina inledande ord på latin.',
-	'schola.cite.magisterium': 'efter dokumentets namn, sedan ett avsnittsnummer inuti det',
 	'schola.what.social':
 		'Kyrkans lära om arbete, egendom, familjen, politiken och freden, hämtad ur de dokumenten och samlad i en bok.',
-	'schola.cite.social': 'efter punktnummer, under den förkortning verket använder om sig självt',
 	'schola.what.law': 'Rätt och inte lära. Den säger vad kyrkan kräver, och den ändras.',
-	'schola.cite.law': 'efter kanon, vilket dess numrerade enheter kallas',
 	'schola.what.doctors':
 		'De teologer kyrkan har utnämnt till kyrkolärare. Det bär ingen officiell auktoritet, hur stor författaren än är.',
-	'schola.cite.doctors': 'efter del, sedan fråga — Summans egna indelningar',
 	'schola.what.prayers': 'Orden kyrkan ber, med latinet bredvid.',
-	'schola.cite.prayers': 'efter namn; det finns inga nummer att citera',
 	'schola.places.heading': 'Inte texter, utan platser på den här sidan',
 	'schola.what.library':
 		'Alla verk på sidan i en lista, grupperade efter ämne och inte efter slag.',
+	'schola.what.questions':
+		'En ingång för den som har en fråga men ingen hänvisning. Var och en samlar de ställen som besvarar den — katekesen först — och varje ord i dem är Kyrkans eget.',
 	'schola.what.calendar':
 		'Den liturgiska dagen — tid, färg och vem som firas — för det land vars kalender du följer.',
 	'schola.what.bookmarks':
 		'Ställen du har markerat, och var du senast slutade i varje verk. Bådadera stannar i den här webbläsaren och skickas ingenstans.',
+	'schola.what.census':
+		'Vad det här biblioteket innehåller och hur långt det räcker — hur många verk, på vilka språk, och hur mycket av vart och ett en läsare av ditt eget språk faktiskt kan nå.',
+	'schola.formulas.heading': 'Tio Guds bud, och vad mer som lärs utantill',
+	'schola.formulas.lede':
+		'Ingen sammanfattning av den här sidan: detta är de listor Kyrkan själv trycker i slutet av Kompendiet, för var och en som undervisas i tron. Varje ord nedan är citerat ur din egen utgåva av det.',
 	'ccc.noCounterpart': 'Ingen motsvarighet i det andra verket',
 	'jumpbox.placeholder': 'Gå till… (t.ex. joh 3:16, ccc 1234)',
 	'jumpbox.short': 'Sök',

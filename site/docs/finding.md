@@ -184,88 +184,125 @@ the card has outside its own border. `LiturgicalDayCard`'s `more` prop is what
 draws it — a prop, because `/calendarium` renders the same card and a link to the
 page you are on is no link at all.
 
-## `/schola` is a guide, and its examples are specimens
+## `/schola` is a catalogue, and the citation forms moved to the box
 
 **The reference system is the part nothing else on the site teaches.** The
 corpus is addressed by number — `CCC 1`, `Comp. 1`, `CSDC 1`, `Can. 1`,
 `STh I, 1` — and `suggest.ts` reads every one of those notations back. A reader
 who has never seen a citation of the Catechism does not know that the number is
 a PARAGRAPH running unbroken from the first page to the last, or that the Code
-numbers canons rather than pages, and no page said so. That is
-`audiences.md` §5's "vocabulary of the corpus itself" stated plainly: per work,
-one sentence on what it is, one on what its numbered unit is called, and a
-worked example.
+numbers canons rather than pages. That is `audiences.md` §5's "vocabulary of the
+corpus itself", and **this page taught it for five days and does not any more**
+(2026-09-10, by direction).
 
-**IDENTIFIED, NOT CITED** (2026-09-07, by direction). The section is headed
-"What is here, and how it is identified" and each row's label is "Identified",
-where both said "cited". To cite is exactly what these numbers are for, and it
-is a word the reader this section is written for does not have yet —
-`audiences.md` §5 stops at "the vocabulary of the corpus itself", and the label
-was a piece of that vocabulary standing at the head of the line meant to teach
-it. The KEYS stay `schola.cite.*`: the works are cited by these numbers, which
-is a fact about the world and the right name for a string; the label is what a
-reader reads. **The label and the clause under it are one sentence** — every
-value opens with the preposition ("by paragraph number"), so the label has to be
-the participle that reads into it, and the pair has to be translated together.
+Every row carried a second line — "Identified by paragraph number, running
+unbroken from the first page to the last" — and a specimen chip of the notation
+at its trailing edge, eight of them in a column down the grid. The jump box's
+empty panel prints that table now, one row per work out of `$lib/specimens.ts`,
+and a row there FILLS THE FIELD. **A legend prints the form a reader types; a
+catalogue prints the form the work prints**, and the reader who needs the
+notation is the reader already in the box. The `schola.cite.*` keys went out of
+all forty dictionaries with the row, on the rule that a translated value nothing
+reads is a line the next translator keeps true for nobody.
 
-**AN EXAMPLE IS A SHAPE, NOT A REFERENCE** (2026-09-05, by direction). Each was
-a live link — `CCC 1` to paragraph 1, `Can. 1` to canon 1 — put through the same
-existence predicate the jump box asks (`cccParagraphExists`,
-`compendiumQuestionExists`, `summaQuestionExists`, …) so a specimen could never 404. That was a sound guard on the wrong thing. A reader working down a
+What the page kept is what a catalogue is for: a name that opens the work and
+one sentence saying what kind of thing it is. **The list is FLAT, one row per
+work, where it was six shelves with three works nested inside them.** Nesting is
+right for a catalogue and wrong here: a nested work took its parent's definition
+and had no line of its own, and the Compendium of the Catechism, the Compendium
+of the Social Doctrine and the Summa are precisely the three a newcomer has
+heard named and cannot place.
+
+**The specimens' own argument is still worth keeping, because it decided the
+formulas section too.** Each specimen was a live link — `CCC 1` to paragraph 1 —
+put through the same existence predicate the jump box asks, so a specimen could
+never 404. That was a sound guard on the wrong thing: a reader working down a
 CATALOGUE was being offered a door into the middle of a work they had not
-chosen; and `CCC 1` is a meaningful citation, so a column of lowest numbers read
-as eight recommendations rather than as eight examples of a form.
+chosen, and `CCC 1` is a meaningful citation, so a column of lowest numbers read
+as eight recommendations rather than as eight examples of a form. The same
+sentence refuses a link in a formula's heading: six of them print a Scripture
+reference the prose linkifier would gladly turn into a door onto Matthew 5.
 
-**So the numbers are representative and the chips are inert**: four figures for
-a work with thousands of paragraphs, three for a code of canons, two for the
-sections of a document. The shape of the number is part of what the specimen
-teaches, `jumpbox.placeholder` already showed `ccc 1234` for that reason, and
-`schola.books.lede` now sends the reader to type one into the jump box — which
-is the one place a notation is worth having. Prayers get no specimen at all,
-because they have no notation: they are cited by name, which the sentence under
-that row says.
-
-**And the table is `$lib/specimens.ts` now, because a fourth surface wanted
-it.** The Bible's line was shared from the start, being the one that cannot be
-written down; the other six were copied into the home page's chip row and were
-about to be copied into the jump box's empty state. A table three files hold by
-hand is a claim they can disagree about, and the one that goes stale is
-whichever page nobody opened while a siglum moved. The help sheet kept its own
-pairs against that rule for three days, on the argument that it taught the NAME
-form (`Catechism 101 → CCC 101`) where every specimen here is a siglum; a fifth
-copy of the notation was the cost, and it went with the section that held it.
-
-**Four indexes went with the predicates.** `/schola` primed `bible`, `ccc`,
-`compendium`, `prayer` and `summa` to decide whether to underline eight words;
-it primes `bible` alone now, which it genuinely needs for the Scripture
-specimen's abbreviation and for the reading suggestion's book names. The check
-at the foot of `index-priming.test.ts` only catches priming too LITTLE, so
-over-priming outlives the code that caused it unless it is pruned by hand.
-
-**The Bible's example is DERIVED and the others are sigla.** The book's
-abbreviation comes from this language's own citation table (`bookAbbrev`),
-falling back to the reader's edition's name for the book, and the separator from
-the same grammar the parser reads — so a Portuguese reader is shown `Jo 3,16`
-and an English one `Jn 3:16`. `STh` is the work's own siglum and is written
-down; `CCC`, `Comp.`, `CSDC` and `Can.` come from the dictionary keys the
-editions print. **The Compendium of the Social Doctrine joined them on
-2026-09-10**: it had been a literal on the ground that every language prints
-`CSDC`, and no edition prints any siglum for it at all — the languages that
-cite it by one built it out of their own title (`CDSI` in pt and es, `CDSC` in
-it, `CDSE` in fr), and `socialDoctrine.abbrev` answers `CSDC` for the rest. **The OSIS id is lower-case here** (`john`), and both readers
-answer `undefined` for the other spelling, so the wrong case draws no example
-rather than erring.
-
-**The list is FLAT, one row per work, where it was six shelves with three works
-nested inside them.** Nesting is right for a catalogue and wrong for a guide: a
-nested work took its parent's definition and had no citation form of its own,
-and the Compendium of the Catechism, the Compendium of the Social Doctrine and
-the Summa are precisely the three a newcomer has heard named and cannot place.
+**And it is what keeps the page at one primed index.** `/schola` primed `bible`,
+`ccc`, `compendium`, `prayer` and `summa` to decide whether to underline eight
+words; it primes `bible` alone now, which it needs for the reading suggestion's
+book names. Linkifying anything would put it back up to three: `refHref`
+validates an address before it mints one, reading the Summa and document
+registries as well as the Bible's — 214 KB before first paint, on the page
+written for the reader least likely to wait for it. The check at the foot of
+`index-priming.test.ts` asserts exactly that, and failed on the first version of
+the formulas section; it only catches priming too LITTLE, so over-priming
+outlives the code that caused it unless it is pruned by hand.
 
 **The chrome had a section of its own here and does not any more** (2026-09-07)
 — it is the sheet the `?` button opens, and the section below is the argument.
-What this page kept is what it is better at: the works, their citation forms,
-and the three destinations that are not texts.
+
+**A row listed here is a row the site HAS.** `/quaestiones` and the census were
+on the site and not on the one page that says what is on the site, for as long
+as it took somebody to notice; a guide that lists what existed when it was
+written is a guide that is quietly wrong. Questions is gated on `hasTopics()`,
+which is `ShelfGrid`'s own test, because a door onto `quaestiones.landing.none`
+is worse than no door; the other four rows are unconditional, the Library and
+the Census drawing whatever the corpus holds and Bookmarks and the Calendar
+needing no corpus at all.
+
+## The formulas are the Church's own list, and that is why they are parsed
+
+**A reader nine months into becoming Catholic wants the ten commandments and
+the seven capital sins**, and `audiences.md` §5 is explicit that they arrive
+without the vocabulary to ask for either by address. The cheap way to give them
+is two dozen names as interface strings: our words for the Church's list, in
+thirty-seven dictionaries, drifting, and with nothing behind them but this
+site's say-so.
+
+**The Holy See publishes the list.** The Compendium of the Catechism ends with
+an appendix whose Part B is "Formulas of Catholic Doctrine" — the two
+commandments of love, the Golden Rule, the Beatitudes, the theological and
+cardinal virtues, the gifts and fruits of the Holy Spirit, the precepts of the
+Church, the two sets of works of mercy, the capital sins and the last things —
+and prints the Decalogue as a three-column table before question 434, its third
+column the numbered catechetical formula a catechism class learns. All of it was
+already in `raw/`, in ten languages, deferred since the day the Compendium was
+first parsed on the ground that it was "not prayers". `ccc/compendium.py` reads
+it now; `docs/corpus-schema.md` has the shape and `pipeline/CLAUDE.md` the
+parsing rules.
+
+**So the section costs two keys and quotes everything else.** The heading names
+the ten commandments, because that is what a reader arrives looking for and no
+edition's own label for them will be recognised — the English calls them "A
+Traditional Catechetical Formula". The lede says whose the words are, in the
+same breath as what the list is, which is the same disclosure `/quaestiones`
+makes at length on its own page: a page printing the seven capital sins with no
+word about where they come from reads as the site's own catechism.
+
+**Nothing in the section is named, ordered or selected by the site**, because
+nothing can be. The editions disagree about the ORDER — Italian prints the
+precepts of the Church and the corporal works of mercy before the theological
+virtues, where the other nine print them after — so `formulas.json` carries no
+key at all, and the page renders the headings it is given in the order it is
+given them. There is no formula this page can be found naming, and no formula it
+can be found leaving out.
+
+**It reports, so it sits above the picture.** The hinge divides the sections
+that LIST from the two that ADVISE, and a printed list of the Church's own
+formulas is on the listing side of that line.
+
+**Three shapes, and the source chooses.** A numbered list where the edition
+numbered it, the numerals redrawn because the parse strips them; a plain list
+where the edition set each item apart without numbering it (Slovenian's
+`<ol><li>`, Hungarian's table cells); and a block of printed lines where the
+source marks no item boundary at all. The Beatitudes are numbered in no edition,
+and nine lines of "Blessed are…" are a passage rather than a list — reading them
+as one would be this page deciding where a beatitude ends, which is exactly what
+it has nothing to decide with.
+
+**A reader whose edition has none gets no section and no sentence.** Four of the
+fourteen editions are PDFs whose appendix nothing has read, so a Russian reader
+sees the page without this section — which is also what a failed fetch gets, and
+deliberately. `/bibliotheca/census` explains its own absence because that page is
+nothing without its numbers; this is one section of a page that is whole without
+it, and a line apologising for it would be the guide explaining its own pipeline
+to the reader it was written for.
 
 ## The guide to the chrome is a sheet, and it answers for the page it opens on
 

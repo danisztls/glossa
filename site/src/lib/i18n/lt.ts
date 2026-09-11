@@ -81,7 +81,7 @@ export const lt: Dictionary = {
 		'Visas rinkinys, lentyna po lentynos — su tuo, kur baigėte skaityti, ir tuo, ką pažymėjote.',
 	'schola.landing.title': 'Nuo ko pradėti',
 	'schola.landing.tagline':
-		'Trumpas vadovas po tai, kas čia yra: kas yra kiekviena iš šių knygų, kaip užrašoma nuoroda į ją, kaip rasti vietą, ir skaitymo tvarkos, kurias Bažnyčia yra pasiūliusi.',
+		'Trumpas vadovas po tai, kas čia yra: kas yra kiekviena iš šių knygų, dešimt Dievo įsakymų ir kiti sąrašai, kuriuos Bažnyčia nori, kad žinotų kiekvienas katalikas, ir nuo ko pradėti skaityti.',
 	'schola.start.heading': 'Ar katalikybė jums nauja?',
 	'schola.start.body': 'Geriausia pradžia — ',
 	'schola.start.bodyAfter':
@@ -116,41 +116,37 @@ export const lt: Dictionary = {
 		'Ne pasakojimas: šimtas penkiasdešimt maldų ir giesmių. Skaitykite po vieną, bet kokia tvarka. Bažnyčia jas tebekalba kasdien.',
 	'schola.bible.bothWays':
 		'Atpažinsite dalykus, ir tai yra esmė, o ne sutapimas. Bažnyčia senesnes knygas skaito Kristaus šviesoje, o naujesnes — to, kas buvo anksčiau, šviesoje: kiekviena pusė aiškina kitą, ir todėl nė viena neskaitoma viena.',
-	'schola.books.heading': 'Kas čia yra ir kaip tai nurodoma',
+	'schola.books.heading': 'Kas čia yra',
 	'schola.books.lede':
-		'Kiekviena iš jų yra kitokios rūšies knyga, ir į kiekvieną nurodoma savu skaičiumi. Pavyzdžiai rodo formą: įrašykite panašų į paieškos langelį ir atsidursite prie vietos.',
-	'schola.cite.label': 'Nurodoma',
+		'Kiekviena iš jų yra kitokios rūšies knyga, ir po ja esanti eilutė sako, kokios. Atverkite paieškos langelį puslapio viršuje, kad pamatytumėte, kaip į kiekvieną nurodoma, ir kad patektumėte tiesiai prie vietos.',
 	'schola.what.scripture':
 		'Šventasis Raštas, kaip jį priima Bažnyčia, abiejuose Testamentuose. Visa kita čia skaitoma jo šviesoje.',
-	'schola.cite.scripture':
-		'knyga, skyrius ir eilutė, tais trumpiniais, kuriuos spausdina jūsų leidimas',
 	'schola.what.catechism':
 		'Santrauka to, kuo tiki Katalikų Bažnyčia, viename tome. Pats jis nėra šaltinis: jis sutelkia Šventąjį Raštą, Tėvus, liturgiją ir Bažnyčios mokymą, ir kiekviena pastraipa nurodo, iš kur tai, ką ji teigia.',
-	'schola.cite.catechism':
-		'pagal pastraipos numerį, einantį be pertrūkio nuo pirmo puslapio iki paskutinio',
 	'schola.what.compendium':
 		'Tas pats mokymas, išdėstytas klausimais ir atsakymais, maždaug dešimtadaliu apimties.',
-	'schola.cite.compendium': 'pagal klausimo numerį',
 	'schola.what.magisterium':
 		'Tai, ką popiežiai ir susirinkimai iš tikrųjų parašė — enciklikos, konstitucijos, dekretai, deklaracijos — kiekvienas skirtas tam tikrai akimirkai ir tam tikram klausimui. Kiekvienas žinomas pagal savo pirmuosius lotyniškus žodžius.',
-	'schola.cite.magisterium': 'pagal dokumento pavadinimą, paskui skirsnio numerį jame',
 	'schola.what.social':
 		'Bažnyčios mokymas apie darbą, nuosavybę, šeimą, politiką ir taiką, surinktas iš tų dokumentų į vieną knygą.',
-	'schola.cite.social': 'pagal pastraipos numerį, po ta santrumpa, kuria veikalas vadina pats save',
 	'schola.what.law': 'Teisė, o ne mokymas. Ji sako, ko Bažnyčia reikalauja, ir yra keičiama.',
-	'schola.cite.law': 'pagal kanoną — taip vadinami jos sunumeruoti vienetai',
 	'schola.what.doctors':
 		'Teologai, kuriuos Bažnyčia paskelbė mokytojais. Tai neturi jokios oficialios galios, koks didis bebūtų autorius.',
-	'schola.cite.doctors': 'pagal dalį, paskui klausimą — pačios Sumos skirstymą',
 	'schola.what.prayers': 'Žodžiai, kuriais meldžiasi Bažnyčia, su lotyniškais greta.',
-	'schola.cite.prayers': 'pagal pavadinimą; nėra numerių, kuriuos būtų galima cituoti',
 	'schola.places.heading': 'Ne tekstai, o šios svetainės vietos',
 	'schola.what.library':
 		'Visi svetainės veikalai viename sąraše, sugrupuoti pagal dalyką, o ne pagal rūšį.',
+	'schola.what.questions':
+		'Įėjimas tam, kas turi klausimą, bet ne nuorodą. Kiekvienas jų surenka ištraukas, atsakančias į jį — pirmiausia iš Katekizmo — ir kiekvienas jų žodis yra pačios Bažnyčios.',
 	'schola.what.calendar':
 		'Liturginė diena — laikas, spalva ir kas minimas — tos šalies, kurios kalendoriaus laikotės.',
 	'schola.what.bookmarks':
 		'Vietos, kurias pažymėjote, ir ties kuo paskutinį kartą sustojote kiekviename veikale. Abu dalykai lieka šioje naršyklėje ir niekur nesiunčiami.',
+	'schola.what.census':
+		'Ką ši biblioteka turi ir kaip toli ji siekia — kiek veikalų, kokiomis kalbomis, ir kiek iš kiekvieno jūsų pačių kalbos skaitytojas iš tikrųjų gali pasiekti.',
+	'schola.formulas.heading': 'Dešimt Dievo įsakymų, ir kas dar mokoma atmintinai',
+	'schola.formulas.lede':
+		'Tai ne šios svetainės santrauka: tai sąrašai, kuriuos pati Bažnyčia spausdina Santraukos gale, skirti kiekvienam, kas mokomas tikėjimo. Kiekvienas žemiau esantis žodis pažodžiui cituojamas iš jūsų paties leidimo.',
 	'ccc.noCounterpart': 'Kitame veikale atitikmens nėra.',
 	'jumpbox.placeholder': 'Pereiti prie… (pvz. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Ieškoti',

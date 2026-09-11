@@ -82,7 +82,7 @@ export const hr: Dictionary = {
 		'Cijeli korpus, polica po polica — s mjestom na kojem ste stali i onim što ste označili.',
 	'schola.landing.title': 'Odakle početi',
 	'schola.landing.tagline':
-		'Kratak vodič kroz ono što je ovdje: što je svaka od ovih knjiga, kako se piše navod za nju, kako naći mjesto, i redoslijedi čitanja koje je Crkva predložila.',
+		'Kratak vodič kroz ono što je ovdje: što je svaka od ovih knjiga, deset zapovijedi i drugi popisi koje Crkva traži da katolik zna, i odakle početi čitati.',
 	'schola.start.heading': 'Novi u katoličanstvu?',
 	'schola.start.body': 'Najbolji je početak ',
 	'schola.start.bodyAfter':
@@ -116,38 +116,36 @@ export const hr: Dictionary = {
 		'Nije pripovijest: sto pedeset molitava i pjesama. Čitajte po jedan, bilo kojim redom. Crkva ih i danas moli svaki dan.',
 	'schola.bible.bothWays':
 		'Prepoznavat ćete stvari, i u tome je smisao, a nije slučajnost. Crkva čita starije knjige u svjetlu Kristovu a novije u svjetlu onoga što je bilo prije — svaka polovica objašnjava drugu, i zato se nijedna ne čita sama.',
-	'schola.books.heading': 'Što je ovdje i kako se određuje',
+	'schola.books.heading': 'Što je ovdje',
 	'schola.books.lede':
-		'Svaka je od ovih knjiga druge vrste, i na svaku se upućuje vlastitim brojem. Primjeri pokazuju oblik: upišite takav u okvir za traženje i stižete na mjesto.',
-	'schola.cite.label': 'Određuje se',
+		'Svaka je od ovih knjiga druge vrste, i redak ispod nje kaže koje. Otvorite okvir za traženje na vrhu stranice da vidite kako se na svaku upućuje, i da odete izravno na mjesto.',
 	'schola.what.scripture':
 		'Pismo kako ga Crkva prima, u oba Zavjeta. Sve ostalo ovdje čita se u njegovu svjetlu.',
-	'schola.cite.scripture': 'knjiga, poglavlje i redak, u kraticama koje tiska vaše izdanje',
 	'schola.what.catechism':
 		'Sažetak onoga u što Katolička Crkva vjeruje, u jednom svesku. Sam nije vrelo: prikuplja Pismo, oce, bogoslužje i nauk Crkve, i svaki broj kaže odakle dolazi ono što tvrdi.',
-	'schola.cite.catechism': 'po broju, koji teče neprekinuto od prve stranice do posljednje',
 	'schola.what.compendium':
 		'Isti nauk izložen u pitanjima i odgovorima, otprilike u desetini duljine.',
-	'schola.cite.compendium': 'po broju pitanja',
 	'schola.what.magisterium':
 		'Ono što su pape i sabori doista napisali — enciklike, konstitucije, dekreti, deklaracije — svaki upravljen određenom trenutku i određenom pitanju. Svaki je poznat po svojim početnim latinskim riječima.',
-	'schola.cite.magisterium': 'po imenu dokumenta, zatim broju odjeljka u njemu',
 	'schola.what.social':
 		'Nauk Crkve o radu, vlasništvu, obitelji, politici i miru, prikupljen iz tih dokumenata u jednu knjigu.',
-	'schola.cite.social': 'po broju, pod kraticom kojom se djelo samo označuje',
 	'schola.what.law': 'Pravo a ne nauk. Kaže što Crkva traži, i mijenja se.',
-	'schola.cite.law': 'po kanonu, kako se zovu njegove brojčane jedinice',
 	'schola.what.doctors':
 		'Bogoslovi koje je Crkva proglasila naučiteljima. Ne nosi nikakvu službenu vlast, koliko god velik bio pisac.',
-	'schola.cite.doctors': 'po dijelu, zatim pitanju — vlastitim podjelama Sume',
 	'schola.what.prayers': 'Riječi kojima se Crkva moli, s latinskim uz njih.',
-	'schola.cite.prayers': 'po imenu; nema brojeva za navođenje',
 	'schola.places.heading': 'Ne tekstovi, nego mjesta na ovoj stranici',
 	'schola.what.library': 'Sva djela stranice u jednom popisu, skupljena po predmetu a ne po vrsti.',
+	'schola.what.questions':
+		'Ulaz za onoga tko ima pitanje, a ne uputu. Svaki od njih okuplja odlomke koji na njega odgovaraju — najprije Katekizam — i svaka je njihova riječ Crkvina vlastita.',
 	'schola.what.calendar':
 		'Bogoslužni dan — vrijeme, boja i tko se slavi — za zemlju čiji kalendar slijedite.',
 	'schola.what.bookmarks':
 		'Mjesta koja ste označili, i gdje ste posljednji put stali u svakom djelu. Oboje ostaje u ovom pregledniku i ne šalje se nikamo.',
+	'schola.what.census':
+		'Što ova knjižnica sadrži i dokle seže — koliko djela, na kojim jezicima, i koliko od svakoga čitatelj vašeg jezika doista može doseći.',
+	'schola.formulas.heading': 'Deset zapovijedi, i što se još uči napamet',
+	'schola.formulas.lede':
+		'Nije sažetak ove stranice: ovo su popisi koje sama Crkva tiska na kraju Kompendija, za svakoga tko uči vjeru. Svaka riječ ispod doslovno je navedena iz vašeg vlastitog izdanja toga djela.',
 	'ccc.noCounterpart': 'Nema odgovarajućeg mjesta u drugom djelu',
 	'jumpbox.placeholder': 'Idi na… (npr. jn 3,16, ccc 1234)',
 	'jumpbox.short': 'Traži',

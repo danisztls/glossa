@@ -55,7 +55,7 @@ export const ro: Dictionary = {
 		'Întregul corpus, raft cu raft — împreună cu locul unde ați rămas și cu ce ați marcat.',
 	'schola.landing.title': 'De unde să începeți',
 	'schola.landing.tagline':
-		'Un ghid scurt al celor de aici: ce este fiecare dintre aceste cărți, cum se scrie o trimitere la ea, cum se găsește un pasaj, și ordini de lectură pe care Biserica le-a propus.',
+		'Un ghid scurt al celor de aici: ce este fiecare dintre aceste cărți, cele zece porunci și celelalte liste pe care Biserica le cere cunoscute de un catolic, și de unde să începeți lectura.',
 	'schola.start.heading': 'Nou în catolicism?',
 	'schola.start.body': 'Începeți cu ',
 	'schola.start.bodyAfter':
@@ -90,42 +90,37 @@ export const ro: Dictionary = {
 		'Nu o povestire: o sută cincizeci de rugăciuni și cântări. Citiți câte una, în orice ordine. Biserica le rostește și astăzi în fiecare zi.',
 	'schola.bible.bothWays':
 		'Veți recunoaște lucruri, iar acesta este rostul, nu o întâmplare. Biserica citește cărțile mai vechi în lumina lui Cristos și pe cele mai noi în lumina a ceea ce a fost înainte — fiecare jumătate o lămurește pe cealaltă, și de aceea niciuna nu se citește singură.',
-	'schola.books.heading': 'Ce se află aici și cum se identifică',
+	'schola.books.heading': 'Ce se află aici',
 	'schola.books.lede':
-		'Fiecare dintre acestea este un alt fel de carte, și la fiecare se trimite printr-un număr propriu. Exemplele arată forma: scrieți unul asemenea în caseta de căutare și ajungeți la pasaj.',
-	'schola.cite.label': 'Se identifică',
+		'Fiecare dintre acestea este un alt fel de carte, și rândul de sub ea spune care anume. Deschideți caseta de căutare din partea de sus a paginii ca să vedeți cum se trimite la fiecare, și ca să ajungeți direct la un pasaj.',
 	'schola.what.scripture':
 		'Scripturile așa cum le primește Biserica, în ambele Testamente. Tot restul de aici se citește în lumina lor.',
-	'schola.cite.scripture':
-		'carte, capitol și verset, în prescurtările pe care le tipărește ediția dumneavoastră',
 	'schola.what.catechism':
 		'Un rezumat a ceea ce crede Biserica Catolică, într-un singur volum. El însuși nu este izvor: adună Scriptura, Părinții, liturgia și învățătura Bisericii, și fiecare paragraf spune de unde vine ceea ce afirmă.',
-	'schola.cite.catechism':
-		'după numărul paragrafului, curgând neîntrerupt de la prima pagină la ultima',
 	'schola.what.compendium':
 		'Aceeași învățătură așezată în întrebări și răspunsuri, la cam a zecea parte din întindere.',
-	'schola.cite.compendium': 'după numărul întrebării',
 	'schola.what.magisterium':
 		'Ceea ce papii și conciliile au scris cu adevărat — enciclice, constituții, decrete, declarații — fiecare adresat unui moment anume și unei chestiuni anume. Fiecare este cunoscut după cuvintele lui de început în latină.',
-	'schola.cite.magisterium': 'după numele documentului, apoi un număr de secțiune dinăuntrul lui',
 	'schola.what.social':
 		'Învățătura Bisericii despre muncă, proprietate, familie, politică și pace, strânsă din acele documente într-o singură carte.',
-	'schola.cite.social':
-		'după numărul paragrafului, sub sigla pe care opera o folosește pentru sine',
 	'schola.what.law': 'Drept, nu doctrină. Spune ce cere Biserica, și se amendează.',
-	'schola.cite.law': 'după canon, cum se numesc unitățile lui numerotate',
 	'schola.what.doctors':
 		'Teologii pe care Biserica i-a numit Învățători. Nu poartă nicio autoritate oficială, oricât de mare ar fi autorul.',
-	'schola.cite.doctors': 'după parte, apoi chestiune — diviziunile proprii ale Summei',
 	'schola.what.prayers': 'Cuvintele cu care se roagă Biserica, având latina alături.',
-	'schola.cite.prayers': 'după nume; nu sunt numere de citat',
 	'schola.places.heading': 'Nu texte, ci locuri de pe acest sit',
 	'schola.what.library':
 		'Toate operele sitului într-o singură listă, grupate după subiect, nu după fel.',
+	'schola.what.questions':
+		'O cale de intrare pentru cine are o întrebare și nicio trimitere. Fiecare adună pasajele care îi răspund — mai întâi Catehismul — și fiecare cuvânt al lor este chiar al Bisericii.',
 	'schola.what.calendar':
 		'Ziua liturgică — timpul, culoarea și cine este prăznuit — pentru țara al cărei calendar îl urmați.',
 	'schola.what.bookmarks':
 		'Pasajele pe care le-ați însemnat, și unde ați rămas ultima dată în fiecare operă. Amândouă se păstrează în acest navigator și nu se trimit nicăieri.',
+	'schola.what.census':
+		'Ce deține această bibliotecă și cât de departe ajunge — câte opere, în ce limbi, și cât din fiecare poate ajunge cu adevărat un cititor al limbii dumneavoastră.',
+	'schola.formulas.heading': 'Cele zece porunci, și ce se mai învață pe de rost',
+	'schola.formulas.lede':
+		'Nu este un rezumat al acestui sit: acestea sunt listele pe care Biserica însăși le tipărește la sfârșitul Compendiului, pentru oricine este învățat în credință. Fiecare cuvânt de mai jos este citat din propria dumneavoastră ediție a lui.',
 	'ccc.noCounterpart': 'Fără corespondent în cealaltă lucrare',
 	'jumpbox.placeholder': 'Salt la… (ex. ioan 3,16, ccc 1234)',
 	'jumpbox.short': 'Caută',
