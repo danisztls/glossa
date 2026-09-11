@@ -3,7 +3,7 @@
  *
  * ## Why this is a module and not a list on a page
  *
- * Four surfaces teach this notation, and by 2026-09-10 three of them held
+ * Four surfaces taught this notation, and by 2026-09-10 three of them held
  * their own copy of it: `/schola`'s catalogue column, the home page's row of
  * three chips, and the shortcut sheet's typed/cites pairs (`help.ts`). The
  * jump box's own legend was about to be the fourth, which is where a table
@@ -17,9 +17,13 @@
  * a verse follows a colon or a comma. This module is the rest of the table
  * arriving at the same conclusion.
  *
- * `help.ts` keeps its own pairs deliberately. It teaches a different lesson —
- * that the box reads the work's NAME and answers in its siglum — so its left
- * column is `Catechism 101` where everything here is `CCC 101`.
+ * THE FOURTH COPY IS GONE RATHER THAN SHARED. `help.ts`'s pairs taught a
+ * different lesson — that the box reads a work's NAME and answers in its
+ * siglum, `Catechism 101` against this table's `CCC 101` — which was a fair
+ * reason to keep them separate and no reason to keep them at all: the help
+ * sheet's whole jump-box section went on 2026-09-10, the box's own panel
+ * teaching the same notation with the field the reader is about to type in
+ * directly above it. Three surfaces now, all of them this table.
  *
  * ## The numbers are representative and the rows are inert
  *
