@@ -41,14 +41,19 @@ export interface HighlightSegment {
 
 export interface HighlightOpts {
 	/**
-	 * Fall back to a subsequence when nothing matches literally.
+	 * Fall back to a subsequence, or to the word a typo was aimed at, for the
+	 * tokens nothing matched literally.
 	 *
-	 * For the rows the LOOSE matcher put on the list, and only useful there:
+	 * For the rows a LOOSE matcher put on the list, and only useful there:
 	 * "capcity" appears nowhere in "Man's Capacity for God", and marking
 	 * `**cap**a**city**` is the whole of the explanation for a row that would
-	 * otherwise look like it arrived by accident. It runs only after the
-	 * literal tiers find nothing, so it can never blur a mark something
-	 * actually read.
+	 * otherwise look like it arrived by accident. Per token and only where the
+	 * literal tiers read nothing, so it can never blur a mark something
+	 * actually read — and so `rerum novarm` still marks the word that was
+	 * typed correctly as the evidence it is.
+	 *
+	 * Every surface that filters with `filterByQuery` owes its rows this, since
+	 * its second pass can put a row on a list for a reason only this can draw.
 	 */
 	loose?: boolean;
 }
@@ -58,11 +63,24 @@ export interface HighlightOpts {
  *  measured against the real Magisterium corpus. */
 const MIN_INTERIOR = 4;
 
-/** And below three, a subsequence reaches everything. `suggest.ts`'s
- *  `MIN_FUZZY_LENGTH`, which is what put the loose rows on the list to begin
- *  with; a highlighter that fired below it would mark rows fuzzy matching had
- *  already declined to produce. */
-const MIN_LOOSE = 3;
+/**
+ * And a loose reading owes the same four characters an interior literal hit
+ * owes — the same number as `MIN_INTERIOR`, for the same measurement.
+ *
+ * IT IS `MIN_INTERIOR`'S NUMBER BECAUSE A FALLBACK LOOSER THAN THE TIER IT
+ * FALLS BACK FROM IS NOT A FALLBACK, IT IS THE GATE BEING REMOVED. `rav` sits
+ * contiguously inside "Ingravescentibus" and `occurrences` refuses it at three
+ * characters; a loose pass that then walked the same three letters would have
+ * handed back through the back door exactly what was measured to be kept out.
+ *
+ * Three was enough while the loose pass only ever explained a row the fuzzy
+ * RANKER had already chosen, where reaching too far costs a stray mark on a
+ * row that was going to be there anyway. As a filter it costs the row itself,
+ * and three characters measurably reach: over the Magisterium's 434 documents
+ * `man` walked "**Ma**so**n**ic Associations" and `leo` walked "**Le**ban**o**n",
+ * a third of the list arriving for no reason a reader could see.
+ */
+const MIN_LOOSE = 4;
 
 /**
  * `suggest.ts`'s `fold`, computed per code point so the result can be walked
@@ -214,11 +232,11 @@ function explains(ranges: Range[]): boolean {
  * Deliberately stricter than `suggest.ts`'s `maxBookEdits`, which allows two
  * edits above six characters: that bound ranges over 258 book forms chosen to
  * be told apart, this one over every word of every label, "and" and "the"
- * included. One edit, and nothing below four characters, where a single edit
+ * included. One edit, and nothing below `MIN_LOOSE`, where a single edit
  * reaches most of the short words there are.
  */
 function nearEnough(word: string, needle: string): boolean {
-	if (needle.length <= MIN_LOOSE) return false;
+	if (needle.length < MIN_LOOSE) return false;
 	return boundedEdit(word, needle, 1) !== null;
 }
 
@@ -244,6 +262,42 @@ function nearWords(folded: string, needle: string): Range[] {
 		if (nearEnough(match[0], needle)) found.push([match.index, match.index + match[0].length]);
 	}
 	return found;
+}
+
+/**
+ * The loose tier, as RANGES rather than as a verdict.
+ *
+ * ONE FUNCTION, SO THE MATCHER AND THE MARKER CANNOT DISAGREE — the rule
+ * `matchesQuery` already states for the literal tiers, carried into the tier
+ * that admits a misspelling. A row joins a filtered list loosely exactly when
+ * there is something on it to draw, which is the whole of what keeps a
+ * typo-tolerant search from answering with rows that look like accidents.
+ *
+ * PER FIELD, BECAUSE A SUBSEQUENCE WALKS OVER A SEAM THAT `indexOf` CANNOT.
+ * The haystacks are newline-joined so that no token runs from the end of one
+ * field into the start of the next, and a literal search gets that for free —
+ * a token holding no newline cannot match across one. A subsequence steps over
+ * anything, and `xiiiencyclical` is a dense walk of `Leo XIII\nEncyclical`.
+ * Splitting first also hands `explains` the right denominator: density
+ * measured against one title, not against a title with a description after it.
+ */
+function looseOccurrences(folded: string, token: string): Range[] {
+	if (token.length < MIN_LOOSE) return [];
+	const found: Range[] = [];
+	let at = 0;
+	for (const field of folded.split('\n')) {
+		for (const [start, end] of looseInField(field, token)) found.push([start + at, end + at]);
+		at += field.length + 1;
+	}
+	return found;
+}
+
+/** The subsequence first, because it marks the letters the reader actually
+ *  typed. `nearWords` answers the two cases it cannot: there is no subsequence
+ *  to walk (a transposition), or the one there is explains nothing. */
+function looseInField(folded: string, token: string): Range[] {
+	const walked = subsequence(folded, token);
+	return explains(walked) ? walked : nearWords(folded, token);
 }
 
 function merge(ranges: Range[]): Range[] {
@@ -277,22 +331,23 @@ export function highlight(
 	const tokens = needle.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
 	if (tokens.length === 0) return plain;
 
+	// PER TOKEN, AND ONLY WHERE THE LITERAL TIERS READ NOTHING. A token that was
+	// read literally has already said why the row is here and a loose pass over
+	// it could only blur that; a token that was not is the half of the query
+	// still owed an explanation. `leo labr` marks `Leo` for the evidence it is
+	// and `lab`our` for the guess it is, where the all-or-nothing pass this
+	// replaced marked the first and left the second bare — which is the shape a
+	// reader reads as "it found Leo and ignored the rest of what I typed".
+	//
+	// The query's own spacing still washes out where it should: `lumgen` is one
+	// token and walks `Lumen Gentium` as a subsequence, `lum gen` is two and
+	// each is read on its own, and the spans they mark are the same letters.
 	let found: Range[] = [];
-	for (const token of tokens) found = found.concat(occurrences(folded, token));
-
-	if (found.length === 0 && opts.loose) {
-		// The loose passes ignore the query's own spacing: a reader typing
-		// "lum gen" and a reader typing "lumgen" mean the same thing, and the
-		// spans they mark are letters either way.
-		const letters = tokens.join('');
-		if (letters.length >= MIN_LOOSE) {
-			const walked = subsequence(folded, letters);
-			// The subsequence first, because it marks the letters the reader
-			// actually typed. `nearWords` answers the two cases it cannot:
-			// there is no subsequence to walk (a transposition), or the one
-			// there is explains nothing (`explains`).
-			found = explains(walked) ? walked : nearWords(folded, letters);
-		}
+	for (const token of tokens) {
+		const literal = occurrences(folded, token);
+		found = found.concat(
+			literal.length > 0 || !opts.loose ? literal : looseOccurrences(folded, token)
+		);
 	}
 
 	if (found.length === 0) return plain;
@@ -328,15 +383,75 @@ export function highlight(
  * into a search box are a narrowing, not a widening — "leo labour" means both.
  *
  * An empty query matches everything, so a caller can apply it unconditionally.
- * The `loose` subsequence pass is deliberately NOT consulted: it is a last
- * resort for explaining a row the fuzzy ranker already chose, and as a filter
- * over 272 documents it would match nearly all of them.
+ * The loose tier is deliberately not consulted here — see `looselyMatches`,
+ * and `filterByQuery`, which is what most callers actually want.
  */
 export function matchesQuery(text: string, query: string): boolean {
-	const tokens = foldWithMap(query)
-		.folded.split(/[^\p{L}\p{N}]+/u)
-		.filter(Boolean);
+	const tokens = tokensOf(query);
 	if (tokens.length === 0) return true;
 	const { folded } = foldWithMap(text);
 	return tokens.every((token) => occurrences(folded, token).length > 0);
+}
+
+/**
+ * The same question, asked of a reader who cannot spell the answer.
+ *
+ * Every token again, each read literally OR loosely — so `rerum novarm` is
+ * carried by the word that was typed correctly and the word that was not,
+ * which is the ordinary shape of a misspelled query. A token read literally is
+ * never re-read loosely: it has already answered.
+ *
+ * THIS IS A FALLBACK AND NOT A TIER TO MIX IN, and `filterByQuery` is where
+ * that is enforced rather than merely intended. Measured over the
+ * Magisterium's 619 document editions, admitting loose rows ALONGSIDE literal
+ * ones widened the 400 commonest words of the corpus by 35% — `them` reaching
+ * 460 rows through "the m-", `form` reaching 383 through "from" — and no floor
+ * on the token length separated that from the repairs: at eight characters the
+ * noise was still 3% and two thirds of the repairs were gone. The mixing is
+ * what is wrong, not the threshold. A guess is worth a great deal to a reader
+ * looking at an empty page and nothing at all to one already looking at rows.
+ */
+export function looselyMatches(text: string, query: string): boolean {
+	const { folded } = foldWithMap(text);
+	return tokensOf(query).every(
+		(token) => occurrences(folded, token).length > 0 || looseOccurrences(folded, token).length > 0
+	);
+}
+
+/**
+ * The rows a query keeps: what it reads literally, or — only if that is
+ * nothing at all — what it can be read to have meant.
+ *
+ * THE FALLBACK IS A DECISION ABOUT THE LIST AND CANNOT BE MADE ROW BY ROW,
+ * which is why this exists rather than a third predicate. `suggest.ts` states
+ * the rule for the jump box — fuzzy sits one band below every literal reading,
+ * adding rows and never reordering the ones something actually read — and the
+ * jump box can afford to mix the bands because it RANKS them. A filtered list
+ * has no ranking to demote a guess into: every row it keeps is equally a row.
+ * So "one band below" can only mean one thing here, and it is this.
+ *
+ * What it buys is that no reader whose spelling was right ever pays for the
+ * tolerance, and every reader whose spelling was wrong gets the rows they
+ * meant rather than an empty page. `textOf` per row rather than a prepared
+ * array of strings, because the second pass runs for a minority of queries and
+ * building every haystack twice for the majority would be the cost this avoids.
+ */
+export function filterByQuery<T>(
+	rows: readonly T[],
+	textOf: (row: T) => string,
+	query: string
+): T[] {
+	if (tokensOf(query).length === 0) return [...rows];
+	const literal = rows.filter((row) => matchesQuery(textOf(row), query));
+	if (literal.length > 0) return literal;
+	return rows.filter((row) => looselyMatches(textOf(row), query));
+}
+
+/** Letters and digits are the word, everything else is between words — the
+ *  split `highlight` makes on the query, folded, so a caller asking whether
+ *  the reader typed anything at all asks it exactly once. */
+function tokensOf(query: string): string[] {
+	return foldWithMap(query)
+		.folded.split(/[^\p{L}\p{N}]+/u)
+		.filter(Boolean);
 }

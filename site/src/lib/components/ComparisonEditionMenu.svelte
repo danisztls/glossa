@@ -36,7 +36,7 @@
 <script lang="ts">
 	import { baseLang, languageDisplayName } from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
-	import { matchesQuery } from '$lib/highlight';
+	import { filterByQuery } from '$lib/highlight';
 	import {
 		editionSearchText,
 		FILTER_MIN_ROWS,
@@ -92,8 +92,10 @@
 	const showFilter = $derived(rows.length >= FILTER_MIN_ROWS);
 	const visible = $derived(
 		showFilter && query.trim()
-			? rows.filter((edition) =>
-					matchesQuery(editionSearchText(edition, languageDisplayName(edition.language)), query)
+			? filterByQuery(
+					rows,
+					(edition) => editionSearchText(edition, languageDisplayName(edition.language)),
+					query
 				)
 			: rows
 	);

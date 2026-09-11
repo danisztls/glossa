@@ -58,7 +58,7 @@
 		languageDisplayName
 	} from '$lib/corpus';
 	import { copyrightLabel } from '$lib/copyright';
-	import { matchesQuery } from '$lib/highlight';
+	import { filterByQuery } from '$lib/highlight';
 	import {
 		editionSearchText,
 		FILTER_MIN_ROWS,
@@ -308,8 +308,10 @@
 	const showFilter = $derived(editions.length >= FILTER_MIN_ROWS);
 	const visible = $derived(
 		showFilter && query.trim()
-			? editions.filter((edition) =>
-					matchesQuery(editionSearchText(edition, languageDisplayName(edition.language)), query)
+			? filterByQuery(
+					editions,
+					(edition) => editionSearchText(edition, languageDisplayName(edition.language)),
+					query
 				)
 			: editions
 	);

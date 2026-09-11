@@ -2,7 +2,9 @@
 
 Four surfaces: the nav bar, the footer's index and `/bibliotheca`, which are for
 a reader who has no address; the jump box, which completes one; and
-`/documenta`, which filters a shelf. None of them is a full-text search.
+`/documenta`, which filters a shelf. None of them is a full-text search. Six
+boxes filter a list — `/documenta`, `/quaestiones`, and the language, edition,
+comparison and calendar menus — and the last section here is what they share.
 
 ## The bar is for the readers who use it least, so it is built for the others
 
@@ -1674,7 +1676,7 @@ measurements that decided the shape:
   literal black, since in dark mode `--color-text` is the light one.
 
 **The search box is what made the cut safe, and it is one function with the
-highlighter.** `matchesQuery` shares `highlight`'s fold and tiers, **so a
+highlighter.** `filterByQuery` shares `highlight`'s fold and tiers, **so a
 document is on the results list exactly when the highlighter has something to
 mark on it** — every row can show why it is a row, and a matcher written
 separately would drift invisibly in the direction that matters. It AND-s its
@@ -1686,3 +1688,71 @@ every reader downloads before first paint answers "does this address exist",
 and a tag answers neither existence nor address. Nor are they merged onto the
 manifests, which would write the same strings into all ten editions of Laudato
 Si'.
+
+## Every box takes a misspelling, and a guess is what a list falls back to
+
+The jump box has read a typo since it was built, through `fuzzysort` and a
+bounded edit distance over the book forms. The six boxes that FILTER a list had
+nothing: `/documenta`, `/quaestiones`, and the language, edition, comparison
+and calendar menus each answered a misspelled word with an empty page, which is
+the one answer a reader cannot tell from "this site does not have it".
+
+**A filtered list has no band to demote a guess into, so the guess can only be
+what it falls back to.** `suggest.ts`'s rule for the jump box — fuzzy sits one
+band below every literal reading, adding rows and never reordering the ones
+something actually read — rests on RANKING, and a filter has none: every row it
+keeps is equally a row. So `filterByQuery` reads the list literally, and only
+if that keeps nothing at all reads it again loosely.
+
+**Mixing the bands instead was measured and is what the rule exists to
+forbid.** Admitting loose rows alongside literal ones widened the 400
+commonest words of the Magisterium corpus by **35%** over 619 document
+editions — `them` reaching 460 rows through "the m-", `form` reaching 383
+through "from" — and no floor on the token length separated that from the
+repairs: at eight characters the noise was still 3% and two thirds of the
+repairs had gone with it. **The mixing is what is wrong, not the threshold.**
+
+**What the fallback is worth, measured the same way.** Over every title word of
+four characters or more, mistyped three ways (a dropped letter, an adjacent
+swap, a doubled letter), 2,240 queries reach the fallback at all and **98.6% of
+them recover the word that was meant**. The list they hand back has a median of
+2 rows and 11 at the 90th percentile; the widest are the ones where the
+correctly-spelled word is itself in 200 documents, which is the list that query
+should return.
+
+**A loose reading owes the same four characters an interior literal one owes.**
+`rav` sits contiguously inside "Ingravescentibus" and the literal tier refuses
+it below four; a loose pass that then walked the same three letters would be
+`MIN_INTERIOR` removed through the back door rather than a fallback. Three was
+enough while the loose pass only ever explained a row the ranker had already
+chosen — `man` walking "**Ma**so**n**ic Associations" costs a stray mark there
+and costs the row itself here.
+
+**A subsequence walks over a seam `indexOf` cannot, so it is confined to one
+field.** The haystacks are newline-joined precisely so no token runs out of a
+title into a description, and a literal search gets that for free; `explains`
+also wants its density measured against one field rather than a whole manifest.
+
+**The marker follows per token, because the matcher does.** `rerum novarm`
+marks the word that was typed correctly as the evidence it is and the word that
+was not as the guess it is; the all-or-nothing pass this replaced marked the
+first and left the second bare, which reads as a box that found one word and
+ignored the rest of what was typed.
+
+**The decision is taken once per list, never per row, and never per facet
+pool.** `/documenta` takes it against the whole corpus and then AND-s the
+result with its facets — otherwise narrowing to one author would make a word
+spelled correctly elsewhere start behaving like a typo — and `CalendarMenu`
+takes it over every cell before splitting them back into regions, or Europe
+could answer out of the literal band while Africa answered out of the loose one.
+
+**`/quaestiones` keeps its own literal tier and borrows the loose one.** That
+page matches a bare substring anywhere, where every other box gates an interior
+hit at four characters, and that difference is about its vocabulary. What a
+reader means by `eutanasia` is not about any vocabulary, so there is one
+implementation of it and `topic-search.ts` imports it.
+
+**`lemma.ts` is not a search box and keeps its refusal.** Fuzzy matching there
+was measured to recover zero further headwords, because what is left is not
+near-misses but notes that do not quote their verse — and the one failure that
+must never happen is marking a span the note never named.

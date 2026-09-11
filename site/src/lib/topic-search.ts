@@ -29,7 +29,18 @@
  * search over the corpus and is unbuilt. This is neither: it filters a list
  * already in memory, in the reader's own interface language, and its scope is
  * one page's own rows.
+ *
+ * THE LITERAL TIER IS THIS FILE'S OWN AND THE LOOSE TIER IS NOT. The substring
+ * rule below is argued on `matchesQuery` and is deliberately not
+ * `highlight.ts`'s; what a reader means by `eutanasia` when the dictionary
+ * says `euthanasia` is not a fact about this vocabulary at all, and a second
+ * implementation of "near enough" would drift from the first within a week
+ * while looking correct in both files. So the fallback is imported, and
+ * `matchingSlugs` applies it the one way it may be applied — to a list that
+ * kept nothing.
  */
+
+import { looselyMatches } from './highlight';
 
 /**
  * Case- and diacritic-insensitive form.
@@ -106,6 +117,11 @@ export function keywordsFrom(key: string, value: string): string {
 	return value === key ? '' : value;
 }
 
+/** The three strings a row is searched on, as one. */
+function haystack(row: TopicSearchRow): string {
+	return `${row.title} ${row.question} ${row.keywords}`;
+}
+
 /**
  * The slugs a query keeps, as a set the page can test membership against.
  *
@@ -113,11 +129,18 @@ export function keywordsFrom(key: string, value: string): string {
  * doorway-then-cluster and it has to decide, per group, whether the group
  * survives at all. Handing back a flat list would make the page rebuild that
  * structure from it.
+ *
+ * A MISSPELLING IS ANSWERED ONLY WHERE NOTHING ELSE WAS, which is the whole of
+ * why the second pass is here and not inside `matchesQuery`. A reader who
+ * types `eutanasia` or `cremacão` meant a topic that exists and would
+ * otherwise meet a page saying it does not; a reader whose words matched
+ * sixteen rows is owed those sixteen and not a seventeenth that merely looks
+ * like one of them. `highlight.ts`'s `looselyMatches` carries the measurement
+ * behind that rule.
  */
 export function matchingSlugs(rows: TopicSearchRow[], query: string): Set<string> {
-	return new Set(
-		rows
-			.filter((row) => matchesQuery(`${row.title} ${row.question} ${row.keywords}`, query))
-			.map((row) => row.slug)
-	);
+	const literal = rows.filter((row) => matchesQuery(haystack(row), query));
+	const kept =
+		literal.length > 0 ? literal : rows.filter((row) => looselyMatches(haystack(row), query));
+	return new Set(kept.map((row) => row.slug));
 }

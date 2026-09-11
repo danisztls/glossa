@@ -45,15 +45,24 @@
 	 * the description this box reads. A facet row is for BROWSING an axis; the
 	 * search is for everything else, and the two answer different questions.
 	 *
-	 * MATCHING AND MARKING ARE ONE FUNCTION, not two. `matchesQuery` and
+	 * MATCHING AND MARKING ARE ONE FUNCTION, not two. `filterByQuery` and
 	 * `highlight` in `$lib/highlight` share a fold and a set of tiers, so a row
 	 * is on this list exactly when there is something on it to mark. That is
 	 * what stops the list from showing a result with no visible reason for
 	 * being there, which is the failure mode a separately-written matcher
-	 * produces and which nothing but a reader ever notices.
+	 * produces and which nothing but a reader ever notices. It is why the
+	 * marker is asked for `loose` marks: the list can now hold rows that were
+	 * read loosely, and a row admitted by a guess has to be able to show it.
+	 *
+	 * A MISSPELLED QUERY IS ANSWERED, AND ONLY WHEN NOTHING ELSE IS. `rermnvrum`
+	 * reaches Rerum Novarum; `labour` goes on returning exactly the documents
+	 * that print the word, because it returns some. `$lib/highlight` argues the
+	 * rule and carries the measurement.
 	 *
 	 * THE HAYSTACK IS JOINED WITH NEWLINES rather than spaces, so no token can
-	 * run across the seam between two fields and match `xiiiencyclical`.
+	 * run across the seam between two fields and match `xiiiencyclical` — a
+	 * constraint the loose tier has to honour too, and does by walking one
+	 * field at a time.
 	 *
 	 * ## What is read reactively and what is fetched
 	 *
@@ -66,7 +75,7 @@
 	 */
 	import { listDocuments, loadDocumentTags, loadTranslatedDescriptions } from '$lib/corpus';
 	import { preferredDescription } from '$lib/document-description';
-	import { highlight, matchesQuery } from '$lib/highlight';
+	import { filterByQuery, highlight } from '$lib/highlight';
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
 	import DocumentSearch from '$lib/components/DocumentSearch.svelte';
 	import { content } from '$lib/content.svelte';
@@ -248,11 +257,24 @@
 		selectedKinds.length === 0 ||
 		selectedKinds.includes(documentKindKey(row.manifest.document_kind));
 	const byTag = (row: Row) => selectedTags.every((tag) => row.tagKeys.includes(tag));
-	/* The fourth axis. `matchesQuery` returns true on an empty query, so this
-	   needs no branch of its own — and it is AND-ed with the facets like any
-	   other, because a reader who has typed a word and chosen an author means
-	   both. */
-	const bySearch = (row: Row) => matchesQuery(haystack(row), query);
+	/* The fourth axis, and the only one that is a SET rather than a predicate.
+
+	   `filterByQuery` decides, for the list as a whole, whether the query was
+	   read literally or had to be guessed at — a decision no per-row predicate
+	   can make, and one that has to be made ONCE. Taken per facet pool instead,
+	   the author counts could be answering out of the literal band while the
+	   kind counts answered out of the loose one, and the two numbers on screen
+	   would be describing different lists.
+
+	   IT IS TAKEN AGAINST THE WHOLE CORPUS, not against the facet selection.
+	   Otherwise narrowing to one author would make a word that is spelled
+	   correctly elsewhere start behaving like a typo, and the reader would see
+	   guesses appear as they clicked a facet that has nothing to do with
+	   spelling. An empty query keeps every row, so this needs no branch of its
+	   own — and it is AND-ed with the facets like any other, because a reader
+	   who has typed a word and chosen an author means both. */
+	const searched = $derived(new Set(filterByQuery(rows, haystack, query).map((row) => row.slug)));
+	const bySearch = (row: Row) => searched.has(row.slug);
 
 	const visible = $derived(
 		rows.filter((row) => byAuthor(row) && byKind(row) && byTag(row) && bySearch(row))
@@ -445,7 +467,9 @@
 			this across lines inserts a space before and after every mark and
 			the marked words drift apart from the words either side of them.
 		-->
-		{#snippet marked(text: string)}{#each highlight(text, query) as segment}{#if segment.hit}<mark
+		{#snippet marked(
+			text: string
+		)}{#each highlight(text, query, { loose: true }) as segment}{#if segment.hit}<mark
 						>{segment.text}</mark
 					>{:else}{segment.text}{/if}{/each}{/snippet}
 

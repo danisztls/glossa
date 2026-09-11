@@ -52,7 +52,7 @@
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { navigatorUiLangs, type UiLang } from '$lib/ui-langs';
 	import { listWorks } from '$lib/corpus';
-	import { matchesQuery } from '$lib/highlight';
+	import { filterByQuery } from '$lib/highlight';
 	import {
 		langWeights,
 		orderUiLangs,
@@ -100,7 +100,7 @@
 	// silently.
 	const visible = $derived(
 		query.trim()
-			? rows.filter((row) => matchesQuery(row.haystack, query))
+			? filterByQuery(rows, (row) => row.haystack, query)
 			: expanded
 				? rows
 				: rows.slice(0, ordered.primary.length)

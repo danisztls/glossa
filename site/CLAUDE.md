@@ -1083,16 +1083,31 @@ reverse-chronological list.
   thirty-four dictionaries). Lookup by `Object.hasOwn`; an unknown name gets no
   years rather than a guess.
 - **Matching and marking are one function**, in `src/lib/highlight.ts`:
-  `matchesQuery` and `highlight` share a fold and the same `occurrences` tiers,
+  `filterByQuery` and `highlight` share a fold and the same `occurrences` tiers,
   so a row is on the list exactly when the highlighter has something to draw on
-  it. `matchesQuery` ANDs tokens where `highlight` ORs them (filtering strict,
-  marking generous); a test pins the agreement. The search reads a document's
-  whole metadata, AND-ed with the facets.
-- **`loose` is the jump box's alone, and it marks by density or by distance.**
-  A subsequence explains a row only where the marks fill half the span they
-  cover (`dani` found four letters across thirty of a Summa title), and a
-  transposition is no subsequence at all, so a second pass marks the whole word
-  within one edit — `deniel` → "Daniel" (`site/docs/finding.md`).
+  it. Matching ANDs tokens where `highlight` ORs them (filtering strict, marking
+  generous); a test pins the agreement. The search reads a document's whole
+  metadata, AND-ed with the facets.
+- **Every box that filters a list takes a misspelling, and a guess is what a
+  list FALLS BACK to** — `filterByQuery`, used by `/documenta`, `/quaestiones`
+  and the four menus. Mixing loose rows in beside literal ones widened the 400
+  commonest words of the corpus by 35%, and no token-length floor separated
+  that from the repairs. A caller that filters row by row instead has silently
+  opted out (`site/docs/finding.md`).
+- **The fallback is decided once per LIST, not per row and not per pool.**
+  `/documenta` decides against the whole corpus and AND-s the result with its
+  facets; deciding inside a facet would make a word spelled correctly elsewhere
+  behave like a typo the moment a reader clicked an author.
+- **A loose reading owes the four characters an interior literal one owes.**
+  `rav` is contiguous inside "Ingravescentibus" and the literal tier refuses it,
+  so a three-letter subsequence would be `MIN_INTERIOR` removed by the back
+  door. Three was safe only while `loose` marked rows a RANKER had chosen.
+- **`loose` marks by density or by distance, per token.** A subsequence explains
+  a row only where the marks fill half the span they cover (`dani` found four
+  letters across thirty of a Summa title), and a transposition is no subsequence
+  at all, so a second pass marks the whole word within one edit — `deniel` →
+  "Daniel". A subsequence also walks over a field seam `indexOf` cannot, so it
+  is confined to one field (`site/docs/finding.md`).
 - **`site/document-tags.json` is the subject vocabulary and it is CLOSED**, in
   its own `vocabulary` array, keyed by document SLUG (a tag is about the
   document, not an edition — the one difference from `descriptions.json`).
@@ -3170,10 +3185,10 @@ blank page whose missing control was the language picker itself. It walks
 
 `src/lib/menu-filter.ts` holds everything that is not markup.
 
-- **Matching is `highlight.ts`'s `matchesQuery`, never a fresh one** — what it
-  buys here is the FOLD (`Čeština` reachable by `cestina`), and the third
-  surface it reads is `Intl.DisplayNames`, so an English reader finds German by
-  typing "German".
+- **Matching is `highlight.ts`'s `filterByQuery`, never a fresh one** — what it
+  buys here is the FOLD (`Čeština` reachable by `cestina`) and the misspelling
+  fallback (`portugese`, `brasil`), and the third surface it reads is
+  `Intl.DisplayNames`, so an English reader finds German by typing "German".
 - **The fold leads with `navigator.languages`, and corpus weight is only the
   filler.** Weight alone buried Korean under the Korean reader. `orderUiLangs`
   pins the reader's own languages in the browser's own order, plus their last

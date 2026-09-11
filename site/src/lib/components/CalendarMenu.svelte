@@ -100,7 +100,7 @@
 <script lang="ts">
 	import { bcp47, t } from '$lib/i18n.svelte';
 	import { keepInViewport } from '$lib/floating';
-	import { matchesQuery } from '$lib/highlight';
+	import { filterByQuery } from '$lib/highlight';
 	import {
 		ensureNationalCalendars,
 		residentRegions,
@@ -196,12 +196,31 @@
 			.filter((region) => region.cells.length > 0)
 	);
 
+	/* THE MATCH IS DECIDED OVER EVERY CELL AND THEN APPLIED REGION BY REGION,
+	   because `filterByQuery` falls back to a loose reading only when the
+	   literal one keeps nothing — and "nothing" is a fact about the panel, not
+	   about one region of it. Filtering each region on its own would ask the
+	   question eight times and let a region whose countries happen to miss the
+	   query answer out of the loose band while its neighbour answered out of
+	   the literal one: `franc` would list France under Europe and, beside it,
+	   whatever in Africa is one edit from the word. The code joins on a newline
+	   so no reading can run out of a country's name into its code. */
+	const kept = $derived(
+		new Set(
+			filterByQuery(
+				regions.flatMap((region) => region.cells),
+				(cell) => `${cell.name}\n${cell.code}`,
+				query
+			).map((cell) => cell.code)
+		)
+	);
+
 	const filtered = $derived(
 		query.trim()
 			? regions
 					.map((region) => ({
 						...region,
-						cells: region.cells.filter((cell) => matchesQuery(`${cell.name} ${cell.code}`, query))
+						cells: region.cells.filter((cell) => kept.has(cell.code))
 					}))
 					.filter((region) => region.cells.length > 0)
 			: regions

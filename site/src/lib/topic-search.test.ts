@@ -93,6 +93,33 @@ describe('matchingSlugs', () => {
 	it('leaves a row without keywords matching on its title and question', () => {
 		expect(matchingSlugs(rows, 'fasting')).toEqual(new Set(['ieiunium']));
 	});
+
+	/** The half of the audience this page exists for arrives holding words
+	 *  rather than an address, and a word half-remembered is a word half
+	 *  spelled. A page that answers `cremtion` with "no topics" looks exactly
+	 *  like a site that has nothing to say about it. */
+	it('answers a misspelling no row reads literally', () => {
+		expect(matchingSlugs(rows, 'cremtion')).toEqual(new Set(['crematio']));
+		expect(matchingSlugs(rows, 'confesion')).toEqual(new Set(['reditus']));
+		expect(matchingSlugs(rows, 'colombarium')).toEqual(new Set(['crematio']));
+	});
+
+	/** The band rule, which is where the tolerance is kept honest: a reader
+	 *  whose words matched rows is owed those rows and not a near-miss beside
+	 *  them. Both rows here answer `feasting` — one because it says the word,
+	 *  one because it is a single edit away — and only the first may. */
+	it('withholds the guess from a query that read something literally', () => {
+		const pair = [
+			{ slug: 'dominica', title: 'Feasting on the Lord’s Day', question: '', keywords: '' },
+			...rows
+		];
+		expect(matchingSlugs(pair, 'feasting')).toEqual(new Set(['dominica']));
+		expect(matchingSlugs(rows, 'feasting')).toEqual(new Set(['ieiunium']));
+	});
+
+	it('still answers nothing where a query means nothing', () => {
+		expect(matchingSlugs(rows, 'transubstantiation').size).toBe(0);
+	});
 });
 
 describe('keywordsFrom', () => {

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { highlight, matchesQuery, type HighlightSegment } from './highlight';
+import {
+	filterByQuery,
+	highlight,
+	looselyMatches,
+	matchesQuery,
+	type HighlightSegment
+} from './highlight';
 import { fold } from './suggest';
 
 /** The marked runs, in order — what a reader actually sees emphasized. */
@@ -112,15 +118,40 @@ describe('highlight', () => {
 			expect(spaced).toEqual(run);
 		});
 
-		it('never runs when a literal tier found something', () => {
+		it('never runs on a token a literal tier answered', () => {
 			// "gentium" is there literally, so the loose pass — which would also
 			// pick up the `l`, `u` and `m` of a query like "lumgen" — is not
-			// consulted at all.
+			// consulted for it.
 			expect(marks(highlight('Lumen Gentium', 'gentium', { loose: true }))).toEqual(['Gentium']);
 		});
 
-		it('needs three characters', () => {
+		/** Per token, so the half of a query that was typed correctly is marked
+		 *  for the evidence it is and the half that was not is still explained.
+		 *  A row whose marks stop at the first word reads as a row that ignored
+		 *  the rest of what was typed. */
+		it('runs on the tokens a literal tier did not answer, beside those it did', () => {
+			const text = 'Leo XIII\nOn the condition of labour';
+			expect(marks(highlight(text, 'leo labr', { loose: true }))).toEqual(['Leo', 'lab', 'r']);
+		});
+
+		/** The walk is greedy and leftmost, so it is the FIELD it runs in that
+		 *  keeps it honest: `labr` starting from the `l` of "Leo" strings four
+		 *  letters across thirty and explains nothing, and a haystack that did
+		 *  not separate its fields would lose the mark it should have had. */
+		it('walks one field at a time', () => {
+			expect(marks(highlight('Leo XIII on labour', 'labr', { loose: true }))).toEqual([]);
+			expect(marks(highlight('Leo XIII\non labour', 'labr', { loose: true }))).toEqual([
+				'lab',
+				'r'
+			]);
+		});
+
+		it('needs four characters, the number an interior literal hit needs', () => {
 			expect(marks(highlight('Lumen Gentium', 'lm', { loose: true }))).toEqual([]);
+			// `rav` sits contiguously inside the word and `occurrences` refuses
+			// it below four characters; a loose pass that walked the same three
+			// letters would be the gate removed rather than a fallback.
+			expect(marks(highlight('Ingravescentibus', 'rav', { loose: true }))).toEqual([]);
 		});
 
 		it('marks the word a transposition was aimed at, whole', () => {
@@ -244,5 +275,101 @@ describe('matchesQuery', () => {
 	it('declines a short token that only appears inside a word', () => {
 		expect(matchesQuery('Ingravescentibus', 'rav')).toBe(false);
 		expect(matchesQuery('Ingravescentibus', 'gravescent')).toBe(true);
+	});
+});
+
+describe('looselyMatches', () => {
+	const row = [
+		'Rerum Novarum',
+		'Leo XIII',
+		'Encyclical',
+		'On the condition of labor.',
+		'labour'
+	].join('\n');
+
+	it('reads a misspelling the literal tiers cannot', () => {
+		expect(matchesQuery(row, 'rermnvrum')).toBe(false);
+		expect(looselyMatches(row, 'rermnvrum')).toBe(true);
+	});
+
+	/** The ordinary shape of a mistyped query: one word right, one word wrong.
+	 *  A token read literally is never re-read loosely — it has answered. */
+	it('carries a query on the word that was typed correctly and the one that was not', () => {
+		expect(looselyMatches(row, 'rerum novarm')).toBe(true);
+		expect(looselyMatches(row, 'leo eucharst')).toBe(false);
+	});
+
+	it('reads a transposition, which no subsequence can', () => {
+		expect(looselyMatches('John Paul II', 'jonh')).toBe(true);
+	});
+
+	/** The seam rule the literal tier gets for free: `indexOf` cannot cross a
+	 *  newline, and a subsequence steps over anything, so the walk is confined
+	 *  to one field. */
+	it('does not walk across the newline that separates two fields', () => {
+		expect(looselyMatches('Leo XIII\nEncyclical', 'xiiiencyclical')).toBe(false);
+	});
+
+	it('needs four characters, the number an interior literal hit needs', () => {
+		expect(looselyMatches('Ingravescentibus', 'rav')).toBe(false);
+	});
+
+	// The property `matchesQuery` asserts for the literal tiers, owed by the
+	// loose one for the same reason: a row admitted by a guess has to be able
+	// to show the guess, or it reads as a result arriving for no reason.
+	it('agrees with highlight: a loose match always leaves something to mark', () => {
+		for (const query of ['rermnvrum', 'rerum novarm', 'condtion', 'novarum']) {
+			expect(looselyMatches(row, query), query).toBe(true);
+			expect(
+				highlight(row, query, { loose: true }).some((segment) => segment.hit),
+				query
+			).toBe(true);
+		}
+	});
+});
+
+describe('filterByQuery', () => {
+	const rows = [
+		'Rerum Novarum\nLeo XIII\nOn the condition of labor.',
+		'Laborem Exercens\nJohn Paul II\nOn human work.',
+		'Humanae Vitae\nPaul VI\nOn the regulation of birth.',
+		'Quadragesimo Anno\nPius XI\nOn the reconstruction of the social order, and on labour.'
+	];
+	const kept = (query: string) => filterByQuery(rows, (row) => row, query);
+
+	it('keeps every row for a query the reader has not typed yet', () => {
+		expect(kept('')).toHaveLength(rows.length);
+		expect(kept('   ')).toHaveLength(rows.length);
+	});
+
+	it('answers literally wherever a literal reading answers at all', () => {
+		expect(kept('labor')).toEqual([rows[0], rows[1]]);
+	});
+
+	/**
+	 * THE RULE THE WHOLE LOOSE TIER RESTS ON. `labour` reads two rows
+	 * literally, so the third — one edit away through "labor" — stays off the
+	 * list: a guess is worth everything to a reader looking at an empty page
+	 * and nothing to one already looking at rows. Mixing the bands instead
+	 * widened the 400 commonest words of the Magisterium corpus by 35%.
+	 */
+	it('does not mix a guess into a list that already has rows in it', () => {
+		expect(kept('labour')).toEqual([rows[3]]);
+		// And the row it withheld is one the loose tier really does reach, so
+		// the assertion above is about the band and not about the matcher.
+		expect(looselyMatches(rows[0], 'labour')).toBe(true);
+	});
+
+	it('falls back for a query no row reads literally', () => {
+		expect(kept('humane vite')).toEqual([rows[2]]);
+	});
+
+	it('falls back to a loose reading only when the literal one keeps nothing', () => {
+		expect(kept('rermnvrum')).toEqual([rows[0]]);
+		expect(kept('jonh paul')).toEqual([rows[1]]);
+	});
+
+	it('keeps nothing when a query means nothing', () => {
+		expect(kept('purgatory')).toEqual([]);
 	});
 });
