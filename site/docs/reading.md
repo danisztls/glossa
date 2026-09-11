@@ -230,6 +230,22 @@ meaningful. What blocked a preview inside a citation was the top layer, not
 nesting; making the overlay a popover puts both in the layer, `manual` rather
 than `auto`, since an `auto` popover light-dismisses the one it was opened from.
 
+**A panel the pointer cannot enter is a panel the reader cannot use, and the
+open delay for one that covers prose is not the delay for a tooltip on an
+icon.** The preview card held `pointer-events: none` on the argument that it
+holds nothing interactive — true of its contents and false of the card, which a
+reader crosses the gap to finish reading, to reach a reference it names, or to
+select a line out of. `NoteCard` had treated its card and its marker as one
+region since the footnote card existed; the preview now does the same, and its
+grace period re-arms rather than fires while a selection stands inside it, so a
+drag across the passage survives the hand moving to the keyboard. The delay
+went 350ms → 500ms for both panels together: opening early costs a box over the
+sentence being read, opening late costs a fraction of a second on a gesture
+that was deliberate, and reading a paragraph means resting the pointer in it.
+Pointer events are granted on `.visible` and not on the element, because
+`visibility` and the discrete `display` both flip at the END of the exit
+transition and a card mid-fade would otherwise go on eating clicks.
+
 **A tap peeks at a citation, and the marker that decides which links those
 are names NAVIGATION rather than citations.** It was an allowlist of two CSS
 classes on the argument that a hover is free and a tap is not — right about the

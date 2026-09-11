@@ -193,7 +193,17 @@
 	}
 
 	function beginShow(el: HTMLAnchorElement, matchedTarget: PreviewTarget) {
-		if (anchorEl === el) return; // already tracking this exact link (pending, loading, or shown)
+		if (anchorEl === el) {
+			// Already tracking this exact link (pending, loading, or shown) — but
+			// the pointer may be arriving BACK on it from the card, which
+			// scheduled a hide on its way out. Coming home cancels that, exactly
+			// as arriving in the card cancels the one the link scheduled.
+			if (hideTimer) {
+				clearTimeout(hideTimer);
+				hideTimer = undefined;
+			}
+			return;
+		}
 		dismiss();
 		anchorEl = el;
 		target = matchedTarget;
@@ -205,15 +215,66 @@
 		}, HOVER_OPEN_MS);
 	}
 
+	/**
+	 * Whether the reader is part-way through copying out of the card.
+	 *
+	 * A selection is a piece of work in progress and the pointer has no more to
+	 * say about it: the hand that dragged across the passage now goes to the
+	 * keyboard, and a card that vanished on the way would take the selection
+	 * with it. So the grace period re-arms instead of firing while one stands,
+	 * and the card is left to the paths that mean it — Escape, a scroll, or
+	 * another link.
+	 */
+	function selecting(): boolean {
+		if (!overlayEl) return false;
+		const sel = window.getSelection();
+		if (!sel || sel.isCollapsed || sel.rangeCount === 0) return false;
+		return overlayEl.contains(sel.getRangeAt(0).commonAncestorContainer);
+	}
+
 	function scheduleHide(el: HTMLAnchorElement) {
 		if (anchorEl !== el) return;
 		if (phase === 'pending') {
 			dismiss(); // never became visible — nothing to grace-period
 			return;
 		}
+		if (hideTimer) clearTimeout(hideTimer);
 		hideTimer = setTimeout(() => {
-			if (anchorEl === el) dismiss();
+			if (anchorEl !== el) return;
+			if (selecting()) {
+				scheduleHide(el);
+				return;
+			}
+			dismiss();
 		}, HOVER_CLOSE_MS);
+	}
+
+	/**
+	 * THE CARD IS PART OF THE REGION ITS LINK IS, which is WCAG 2.1's
+	 * "hoverable" under 1.4.13 and, long before it was a criterion, the only
+	 * way a preview is worth anything: the passage in it names further
+	 * references, and its text is there to be read and copied. While the card
+	 * could not be entered at all, the pointer crossing the `GAP` to reach it
+	 * was a departure like any other and the grace period ran out underneath
+	 * the reader. `NoteCard` has answered this since the footnote card existed
+	 * (`sidenotes.svelte.ts`, "entering the card counts as entering the
+	 * marker"); this is the same arrangement, written out here because the two
+	 * panels keep their own state machines.
+	 *
+	 * The TAP card stands down: it is dismissed by its own click handler and
+	 * by a tap anywhere else, and it is open on a pointer that cannot hover.
+	 */
+	function onOverlayEnter() {
+		if (openedByTap || !anchorEl) return;
+		if (hideTimer) {
+			clearTimeout(hideTimer);
+			hideTimer = undefined;
+		}
+	}
+
+	function onOverlayLeave() {
+		if (openedByTap || !anchorEl) return;
+		scheduleHide(anchorEl);
 	}
 
 	// --- Pointer path — gated behind a hover-capable, fine pointer -----------
@@ -258,13 +319,18 @@
 	// whose content turns out not to be previewable.
 
 	function onClickCapture(e: MouseEvent) {
-		// A click inside the overlay is the follow-through: the card's own
+		// A click inside the TAP overlay is the follow-through: the card's own
 		// anchor handles it (real link, real SvelteKit navigation), this just
 		// gets the preview out of the way first. Checked before anything else
 		// because that anchor's href is itself previewable and would otherwise
 		// match below and re-open the preview it was dismissing.
+		//
+		// Inside the HOVER card it is the end of a drag across the text, and
+		// dismissing there would throw away the selection the drag just made.
+		// Nothing in that card is clickable, so doing nothing is the whole of
+		// the right answer.
 		if (overlayEl && e.target instanceof Node && overlayEl.contains(e.target)) {
-			dismiss();
+			if (openedByTap) dismiss();
 			return;
 		}
 		if (canHover()) return;
@@ -413,12 +479,16 @@
 	loading -> content swap either way. Neither mechanism alone was honest
 	about how this actually behaves; the combination is.
 
-	`pointer-events: none` (in the stylesheet below) is what makes "no
-	interactive elements" actually true rather than merely asserted — nothing
-	inside can ever receive a click or a hover of its own, so there is no
-	separate mechanism needed to keep it non-interactive. It matters more now
-	that this sits in the top layer: without it the hover card could cover the
-	very thing it was opened from.
+	"No interactive elements" stays true of the hover card because there is
+	nothing interactive IN it — two paragraphs of text — and not because the
+	pointer is kept out. It used to be kept out, by a blanket
+	`pointer-events: none`, and that is what made the card unreachable: the
+	reader could not cross the `GAP` to read the rest of a passage, follow a
+	reference it named, or select a line to copy, because the pointer leaving
+	the link was a departure and the card was not anywhere to arrive. The
+	stylesheet now grants pointer events for exactly as long as the card is
+	placed and opaque (`.visible`), which also keeps a card mid-fade from
+	swallowing a click meant for the page behind it.
 
 	ALL OF WHICH APPLIES TO THE HOVER CARD ONLY. The tap card is the same box
 	wearing a different hat: an ordinary `<a>` filling it, no tooltip role, no
@@ -441,6 +511,8 @@
 	bind:this={overlayEl}
 	id={TOOLTIP_ID}
 	popover="manual"
+	onpointerenter={onOverlayEnter}
+	onpointerleave={onOverlayLeave}
 	class="panel-surface floating-panel link-preview"
 	class:visible={coords !== undefined}
 	class:tappable={openedByTap}
@@ -483,8 +555,15 @@
 	 * The card itself — fill, hairline, corner, shadow, sans face — is
 	 * `.floating-panel` in app.css, shared with the two popovers that are the
 	 * same object seen from elsewhere. What is left here is what only a
-	 * preview has: it is hidden until placed, it fades, and it takes no
-	 * pointer events unless it was opened by a tap.
+	 * preview has: it is hidden until placed, and it fades.
+	 *
+	 * PLACED AND OPAQUE IS EXACTLY WHEN IT TAKES THE POINTER. A card the
+	 * reader can reach is the point of it (see the comment above the markup),
+	 * but `visibility` and the discrete `display` both flip at the END of the
+	 * exit transition, so a card that kept its pointer events throughout would
+	 * go on eating clicks for 120ms after it had visually gone. Tying them to
+	 * `.visible` — the class that drives the fade — makes it inert on the
+	 * frame the fade starts.
 	 */
 	.link-preview {
 		pointer-events: none;
@@ -527,6 +606,7 @@
 		opacity: 1;
 		visibility: visible;
 		transform: none;
+		pointer-events: auto;
 	}
 
 	.link-preview-title {
@@ -545,11 +625,8 @@
 		display: flow-root;
 	}
 
-	/* Tap card only. `pointer-events` goes back to `auto` on exactly the
-	   variant whose whole point is being touchable — the hover card keeps the
-	   `none` above, so it still cannot intercept a cursor. */
+	/* Tap card only. */
 	.link-preview.tappable {
-		pointer-events: auto;
 		/* A card the reader is meant to hit deserves to be hittable: the
 		   anchored width above can collapse to a few characters around a short
 		   Bible verse, which is fine to read and awkward to aim at. */

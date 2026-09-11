@@ -29,9 +29,15 @@ const GAP = 8;
  * Long enough that a pointer merely crossing a citation-dense paragraph never
  * strobes a card per link — `RefText` renders a handful per footnote line, and
  * a Catechism paragraph can raise a dozen footnotes — and short enough that a
- * reader who actually pauses on one does not feel a lag. 350ms sits between
- * the ~150-200ms convention for "acknowledge instantly" and the ~500ms that
- * starts to read as unresponsive.
+ * reader who actually pauses on one does not feel a lag.
+ *
+ * A PANEL THAT COVERS THE PROSE IS NOT A TOOLTIP ON AN ICON, and the ~150-200ms
+ * convention for "acknowledge instantly" belongs to the second. The cost of
+ * opening early is a box thrown over the sentence being read, which the reader
+ * then has to wait out; the cost of opening late is a fraction of a second on a
+ * gesture they made deliberately. 500ms is the far end of the usual range and
+ * the right end for this, because reading a paragraph means resting the pointer
+ * in it.
  *
  * SHARED BY THE TWO THINGS A READER CAN HOVER: an internal link, which shows
  * the content behind it (`LinkPreview`), and a footnote marker, which shows
@@ -39,7 +45,7 @@ const GAP = 8;
  * the same prose and cannot want different numbers — a paragraph where the
  * two disagreed would feel like two different pages.
  */
-export const HOVER_OPEN_MS = 350;
+export const HOVER_OPEN_MS = 500;
 
 /**
  * How long a panel survives the pointer leaving.
@@ -47,10 +53,12 @@ export const HOVER_OPEN_MS = 350;
  * Deliberately shorter than `HOVER_OPEN_MS`: this only has to cover the gap
  * between leaving one link and entering an adjacent one — two citations
  * separated by a comma and a space — or the `GAP` between a marker and the
- * card it just opened, which the reader crosses to click a reference inside
- * it. It is not a pause to read.
+ * card it just opened, which the reader crosses to reach a reference inside
+ * it. It is not a pause to read: a card the pointer has actually ARRIVED in
+ * stays for as long as the pointer is in it, which is both panels' own
+ * business and not this number's.
  */
-export const HOVER_CLOSE_MS = 200;
+export const HOVER_CLOSE_MS = 300;
 
 /** Whether the reader's pointer can hover at all. Checked per event rather
  *  than cached at mount: a mouse plugged into a tablet changes the answer
