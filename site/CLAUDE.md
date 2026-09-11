@@ -502,11 +502,11 @@ Rationale in `site/docs/finding.md`.
   survives the close.** One row per work out of `$lib/specimens.ts` — the
   fourth surface to want that table, so it is a module rather than a fourth
   copy — and a row fills the FIELD rather than navigating, which is the one
-  thing `/schola`'s inert chips cannot offer. Reopening finds the old query
+  thing an inert chip on a page cannot offer. Reopening finds the old query
   selected, so the legend is what a reader who has not used the box sees.
 - **A legend prints the form a reader TYPES; a catalogue prints the form the
-  work PRINTS.** `comp 123` in the box against `Comp. 123` on `/schola` —
-  `fold` and `sectionForm` mean both resolve, so the stop and the capitals
+  work PRINTS.** `comp 123` in the box against the `Comp. 123` the edition
+  itself prints — `fold` and `sectionForm` mean both resolve, so the stop and the capitals
   only tell a reader that characters they need not type are load-bearing.
   Punctuation that MEANS something stays: Scripture's separator is the
   chapter/verse mark, and `specimens.test.ts` puts both forms through
@@ -542,12 +542,11 @@ Rationale in `site/docs/finding.md`.
 - **`/schola` is a catalogue, and the citation forms are in the jump box.** One
   row per work, flat, each with a name that opens the work and one sentence
   saying what kind of thing it is. Every row carried a second line and a
-  specimen chip of the notation until 2026-09-10, and the box's empty panel
-  prints that table now: **a legend prints the form a reader TYPES, a catalogue
-  prints the form the work PRINTS**, and a row in the box fills the field where
-  an inert chip on a page could not. `$lib/specimens.ts` keeps its three
-  readers — the home page, the box, its own test — and the `schola.cite.*` keys
-  went out of every dictionary with the row.
+  specimen chip of the notation until 2026-09-10; the box's empty panel prints
+  that table now, on the legend-against-catalogue rule two bullets above, and a
+  row there fills the field where an inert chip on a page could not.
+  `$lib/specimens.ts` keeps its three readers — the home page, the box, its own
+  test — and the `schola.cite.*` keys went out of every dictionary with the row.
 - **A row listed here is a row the site HAS**, which is what `/quaestiones` and
   the census arriving on the page a year late say: a guide listing what existed
   when it was written is a guide that is quietly wrong. Questions is gated on
@@ -817,8 +816,8 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   specimens are inert (a specimen teaches a SHAPE), three of them because that
   is what it takes to show the notations differ, and the section names the
   control rather than linking to it — a control in the header of every page is
-  not an address, the same reason `/schola` describes the settings menu without
-  a link.
+  not an address, which is also why the help sheet names the box's own keys
+  instead of offering a door to them.
 - **No section on that page is titled**: every `h2` is `visually-hidden` and
   every one still exists, since three rules labelling what the cards and
   specimens already say made the page read as a form. The ruled-heading rule has
@@ -1777,7 +1776,7 @@ had no `canonLaw` case at all since the Code was ingested: **a switch over a
 union is not exhaustive because it looks exhaustive**, and both halves of that
 one return `| undefined`.
 
-**A `/signata` row is a citation, written in the form `/schola` teaches.**
+**A `/signata` row is a citation, written in the form `specimens.ts` holds.**
 `citation-label.ts` is the one writer — `citationFor` off the index tier, so a
 library of eighty marks fetches nothing where it used to fetch eighty passages
 to print two clamped lines of each. Its `addressResolves` asks the ROUTE's

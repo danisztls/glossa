@@ -49,8 +49,9 @@
 	 *     are drawn with — `scroll`, `flame`, `book-open` are that page's
 	 *     assignments for these three works, reused rather than re-chosen —
 	 *     set in `/bibliotheca`'s `1lh` box rather than on a baseline.
-	 *   - **The inert specimen chip**, `.cite-example` there and `.specimen`
-	 *     here, for the same reason that page gives: it teaches a SHAPE.
+	 *   - **The inert specimen chip**, `.specimen` here, drawn after the one
+	 *     `/schola` printed until its column went, for the reason
+	 *     `specimens.ts` gives: it teaches a SHAPE.
 	 *
 	 * NO SECTION ON THIS PAGE IS TITLED, WHICH IS THE OTHER HALF OF THAT MOVE
 	 * (2026-09-06). The headings were `visually-hidden`, then two of the three
@@ -206,10 +207,9 @@
 
 	/**
 	 * THREE SHAPES, NOT A CATALOGUE, and this page is the one that picks.
-	 * `/schola` prints one specimen per work because that page IS the list of
-	 * works, and the jump box prints them all because a reader with the box
-	 * open is looking for one of them. This section is showing that the box at
-	 * the top of every page reads a notation AT ALL, and three is what it takes
+	 * The jump box prints one per work because a reader with the box open is
+	 * looking for one of them; this section is showing that the box at the top
+	 * of every page reads a notation AT ALL, and three is what it takes
 	 * to show that the notations differ: a book with a chapter and a verse, a
 	 * siglum with a paragraph running unbroken through a whole book, and a code
 	 * cited by canon. A fourth of a shape already on the row would be a longer
@@ -350,9 +350,9 @@
 			<!--
 				NOT LINKS, AND NOT A LIVE FIELD EITHER. The jump box is a control
 				in the header of every page rather than an address, so this
-				section describes it the way `/schola`'s guide describes the
-				settings menu and the language switcher — there is nothing for a
-				link to open. Reaching into `JumpBox` to open it from here would
+				section names it rather than opening it — a control in the header
+				of every page is not an address, so there is nothing for a link
+				to open. Reaching into `JumpBox` to open it from here would
 				give one page a private door into a component the whole site
 				shares, to save a reader one keystroke that the line underneath
 				already names.
@@ -461,7 +461,7 @@
 
 	/*
 	 * DRAWN AS SOMETHING TO TYPE, in the idiom the shortcut sheet's keycaps
-	 * and `/schola`'s `.cite-example` already use: the interface face on the
+	 * and the jump box's legend already use: the interface face on the
 	 * page's own ground inside a hairline. NOT a monospace — this site has
 	 * exactly two faces and `docs/reading.md` splits them on authorship, so a
 	 * third introduced for three scraps of notation would be a new axis to

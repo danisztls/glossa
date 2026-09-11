@@ -8,10 +8,10 @@
  * column, and until this module it printed each of them in whatever form the
  * surface that produced the row happened to use — a chapter heading from one
  * reading route, a scholastic citation from another, a bare question label
- * from a third. The forms here are the ones `/schola` TEACHES (its `specimens`
- * table), read out of the same tables rather than re-spelled: a page that
- * teaches `CCC 1234` and then files a mark under "1. The Sacraments of
- * Christian Initiation" has taught nothing.
+ * from a third. The forms here are the ones the site TEACHES (`specimens.ts`,
+ * printed by the home page and the jump box), read out of the same tables
+ * rather than re-spelled: a site that teaches `CCC 1234` and then files a mark
+ * under "1. The Sacraments of Christian Initiation" has taught nothing.
  *
  * INDEX TIER ONLY, AND THAT IS THE POINT. Every reader here is synchronous —
  * `bookAbbrev`, `getBook`, the manifests, the existence sets — so a row costs
@@ -69,7 +69,7 @@ export function prayerWorkId(lang: string): string {
 }
 
 /**
- * The Summa's citation, in the scholastic short form `/schola` prints.
+ * The Summa's citation, in the scholastic short form the specimens print.
  *
  * `STh` and not `S.Th.` because that is the specimen the site teaches, and the
  * part is the WORK's spelling (`II-II`) rather than the URL slug — a citation

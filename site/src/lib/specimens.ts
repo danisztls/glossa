@@ -23,7 +23,10 @@
  * reason to keep them separate and no reason to keep them at all: the help
  * sheet's whole jump-box section went on 2026-09-10, the box's own panel
  * teaching the same notation with the field the reader is about to type in
- * directly above it. Three surfaces now, all of them this table.
+ * directly above it. `/schola`'s column went the same day and for a different
+ * reason — a catalogue prints what a work IS, and the form it is addressed by
+ * belongs where a reader types one (`docs/finding.md`). Two surfaces now, the
+ * home page and the box, both of them this table.
  *
  * ## The numbers are representative and the rows are inert
  *
@@ -38,11 +41,10 @@
  * ## Prayers have no CITATION, which is not the same as having no row
  *
  * They are cited by name. An invented shape would teach a citation form that
- * does not exist, which is why `/schola` prints a sentence there instead and
- * why `citationSpecimens` has no prayer row. The jump box's legend does have
- * one: that list is of PLACES TO LOOK rather than of notations, and a work
- * with no number to cite is still somewhere to search. `sectionSpecimens`,
- * at the foot of this file, is where the two lists diverge.
+ * does not exist, which is why `citationSpecimens` has no prayer row. The jump
+ * box's legend does have one: that list is of PLACES TO LOOK rather than of
+ * notations, and a work with no number to cite is still somewhere to search.
+ * `sectionSpecimens`, at the foot of this file, is where the two lists diverge.
  */
 import { listWorksOfType } from './corpus';
 import { t } from './i18n.svelte';
@@ -50,7 +52,8 @@ import { scriptureSpecimen } from './refs';
 import type { WorkType } from './types';
 
 export interface Specimen {
-	/** Stable id, and the key `/schola` looks its own row up by. */
+	/** Stable id: the home page picks its three rows by it (`HOME_SHAPES`),
+	 *  and both surfaces key their `{#each}` on it. */
 	key: string;
 	/** The work that has to be in this build for the row to mean anything. */
 	type: WorkType;
@@ -59,8 +62,8 @@ export interface Specimen {
 	 *  "Compendium of the Social Doctrine of the Church" is a paragraph. */
 	labelKey: string;
 	/** The form as the work PRINTS it, in the reader's own language —
-	 *  `/schola`'s column and the home page's chips, both of which are
-	 *  teaching a citation. `undefined` only for Scripture, whose book name
+	 *  the home page's chips, which are teaching a citation rather than
+	 *  offering one. `undefined` only for Scripture, whose book name
 	 *  comes from an edition that may be absent. */
 	text: string | undefined;
 	/** The same form as a reader TYPES it, which is what the jump box's legend

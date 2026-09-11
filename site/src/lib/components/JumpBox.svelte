@@ -361,12 +361,12 @@
 	/**
 	 * A specimen goes into the FIELD and nowhere else.
 	 *
-	 * `/schola` and the home page draw the same forms and leave them inert,
-	 * for a reason that holds here too: `CCC 1234` is a meaningful citation,
-	 * so an example that navigated would drop a reader who is being taught a
-	 * form into the middle of a work they did not choose. What this box has
-	 * that neither page has is somewhere better to put it — the reader sees
-	 * the list answer under their own eyes and still presses Enter themselves.
+	 * The home page draws the same forms and leaves them inert, for a reason
+	 * that holds here too: `CCC 1234` is a meaningful citation, so an example
+	 * that navigated would drop a reader who is being taught a form into the
+	 * middle of a work they did not choose. What this box has that a page has
+	 * not is somewhere better to put it — the reader sees the list answer
+	 * under their own eyes and still presses Enter themselves.
 	 *
 	 * The caret goes to the end, where Tab-completion already leaves it: the
 	 * number is the part a reader will want to change, and it is the part at
@@ -866,8 +866,8 @@
 			`aria-activedescendant` rather than entered.
 
 			IT PRINTS `Specimen.typed` AND NOT `Specimen.text`, which is the
-			one thing this legend does that `/schola`'s column must not: that
-			page teaches a citation and writes it as the work prints it, where
+			one thing this legend does that the home page's chips must not:
+			those teach a citation and write it as the work prints it, where
 			this chip is a string that goes into the field above. The box folds
 			case and drops an abbreviation's stop, so printing `Comp. 123`
 			would state a precision it does not ask for.
@@ -1389,11 +1389,11 @@
 		white-space: nowrap;
 	}
 
-	/* `.cite-example`'s chip from `/schola`, to the declaration: the interface
-	   face on a hairline, tabular figures, muted. That page's own note says
-	   why it is not a monospace and not coloured — it is drawn as something to
-	   TYPE, in the idiom the keycaps in this box's foot already use, and the
-	   two now sit one above the other. */
+	/* The chip `/schola` drew until its column went (`.cite-example`), reduced
+	   to the declaration: the interface face on a hairline, tabular figures,
+	   muted. Not a monospace and not coloured, because it is drawn as
+	   something to TYPE, in the idiom the keycaps in this box's foot already
+	   use — and here the two sit one above the other. */
 	.example-form {
 		justify-self: start;
 		padding: 0.1rem 0.4rem;

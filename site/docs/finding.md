@@ -103,10 +103,10 @@ without reading this page.
 
 **The specimens are inert, and three of them, and the section describes a
 control rather than opening one.** All three follow rules stated elsewhere and
-are not new judgments: `/schola` records the direction that a specimen teaches a
-SHAPE and so must not be a link (§`/schola` is a guide), and that same page
-describes the settings menu and the language switcher without linking to them,
-because a control in the header of every page is not an address. Three is what it
+are not new judgments: the direction that a specimen teaches a SHAPE and so
+must not be a link is recorded in §`/schola` is a catalogue, and a control in
+the header of every page is not an address, which is why the section names the
+box rather than opening it. Three is what it
 takes to show the notations differ — a book with chapter and verse, a siglum with
 a paragraph number, a code cited by canon — and a fourth of a shape already on the
 row would be a longer row teaching nothing more. The Bible's is derived from the
@@ -1184,9 +1184,9 @@ stands where the results will, so a reader learns in one open that the space
 under the field is where the box answers.
 
 **And it prints the form a reader TYPES, not the form the work prints.**
-`/schola`'s column is a citation and is set as the work sets it, `Comp. 123`;
-every row here is a string that goes into the field above it, so it reads
-`comp 123`. Both resolve — `fold` lower-cases every title, heading and topic,
+A citation is set as the work sets it, `Comp. 123`, which is what the home
+page's chips still print; every row here is a string that goes into the field
+above it, so it reads `comp 123`. Both resolve — `fold` lower-cases every title, heading and topic,
 and `sectionForm` drops punctuation on top of that, which is why `ccc. 27` and
 `CATECHISM 27` are one query — but a legend that prints the stop and the
 capitals states a precision the box does not ask for, and the reader cannot
@@ -1197,10 +1197,10 @@ read by the book tables rather than by `sectionForm`. `specimens.test.ts` puts
 every row of both forms back through `suggest()`.
 
 **A specimen there goes into the FIELD, which is the one thing a page of
-specimens cannot offer.** `/schola` and the home page leave theirs inert for a
-reason that holds here too — `CCC 1234` is a meaningful citation, so an example
-that navigated would drop a reader who is being taught a form into the middle
-of a work they did not choose. Filling the field is not navigation: the list
+specimens cannot offer.** The home page leaves its three inert for a reason
+that holds here too — `CCC 1234` is a meaningful citation, so an example that
+navigated would drop a reader who is being taught a form into the middle of a
+work they did not choose. Filling the field is not navigation: the list
 answers under the reader's own eyes and they still press Enter. The rows are
 `tabindex="-1"` like the suggestions, because focus belongs to the field and
 Tab is spoken for, and nothing is unreachable by keyboard — every row is a
