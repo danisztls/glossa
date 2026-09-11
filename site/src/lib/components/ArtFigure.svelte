@@ -77,6 +77,10 @@
 	 * page has after its shelves, which is the page's business and nothing this
 	 * file could ever decide.
 	 *
+	 * `--art-position` is the same knob for WHICH band, and exists because a
+	 * slot far narrower than its file makes that a choice rather than a
+	 * rounding. It is the page's for the same reason. See the CSS.
+	 *
 	 * ## AND THE PICTURE OPENS OVER THE PAGE, on `Plate.svelte`'s reasoning
 	 * arrived at from the opposite direction. A plate opens because the file
 	 * holds more DETAIL than the reading column can draw; this opens because the
@@ -322,12 +326,29 @@
 	 * a band: `cover` fills that box from the middle of the picture and
 	 * crops what will not fit, which is why the shipped file is cropped to
 	 * the study and no further (`assets/README.md`).
+	 *
+	 * `--art-position` IS THE SECOND HALF OF THAT, and it defaults to the
+	 * middle because that is where `cover` crops from. `assets/README.md`'s
+	 * rule is to CENTRE THE BAND ON THE FILE and let cover find it, and that
+	 * rule holds wherever the file's ratio is near the slot's — Jerome is
+	 * 2.2:1 in a 2.3:1 box, so the window barely moves and baking it in costs
+	 * nothing.
+	 *
+	 * It stops holding when the two are far apart. `/scriptura` hangs a 2.15:1
+	 * panel in a 5.3:1 slot, and then the window is a THIRD of the file rather
+	 * than nearly all of it, so which third is a real choice and a different
+	 * one at different widths — baked into the file it would also be all a
+	 * phone could ever show, where cover flips to cropping the ends and a
+	 * narrow screen wants the panel back. So the file stays whole and the page
+	 * says where to look. **Bake the crop in where the file and the slot want
+	 * the same window at every width; use this where they do not.**
 	 */
 	.plate {
 		display: block;
 		inline-size: 100%;
 		block-size: var(--art-height, auto);
 		object-fit: cover;
+		object-position: var(--art-position, center);
 		border-radius: var(--radius-md);
 		filter: var(--plate-filter);
 	}

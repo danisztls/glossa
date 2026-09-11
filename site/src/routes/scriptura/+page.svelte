@@ -145,23 +145,32 @@
 	 * 2.15:1 would draw it 32rem tall — a wall the reader has to scroll past
 	 * to reach Matthew.
 	 *
-	 * 11rem is the number, and what it keeps is the argument for it: `cover`
-	 * crops top and bottom at this width, and a third of the panel's height
-	 * taken from the middle is exactly the two hands, Adam's head and shoulder,
-	 * and God's arm out of the mantle. The half that goes is sky and Adam's
-	 * legs. A frieze of the reaching is a better seam than the whole scene
-	 * shrunk, and it is the one crop of this picture that everybody already
-	 * knows.
+	 * WHICH BAND IS A SEPARATE CHOICE FROM HOW TALL, and centring gets it
+	 * wrong here. The slot is 5.3:1 against a 2.15:1 file, so `cover` shows
+	 * about a third of the panel's height — and the middle third is the two
+	 * hands, Adam's head, and God's ARM with his head cut off above the frame.
+	 * A band in which one of the two figures has a face and the other does not
+	 * reads as a crop that missed, whatever it was aiming at.
 	 *
-	 * NO BREAKPOINT, which the other two both need and this one does not.
-	 * Below 23.6rem of column — 11rem times the file's ratio — the box is
-	 * narrower than the scaled file is wide, so `cover` switches to cropping
-	 * the ENDS and the band becomes nearly the whole panel: a phone gets more
+	 * So the window is raised: `23%` of the overflow rather than the middle's
+	 * 50%, which brings God's head and beard down into the frame and takes the
+	 * sky instead. The hands then sit in the lower third, where the eye is
+	 * already going, and both faces are in. 13rem rather than 11 because at 11
+	 * the two heads and the hands do not fit between them at all — the height
+	 * is what the composition needs, and the position is which part of it.
+	 *
+	 * NO BREAKPOINT, which the other two both need and this one does not, and
+	 * the raised window costs nothing on a phone either. Below 27.9rem of
+	 * column — 13rem times the file's ratio — the box is narrower than the
+	 * scaled file is wide, so `cover` switches to cropping the ENDS: the
+	 * vertical overflow goes to zero, `--art-position`'s Y stops applying, and
+	 * the band becomes the whole height of the panel. A phone gets more
 	 * picture rather than less, with no rule to say so. `/quaestiones` needs
 	 * its shorter mobile band because its file is 4.21:1 and that crossover
 	 * never arrives.
 	 */
 	.seam-art {
-		--art-height: 11rem;
+		--art-height: 13rem;
+		--art-position: center 23%;
 	}
 </style>

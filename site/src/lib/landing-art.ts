@@ -260,11 +260,16 @@ export interface Artwork {
  * the MIDDLE of a list. That band hangs on the seam between the Testaments
  * with 46 books above it and 27 below, and everything under it is still the
  * index — so where a tailpiece may take the room a tailpiece takes, this one
- * is 11rem of a 69.5rem column against a file that would draw itself 32rem
- * tall. The picture is 2.15:1 and the slot is 6.3:1; `cover` takes the sky and
- * Adam's legs and leaves the two hands, which is the one crop of this painting
- * everybody already knows. That is also why its `detail` is true while its
- * file is whole.
+ * is 13rem of a 69.5rem column against a file that would draw itself 32rem
+ * tall. That is also why its `detail` is true while its file is whole.
+ *
+ * **AND A SLOT THAT FAR FROM ITS FILE'S RATIO ASKS A THIRD QUESTION, which is
+ * WHICH band.** 2.15:1 in a 5.3:1 box shows about a third of the panel, and
+ * the middle third has God's arm in it and not his head — one figure with a
+ * face and one without. So the page raises the window with `--art-position`
+ * and takes the sky instead. Centring is the right default and `cover`'s own
+ * behaviour; it stops being an answer once the window is a fraction of the
+ * file rather than nearly all of it.
  *
  * So these numbers are the intrinsic pixels and nothing more: the `<img>`
  * attributes, the ratio the viewer's stage reserves. They stopped being a

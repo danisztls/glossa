@@ -780,11 +780,22 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   a taller one — the opposite of `/bibliotheca`'s call.
 - **A picture in the MIDDLE of a list is a divider, and a divider is short.**
   `/scriptura`'s hangs on the seam between the Testaments with 27 books still
-  below it, so it is 11rem of a 69.5rem column against a file that would draw
+  below it, so it is 13rem of a 69.5rem column against a file that would draw
   itself 32rem tall — where a tailpiece closing a page may take the room
-  `/bibliotheca` gives one. It needs no mobile rule either: at 11rem the file's
-  own 2.15:1 puts `cover`'s crossover at 23.6rem of column, below which a phone
-  gets MORE picture rather than less.
+  `/bibliotheca` gives one. It needs no mobile rule either: at that height the
+  file's own 2.15:1 puts `cover`'s crossover at 27.9rem of column, below which
+  a phone gets MORE picture rather than less.
+- **How tall the band is and WHICH band it is are two questions, and centring
+  only answers the second while the file's ratio is near the slot's.** Jerome
+  is 2.2:1 in a 2.3:1 box, so the window is nearly the whole file and
+  `assets/README.md`'s rule — centre the band on the file and let `cover` find
+  it — settles it. `/scriptura` is 2.15:1 in a 5.3:1 slot, where the window is
+  a THIRD of the file and the middle third gives God an arm and no head: one
+  figure with a face and one without reads as a crop that missed.
+  `--art-position` is the page's second knob for that, and **the crop is baked
+  into the file only where the file and the slot want the same window at every
+  width** — baked in here it would also be all a phone could show, where
+  `cover` flips to cropping the ends and a narrow screen wants the panel back.
 - **A caption's "(detail)" is a claim about what the reader SEES, not about the
   file.** That band's file is the Creation panel entire and `detail` is still
   true, because the slot crops it — a picture the page crops is a detail
