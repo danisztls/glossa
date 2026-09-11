@@ -30,6 +30,14 @@ where it is read at length, and Source Sans wherever it is scanned or operated:
 authorship alone gave the colophon and `/schola` one answer and a filter's
 heading the same one.
 
+**Our heading is a label and our paragraph is not**, so a surface of ours that
+is read through — the colophon, `/schola`, a topic's note, the error pages —
+sets its prose in the text face and keeps its headings in the interface one.
+The colophon reached that arrangement first, by giving its section heads
+`.label-micro`; the rule is what the other three were missing. It does not
+reach the corpus's own headings, which clause one governs: a work's title and a
+division's name are its words, not a label over them.
+
 **A heading takes the face of the surface it is on**, which is why `base.css`
 declares no family for `h1`–`h6`. A blanket rule there outranks `.reading-text`,
 so the work's own section heads went on standing in Garamond after a reader

@@ -936,10 +936,15 @@ their place. Two sections, not one list, and the trace goes first.
 - **The corpus's words take the text face wherever they stand** — running text,
   a work's title, a division's name, a prayer group's heading out of
   `structure.json` — including on a chrome surface that is otherwise sans.
-- **Ours take it only where they are read at length.** The colophon, `/schola`
-  and the error pages are set as documents; a label, a count, a filter, a
+- **Ours take it only where they are read at length** — the colophon,
+  `/schola`, a topic's note, the error pages. A label, a count, a filter, a
   caption and a gloss are operated rather than read, and take the interface
   face. Having written it is not by itself a claim to either face.
+- **A heading of ours is a label wherever it stands**, including at the head of
+  our own prose: those four surfaces set their paragraphs in the text face and
+  their headings in the interface face, which is the arrangement the colophon
+  already had in `.label-micro`. The corpus's heading is not a label — a work's
+  title and a division's name are its words, and clause one governs them.
 - **A heading takes the face of the surface it is on**, so `base.css` declares
   no family for `h1`–`h6`: a surface that reads declares the text face on its
   own container and its headings follow. The blanket rule this replaced

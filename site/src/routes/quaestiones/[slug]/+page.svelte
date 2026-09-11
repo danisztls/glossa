@@ -345,9 +345,27 @@
 		padding: 1rem;
 	}
 
+	/*
+	 * THE HEADINGS ARE LABELS AND EVERYTHING UNDER THEM IS READ. The title,
+	 * the block headings and the footings are our words for the parts of this
+	 * page and take the interface face; the question, the note we wrote and
+	 * every quoted unit are what the reader came for and take the reading
+	 * face. `/schola` and the colophon are set the same way.
+	 *
+	 * The quoted paragraphs had been in the interface face since this page
+	 * shipped — nothing here named a family, so the Catechism was rendered in
+	 * the chrome's face on the one surface that quotes it outside a reading
+	 * page.
+	 */
 	h1 {
 		font-size: 1.6rem;
 		margin: 0 0 0.35rem;
+	}
+
+	.question,
+	.editorial p,
+	.text {
+		font-family: var(--font-serif);
 	}
 
 	.question {
@@ -405,6 +423,7 @@
 	}
 
 	.editorial .sources {
+		font-family: var(--font-sans);
 		margin-top: 1rem;
 		padding-top: 0.75rem;
 		border-top: 1px solid var(--color-border);

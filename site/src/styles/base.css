@@ -225,7 +225,9 @@ body {
  * `body` carries the interface face, so the chrome's headings follow it; a
  * surface that reads rather than operates declares the text face on its own
  * container and its headings follow that instead (`.reading-text` in
- * styles/layout.css, `.colophon`, `/schola`, the error pages). The blanket
+ * styles/layout.css, `.colophon`). Where that prose is OURS the heading over
+ * it is still our label, so `/schola`, a topic page and the error pages set
+ * the two apart element by element rather than by container. The blanket
  * `h1-h6 { --font-serif }` this replaces outranked the container, so the
  * work's own section heads stayed in Garamond when a reader switched the
  * reading region to the sans face -- a heading that cannot follow its

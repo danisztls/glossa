@@ -59,7 +59,10 @@
 		line-height: 1.7;
 	}
 
+	/* Our name for what happened, where the line under it is what the
+	   reader reads — and a name of ours is a label. */
 	.load-failed h1 {
+		font-family: var(--font-sans);
 		margin-bottom: 0.5rem;
 	}
 

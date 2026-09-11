@@ -846,8 +846,16 @@
 		margin: 3rem 0 2.25rem;
 	}
 
+	/*
+	 * THE HEADINGS HERE ARE LABELS AND THE PROSE UNDER THEM IS NOT. Every
+	 * heading on this page is our own word for a part of the page — `Learn`,
+	 * `What is here`, `Where to begin` — so each takes the interface face,
+	 * and what the page SAYS takes the reading face below. That is the
+	 * colophon's arrangement, on the site's other page written to be read
+	 * through. What still stands in the text face is the source's: a work's
+	 * name in a card, a formula's own heading, a Scripture address.
+	 */
 	h1 {
-		font-family: var(--font-serif);
 		margin: 0 0 0.5rem;
 	}
 
@@ -890,6 +898,14 @@
 	.section-lede,
 	.stage-why,
 	.closing,
+	.book-what,
+	section[aria-labelledby='start-heading'] p {
+		font-family: var(--font-serif);
+	}
+
+	.section-lede,
+	.stage-why,
+	.closing,
 	section[aria-labelledby='start-heading'] p {
 		line-height: 1.62;
 	}
@@ -923,7 +939,6 @@
 		display: flex;
 		align-items: baseline;
 		gap: 0.55rem;
-		font-family: var(--font-serif);
 		font-size: 1.15rem;
 		margin: 0 0 0.35rem;
 	}
@@ -931,6 +946,10 @@
 	/* Optically aligned rather than boxed: a figure's own side bearing would
 	   otherwise set the title a hair further in than the paragraph under it. */
 	.stage-n {
+		/* Named rather than inherited: the heading beside it is a label in the
+		   interface face, and an old-style figure at 1.6rem is the one thing in
+		   it that is drawn rather than read. */
+		font-family: var(--font-serif);
 		font-size: 1.6rem;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
@@ -1122,7 +1141,6 @@
 	 * and it costs one declaration and no new token.
 	 */
 	section h2 {
-		font-family: var(--font-serif);
 		font-size: 1.3rem;
 		border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 32%, var(--color-border));
 		padding-bottom: 0.4rem;
@@ -1192,6 +1210,11 @@
 	.formula-body {
 		padding-inline-start: 1.05rem;
 		padding-block-end: 0.7rem;
+	}
+
+	.formula-items,
+	.formula-lines {
+		font-family: var(--font-serif);
 	}
 
 	.formula-items {
@@ -1383,12 +1406,11 @@
 
 	/*
 	 * A GROUP INSIDE A SECTION: here, the rows that are pages rather than
-	 * works. Serif like every other heading here, but without `section h2`'s
-	 * rule — a second horizontal line one level down would divide the section
+	 * works. The interface face like every other heading here, but without
+	 * `section h2`'s rule — a second horizontal line one level down would divide the section
 	 * it is inside, which is the opposite of what a subheading does.
 	 */
 	.group {
-		font-family: var(--font-serif);
 		font-size: 1rem;
 		font-weight: 600;
 		margin: 1.5rem 0 0.6rem;
