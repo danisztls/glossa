@@ -504,6 +504,13 @@ Rationale in `site/docs/finding.md`.
   copy — and a row fills the FIELD rather than navigating, which is the one
   thing `/schola`'s inert chips cannot offer. Reopening finds the old query
   selected, so the legend is what a reader who has not used the box sees.
+- **A legend prints the form a reader TYPES; a catalogue prints the form the
+  work PRINTS.** `comp 123` in the box against `Comp. 123` on `/schola` —
+  `fold` and `sectionForm` mean both resolve, so the stop and the capitals
+  only tell a reader that characters they need not type are load-bearing.
+  Punctuation that MEANS something stays: Scripture's separator is the
+  chapter/verse mark, and `specimens.test.ts` puts both forms through
+  `suggest()`.
 - **Sections a reader can type are `suggest.ts`'s `SECTIONS`, not the bar.**
   Every work with an index belongs there whether or not it has a door, and
   `scripts/export-section-names.mjs` must be re-run and its output committed

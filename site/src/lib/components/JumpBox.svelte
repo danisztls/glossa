@@ -638,6 +638,13 @@
 			modal). Nothing here is unreachable by keyboard: every row is a
 			string the reader can type, which is the whole lesson.
 
+			IT PRINTS `Specimen.typed` AND NOT `Specimen.text`, which is the one
+			thing this legend does that `/schola`'s column must not: those rows
+			teach a citation and are written as the work prints it, where every
+			row here is a string that goes into the field above it. The box
+			folds case and drops an abbreviation's stop, so printing `Comp. 123`
+			would state a precision it does not ask for.
+
 			PRAYERS HAVE NO ROW because they have no notation — they are cited
 			by name, which is what the lead sentence above the rows says, and
 			an invented shape would teach a form that does not exist.
@@ -648,9 +655,9 @@
 				<ul class="examples-list">
 					{#each examples as example (example.key)}
 						<li>
-							<button type="button" tabindex="-1" onclick={() => fillExample(example.text)}>
+							<button type="button" tabindex="-1" onclick={() => fillExample(example.typed)}>
 								<span class="example-work">{t(example.labelKey)}</span>
-								<span class="example-form">{example.text}</span>
+								<span class="example-form">{example.typed}</span>
 							</button>
 						</li>
 					{/each}

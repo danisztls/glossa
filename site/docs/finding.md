@@ -1144,6 +1144,19 @@ accessible name, where brevity buys nothing and the examples still help. It
 stands where the results will, so a reader learns in one open that the space
 under the field is where the box answers.
 
+**And it prints the form a reader TYPES, not the form the work prints.**
+`/schola`'s column is a citation and is set as the work sets it, `Comp. 123`;
+every row here is a string that goes into the field above it, so it reads
+`comp 123`. Both resolve — `fold` lower-cases every title, heading and topic,
+and `sectionForm` drops punctuation on top of that, which is why `ccc. 27` and
+`CATECHISM 27` are one query — but a legend that prints the stop and the
+capitals states a precision the box does not ask for, and the reader cannot
+tell which characters were load-bearing. The two exceptions are punctuation
+that MEANS something: Scripture keeps its separator, which is the chapter and
+verse mark and is a comma in half these languages, and its abbreviation is
+read by the book tables rather than by `sectionForm`. `specimens.test.ts` puts
+every row of both forms back through `suggest()`.
+
 **A specimen there goes into the FIELD, which is the one thing a page of
 specimens cannot offer.** `/schola` and the home page leave theirs inert for a
 reason that holds here too — `CCC 1234` is a meaningful citation, so an example

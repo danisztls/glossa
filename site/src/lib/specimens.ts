@@ -51,9 +51,34 @@ export interface Specimen {
 	 *  landing page's. A legend is a column of names read at a glance, and
 	 *  "Compendium of the Social Doctrine of the Church" is a paragraph. */
 	labelKey: string;
-	/** The form, drawn in the reader's own language. `undefined` only for
-	 *  Scripture, whose book name comes from an edition that may be absent. */
+	/** The form as the work PRINTS it, in the reader's own language —
+	 *  `/schola`'s column and the home page's chips, both of which are
+	 *  teaching a citation. `undefined` only for Scripture, whose book name
+	 *  comes from an edition that may be absent. */
 	text: string | undefined;
+	/** The same form as a reader TYPES it, which is what the jump box's legend
+	 *  prints, since every row there is a string that goes into the field.
+	 *  Defined exactly where `text` is. */
+	typed: string | undefined;
+}
+
+/**
+ * A printed siglum as something to key in: lower case, and the abbreviating
+ * full stop gone.
+ *
+ * BOTH ARE THINGS THE BOX DOES NOT ASK FOR. `fold` lower-cases every title,
+ * heading and topic it matches, and `sectionForm` drops punctuation on top of
+ * that — `ccc. 27`, `CCC 27` and `catechism 27` are one query. So a legend
+ * printing `Comp. 123` states a precision that is not required, and the stop
+ * is the character that most looks like it is.
+ *
+ * NOT APPLIED TO SCRIPTURE, whose abbreviation is whatever the reader's own
+ * edition prints and is read by the book-token tables rather than by
+ * `sectionForm` — those tables hold the printed forms, stops included, and
+ * nothing licenses removing one.
+ */
+function typeable(text: string): string {
+	return text.toLowerCase().replaceAll('.', '');
 }
 
 /**
@@ -66,19 +91,33 @@ export interface Specimen {
  * cited by its incipit, and `STh` is the Summa's own abbreviation.
  */
 export function citationSpecimens(bibleWorkId: string | undefined, bibleLang: string): Specimen[] {
+	const cited = scriptureSpecimen(bibleWorkId, bibleLang);
+	const siglum = (text: string): Pick<Specimen, 'text' | 'typed'> => ({
+		text,
+		typed: typeable(text)
+	});
 	return [
 		{
 			key: 'scripture',
 			type: 'bible',
 			labelKey: 'nav.bible',
-			text: scriptureSpecimen(bibleWorkId, bibleLang)
+			text: cited,
+			// Case alone. The separator is the LANGUAGE's — `Jo 3,16` in
+			// Portuguese — so a rule that dropped punctuation here would take
+			// the chapter/verse mark with it.
+			typed: cited?.toLowerCase()
 		},
-		{ key: 'catechism', type: 'catechism', labelKey: 'nav.ccc', text: `${t('ccc.abbrev')} 1234` },
+		{
+			key: 'catechism',
+			type: 'catechism',
+			labelKey: 'nav.ccc',
+			...siglum(`${t('ccc.abbrev')} 1234`)
+		},
 		{
 			key: 'compendium',
 			type: 'compendium',
 			labelKey: 'nav.compendium',
-			text: `${t('compendium.abbrev')} 123`
+			...siglum(`${t('compendium.abbrev')} 123`)
 		},
 		{
 			// A real incipit and not a placeholder: the form is a NAME followed
@@ -88,16 +127,30 @@ export function citationSpecimens(bibleWorkId: string | undefined, bibleLang: st
 			key: 'magisterium',
 			type: 'document',
 			labelKey: 'nav.magisterium',
-			text: 'Dei Verbum 12'
+			...siglum('Dei Verbum 12')
 		},
 		{
 			key: 'social',
 			type: 'social-doctrine',
 			labelKey: 'nav.socialDoctrine',
-			text: `${t('socialDoctrine.abbrev')} 123`
+			...siglum(`${t('socialDoctrine.abbrev')} 123`)
 		},
-		{ key: 'law', type: 'canon-law', labelKey: 'nav.canonLaw', text: `${t('canonLaw.canon')} 123` },
-		{ key: 'doctors', type: 'summa', labelKey: 'nav.summa', text: 'STh I, 12' }
+		{
+			key: 'law',
+			type: 'canon-law',
+			labelKey: 'nav.canonLaw',
+			...siglum(`${t('canonLaw.canon')} 123`)
+		},
+		{
+			key: 'doctors',
+			type: 'summa',
+			labelKey: 'nav.summa',
+			text: 'STh I, 12',
+			// The comma is a locus separator the Summa's grammar tolerates
+			// either way (`SUMMA_RE` reads `sth i 12`), so it comes off with the
+			// case — unlike Scripture's, which IS the chapter/verse mark.
+			typed: 'sth i 12'
+		}
 	];
 }
 
@@ -113,9 +166,9 @@ export function citationSpecimens(bibleWorkId: string | undefined, bibleLang: st
 export function availableSpecimens(
 	bibleWorkId: string | undefined,
 	bibleLang: string
-): (Specimen & { text: string })[] {
+): (Specimen & { text: string; typed: string })[] {
 	return citationSpecimens(bibleWorkId, bibleLang).filter(
-		(row): row is Specimen & { text: string } =>
+		(row): row is Specimen & { text: string; typed: string } =>
 			row.text !== undefined && listWorksOfType(row.type).length > 0
 	);
 }
