@@ -1023,7 +1023,7 @@ export const pt: Dictionary = {
 	'quaestiones.mors-voluntaria.question':
 		'Alguém tirou a própria vida. Há esperança para essa pessoa?',
 	'quaestiones.mors-voluntaria.keywords':
-		'se matou, funeral de suicida, condenado, luto, quem ficou, pecado mortal, enterro na igreja',
+		'se matou, funeral de suicida, condenado, luto, abandonado, pecado mortal, enterro na igreja',
 	'quaestiones.aegritudo.title': 'Depois de um diagnóstico',
 	'quaestiones.aegritudo.question': 'O que a Igreja diz a quem está doente?',
 	'quaestiones.aegritudo.keywords':
