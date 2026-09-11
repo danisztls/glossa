@@ -9564,7 +9564,13 @@ def build_manifest(
         )
     if state.anomalies:
         notes.append(
-            f"{len(state.anomalies)} anomalies recorded; see corrections-applied.json / run log."
+            # NOT `corrections-applied.json`, which the note has named since
+            # the scraper's first commit and which holds corrections only: an
+            # anomaly is this parse's own reading, and it is written nowhere.
+            # `summi-dei-verbum.en` claims three beside a receipt whose count
+            # is 0, so a reader who opens the file it names finds no answer
+            # and no reason to doubt it.
+            f"{len(state.anomalies)} anomalies recorded; printed in the run log, stored nowhere."
         )
     if work_id in KNOWN_SOURCE_DEFECTS:
         notes.append(KNOWN_SOURCE_DEFECTS[work_id])
