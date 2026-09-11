@@ -1252,6 +1252,10 @@ export const pt: Dictionary = {
 	'quaestiones.verecundia.question': 'O que eu devo vestir?',
 	'quaestiones.verecundia.keywords':
 		'roupa, decote, shorts, véu, recato, modéstia, imodesto, guarda dos olhos, biquíni, legging, o que os outros vão pensar',
+	'quaestiones.associationes-massonicae.title': 'A maçonaria',
+	'quaestiones.associationes-massonicae.question': 'Um católico pode ser maçom?',
+	'quaestiones.associationes-massonicae.keywords':
+		'loja maçônica, maçons, grande loja, sociedade secreta, meu pai era maçom, entrar para a loja, excomunhão, proibido, iniciação, avental',
 	'quaestiones.decimae.title': 'O dízimo e a doação',
 	'quaestiones.decimae.question': 'Quanto um católico deve dar?',
 	'quaestiones.decimae.keywords':

@@ -345,19 +345,19 @@ permite cremação?_") as its example query without noticing it was a genre.
 The highest-volume band on this page and the one absent from every serious
 topic list, because it embarrasses the people who write them.
 
-| Topic                              | Anchor                                         |
-| ---------------------------------- | ---------------------------------------------- |
-| Astrology, tarot, crystals, luck   | CCC 2115–2117 — names each practice explicitly |
-| Manifesting, "the universe"        | CCC 2110–2117; `placuit-deo`                   |
-| Ghosts and the dead                | CCC 2116; 1030–1032                            |
-| Demons, possession, exorcism       | CCC 391–395, 550, 1673                         |
-| Angels, guardian angels            | CCC 328–336                                    |
-| Yoga, mindfulness, meditation      | CCC 2705–2719 — _Orationis Formas_ absent      |
-| Apparitions and private revelation | CCC 66–67; `signum-magnum`                     |
-| Miracles, relics, the incorrupt    | CCC 156, 1674–1676                             |
-| Near-death experiences             | CCC 1021–1022                                  |
-| The end of the world, Antichrist   | CCC 668–682                                    |
-| Freemasonry                        | tag `Freemasonry`; `humanum-genus`             |
+| Topic                              | Anchor                                                     |
+| ---------------------------------- | ---------------------------------------------------------- |
+| Astrology, tarot, crystals, luck   | CCC 2115–2117 — names each practice explicitly             |
+| Manifesting, "the universe"        | CCC 2110–2117; `placuit-deo`                               |
+| Ghosts and the dead                | CCC 2116; 1030–1032                                        |
+| Demons, possession, exorcism       | CCC 391–395, 550, 1673                                     |
+| Angels, guardian angels            | CCC 328–336                                                |
+| Yoga, mindfulness, meditation      | CCC 2705–2719 — _Orationis Formas_ absent                  |
+| Apparitions and private revelation | CCC 66–67; `signum-magnum`                                 |
+| Miracles, relics, the incorrupt    | CCC 156, 1674–1676                                         |
+| Near-death experiences             | CCC 1021–1022                                              |
+| The end of the world, Antichrist   | CCC 668–682                                                |
+| Freemasonry                        | no CCC paragraph; can. 1374 and the CDF's two declarations |
 
 ### I. The body, the calendar and ordinary practice
 
@@ -437,15 +437,14 @@ say, which is worse than never offering the topic. So the list below is the
 shipping blocklist, and every line is a claim that the corpus — not the Church —
 is what falls short.
 
-| Held back                     | Why                                                                                                                                      |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                |
-| Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                         |
-| Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                |
-| Debt and interest             | _Vix Pervenit_ absent                                                                                                                    |
-| Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one               |
-| Freemasonry                   | the Catechism never names it, and the operative statement — the CDF's 1983 declaration — is absent while _Humanum Genus_ (1884) is here  |
+| Held back                     | Why                                                                                                                                                  |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                            |
+| Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                                     |
+| Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner             |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                            |
+| Debt and interest             | _Vix Pervenit_ absent                                                                                                                                |
+| Same-sex blessings            | _Fiducia Supplicans_ arrived 2026-09-11, so this row is now about the anchor rather than the corpus: CCC 2357–2359 is the teaching, not the blessing |
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a
@@ -455,28 +454,51 @@ topic shipping over a corpus that answers an older question than the one asked.
 frozen.** Three rows were removed on 2026-09-10 because the documents they were
 waiting for had already arrived — one of them on the day the row was written. A
 row that reads "_X_ absent" is checkable in one command and none of them were
-rechecked. That is the same failure as a stale answer, pointing the other way:
+rechecked. **59 documents arrived on 2026-09-11 alone**, and two rows expired in
+that single ingest, so the recheck is not an annual tidy — it is what to run
+before reading this section at all. `site/scripts/lastmod.json` says which
+addresses are new and on what day: every `/documenta/*` row carries the date the
+sync last wrote it, so a `git diff` of that file after a sync is the arrival list
+nobody has to keep by hand. That is the same failure as a stale answer, pointing the other way:
 there, the reader is told something no longer taught; here, the reader is told
 nothing at all about something the corpus can now answer. Recheck before
 trusting a row:
 
 ```sh
-for n in orationis-formas vix-pervenit fiducia-supplicans; do
+for n in orationis-formas vix-pervenit; do
   ls -d "$CORPUS_DIR"/build/*."$n".* >/dev/null 2>&1 \
     && echo "$n PRESENT — this row has expired" || echo "$n absent"
 done
 ```
 
-**Freemasonry is the same shape as same-sex blessings and was checked the same
-way.** A reader asking whether a Catholic may be a Freemason is asking about a
-penalty, and can. 1374 supplies one — "a person who joins an association which
-plots against the Church is to be punished with a just penalty" — without naming
-Masonry, which is the whole difficulty. The Catechism says nothing: zero hits for
-_masonic_ or _freemason_ across the work. _Humanum Genus_ is in the corpus in
-five languages and is Leo XIII writing in 1884; the statement that actually
-governs the question is the Congregation's 1983 declaration, which is not. A page
-built on the encyclical alone would answer a 2026 reader in the vocabulary of
-1884 and look current doing it. Recheck for any work id containing `mason`.
+**Freemasonry was dropped, then blocked, then shipped, and the three verdicts
+are the whole argument for keeping this section.** It was dropped in the first
+pass as having "no Catechism paragraph at all" — a judgement that the subject
+could not resolve to anything — and that was wrong in a way the drop/block
+distinction is meant to catch: it was never short of a SUBJECT, it was short of a
+DOCUMENT, which is the definition of blocked. Refiled as a block on 2026-09-10,
+in the form the rules above ask for, it named the absent text rather than the
+missing feeling. On 2026-09-11 the corpus gained the Congregation's 1983
+declaration and its 1981 predecessor; the row was checkable, checked and expired,
+and `associationes-massonicae` ships as a B. **A dropped row is a claim about the
+subject and a blocked row is a claim about the shelf, and only one of them can be
+overturned by somebody else's work.** Check which you are writing.
+
+Both halves of the block's reasoning survived into the topic. The Catechism still
+says nothing — zero hits for _masonic_ or _freemason_ across all nine editions,
+which is why the page is a B and not an A — and can. 1374 still does not name
+Masonry, so the law alone leaves the reader to judge whether their own lodge
+"plots against the Church". The declaration is exactly what forbids them that
+judgement, and reserves it from local ecclesiastical authorities too. **A canon
+and a declaration that are useless apart and sufficient together are one topic,
+and neither is an anchor on its own.**
+
+**Leo XIII's encyclicals on the subject are in the corpus and the topic names
+none of them**, which is this section's warning turned on a document that is
+PRESENT rather than absent. _Humanum Genus_ (1884) would answer a 2026 reader in
+the vocabulary of 1884, and standing it beside the operative text as an equal is
+a milder form of the error a stale answer makes. **Not naming a document is also
+an editorial act and owes the same kind of reason as naming one.**
 
 **A row that names no document cannot be rechecked, and this one was wrong for
 a day and a year.** _Mental illness, loneliness_ gave as its reason "nothing
@@ -649,20 +671,23 @@ time, which makes `pt` the first dictionary after `en` to carry the route.
 matters: a blocked topic is waiting for a document, a dropped one has nothing
 of its own to resolve to.
 
-| Dropped                     | Why                                                                |
-| --------------------------- | ------------------------------------------------------------------ |
-| Emigrating                  | CCC 2241 entire, and that paragraph is already `migratio`          |
-| Growing old                 | CCC 2218 answers the grown child, not the reader who asked         |
-| Freemasonry                 | no Catechism paragraph at all; `humanum-genus` cannot carry a page |
-| Manifesting, "the universe" | resolves to `divinatio`'s and `superstitio`'s paragraphs exactly   |
-| Caste and social exclusion  | CCC 1934–1938, which is `discrimen-gentium`                        |
-| Animals and how we eat      | CCC 2416–2418, which is inside `oecologia`                         |
+| Dropped                     | Why                                                              |
+| --------------------------- | ---------------------------------------------------------------- |
+| Emigrating                  | CCC 2241 entire, and that paragraph is already `migratio`        |
+| Growing old                 | CCC 2218 answers the grown child, not the reader who asked       |
+| Freemasonry                 | ~~no Catechism paragraph at all~~ — misfiled here, see below     |
+| Manifesting, "the universe" | resolves to `divinatio`'s and `superstitio`'s paragraphs exactly |
+| Caste and social exclusion  | CCC 1934–1938, which is `discrimen-gentium`                      |
+| Animals and how we eat      | CCC 2416–2418, which is inside `oecologia`                       |
 
 The rule they teach is the one the file now states: **where two doors produce
 the same anchor set in the same order, there is one topic and not two.** The
 door has to change what the reader is given, not merely what they were asked.
 
-The blocklist above is unchanged and still holds.
+Two of those six have since moved: Freemasonry was refiled as a block and
+then shipped (above), which is why the "nothing of its own to resolve to"
+test has to be applied to the SUBJECT and not to what the shelf happens to
+hold today.
 
 ## Decided
 

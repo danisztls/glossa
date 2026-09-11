@@ -2313,6 +2313,10 @@ export const en: Dictionary = {
 	'quaestiones.verecundia.question': 'What am I supposed to wear?',
 	'quaestiones.verecundia.keywords':
 		'dress code, clothes, shorts, veil, immodest, custody of the eyes, swimsuit, leggings, tempting others, what people will think',
+	'quaestiones.associationes-massonicae.title': 'Freemasonry',
+	'quaestiones.associationes-massonicae.question': 'Can a Catholic be a Freemason?',
+	'quaestiones.associationes-massonicae.keywords':
+		'masonic, masons, lodge, grand lodge, secret society, my father was a mason, joining the lodge, excommunicated, forbidden, initiation, apron',
 	'quaestiones.decimae.title': 'Giving and tithing',
 	'quaestiones.decimae.question': 'How much is a Catholic supposed to give?',
 	'quaestiones.decimae.keywords':
