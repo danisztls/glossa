@@ -283,11 +283,20 @@
 		margin: 0.5rem 0;
 	}
 
-	/* THE RULE BELONGS TO THE ROW AND NOT TO THE HEADING'S WORDS. The summary
-	   is a flex row (`.fold`, components.css) and the `h2` in it is only as
-	   wide as the title, so the border that used to run the column's width
-	   would underline three words and stop. */
-	.prayer-group > summary {
+	/*
+	 * THE RULE BELONGS TO THE ROW AND NOT TO THE HEADING'S WORDS. The summary
+	 * is a flex row (`.fold`, components.css) and the `h2` in it is only as
+	 * wide as the title, so a border on the heading would underline three
+	 * words and stop.
+	 *
+	 * AND ONLY WHILE THE SECTION IS OPEN. A rule under a heading says "the
+	 * thing below belongs to this", so on a shut section it drew a line under
+	 * nothing — and a run of shut sections came out as headings over empty
+	 * ruled boxes. Shut, what separates one from the next is the gap below,
+	 * which is `/quaestiones`'s rule for the same shape: closed sections
+	 * should read as a list of rows and not as sections with nothing in them.
+	 */
+	.prayer-group[open] > summary {
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.5rem;
 		margin-bottom: 0.5rem;
