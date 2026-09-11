@@ -3014,6 +3014,14 @@ ml`), chosen by Catholic population rather than by what has been ingested; and
   each content language in its own language for the edition menu; an unnamed tag
   falls through to the tag itself, past every build, test and type error. Adding
   a content language means adding a line there in the same commit.
+- **A key only English has is legal, silent and indefinite.** `t()` resolves
+  `loaded[lang]?.[key] ?? en[key] ?? key` and `i18n.test.ts` forbids only the
+  other direction — a key English does not have — so the four
+  `document.kind.cdf*` labels added with the doctrinal office's decrees, norms,
+  notifications and communications read in English in the other thirty-nine
+  dictionaries and nothing reports it. The fallback is what keeps a new kind
+  from shipping a bare key at a reader; it is not a substitute for the
+  translation, and only a commit will say the translation is owed.
 
 **`zht` is Vatican News's slug, not BCP-47, and `zh-Hant` throughout was weighed
 and rejected.** A tag here is an IDENTITY and a subtag is a VARIANT: `baseLang`
