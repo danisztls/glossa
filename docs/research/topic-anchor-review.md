@@ -328,6 +328,24 @@ forbids. **So the subset rule is not only a check — it is what forces a second
 topic to have a second reason**, and here that was CCC 1809 on temperance, which
 was on no topic at all. `telephonum` ships on the pair.
 
+**The commandments are covered and the virtues are not, and the asymmetry is the
+file working as designed.** Read against the Catechism's own Part Three
+(2026-09-10): every one of the ten commandments is reached by at least one topic,
+five of them by more than ten, because a commandment is a band of PROBLEMS and
+this file is a list of problems. The virtues are the opposite shape. Of the seven,
+`caritas` anchors charity, and prudence, justice, fortitude and faith are on no
+topic at all — temperance and hope were reached this same day only as a
+side-effect of building `telephonum` and `anxietas`, neither of which is a topic
+about a virtue. The reason is `topics.md`'s founding one: **nobody arrives at
+prudence.** A reader arrives at a decision they cannot make. So the finding is
+not that four topics are missing; it is that the virtue articles are a reservoir
+of unanchored text a doorway can be pointed at when one is found, exactly as
+1817–1818 turned out to be what an anxious reader needed. The capital sins fall
+between: `invidia` and `acedia` are topics because envy and sloth are experienced
+as conditions, and the other five are reached only through what they DO —
+lust through `castitas` and `pornographia`, avarice through `paupertas`, wrath
+through no page of its own at all.
+
 **A one-paragraph topic is not a thin one.** This pass spent most of its effort
 widening spans, and the opposite error was waiting at the end of it. `islam` is
 CCC 841 and `migratio` is CCC 2241, and in both cases that single paragraph is

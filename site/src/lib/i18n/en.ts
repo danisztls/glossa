@@ -1877,7 +1877,7 @@ export const en: Dictionary = {
 	'quaestiones.charismata.title': 'Charismatic gifts and healing',
 	'quaestiones.charismata.question': 'Was what I felt from God?',
 	'quaestiones.charismata.keywords':
-		'charismatic renewal, speaking in tongues, prophecy, pentecostal, gifts of the spirit, faith healing, resting in the spirit',
+		'charismatic renewal, speaking in tongues, glossolalia, prophecy, pentecostal, gifts of the spirit, faith healing, resting in the spirit',
 	'quaestiones.caritas.title': 'What the Church means by love',
 	'quaestiones.caritas.question': 'We love each other. Why is that not the answer?',
 	'quaestiones.caritas.keywords':
@@ -2141,6 +2141,10 @@ export const en: Dictionary = {
 	'quaestiones.homosexualitas-vivenda.question': 'What am I supposed to do with my life?',
 	'quaestiones.homosexualitas-vivenda.keywords':
 		'same-sex attraction, celibacy, loneliness, friendship, coming out, partner, courage',
+	'quaestiones.temptatio.title': 'Temptation',
+	'quaestiones.temptatio.question': 'Is wanting it already a sin?',
+	'quaestiones.temptatio.keywords':
+		'tempted, intrusive thoughts, resisting, giving in, near occasion, the desert, spiritual combat, willpower, kept falling, vigilance',
 	'quaestiones.mortis-desiderium.title': 'Wanting to die',
 	'quaestiones.mortis-desiderium.question': 'If I did it, would God forgive it?',
 	'quaestiones.mortis-desiderium.keywords':
@@ -2173,7 +2177,7 @@ export const en: Dictionary = {
 	'quaestiones.divinatio.title': 'Astrology and divination',
 	'quaestiones.divinatio.question': 'Horoscopes, tarot, the dead — what is actually forbidden?',
 	'quaestiones.divinatio.keywords':
-		'ouija, mediums, fortune telling, psychic, palm reading, crystals, new age, seance, zodiac, spiritism',
+		'ouija, mediums, fortune telling, psychic, palm reading, crystals, new age, seance, zodiac, spiritism, occult, occultism',
 	'quaestiones.signa.title': 'Signs',
 	'quaestiones.signa.question': 'Was that a sign, or was it a coincidence?',
 	'quaestiones.signa.keywords':

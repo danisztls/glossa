@@ -445,6 +445,7 @@ is what falls short.
 | Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                |
 | Debt and interest             | _Vix Pervenit_ absent                                                                                                                    |
 | Same-sex blessings            | three earlier documents present, _Fiducia Supplicans_ absent — the worst case, since a stale answer reads as a current one               |
+| Freemasonry                   | the Catechism never names it, and the operative statement — the CDF's 1983 declaration — is absent while _Humanum Genus_ (1884) is here  |
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a
@@ -465,6 +466,17 @@ for n in orationis-formas vix-pervenit fiducia-supplicans; do
     && echo "$n PRESENT — this row has expired" || echo "$n absent"
 done
 ```
+
+**Freemasonry is the same shape as same-sex blessings and was checked the same
+way.** A reader asking whether a Catholic may be a Freemason is asking about a
+penalty, and can. 1374 supplies one — "a person who joins an association which
+plots against the Church is to be punished with a just penalty" — without naming
+Masonry, which is the whole difficulty. The Catechism says nothing: zero hits for
+_masonic_ or _freemason_ across the work. _Humanum Genus_ is in the corpus in
+five languages and is Leo XIII writing in 1884; the statement that actually
+governs the question is the Congregation's 1983 declaration, which is not. A page
+built on the encyclical alone would answer a 2026 reader in the vocabulary of
+1884 and look current doing it. Recheck for any work id containing `mason`.
 
 **A row that names no document cannot be rechecked, and this one was wrong for
 a day and a year.** _Mental illness, loneliness_ gave as its reason "nothing

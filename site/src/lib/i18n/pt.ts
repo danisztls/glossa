@@ -861,7 +861,7 @@ export const pt: Dictionary = {
 	'quaestiones.charismata.title': 'Os dons carismáticos e a cura',
 	'quaestiones.charismata.question': 'O que eu senti veio de Deus?',
 	'quaestiones.charismata.keywords':
-		'renovação carismática, falar em línguas, profecia, pentecostal, dons do Espírito, cura interior, repouso no Espírito',
+		'renovação carismática, falar em línguas, glossolalia, profecia, pentecostal, dons do Espírito, cura interior, repouso no Espírito',
 	'quaestiones.caritas.title': 'O que a Igreja chama de amor',
 	'quaestiones.caritas.question': 'A gente se ama. Por que isso não basta?',
 	'quaestiones.caritas.keywords':
@@ -1128,6 +1128,10 @@ export const pt: Dictionary = {
 	'quaestiones.homosexualitas-vivenda.question': 'O que eu devo fazer da minha vida?',
 	'quaestiones.homosexualitas-vivenda.keywords':
 		'gay e católico, atração pelo mesmo sexo, celibato, solidão, amizade, se assumir, companheiro, coragem',
+	'quaestiones.temptatio.title': 'A tentação',
+	'quaestiones.temptatio.question': 'Só de querer já é pecado?',
+	'quaestiones.temptatio.keywords':
+		'tentado, pensamento impuro, resistir, ceder, ocasião próxima, o deserto, combate espiritual, força de vontade, caí de novo, vigilância',
 	'quaestiones.mortis-desiderium.title': 'Querer morrer',
 	'quaestiones.mortis-desiderium.question': 'Se eu fizesse isso, Deus perdoaria?',
 	'quaestiones.mortis-desiderium.keywords':
@@ -1160,7 +1164,7 @@ export const pt: Dictionary = {
 	'quaestiones.divinatio.title': 'Astrologia e adivinhação',
 	'quaestiones.divinatio.question': 'Horóscopo, tarô, os mortos — o que é proibido de fato?',
 	'quaestiones.divinatio.keywords':
-		'ouija, médiuns, cartomante, vidente, leitura de mãos, cristais, nova era, sessão espírita, signo, espiritismo, búzios',
+		'ouija, médiuns, cartomante, vidente, leitura de mãos, cristais, nova era, sessão espírita, signo, espiritismo, búzios, ocultismo',
 	'quaestiones.signa.title': 'Sinais',
 	'quaestiones.signa.question': 'Aquilo foi um sinal ou foi coincidência?',
 	'quaestiones.signa.keywords':

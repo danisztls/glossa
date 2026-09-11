@@ -1030,6 +1030,16 @@
 			"ccc": [[2842, 2845]],
 			"documents": ["dives-in-misericordia"]
 		},
+		"temptatio": {
+			"doorway": "private-shame",
+			"cluster": "forgiveness",
+			"ccc": [
+				[2846, 2849],
+				[540, 540]
+			],
+			"lead": 2847,
+			"documents": ["gaudete-et-exsultate"]
+		},
 		"mortis-desiderium": {
 			"doorway": "private-shame",
 			"cluster": "despair",
