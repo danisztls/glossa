@@ -106,7 +106,7 @@
 	   rather than as the start of the next. A shut section has no rows and owes
 	   nothing. */
 	.index-section[open] {
-		margin-block-end: 2.25rem;
+		margin-block-end: 1.5rem;
 	}
 
 	/* THE WHOLE HEADING ROW IS THE TOGGLE, which is what `<details>` is for.

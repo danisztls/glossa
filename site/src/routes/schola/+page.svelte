@@ -1228,7 +1228,7 @@
 	.formula-items {
 		margin: 0;
 		padding-inline-start: 1.4rem;
-		font-size: 0.92rem;
+		font-size: 1rem;
 		line-height: 1.5;
 	}
 
@@ -1251,7 +1251,7 @@
 	 */
 	.formula-lines {
 		margin: 0;
-		font-size: 0.92rem;
+		font-size: 1rem;
 		line-height: 1.5;
 		padding-inline-start: 1.1rem;
 		text-indent: -1.1rem;

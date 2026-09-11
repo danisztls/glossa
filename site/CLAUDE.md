@@ -947,7 +947,7 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
 - **A section of a folded index is `IndexSection.svelte`** — the
   `<details class="fold">`, the `<summary>` with its heading, the optional
   count beside it, the rule under an OPEN heading, and the space — one row's
-  worth above every heading whatever its state, and the two rems an open
+  worth above every heading whatever its state, and the rem and a half an open
   section adds BELOW, for its rows. Opening a section must not move the heading
   the reader just clicked. `/quaestiones`, `/preces` and `/schola`'s formulas draw the
   same one and pass their rows in as `children`: a grid of title-over-question
