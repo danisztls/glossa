@@ -735,6 +735,13 @@
 	 * own dark ground with them wherever the page is light. It is declared
 	 * here and inherited by the title, the credit and the link alike, so the
 	 * three cannot drift apart.
+	 *
+	 * IT IS NOT WHAT MADE THE CREDIT READABLE, and it was shipped believing it
+	 * was. The credit was dark on that scrim because `.source-link` overrode
+	 * its colour, and a dark shadow under dark text is a halo rather than a
+	 * contrast — the shadow only started earning its place once the colour was
+	 * fixed below. Tight and at 70%, matching the bar's glyphs: a heavier one
+	 * under 0.75rem type reads as fuzz.
 	 */
 	.viewer-caption {
 		flex: none;
@@ -746,7 +753,7 @@
 		font-family: var(--font-sans);
 		text-align: center;
 		text-wrap: pretty;
-		text-shadow: 0 1px 3px rgb(0 0 0 / 85%);
+		text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
 	}
 
 	.viewer-title {
@@ -776,28 +783,38 @@
 
 	/*
 	 * `CopyrightNotice`'s source link, in this view's own palette. Dotted until
-	 * the pointer is on it and `color: inherit`, so the line reads as the
-	 * credit it is rather than as a link with a credit attached.
+	 * the pointer is on it, so the line reads as the credit it is rather than
+	 * as a link with a credit attached.
 	 *
 	 * The colours are white at a percentage and NOT `--color-accent`, which is
 	 * every other link on the site. The caption sits on the viewer's own dark
-	 * scrim in both themes — the title and the credit beside it are white at
-	 * 88% and 85% for that reason — and an accent tuned against the page's
-	 * background is not the same colour against this one.
+	 * scrim in both themes — the title and the credit are white at 88% and 85%
+	 * for that reason — and an accent tuned against the page's background is
+	 * not the same colour against this one.
 	 *
-	 * `color: inherit` is why this line needed no change when the credit's own
-	 * alpha moved: the link IS the credit, so it is one number in one place.
+	 * **IT SETS NO `color`, AND THAT IS THE WHOLE POINT.** Carried over from
+	 * `CopyrightNotice`, this rule said `color: inherit`, which is right there
+	 * — the anchor sits inside a paragraph that owns the colour — and was
+	 * wrong here, because the anchor IS the credit and wears both classes at
+	 * once. Two rules of equal specificity set `color` on one element, so
+	 * SOURCE ORDER decided, and this one is second: every credit in this view
+	 * inherited the page's `--color-text` and rendered dark on a dark scrim,
+	 * from the day the line became a link. Measured at rgb(97,97,97) ground
+	 * with darker glyphs on it. **A class that supplies a link's clothes must
+	 * not also supply its colour, or it silently overrides the class it is
+	 * paired with.**
 	 */
 	.source-link {
-		color: inherit;
 		text-decoration-line: underline;
 		text-decoration-style: dotted;
 		text-underline-offset: 0.15em;
 	}
 
+	/* Full white, not 88%: against a credit that is now 85% the old value was
+	   a three-point move nobody could see. The solid underline says the rest. */
 	.source-link:hover,
 	.source-link:focus-visible {
-		color: rgb(255 255 255 / 88%);
+		color: #fff;
 		text-decoration-style: solid;
 	}
 

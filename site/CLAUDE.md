@@ -820,17 +820,31 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   `prefers-reduced-transparency` getting the opaque end of the trade. One
   full-viewport filter, composited once: the page under a modal does not
   repaint, and zoom and pan move layers above the backdrop.
-- **Blurring the scrim made every fixed light value in that view a wager on
-  the page behind it.** At 82% black the ground was near-black whatever was
-  under it, so white at a percentage was a ratio somebody computed once; at
-  62% and blurred, 38% of a nearly-white `--color-bg` comes through and the
-  credit set at 55% went to almost nothing. **A fixed colour over a variable
-  ground is not a colour choice.** The caption carries its own dark ground
-  (`text-shadow`, inherited by title, credit and link together) and the bar's
-  glyphs the same as a `filter: drop-shadow`, an `<svg>` taking no text
-  decoration — and where contrast is scarce, rank by TYPE rather than by
-  alpha: the credit is 3 points below the title now and a size and a case
-  below it, where it used to be 33.
+- **A class that supplies a link's clothes must not also supply its colour.**
+  `PlateViewer`'s credit wears `.viewer-credit` and `.source-link` at once;
+  the second was copied from `CopyrightNotice` carrying `color: inherit`,
+  right where an anchor sits inside a paragraph that owns the colour and wrong
+  where the anchor IS the credit. Equal specificity, so SOURCE ORDER decided
+  and the later one won: every credit in that view rendered in the page's
+  `--color-text`, dark on a dark scrim, from the day the line became a link.
+  **Two rules setting `color` on one element is a silent bug — nothing warns,
+  and the surviving rule looks deliberate.**
+- **Measure the pixels before theorising about a contrast complaint.** That one
+  was read twice as a consequence of the blurred backdrop and patched twice on
+  that reading — a raised alpha, then a text-shadow — neither of which could
+  reach a colour that was being overridden. Sampling the screenshot settled it
+  in one step: ground `rgb(97,97,97)`, exactly the 62% scrim over white and so
+  working as designed, with glyphs DARKER than it. A shadow under dark text is
+  a halo, not a contrast.
+- **Fixed light values in that view are still a wager on the page behind it**,
+  which is the real thing the blur changed: at 82% the ground was near-black
+  whatever was under it, and at 62% some of a nearly-white `--color-bg` comes
+  through. So the caption carries its own dark ground (`text-shadow`,
+  inherited by title, credit and link together) and the bar's glyphs the same
+  as a `filter: drop-shadow`, an `<svg>` taking no text decoration. Where
+  contrast is scarce, rank by TYPE rather than by alpha: the credit sits 3
+  points below the title and a size and a case below it, where it used to be
+  33 points and unreadable.
 - **`†` links carry no `title`.** Those get the site's own preview card, and the
   platform's tooltip draws on top of it. The `aria-label` stays.
 - **The definitions take icons, not paintings.** A painting beside a definition
