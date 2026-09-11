@@ -247,7 +247,7 @@ export function overflowsCard(chars: number): boolean {
  * THE DAGGER COST A FONT FILE AND THE DOUBLE DAGGER COST 100 BYTES ON TOP OF
  * IT. Neither is in either text family's `latin` subset — Google files U+2020
  * under `latin-ext` and U+2021 in no subset at all — so a page carrying one
- * mark would pull a latin-ext subset it needs for nothing else, and pull
+ * mark would pull 158 KB of Source Sans 3 it needs for nothing else, and pull
  * it for the English reader too, since a commentary is switched on rather than
  * implied by a language. `fonts.css` declares a 1.2 KB face subset to these
  * two glyphs, under its own family, and `.commentary-marker` names it ahead of

@@ -79,7 +79,7 @@
  * comparison can pair two scripts. `tokens.css` argues that.
  *
  * THESE ARE ALL EB GARAMOND MEASUREMENTS. The reader's sans face has its own
- * Latin figure and no per-script ones; a Cyrillic edition read in the sans
+ * Latin figure and no per-script ones; a Cyrillic edition read in Source Sans
  * 3 is measured for the serif. That is a smaller error than the one above and
  * is left standing rather than guessed at.
  */
@@ -240,11 +240,11 @@
    TWO THINGS ABOUT THE VALUE ARE LOAD-BEARING, and both were wrong in the
    first draft:
 
-   THE LATIN PAIR STAYS FIRST. Font fallback is per glyph and left to right, and
+   Source Sans STAYS FIRST. Font fallback is per glyph and left to right, and
    every one of these system faces carries Latin too — usually drawn to fill a
    full-width em. Putting the CJK family first would hand it `Glossa
    Catholica` and every numeral, which is how a Chinese interface ends up with
-   Latin that sits wrong beside itself. The Latin pair first means Latin is
+   Latin that sits wrong beside itself. Source Sans first means Latin is
    answered before the question reaches them, and Han is answered after.
 
    The tail is spelled out rather than written `var(--font-sans)`. A custom
@@ -254,8 +254,8 @@
    anything, it would have unset the font for the whole page. */
 :lang(zh) {
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'PingFang SC', 'Hiragino Sans GB',
-		'Microsoft YaHei', 'Noto Sans CJK SC', 'Source Han Sans SC', var(--font-serif);
+		'Source Sans 3 Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+		'Noto Sans CJK SC', 'Source Han Sans SC', var(--font-serif);
 }
 
 /* Traditional Chinese, added 2026-09-04 with `zht` (ui-langs.ts). TWO THINGS
@@ -275,30 +275,30 @@
    separates them. Moving this block above the one before it silently gives a
    Taiwanese reader mainland forms.
 
-   The families are the Traditional cuts of the same faces, and the Latin pair
+   The families are the Traditional cuts of the same faces, and Source Sans
    stays first for the reason the block above gives. */
 :lang(zh-Hant) {
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'PingFang TC', 'Hiragino Sans CNS',
-		'Microsoft JhengHei', 'Noto Sans CJK TC', 'Source Han Sans TC', var(--font-serif);
+		'Source Sans 3 Variable', 'PingFang TC', 'Hiragino Sans CNS', 'Microsoft JhengHei',
+		'Noto Sans CJK TC', 'Source Han Sans TC', var(--font-serif);
 }
 
 :lang(ko) {
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'Apple SD Gothic Neo', 'Malgun Gothic',
-		'Noto Sans CJK KR', 'Source Han Sans KR', var(--font-serif);
+		'Source Sans 3 Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR',
+		'Source Han Sans KR', var(--font-serif);
 }
 
 :lang(hi) {
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'Noto Sans Devanagari', 'Nirmala UI',
-		'Kohinoor Devanagari', 'Mangal', var(--font-serif);
+		'Source Sans 3 Variable', 'Noto Sans Devanagari', 'Nirmala UI', 'Kohinoor Devanagari', 'Mangal',
+		var(--font-serif);
 }
 
 :lang(ml) {
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'Noto Sans Malayalam',
-		'Malayalam Sangam MN', 'Kartika', var(--font-serif);
+		'Source Sans 3 Variable', 'Noto Sans Malayalam', 'Malayalam Sangam MN', 'Kartika',
+		var(--font-serif);
 }
 
 /* ---------------------------------------------------------------------------
@@ -316,7 +316,7 @@
    split `[lang='ru']` sits on a few blocks up, for the same reason: these
    rules answer for a text region, those for the document.
 
-   EB GARAMOND STAYS FIRST, exactly as the Latin pair does above. The Ming faces
+   EB GARAMOND STAYS FIRST, exactly as Source Sans does above. The Ming faces
    carry Latin too, drawn to fill a full-width em, so naming one first would
    hand it every numeral and every parenthesis in a Scripture locator —
    `(創 10:5)` set with the digits as wide as the characters. Per-glyph
@@ -335,7 +335,7 @@
  * order this project would choose them, which is what the serif line beside
  * it does too.
  *
- * THE LATIN PAIR FIRST, for the reason EB Garamond is first above and the
+ * SOURCE SANS FIRST, for the reason EB Garamond is first above and the
  * chrome's own chains give at length: fallback is per glyph and left to
  * right, the Han faces carry full-width Latin, and a Scripture locator whose
  * digits are as wide as the characters is what naming one first buys.
@@ -345,8 +345,8 @@
 		'EB Garamond Variable', 'Songti TC', 'Noto Serif CJK TC', 'Source Han Serif TC', 'PMingLiU',
 		'MingLiU', serif;
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'PingFang TC', 'Hiragino Sans CNS',
-		'Microsoft JhengHei', 'Noto Sans CJK TC', 'Source Han Sans TC', sans-serif;
+		'Source Sans 3 Variable', 'PingFang TC', 'Hiragino Sans CNS', 'Microsoft JhengHei',
+		'Noto Sans CJK TC', 'Source Han Sans TC', sans-serif;
 	/*
 	 * THE MEASURE FOR THIS SCRIPT IS NOT HERE, AND CANNOT BE. It was — an
 	 * advance of 0.9757em and a 40-character target, set on this very rule —
@@ -375,6 +375,6 @@
 	--font-serif:
 		'EB Garamond Variable', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'SimSun', serif;
 	--font-sans:
-		'Atkinson Hyperlegible Next Variable', 'Inter Variable', 'PingFang SC', 'Hiragino Sans GB',
-		'Microsoft YaHei', 'Noto Sans CJK SC', 'Source Han Sans SC', sans-serif;
+		'Source Sans 3 Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+		'Noto Sans CJK SC', 'Source Han Sans SC', sans-serif;
 }

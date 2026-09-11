@@ -1,8 +1,7 @@
 /*
  * THE FACES, AND NOTHING ELSE. Eleven `@font-face` blocks over six scripts:
  * EB Garamond (the text face, in six unicode-range subsets), Amiri for
- * Arabic, Frank Ruhl Libre for Hebrew, Atkinson Hyperlegible Next and Inter
- * for the interface, and
+ * Arabic, Frank Ruhl Libre for Hebrew, Source Sans 3 for the interface, and
  * the two drop-cap faces.
  *
  * The largest file here and the one least often opened — it is data, not
@@ -337,116 +336,110 @@
 	unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
 }
 /*
- * THE INTERFACE FACE, WHICH IS TWO FAMILIES AND HAS TO BE.
+ * SOURCE SANS 3, the interface face — and the only face here that revives
+ * nothing.
  *
  * The chrome is not the book. A menu, a keycap, a "CH. 4" marker, the
  * sidebar's navigation rows: those are our words about the text, not the
- * text's own. What stays in the text face is what the corpus wrote, and
- * `styles/base.css` states the rule that decides which is which -- a heading
- * takes the face of the surface it is on, and only the work's own words name
- * `--font-serif` against the chrome around them.
+ * text's own, and until now they were set in EB Garamond only because
+ * `--font-sans` was an alias for `--font-serif`. What stays in the text face
+ * is everything the work itself wrote — every page `h1`, every
+ * `.structure-heading`, the index and the inline table of contents — each of
+ * which names `var(--font-serif)` explicitly, and did so before this face
+ * existed, precisely so that this change could not move them.
  *
- * ATKINSON HYPERLEGIBLE NEXT CARRIES THE LATIN. Braille Institute with
- * Letters From Sweden, SIL OFL, one variable master (`wght` 200-800) and a
- * drawn italic at every weight. It is here for a reason this project already
- * wrote down somewhere else: `TypeMenu` offers the sans as a READING face to
- * readers who cannot manage EB Garamond, and `site/docs/reading.md` names
- * what defeats them -- fine hairlines, old-style figures, a modest x-height.
- * That sentence is close to a statement of this face's design brief, which no
- * other candidate could say. Its x-height is 0.496em against Garamond's
- * 0.400, the widest separation on the shortlist, and the separation is the
- * point rather than a cost.
- *
- * INTER CARRIES THE CYRILLIC, AND THAT SPLIT IS THE PRICE OF THE FIRST
- * CHOICE. Atkinson stops at latin-ext, and three interface dictionaries --
- * `be`, `ru`, `uk` -- are Cyrillic, so without a second family their chrome
- * would fall through `--font-sans` to the text face and those three readers
- * would get a serif interface while the other thirty-six got a sans. Inter is
- * deliberately the neutral one: it is a supporting face for three languages,
- * and a face with opinions is the wrong thing to hand a role that exists to
- * be unnoticed. It also covers greek, greek-ext and vietnamese if any of
- * those is ever wanted here.
- *
- * FALLBACK IS PER GLYPH AND LEFT TO RIGHT, so the chain in `tokens.css` reads
- * Atkinson, then Inter, then `var(--font-serif)`, and each script lands on the
- * first family that has it. This is the same composition `--font-serif` has
- * always been -- EB Garamond, then Amiri for Arabic, then Frank Ruhl Libre
- * for Hebrew -- made deliberate one tier down.
+ * Slimbach's Source Sans is a humanist sans with an old-style skeleton, drawn
+ * by the hand that also drew Garamond Premier, which is why it sits beside a
+ * Garamond without arguing; it was drawn for interfaces at small sizes, which
+ * is the whole of its job here. Adobe, SIL OFL. One variable master, `wght`
+ * 200-900, so the letterspaced labels at 600 come off a real axis rather than
+ * a synthetic bold.
  *
  * THREE SUBSETS, and unlike the text face's six the interface dictionaries
  * decide them outright: the chrome's strings are `src/lib/i18n/*.ts`, so its
- * glyph inventory is countable rather than estimated.
+ * glyph inventory is countable rather than estimated. Across all thirty-four
+ * — the count trebled on 2026-08-31, and the SUBSETS did not move, because
+ * the scripts that arrived with it are the four no webfont here covers
+ * (see the `:lang()` block at the foot of direction.css):
  *
- *   latin       every language -- Swedish included, whose a-ring and umlauts
- *               are all Latin-1 Supplement.
- *   latin-ext   Polish, Slovenian, Romanian and Hungarian -- four interface
- *               languages, so these are bytes somebody reads. It is a third
- *               the size of the file it replaces (19 KB against 60), which
- *               takes `sw-policy.ts`'s `latin-ext` bucket from 315 KB to 236
- *               for the readers who need it and the install that precached
- *               it.
- *   cyrillic    Russian, Belarusian, Ukrainian -- Inter's.
+ *   latin       every language — Swedish included, whose å ä ö are all
+ *               Latin-1 Supplement, so it added nothing outside this file.
+ *   latin-ext   19 glyphs: Polish 9 (ł ź ś ć ą ń ę ż Ś), Slovenian 5
+ *               (č š ž Č Š), Romanian 3 (ă ș ț) and Hungarian 2 (ő ű).
+ *   cyrillic    55 glyphs, Russian.
+ *   arabic      47 glyphs — and Source Sans has none. `ar` chrome keeps
+ *               falling through to Amiri, which is where it already was and
+ *               where it belongs: Arabic does not carry the serif/sans
+ *               distinction this face exists to draw, so there is nothing
+ *               here for it to be excluded from.
  *
- * Arabic and Hebrew are not gaps in either face: `ar` and `he` chrome resolve
- * through `--font-serif` to Amiri and Frank Ruhl Libre, where they already
- * were. Vietnamese is the standing bet this file has always taken -- neither
- * sans declares it, so a Vietnamese name in a sidebar title finds no
- * `@font-face` here and falls to EB Garamond. One word in the text face is
- * the failure mode, not tofu, which is what makes the bet cheap and cheap to
- * reverse. CHECK THIS INVENTORY WHEN ADDING A LANGUAGE, not after someone
- * reports tofu.
+ * TWO GAPS ARE NOW REAL RATHER THAN THEORETICAL, and both were opened by the
+ * eleven interface languages added on 2026-08-31 (see ui-langs.ts):
  *
- * `size-adjust: 93%` ON ATKINSON AND `85%` ON INTER, and the numbers are the
- * same compromise the face it replaces was struck at. Atkinson's x-height is
- * 24% over the serif's, so mixed-case chrome set at sizes chosen for Garamond
- * reads bigger than the page around it; matching x-heights outright would
- * mean 81% and throw away the large x-height a UI face is chosen for. 93%
- * lands the x-height at 0.461 (15% over the serif's, where the face it
- * replaces sat at 13%) and cap height at 0.621 against 0.650. Inter's 85% is
- * measured against THAT rather than against the serif, because those two
- * faces meet on the same line: the language menu prints endonyms, so a
- * Cyrillic row sits directly under a Latin one, and that is the only place
- * the split is visible at all. At 85% Inter's x-height is 0.464 against
- * Atkinson's 0.461 and its cap 0.618 against 0.621 -- half a percent on both,
- * which is the number to preserve if either face is ever changed.
+ *   vietnamese  Vietnamese chrome sets `Đọc tiếp`, `Ngũ Thư`, `Khải Huyền` —
+ *               U+1EA0-1EF9, which `latin-ext` does not cover. EB Garamond
+ *               declares this subset; Source Sans 3 does not, so the chrome
+ *               falls through `--font-sans` to the text face for those
+ *               glyphs. One word in a serif inside a sans row, not tofu —
+ *               the same bet this file already takes on sidebar titles, and
+ *               the same cheap fix if it ever looks wrong.
+ *   hebrew      Not a gap in THIS face either: Hebrew chrome resolves through
+ *               `--font-serif` to Frank Ruhl Libre, vendored below, the same
+ *               way Arabic chrome has always resolved to Amiri.
  *
- * It is declared on the face rather than spent at each call site, because the
- * mismatch is a property of the face and would otherwise be re-derived every
- * time a surface takes the sans. The five numbers the READING face needs are
- * in `tokens.css` and are stated as this descriptor renders them, not raw.
+ * `greek-ext` and `cyrillic-ext` remain genuinely unreached: Byelorussian
+ * spells `Біблія` and `Пяцікніжжа` inside the plain `cyrillic` range, and its
+ * ў (U+045E) is there too. CHECK THIS INVENTORY WHEN ADDING A LANGUAGE, not
+ * after someone reports tofu — the chrome's glyph inventory is countable, so
+ * there is no excuse for finding out from a reader. The sidebar tables of contents do set corpus
+ * titles in this face, and those are NOT countable, so the omission is a
+ * real bet: a Vietnamese name in a heading finds no `@font-face` here and
+ * falls to EB Garamond through `--font-sans`'s own chain. One word in the
+ * text face is the failure mode, not tofu — which is what makes the bet
+ * cheap, and cheap to reverse if a sidebar ever looks mixed.
  *
- * Italic is declared for both because the chrome genuinely uses it
- * (`.compare-note`, `.compare-missing`, `.divergence-note`), and a declared
- * italic beats the synthetic oblique a missing one produces. Ranges are
- * copied verbatim from each package's `wght.css` / `wght-italic.css` -- do
- * not hand-edit them.
+ * `size-adjust: 95%`, and the number is a compromise between two facts.
+ * Source Sans's x-height is 0.478em against EB Garamond's 0.400 — 19.5%
+ * larger at the same `font-size` — so mixed-case chrome set at sizes chosen
+ * for the serif (the sidebar's rows at 0.85rem, the menus) came out reading
+ * bigger than the page around it. Matching x-heights outright would mean 84%,
+ * which throws away the large x-height a UI face is chosen for and leaves
+ * 12px labels genuinely small. 95% takes the edge off and keeps the
+ * advantage: x-height lands at 0.454 (still 13% over the serif's) and cap
+ * height at 0.627 against 0.650, a 3.5% difference nobody will see in the
+ * uppercase letterspaced labels that are most of the call sites.
  *
- * THE DAGGERS DO NOT COME FROM HERE, and the block at the foot of this file
- * that draws them now outlives the family it was cut from: Atkinson has
- * `dagger` and no `daggerdbl` at all, so U+2021 exists in exactly one file in
- * this project.
+ * It is declared on the face rather than spent adjusting `font-size` at each
+ * call site, because the mismatch is a property of the face and would
+ * otherwise have to be re-derived every time a new surface takes the sans.
+ *
+ * Italic is declared for all three because the chrome genuinely uses it
+ * (`.row-title.borrowed` in the structure sidebar, `.sidenote-missing`), and
+ * a declared italic beats the synthetic oblique a missing one produces.
+ * Ranges are copied verbatim from the package's `wght.css` /
+ * `wght-italic.css` — do not hand-edit them.
  */
 
 /* latin */
 @font-face {
-	font-family: 'Atkinson Hyperlegible Next Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: normal;
-	font-weight: 200 800;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 93%;
-	src: url('/fonts/atkinson-hyperlegible-next-latin-wght-normal.woff2') format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-normal.woff2') format('woff2-variations');
 	unicode-range:
 		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
 		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-	font-family: 'Atkinson Hyperlegible Next Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: italic;
-	font-weight: 200 800;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 93%;
-	src: url('/fonts/atkinson-hyperlegible-next-latin-wght-italic.woff2') format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-wght-italic.woff2') format('woff2-variations');
 	unicode-range:
 		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
 		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -454,13 +447,12 @@
 
 /* latin-ext */
 @font-face {
-	font-family: 'Atkinson Hyperlegible Next Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: normal;
-	font-weight: 200 800;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 93%;
-	src: url('/fonts/atkinson-hyperlegible-next-latin-ext-wght-normal.woff2')
-		format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-normal.woff2') format('woff2-variations');
 	unicode-range:
 		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
 		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
@@ -468,13 +460,12 @@
 }
 
 @font-face {
-	font-family: 'Atkinson Hyperlegible Next Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: italic;
-	font-weight: 200 800;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 93%;
-	src: url('/fonts/atkinson-hyperlegible-next-latin-ext-wght-italic.woff2')
-		format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-latin-ext-wght-italic.woff2') format('woff2-variations');
 	unicode-range:
 		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
 		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
@@ -483,22 +474,22 @@
 
 /* cyrillic */
 @font-face {
-	font-family: 'Inter Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: normal;
-	font-weight: 100 900;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 85%;
-	src: url('/fonts/inter-cyrillic-wght-normal.woff2') format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-normal.woff2') format('woff2-variations');
 	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
 @font-face {
-	font-family: 'Inter Variable';
+	font-family: 'Source Sans 3 Variable';
 	font-style: italic;
-	font-weight: 100 900;
+	font-weight: 200 900;
 	font-display: swap;
-	size-adjust: 85%;
-	src: url('/fonts/inter-cyrillic-wght-italic.woff2') format('woff2-variations');
+	size-adjust: 95%;
+	src: url('/fonts/source-sans-3-cyrillic-wght-italic.woff2') format('woff2-variations');
 	unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
@@ -645,25 +636,19 @@
  * `†` (U+2020) and `‡` (U+2021) are what a printed apparatus marks unnumbered
  * notes with, and they are the two marks `CommentaryGloss` sets — the dagger
  * on the words a note quotes, the double dagger at the end of a unit whose
- * notes quote nothing in it (`COMMENTARY_MARKER`). Neither is in any text
- * family's `latin` subset. Google files the dagger under `latin-ext` — the
- * range declared above says so, and the glyph really is in that file — so a
- * page carrying one dagger would pull a latin-ext subset it needs for nothing
- * else, and would do it for the English reader too, since a commentary is
- * switched on rather than implied by a language. That is the exact shape
- * `sw-policy.ts`'s `DEFERRED_FONTS` exists to stop, arriving from the other
- * side: there the cost was a script nobody read, here it is one glyph.
- *
- * AND THE SECOND MARK IS NOT A SUBSET PROBLEM AT ALL NOW. Atkinson
- * Hyperlegible Next draws `dagger` and has no `daggerdbl` anywhere in the
- * family, so after the interface face changed U+2021 exists in exactly ONE
- * file in this project: this one. The block outlives the family it was cut
- * from, which is why it is named for the marks rather than for the face, and
- * why replacing the chrome's face again does not reach it.
+ * notes quote nothing in it (`COMMENTARY_MARKER`). Neither is in either text
+ * family's `latin` subset. Google files the dagger under
+ * `latin-ext` — the range declared above says so, and the glyph really is in
+ * that file — so a page carrying one dagger downloads 158 KB of Source Sans 3
+ * it needs for nothing else, and does it for the English reader too, since a
+ * commentary is switched on rather than implied by a language. That is the
+ * exact shape `sw-policy.ts`'s `DEFERRED_FONTS` exists to stop, arriving from
+ * the other side: there the cost was a script nobody read, here it is one
+ * glyph.
  *
  * SO IT IS SUBSET TO THE MARKS AND GIVEN ITS OWN FAMILY, which is what the two
  * drop-cap faces above already do and for the same reason. A separate family
- * rather than a fourth `unicode-range` on the interface family: two faces
+ * rather than a fourth `unicode-range` on 'Source Sans 3 Variable': two faces
  * of one family whose ranges overlap on U+2020 resolve by declaration order,
  * which is a rule this file would then depend on silently. Named for what it
  * is, so nothing else reaches for it by accident.
@@ -765,7 +750,7 @@
 	font-family: 'EB Garamond Manicule';
 	font-style: normal;
 	/* The subset keeps EB Garamond's axis, which runs 400 to 800 rather than
-	   the interface face's 200 to 800. Nothing turns it today; declaring the real
+	   Source Sans's 200 to 900. Nothing turns it today; declaring the real
 	   range is what keeps a future `font-weight` from being synthesised. */
 	font-weight: 400 800;
 	font-display: block;

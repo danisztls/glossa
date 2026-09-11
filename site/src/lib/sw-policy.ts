@@ -217,18 +217,17 @@ export const CORE_FONTS = [
  * in its range is actually on the page. That is true over HTTP and it was
  * false the moment this service worker installed: everything in `static/` that
  * the precache does not refuse is downloaded whole at install. Measured
- * 2026-09-11: 1,060 KB of woff2 for EVERY reader, of which 412 KB is Amiri and
- * 236 KB is the two `latin-ext` subsets — real bytes for the readers whose
- * chrome needs them, `pl`, `sl`, `ro` and `hu`, and dead weight for the
- * English one paying the same install.
+ * 2026-08-31: 1,118 KB of woff2 for EVERY reader, of which 413 KB is Amiri and
+ * 315 KB is the two `latin-ext` subsets — paid in full by an English reader who
+ * will never render an Arabic character or a Polish one.
  *
  * So the faces move to the content tier, where the browser's own laziness
  * survives: a deferred font is fetched on demand, stored on first read, and
  * outlives every deploy — the same terms the corpus itself is cached on. The
- * install precache drops from 1,060 KB of fonts to 176 KB, an 83% cut, and
+ * install precache drops from 1,118 KB of fonts to 157 KB, an 86% cut, and
  * what a reader adds back is bounded by their own CHAIN — which is the word
- * that matters, see the `la` paragraph below: 412 KB for Arabic, 236 for the
- * `latin-ext` languages, 161 for the Cyrillic ones, 21 for Vietnamese, 13 for
+ * that matters, see the `la` paragraph below: 413 KB for Arabic, 315 for the
+ * `latin-ext` languages, 160 for the Cyrillic ones, 21 for Vietnamese, 13 for
  * Hebrew, and nothing at all for English, Italian, Spanish, Portuguese,
  * German, French, Dutch, Danish, Finnish, Swedish, Latin and the rest of the
  * plain-`latin` set.
@@ -276,7 +275,7 @@ type FontScript = keyof typeof DEFERRED_FONTS;
  * reason `latin-ext` is declared. It was here for one commit, and the effect
  * was to undo this whole partition: `en` and `la` are the tail of EVERY row in
  * `CONTENT_LANG_FALLBACK`, so `la` is in every reader's chain by construction,
- * so keying the `latin-ext` bucket to it warmed all of it for every reader on
+ * so keying 315 KB of `latin-ext` to it warmed that 315 KB for every reader on
  * earth — the precise thing deferring the faces was meant to stop. Measured:
  * an English reader's automatic fill takes 28 KB of Latin (the prayers; Latin
  * has no Compendium and the elected Catechism is English), so it was eleven

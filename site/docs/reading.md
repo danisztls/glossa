@@ -26,8 +26,7 @@ runs 24.6rem to 55.3rem across the range and every press slid the panel about
 wrote is EB Garamond wherever it stands — running text, a work's title, a
 division's name, a prayer group's heading out of `structure.json` — including
 on a chrome surface that is otherwise sans. What we wrote is Garamond only
-where it is read at length, and the interface face wherever it is scanned or
-operated:
+where it is read at length, and Source Sans wherever it is scanned or operated:
 authorship alone gave the colophon and `/schola` one answer and a filter's
 heading the same one.
 
@@ -52,19 +51,12 @@ default, not a claim that Garamond is legible to everybody — fine hairlines,
 old-style figures and a modest x-height are what some readers cannot manage,
 and the sans is on the device already. `TypeMenu` offers it.
 
-**So the interface face is chosen for that second job, not the first.** It is
-Atkinson Hyperlegible Next, drawn by the Braille Institute for readers with low
-vision, whose brief is the sentence above almost word for word; its x-height is
-0.496em against Garamond's 0.400, the widest separation available, and the
-separation is the point. It stops at latin-ext, so **Inter carries the
-Cyrillic** — `be`, `ru` and `uk` would otherwise read their whole chrome in the
-text face. Composition per script is what `--font-serif` has always been
-(Garamond, then Amiri, then Frank Ruhl Libre); `fonts.css` argues both halves.
-
 **A face's numbers are measured at wght 400, and a variable font's default
-instance is not always 400.** Source Sans 3's default master was 200, so its
-file as loaded measured 5% narrow — the trap in re-running any of the
-frequency-weighted work in `tokens.css`. Instantiate first, or read `fvar`.
+instance is not always 400.** Source Sans 3's default master is wght 200, so
+measuring its file as loaded returns an advance 5% narrow and an ink height 1%
+short — EB Garamond's default is 400, so only one of the pair ever needs
+instantiating, which is what makes the error survive a spot check. Instantiate
+before measuring, or read `fvar` first.
 
 **Whether a script has two faces is a question about the script.** Latin and
 Cyrillic do and this site ships both cuts; Han's pair is Ming and Gothic, named

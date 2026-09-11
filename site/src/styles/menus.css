@@ -403,9 +403,8 @@
 	 * rather than of itself: a 24.4px line box where the rule reads as
 	 * 1.5 x 0.85rem = 20.4px, i.e. ~3.6px of leading nobody asked for, and
 	 * the placeholder sitting 1.7px above the field's centre inside it.
-	 * Measured off a screenshot against the interface face's own metrics (cap
-	 * 660/1000, ascender 722, `g` -234, Source Sans 3 as it then was); the
-	 * `.menu-item` buttons beside it
+	 * Measured off a screenshot against Source Sans 3's own metrics (cap
+	 * 660/1000, ascender 722, `g` -234); the `.menu-item` buttons beside it
 	 * are the control, and they centre to within 0.35px because a button
 	 * inherits the RATIO in the ordinary way and rescales it.
 	 *
