@@ -57,6 +57,14 @@
 	which is why the size rail's silhouette still matches the segmented
 	control here from another bar.
 
+	THE DARK MODE IS DRAWN, NOT WRITTEN: sun, the sun and moon halved, moon.
+	Three words in one bar had each to fit a third of this panel in every
+	interface language, and the next translation to overrun would have widened
+	the whole panel; a glyph is one width in all of them. The words stay as
+	each cell's accessible name and `title`, which is what an icon-only control
+	owes (`Icon.svelte`), and the row's label above still says what is being
+	switched.
+
 	SEPIA AND OLED ARE THE SAME ROW MIRRORED, and they are adjacent so that
 	reads as deliberate: sepia yields to dark, OLED needs it, and so exactly
 	one of the two is ever live. Monochrome can switch sepia off from a third
@@ -69,7 +77,7 @@
 	THE MONOCHROME SWITCH IS THE THIRD ONE AND THE ODD ONE OUT: it applies in
 	every theme, so it is the only switch here that is never disabled — it is
 	the one that disables something else. It sits last of the three because
-	it outranks both, and it is the only row carrying a `title`, because
+	it outranks both, and it is the only switch carrying a `title`, because
 	"monochrome" names the result without saying what the page gives up for
 	it. What it does is app.css's monochrome section.
 
@@ -86,14 +94,20 @@
 	`Menu`'s unaltered — Escape and no more. Tab still walks the rows.
 -->
 <script lang="ts">
-	import { appearance, DARK_MODES } from '$lib/theme.svelte';
+	import { appearance, type DarkMode } from '$lib/theme.svelte';
 	import { library } from '$lib/library.svelte';
-	import Icon from './Icon.svelte';
+	import Icon, { type IconName } from './Icon.svelte';
 	import { Menu } from './menu.svelte';
 	import { keepInViewport } from '$lib/floating';
 	import { t } from '$lib/i18n.svelte';
 
 	const menu = new Menu();
+
+	// Light, auto, dark: the middle of a three-way switch is the position that
+	// decides nothing, which is what auto is. The store's `DARK_MODES` lists the
+	// same three in its own order, which is a set of valid values, not a layout.
+	const MODES: DarkMode[] = ['off', 'auto', 'on'];
+	const MODE_ICON: Record<DarkMode, IconName> = { off: 'sun', auto: 'sun-moon', on: 'moon' };
 </script>
 
 <svelte:window onclick={menu.onWindowClick} />
@@ -126,17 +140,19 @@
 			<div class="field" role="none">
 				<span class="field-label label-micro">{t('darkMode.label')}</span>
 				<div class="field-control segmented" role="group" aria-label={t('darkMode.label')}>
-					{#each DARK_MODES as mode (mode)}
+					{#each MODES as mode (mode)}
 						{@const current = appearance.mode === mode}
 						<button
 							type="button"
 							role="menuitemradio"
 							aria-checked={current}
-							class="segment"
+							aria-label={t(`darkMode.${mode}`)}
+							title={t(`darkMode.${mode}`)}
+							class="segment glyph"
 							class:current
 							onclick={() => appearance.setMode(mode)}
 						>
-							{t(`darkMode.${mode}`)}
+							<Icon name={MODE_ICON[mode]} />
 						</button>
 					{/each}
 				</div>
@@ -273,6 +289,17 @@
 	   are one subject. This separates two subjects. The margin above it is
 	   `.field + .field`'s own, restated because the row below is not a `.field`
 	   and would otherwise sit tight against the row above. */
+	/* The dark-mode cells draw a glyph where `TypeMenu`'s draw a word, so they
+	   undo the shared cell's small-caps size — an icon is sized in `em`, and at
+	   0.72rem it closes up. A flex box centres it, because an inline SVG sits on
+	   the text baseline, and in a cell with no text that is its bottom edge. */
+	.glyph {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.95rem;
+	}
+
 	.advanced {
 		margin-block-start: 0.55rem;
 		border-block-start: 1px solid var(--color-border);

@@ -162,6 +162,15 @@
 	// question and answer — and the help sheet's `?` is a character in a
 	// control row rather than an icon, so nothing in the set collides.
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
+	// DARK MODE'S THREE, the settings panel's switch drawn rather than written:
+	// the sun for light, the moon for dark, and `sun-moon` — the two halved
+	// together — for following the device, which on most of them is light by
+	// day and dark by night. `monitor` was the other candidate for auto and
+	// names where the answer comes from rather than what the reader will see;
+	// `contrast`, a half-filled disc, reads as a contrast setting.
+	import Sun from '@lucide/svelte/icons/sun';
+	import Moon from '@lucide/svelte/icons/moon';
+	import SunMoon from '@lucide/svelte/icons/sun-moon';
 
 	const ICONS = {
 		search: Search,
@@ -209,7 +218,10 @@
 		'a-large-small': ALargeSmall,
 		library: Library,
 		'chart-column': ChartColumn,
-		'circle-help': CircleHelp
+		'circle-help': CircleHelp,
+		sun: Sun,
+		moon: Moon,
+		'sun-moon': SunMoon
 	};
 
 	export type IconName = keyof typeof ICONS;

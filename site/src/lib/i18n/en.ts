@@ -592,9 +592,9 @@ export const en: Dictionary = {
 	// arrived at the hard way: this row was once "Shape cues" and then
 	// "Colour-blind", and a reader who wants a grey page should not have to
 	// identify themselves to find it.
-	// KEEP THE THREE `darkMode` OPTIONS SHORT. They are three cells of one
-	// full-width segmented control inside a ~13rem panel, set uppercase at
-	// 0.68rem, so a long word in any language pushes the panel wider.
+	// The three `darkMode` options are never printed: they name three icon
+	// cells (sun, sun and moon, moon) to a screen reader and in a tooltip, so
+	// they no longer have to fit a third of the panel.
 	// SETTINGS AND NOT APPEARANCE SINCE OFFLINE MODE joined the panel
 	// (`SettingsMenu.svelte` argues the rename). The trigger's icon did not
 	// change with it: the sliders glyph reads as "settings" already, which is
