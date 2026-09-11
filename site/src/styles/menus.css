@@ -73,10 +73,17 @@
  * The `<svg>` is sized here rather than by the caller's `font-size`, so a
  * caller that passes no class to `Icon` gets the same glyph as one that does.
  *
- * NOT FOR AN `i` OVER A PICTURE. `ArtFigure` and `Plate` keep the bordered
- * `.caption-trigger`, because a bare glyph in the corner of a photograph is
- * legible against whatever that photograph happens to be there — which is to
- * say, sometimes not at all.
+ * NOT FOR AN `i` OVER A PICTURE, which is `CreditCard`'s `'overlay'` variant
+ * and wears `.menu-trigger` at a smaller size. A bare glyph in the corner of a
+ * photograph is legible against whatever that photograph happens to be there —
+ * which is to say, sometimes not at all — so that one keeps the bordered
+ * square on its elevated ground, and this one, which sits beside a heading or
+ * a row of controls on the page's own background, does not.
+ *
+ * `CreditCard`'s other variant is a third thing again: a trigger INSIDE a
+ * caption, whose content is the plate's own title with the glyph as a hint
+ * after it, so it takes the caption's colour and size and no chrome at all.
+ * Three arrangements, and what separates them is what the `i` sits ON.
  */
 .hint-trigger {
 	display: inline-flex;

@@ -69,9 +69,9 @@
 	   the control becomes the line it opens, and every surface that draws one
 	   prints that line separately — `.caveat-print` and its siblings — because
 	   a popover never prints. Four of them carried this rule apiece while the
-	   trigger was four local copies of one class. `.caption-trigger` is not
-	   here: `ArtFigure` and `Plate` hide theirs in their own blocks, beside
-	   the printed credit each one substitutes. */
+	   trigger was four local copies of one class. `.credit-trigger` is not
+	   here: `CreditCard` hides its own, beside the printed credit it
+	   substitutes, for both the pictures that draw one. */
 	.hint-trigger {
 		display: none !important;
 	}
