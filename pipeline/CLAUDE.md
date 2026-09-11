@@ -255,6 +255,17 @@ pipeline/scrapers/
   italic so `style ^ 1` still means "the same but for the italics" — and an
   anchor-titled heading is unbold as well as italic, since it carries no
   emphasis at all (`fratelli-tutti.en` makes the two shapes peers).
+- **A division LABEL outside the emphasis is still that heading's**, which is
+  the one tolerance `is_full_italic` may take beside `is_full_bold`: a label is
+  anchored on a numeral where the reverted enumerator tolerance admitted `(a)`.
+  `<p>Article 1. <i><b>…</b></i></p>` cost `ex-corde-ecclesiae` all seven
+  articles of its General Norms, their text included. The run must still carry a
+  word — `pastor-bonus.it` emphasises only its brown amendment `<sup>`.
+- **A numeral printed above its own name is that label with the noun left out,
+  and the STYLE is what says so.** 281 headings in 56 works stood as a numeral
+  row and a title row anchored at one section; the guard the labelled form does
+  not need is that the page paints the two lines alike, since a numeral standing
+  as a division on its own is followed by prose or by a heading set differently.
 - **A division above the numbers may say so in words or in paint, not only in
   Roman numerals.** `numbering_is_in_headings` decides whether a numbered run is
   the document's outline or its paragraph addresses, and a coarser heading in
@@ -281,6 +292,10 @@ pipeline/scrapers/
   leaves a footnote list's worth below it (`_HR_MAX_SHARE`). Measured over every
   raw page: of the 1,008 that boundary on it, 1,003 leave at most 26.1% of the
   region below the rule and five leave at least 96.9%, with nothing in between.
+- **A rule INSIDE the text defeats that size test, so ask what lies below it.** A
+  footnote list does not open with a division — `sapientia-christiana.en` is the
+  one page of 1,228 that prints one under the rule, and its two appendices were
+  never offered to the parse.
 - **An unnumbered edition is empty when it has no CHARACTERS, not when it has no
   block.** Four of those five were the Hungarian Rerum Novarum, Arcanum, Humanae
   Vitae and Redemptionis Donum, sitting in the corpus as works whose whole text

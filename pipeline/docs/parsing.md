@@ -83,6 +83,19 @@ it. The subsequence check reports what it did not find, and "not found" was
 written into a manifest note as "not printed at all" without anyone looking.
 `raw/` is kept so that question is always answerable.
 
+**`census.py` answers it, and a verdict it gets wrong costs a reader's whole
+investigation.** Both of its own blind spots were the same mistake as the defect
+it exists to catch — asking a narrower question than the one meant. An appendix
+unit's `title` is a heading the parse kept, and only its `blocks` were read, so
+an unnumbered edition's headings all scored `DROPPED`
+(`incarnationis-mysterium`, in seven languages). And `heading*` — the verdict
+for one line of a heading the source printed across two — was being spent on a
+title another block already prints entire, which made a dropped heading read as
+a kept one (`mitis-iudex-dominus-iesus.en`'s `The Competent Forum`). A title a
+`heading` block prints whole is CLAIMED and the two-line rule may not reach for
+it: 429 `heading*` verdicts over the corpus were that, 127 of them a heading
+genuinely gone.
+
 ## The same work in ten hands
 
 Nothing about the Compendium's markup is uniform across its editions, and every
@@ -234,6 +247,33 @@ means a citation by it. What makes the core of that unarguable is the
 translations: `libertatis-conscientia` loses 14 to 18 in each of four
 languages, `veritatis-splendor` the same heading in all seven.
 
+**A DIVISION LABEL is the part of that number both predicates may read**,
+because a label is not an enumerator: `LABEL_PATTERNS` demands the document's
+own word for a division and a number after it, where the reverted tolerance
+admitted `(a)` and a dateline. `<p>Article 1. <i><b>The Nature of these General
+Norms</b></i></p>` — `ex-corde-ecclesiae` sets all seven articles of its
+GENERAL NORMS that way, and a short unpunctuated prose line is a run-in header,
+so the walk discarded all seven with their names. 21 works in five languages,
+and in three of them the heading had been welded to the end of the paragraph
+above it, which is the cost of a heading nobody detects in a corpus that
+reproduces text verbatim (`lumen-fidei.de` §22, `crebrae-allatae.la`,
+`cleri-sanctitati.la`). **The run must still carry a word**: `pastor-bonus.it`
+emphasises nothing but the mirror's own brown amendment `<sup>`, and its six
+amended articles came out titled `n`.
+
+**A NUMERAL PRINTED ABOVE ITS OWN NAME IS THAT LABEL WITH THE NOUN LEFT OUT,
+and the style is what says so.** `merge_heading_lines` folds `PART TWO` into the
+line beneath it and could not see `I`, so 281 headings in 56 works stood as two
+nodes anchored at the same section — a numeral row and a title row, which derive
+the same range and highlight together in a reader's outline; in
+`praedicate-evangelium.en` the title also took a level the numeral did not, the
+page's own linked outline vouching for one of the two. The guard the labelled
+form does not need is that the page paints the two lines alike. `PART TWO` says
+what it is however it is set; `I` says nothing, and a numeral standing as a
+division on its own is followed by prose or by a heading set differently —
+which is how the six the Sapientia Christiana foreword prints inside
+`veritatis-gaudium.en`'s appendix stay six divisions.
+
 **Every heading detector needs markup, and the modern Dicastery template
 prints none.** `dignitas-infinita.en` prints 32 headings as bare `<p>` and six
 reach the tree — the six the page happens to italicise, which is an
@@ -271,6 +311,15 @@ footnote list is the only thing that separates them. Measured over every raw
 page: 1,008 boundary on this signal and they do not form a spectrum — 1,003
 leave at most 26.1% of the region below the rule and five leave at least 96.9%,
 with nothing in between, so `_HR_MAX_SHARE` is not a tuning parameter.
+
+**And a rule INSIDE the text is the third thing it can be, which no threshold
+reaches.** `sapientia-christiana.en` sets one above its two appendices, 5,132
+characters of the constitution and 5.8% of the region — so far inside the notes
+band that the size test can only agree with it, and both appendices plus two
+footnotes were never offered to the parse. What separates them is not how much
+lies below the rule but what it OPENS with: a footnote list does not begin with
+a division. Measured over every page that boundaries on this signal — 1,228 of
+them, and exactly one prints a labelled division under the rule.
 
 **Empty is measured in characters, not in blocks.** The five were the Hungarian
 Rerum Novarum, Arcanum, Humanae Vitae and Redemptionis Donum, each of which had

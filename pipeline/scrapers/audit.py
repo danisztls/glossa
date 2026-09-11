@@ -330,7 +330,7 @@ DEFAULT_MIN_COVERAGE = 0.50
 DEFEAT_MARKER = "PARSER DEFEATED"
 
 
-def split_region(html: str) -> tuple[str, str]:
+def split_region(html: str, lang: str | None = None) -> tuple[str, str]:
     """The document's body and its footnote list, delimited exactly as
     `parse_document` delimits them.
 
@@ -357,14 +357,14 @@ def split_region(html: str) -> tuple[str, str]:
         region = html[start : testo.start() + end.start()] if end else html[start:]
     else:
         region = html[V.find_content_start_old_shell(html) :]
-    fn_start, _evidence = V.find_footnote_region_start(region)
+    fn_start, _evidence = V.find_footnote_region_start(region, lang)
     if fn_start is None:
         return region, ""
     return region[:fn_start], region[fn_start:]
 
 
-def body_region(html: str) -> str:
-    return split_region(html)[0]
+def body_region(html: str, lang: str | None = None) -> str:
+    return split_region(html, lang)[0]
 
 
 def stored_text_len(work: Path) -> int:
@@ -435,7 +435,7 @@ def measure(corpus: Path) -> list[dict]:
             # (CLAUDE.md), so this is not a finding.
             continue
         raw = page.read_text(encoding="utf-8", errors="replace")
-        body_len = len(V.strip_tags(body_region(raw)))
+        body_len = len(V.strip_tags(body_region(raw, work_id.rsplit(".", 1)[-1])))
         if body_len < V.STUB_CONTENT_MIN_CHARS:
             continue
         stored = stored_text_len(work)
@@ -2050,7 +2050,8 @@ def measure_apparatus_recall(corpus: Path) -> list[dict]:
             continue
         cites = stored_citations(work)
         _body, foot_html = split_region(
-            page.read_text(encoding="utf-8", errors="replace")
+            page.read_text(encoding="utf-8", errors="replace"),
+            work_id.rsplit(".", 1)[-1],
         )
         notes = source_notes(foot_html)
         if not cites and not notes:

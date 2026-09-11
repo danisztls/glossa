@@ -62,7 +62,7 @@ _SPLIT_RE = re.compile(rf"<\s*/?\s*(?:{BLOCK_TAGS})(?=[\s/>])[^>]*>", re.IGNOREC
 HEADING_MAX_CHARS = 200
 
 
-def body_region(html: str) -> str:
+def body_region(html: str, lang: str | None = None) -> str:
     """Body as `parse_document` delimits it. Mirrors `audit.body_region`."""
     html = V.strip_transparent_spans(html)
     testo = re.search(r'class="testo"', html)
@@ -75,7 +75,7 @@ def body_region(html: str) -> str:
         region = html[start : testo.start() + end.start()] if end else html[start:]
     else:
         region = html[V.find_content_start_old_shell(html) :]
-    fn_start, _ = V.find_footnote_region_start(region)
+    fn_start, _ = V.find_footnote_region_start(region, lang)
     return region if fn_start is None else region[:fn_start]
 
 
@@ -195,7 +195,7 @@ def census(corpus: Path, work_id: str) -> dict:
         raise SystemExit(f"no raw page for {work_id}: {page}")
     work = common.build_root(corpus) / work_id
 
-    body = body_region(page.read_text(encoding="utf-8", errors="replace"))
+    body = body_region(page.read_text(encoding="utf-8", errors="replace"), lang)
     # The parser marks footnote references and then stores the text WITHOUT
     # them, so a raw block reading "...Encyclical,[48] is not..." never
     # matches the stored "...Encyclical, is not..." and every test below
@@ -220,6 +220,7 @@ def census(corpus: Path, work_id: str) -> dict:
     # such a work DROPPED -- all 35 blocks of `rerum-orientalium.it`, a
     # document with nothing wrong with it. The same blind spot reported the
     # trailing block after `optatam-totius.en`'s CONCLUSION as lost.
+    appendix_titles: set[str] = set()
     if (work / "appendix.json").exists():
         for entry in json.loads((work / "appendix.json").read_text()):
             blocks = entry.get("blocks", []) if isinstance(entry, dict) else []
@@ -228,7 +229,16 @@ def census(corpus: Path, work_id: str) -> dict:
             kept_text += " " + norm(
                 " ".join(V.strip_tags(b.get("html", "")) for b in blocks)
             )
-    structure_titles = set()
+            # AN APPENDIX UNIT'S OWN TITLE IS A HEADING THE PARSE KEPT, and
+            # only its `blocks` were being read. An unnumbered edition stores
+            # its headings here and nowhere else, so every one of them scored
+            # DROPPED -- `incarnationis-mysterium.en`'s CONDITIONS FOR GAINING
+            # THE JUBILEE INDULGENCE reads as content loss in a document that
+            # has it. Same blind spot the `blocks` comment below records, one
+            # field over.
+            if isinstance(entry, dict) and entry.get("title"):
+                appendix_titles.add(norm(entry["title"]))
+    structure_titles = set(appendix_titles)
     structure_joined = set()
     if (work / "structure.json").exists():
         for node in json.loads((work / "structure.json").read_text()):
@@ -243,7 +253,7 @@ def census(corpus: Path, work_id: str) -> dict:
             for cut in range(2, len(parts) + 1):
                 structure_joined.add(join_key(" ".join(parts[:cut])))
 
-    rows = []
+    units = []
     for index, raw in enumerate(split_blocks(body)):
         text = _MARKER_RE.sub("", V.strip_tags(V.mark_footnotes(raw, marker_template)))
         if not text:
@@ -255,13 +265,34 @@ def census(corpus: Path, work_id: str) -> dict:
             text = text[m.end() :]
             if not text:
                 continue
+        units.append((index, raw, number, text))
+
+    # A HEADING THE SOURCE PRINTS WHOLE ON ONE LINE CANNOT ALSO BE THE
+    # SECOND LINE OF ANOTHER. `mitis-iudex-dominus-iesus.en` prints
+    # `Art. 1 - The Competent Forum and Tribunals` as one block and then a
+    # bare `The Competent Forum`, which the parse dropped -- and which
+    # `_is_heading_line` scored `heading*` on the strength of the very node
+    # the block above already accounts for. So a title a `heading` block
+    # prints entire is CLAIMED, and the two-line rule may not spend it twice.
+    claimed = set()
+    for _index, _raw, _number, text in units:
+        n = norm(text)
+        if n in structure_titles or (n and join_key(n) in structure_joined):
+            claimed |= {t for t in structure_titles if _is_heading_line(t, n)}
+
+    rows = []
+    for index, raw, number, text in units:
         # Matched WITHOUT the paragraph-number prefix, because the parser strips
         # it (`mark_and_split`) before storing. Comparing with it in place scores
         # every correctly-parsed numbered paragraph as DROPPED.
         n = norm(text)
         if n in structure_titles or (n and join_key(n) in structure_joined):
             verdict = "heading"
-        elif n and any(_is_heading_line(n, title) for title in structure_titles):
+        elif n and any(
+            _is_heading_line(n, title)
+            for title in structure_titles
+            if title not in claimed
+        ):
             # A heading printed on two lines is ONE node: `merge_heading_lines`
             # joins the division label, its name and any subtitle. Each raw
             # line is still its own block here, so an exact-match test scores

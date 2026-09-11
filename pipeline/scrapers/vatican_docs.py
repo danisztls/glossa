@@ -757,8 +757,52 @@ _CITATION_OUTSIDE_RE = re.compile(
 _BLANK_OUTSIDE_RE = re.compile(r"^\s*$")
 
 
+#: Any raised run, marker or not. `_FN_EL_RE` matches only the marker the
+#: parser itself writes; this one has to see what the SOURCE raised.
+_ANY_SUP_RE = re.compile(r"<sup\b[^>]*>.*?</sup>", re.IGNORECASE | re.DOTALL)
+
+
+def _emphasis_titles(spans: list[re.Match[str]]) -> bool:
+    """Does the emphasis cover a TITLE, or only a raised marker?
+
+    Asked of the label tolerance alone. `pastor-bonus.it` marks its amended
+    articles `<p>Articolo 93<i><font color="#663300"><b><sup>n</sup></b>
+    </font></i></p>` -- the whole emphasised run is the amendment mark, which
+    is the mirror's own apparatus and not a word of the document, so the six
+    that carry it came out as headings titled `n`. Every other tolerance is
+    safe from this because a marker is what they permit OUTSIDE the run."""
+    return bool(
+        strip_tags(_ANY_SUP_RE.sub("", "".join(m.group(0) for m in spans))).strip()
+    )
+
+
+def _label_outside(before: str, lang: str | None) -> bool:
+    """Is the text a source left outside its emphasis a DIVISION LABEL?
+
+    `<p>Article 1. <i><b>The Nature of these General Norms</b></i></p>` --
+    `ex-corde-ecclesiae.en` sets all seven articles of its GENERAL NORMS this
+    way, and the label reaches neither `_ENUM_OUTSIDE_RE`, which knows a bare
+    numeral and a single letter, nor `_PUNCT_OUTSIDE_RE`. So none of the seven
+    was a heading, and a short unpunctuated prose line is a run-in header:
+    `walk_document` dropped all seven outright, their names with them.
+
+    Narrower than the ENUMERATOR tolerance `is_full_italic` measured and
+    reverted, which is why this one may be given to both predicates: `(a)` and
+    a dateline are not labels, and `LABEL_PATTERNS` is anchored on a numeral,
+    so a bold or italic lead-in to ordinary prose has to open with the
+    document's own word for a division and a number before it can be read as a
+    heading at all."""
+    if lang is None or not before.strip():
+        return False
+    end = _label_prefix_end(before, lang)
+    return end is not None and _PUNCT_OUTSIDE_RE.match(before[end:]) is not None
+
+
 def _emphasis_covers(
-    inner_html: str, span_re: re.Pattern, tolerant: bool = False
+    inner_html: str,
+    span_re: re.Pattern,
+    tolerant: bool = False,
+    lang: str | None = None,
 ) -> bool:
     """Does `span_re`'s emphasis cover this block's text, allowing a source's
     enumerator and punctuation to sit outside it?
@@ -768,7 +812,11 @@ def _emphasis_covers(
     sits outside the `<b>`; Mystici Corporis PT lost two lettered
     sub-headings the same way; Quadragesimo PT absorbed one into a paragraph
     over a trailing period. All three are the source setting an enumerator or
-    a full stop outside the run it emphasises."""
+    a full stop outside the run it emphasises.
+
+    `lang` adds the fourth thing a source puts outside the run, and the only
+    one that needs to know which language it is reading -- see
+    `_label_outside`."""
     spans = list(span_re.finditer(inner_html))
     if not spans:
         return False
@@ -787,6 +835,8 @@ def _emphasis_covers(
     ):
         return False
     if outside.match(before):
+        return True
+    if _label_outside(before, lang) and _emphasis_titles(spans):
         return True
     return bool(tolerant and _ENUM_OUTSIDE_RE.match(before))
 
@@ -846,7 +896,7 @@ def _anchor_wraps_its_title(inner_html: str) -> bool:
     return _anchor_names_its_text(_ANCHOR_WRAPS_TITLE_RE.match(inner_html))
 
 
-def is_full_bold(inner_html: str) -> bool:
+def is_full_bold(inner_html: str, lang: str | None = None) -> bool:
     """True when the block's visible text sits inside <b>...</b> --
     ccc.py's heading style detector, widened 2026-08-24 to allow the
     enumerator and punctuation a source sets outside the run (see
@@ -854,10 +904,10 @@ def is_full_bold(inner_html: str) -> bool:
     bold *prefix* of an ordinary paragraph must not read as a heading."""
     if not strip_tags(inner_html):
         return False
-    return _emphasis_covers(inner_html, _BOLD_SPAN_RE, tolerant=True)
+    return _emphasis_covers(inner_html, _BOLD_SPAN_RE, tolerant=True, lang=lang)
 
 
-def is_full_italic(inner_html: str) -> bool:
+def is_full_italic(inner_html: str, lang: str | None = None) -> bool:
     """True when the block's visible text sits inside <i>/<em>, the italic
     counterpart of `is_full_bold`.
 
@@ -877,17 +927,21 @@ def is_full_italic(inner_html: str) -> bool:
 
     A heading whose emphasis is bold survives either mistake, because
     `is_full_bold` sees it first. Until the walk can keep a section open
-    across a heading, the safer reading of a lone italic line is prose."""
+    across a heading, the safer reading of a lone italic line is prose.
+
+    The DIVISION-LABEL tolerance is the one it does take, and it is not a
+    third of these: `_label_outside` demands the document's own word for a
+    division and a number, which is neither an enumerator nor a dateline."""
     if not strip_tags(inner_html):
         return False
-    return _emphasis_covers(inner_html, _ITALIC_SPAN_RE)
+    return _emphasis_covers(inner_html, _ITALIC_SPAN_RE, lang=lang)
 
 
 #: A pair of parentheses around a whole block, and nothing else outside them.
 _PARENTHESISED_RE = re.compile(r"^\s*\(\s*(.*?)\s*\)\s*$", re.DOTALL)
 
 
-def is_parenthesised_italic(inner_html: str) -> bool:
+def is_parenthesised_italic(inner_html: str, lang: str | None = None) -> bool:
     """`is_full_italic` of a line the source has put in brackets.
 
     A HEADING A SOURCE PARENTHESISES IS STILL THAT HEADING. The Latvian
@@ -903,7 +957,7 @@ def is_parenthesised_italic(inner_html: str) -> bool:
     asked by `promote_italic_heading_run`, which decides on a RUN and not on
     one line. A single bracketed italic aside stays prose."""
     m = _PARENTHESISED_RE.match(inner_html)
-    return m is not None and is_full_italic(m.group(1))
+    return m is not None and is_full_italic(m.group(1), lang)
 
 
 _CENTERED_RE = re.compile(
@@ -1409,10 +1463,15 @@ _FN_DEF_ANCHOR_RE = re.compile(
 _HR_RE = re.compile(r"<hr\b[^>]*>", re.IGNORECASE)
 
 
-def find_footnote_region_start(html: str) -> tuple[int | None, str]:
+def find_footnote_region_start(
+    html: str, lang: str | None = None
+) -> tuple[int | None, str]:
     """Returns (offset, evidence) -- offset is None if no signal found at
     all (document has no footnotes, or the page defeated every heuristic --
-    the latter is reported, not silently swallowed)."""
+    the latter is reported, not silently swallowed).
+
+    `lang` is read only by `_hr_is_a_lid`, and only to recognise a division
+    label; without it that guard is simply not applied."""
     candidates: list[tuple[int, str]] = []
     m = _FN_HEADING_RE.search(html)
     if m:
@@ -1444,7 +1503,7 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
         # a whole page twice is the most expensive call in this file, and a
         # page that has already shown its apparatus -- a heading, a definition
         # anchor, a numbered run -- boundaries on that whatever a rule says.
-        if (earliest is None or at < earliest) and _hr_is_a_lid(html, at):
+        if (earliest is None or at < earliest) and _hr_is_a_lid(html, at, lang):
             candidates.append((at, "last <hr>"))
     if not candidates:
         return None, "no signal"
@@ -1479,8 +1538,35 @@ def find_footnote_region_start(html: str) -> tuple[int | None, str]:
 _HR_MAX_SHARE = 0.5
 
 
-def _hr_is_a_lid(html: str, at: int) -> bool:
-    """Whether the last `<hr>` leaves a footnote list's worth below it."""
+def _opens_a_division(html: str, lang: str | None) -> bool:
+    """Does the first block with any text in `html` open with a division
+    label the document's own language prints?"""
+    if lang is None or lang not in LABEL_PATTERNS:
+        return False
+    for m in _BLOCK_RE.finditer(html):
+        inner, _kind = block_kind(m)
+        text = " ".join(strip_tags(inner).split())
+        if text:
+            return _label_prefix_end(text, lang) is not None
+    return False
+
+
+def _hr_is_a_lid(html: str, at: int, lang: str | None = None) -> bool:
+    """Whether the last `<hr>` leaves a footnote list's worth below it.
+
+    AND WHETHER WHAT IT LEAVES IS A FOOTNOTE LIST AT ALL. The share test
+    separates a lid from a rule under a table of contents, and cannot see the
+    third thing a rule can be: an ordinary divider inside the body.
+    `sapientia-christiana.en` sets one above its two appendices, which are
+    5,132 characters of the constitution -- 5.8% of the region, so far inside
+    the notes band that no threshold reaches it -- and both appendices plus
+    two real footnotes were never offered to the parse at all.
+
+    A footnote list does not open with a division. Measured over every raw
+    page whose boundary is this signal: 1,228 boundary on it and exactly one
+    opens a labelled division below the rule, which is that page."""
+    if _opens_a_division(html[at:], lang):
+        return False
     total = len(strip_tags(html))
     return total == 0 or len(strip_tags(html[at:])) <= _HR_MAX_SHARE * total
 
@@ -2689,7 +2775,9 @@ def strip_leading_number_html(html: str) -> str:
 _GAP_NUM_PREFIX_RE = re.compile(r"^\s*\d{1,4}\s*\.\s*")
 
 
-def _gap_block(gap_html: str, marker_template: str) -> Block | None:
+def _gap_block(
+    gap_html: str, marker_template: str, lang: str | None = None
+) -> Block | None:
     """Recovers a numbered paragraph whose opening <p> tag is missing from
     the source. Confirmed live (docs/research/vatican-documents.md §7.1,
     encyclical.aeterna-dei.pt): `<p align="center"><b>TITLE</b></p> 3. À
@@ -2766,8 +2854,8 @@ def _gap_block(gap_html: str, marker_template: str) -> Block | None:
     # the period, so it takes the opening `<b><i>` off with the number and
     # `is_full_bold` then sees no bold at all. Here the prefix must be the
     # number and whitespace only, leaving the markup to be judged.
-    heading = is_full_bold(gap_html) or is_full_bold(
-        _GAP_NUM_PREFIX_RE.sub("", gap_html, count=1)
+    heading = is_full_bold(gap_html, lang) or is_full_bold(
+        _GAP_NUM_PREFIX_RE.sub("", gap_html, count=1), lang
     )
     return Block(
         heading,
@@ -3573,6 +3661,35 @@ def split_heading_break(html: str, text: str, lang: str) -> tuple[str, str] | No
     return (label, rest) if rest else None
 
 
+#: A heading line that is nothing but a division's number.
+_BARE_NUMERAL_LINE_RE = re.compile(r"^\s*(?:[IVXLCDM]{1,7}|\d{1,3})\s*[.)]?\s*$")
+
+
+def _numeral_opens_heading(blocks: list[Block], i: int) -> bool:
+    """Is `blocks[i]` a division's NUMBER, printed above its own name?
+
+    `tertio-millennio-adveniente.en` sets `<center><p><b>I</b></p></center>`
+    and its title in a second, identical `<center>`;
+    `praedicate-evangelium.en` prints `I.` and `PREAMBLE` as two
+    `<p style="text-align: center;"><b>`. Both are one heading in two blocks,
+    and `bare_division_label` cannot see either, because the page has left out
+    the noun that makes a label a label -- so each numeral stood as a node of
+    its own, anchored to the same section as the title it names, and in
+    `praedicate-evangelium` the title took a level the numeral did not.
+
+    THE GUARD THE LABELLED FORM DOES NOT NEED IS THE STYLE. `PART TWO` says
+    what it is whatever it is painted like; `I` says nothing, and the only
+    evidence that the line under it finishes it is that the page prints the
+    two the same way. A numeral standing as a division on its own -- the six
+    the Sapientia Christiana foreword prints inside `veritatis-gaudium.en`'s
+    appendix -- is followed by prose, or by a heading set differently."""
+    return bool(
+        _BARE_NUMERAL_LINE_RE.match(blocks[i].text)
+        and i + 1 < len(blocks)
+        and blocks[i].style == blocks[i + 1].style
+    )
+
+
 def merge_heading_lines(
     blocks: list[Block], lang: str, toc_level: dict[int, int]
 ) -> tuple[dict[int, int], list[str]]:
@@ -3611,16 +3728,22 @@ def merge_heading_lines(
     only reason Magnifica Humanitas' three-line chapter openings merge while
     Ad Petri's three-line one does not.
 
+    A BARE NUMERAL IS THE SAME STATEMENT WITH THE NOUN LEFT OUT, and it needs
+    one guard the labelled form does not -- see `_numeral_opens_heading`.
+
     Measured before it was written: 154 runs in 33 works open with a bare
     label, every one of them an identifier followed by a name."""
     merged: list[str] = []
     dropped: set[int] = set()
     i = 0
     while i < len(blocks):
+        opener = bare_division_label(blocks[i].text, lang) or _numeral_opens_heading(
+            blocks, i
+        )
         if (
             not blocks[i].is_heading
             or blocks[i].label
-            or not bare_division_label(blocks[i].text, lang)
+            or not opener
             or i + 1 >= len(blocks)
             or not blocks[i + 1].is_heading
             # Two bare labels in a row are two divisions opening together
@@ -3628,6 +3751,7 @@ def merge_heading_lines(
             # document in the corpus does this today -- the guard is here so
             # that one arriving later loses a level rather than a heading.
             or bare_division_label(blocks[i + 1].text, lang)
+            or _BARE_NUMERAL_LINE_RE.match(blocks[i + 1].text)
         ):
             i += 1
             continue
@@ -3777,11 +3901,17 @@ _TOC_TITLE_WORDS = frozenset(
 # measurement.
 _TOC_CAPTION_WORDS = _TOC_TITLE_WORDS | {
     "contents",
+    "table of contents",
     "sommario",
     "sumário",
     "obsah",
     "kazalo",
 }
+# `table` and `contents` were both in that set and the phrase they make was
+# not, so `pastor-bonus.en` -- the one raw page in the corpus printing it --
+# opened on a level-1 node called TABLE OF CONTENTS which then adopted the
+# document's nine Parts. A table of spellings is closed against a
+# measurement, not against a language.
 
 
 def is_toc_title(text: str) -> bool:
@@ -4776,7 +4906,9 @@ _MIN_STYLE_TIER = 3
 _ODD_TIER_MAX = 2
 
 
-def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
+def promote_italic_heading_run(
+    blocks: list[Block], lang: str | None = None
+) -> list[str]:
     """Mark italic-only blocks as headings where a RUN of them appears, and
     return the texts promoted (for the run summary -- never silent).
 
@@ -4838,7 +4970,7 @@ def promote_italic_heading_run(blocks: list[Block]) -> list[str]:
         )
         and has_words(blk.text)
         and not blk.indented
-        and (is_full_italic(blk.raw) or is_parenthesised_italic(blk.raw))
+        and (is_full_italic(blk.raw, lang) or is_parenthesised_italic(blk.raw, lang))
     ]
     # THE RUN IS ESTABLISHED BY THE BODY, and a pre-body block only joins
     # one that already exists. Counting the two together lets a single
@@ -7928,7 +8060,7 @@ def parse_document(
             else (None, "no note rule found")
         )
     else:
-        fn_start, evidence = find_footnote_region_start(region)
+        fn_start, evidence = find_footnote_region_start(region, lang)
     if fn_start is None:
         body_html, foot_html = region, ""
     else:
@@ -7999,7 +8131,7 @@ def parse_document(
         # opening <p> is missing from the source, by checking the raw
         # text _BLOCK_RE stepped over between the previous match and this
         # one (or, on the first iteration, before the first match).
-        gap = _gap_block(body_html[prev_end : m.start()], marker_template)
+        gap = _gap_block(body_html[prev_end : m.start()], marker_template, lang)
         if gap is not None:
             blocks.append(gap)
         prev_end = m.end()
@@ -8020,7 +8152,7 @@ def parse_document(
             is_heading = True
         else:
             is_heading = (
-                (is_full_bold(inner) or anchor_titled or anchor_wrapped)
+                (is_full_bold(inner, lang) or anchor_titled or anchor_wrapped)
                 if not is_bq
                 else False
             )
@@ -8043,7 +8175,7 @@ def parse_document(
         )
     # Trailing gap after the last block match (or the whole region, if
     # _BLOCK_RE matched nothing at all) -- same recovery, same gate.
-    tail_gap = _gap_block(body_html[prev_end:], marker_template)
+    tail_gap = _gap_block(body_html[prev_end:], marker_template, lang)
     if tail_gap is not None:
         blocks.append(tail_gap)
 
@@ -8060,7 +8192,7 @@ def parse_document(
     # Compact observed heading styles to contiguous levels 1..N for THIS
     # document (see heading_style_rank). Done before the walker so every
     # push_heading can record the level the source actually showed.
-    promoted = promote_italic_heading_run(blocks)
+    promoted = promote_italic_heading_run(blocks, lang)
     if promoted:
         state.anomalies.append(
             f"italic heading run promoted ({len(promoted)}): "
