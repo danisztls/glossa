@@ -421,17 +421,11 @@
 	class="panel-surface floating-panel actions-panel"
 	data-link-preview="off"
 >
-	<ul
-		class="panel-actions"
-		role="menu"
-		aria-orientation="horizontal"
-		aria-label={t('anchor.actions')}
-	>
-		<li role="none">
+	<ul class="panel-actions" aria-label={t('anchor.actions')}>
+		<li>
 			<button
 				type="button"
-				role="menuitemcheckbox"
-				aria-checked={bookmarked}
+				aria-pressed={bookmarked}
 				class="panel-action"
 				class:bookmarked
 				aria-label={bookmarkLabel}
@@ -441,10 +435,9 @@
 				<Icon name="bookmark" filled={bookmarked} />
 			</button>
 		</li>
-		<li role="none">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				class="panel-action"
 				aria-label={t('anchor.copy')}
 				title={t('anchor.copy')}
@@ -453,10 +446,9 @@
 				<Icon name={glyph('copy', 'copy')} />
 			</button>
 		</li>
-		<li role="none">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				class="panel-action"
 				aria-label={t('anchor.copyLink')}
 				title={t('anchor.copyLink')}

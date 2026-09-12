@@ -165,23 +165,21 @@
 	 * whole interface is the wrong way to be wrong.
 	 */
 	function onFilterKeydown(event: KeyboardEvent) {
-		// Composes, as `onPanelKeydown`'s own docblock promises: it acts on
-		// Escape alone and leaves everything else to whatever runs after it.
-		menu.onPanelKeydown(event);
+		// Escape is not handled here: it is the window's, and this input is
+		// inside the path the event bubbles along.
 		if (event.key !== 'Enter' || visible.length !== 1) return;
 		event.preventDefault();
 		choose(visible[0].code);
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger lang-trigger"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={`${t('lang.label')}: ${current}`}
 		title={t('lang.label')}
@@ -191,10 +189,11 @@
 	</button>
 	{#if menu.open}
 		<!-- A `<div>`, not the `<ul>` the unfiltered panels are: an input is not
-		     a list item, so `role="menu"` moves down onto the list. Escape is
-		     handled on the box and on the list rather than on this wrapper,
-		     which is where it would read as an interactive element with no
-		     role — those two are the only things in here focus can be in. -->
+		     a list item, so the list is a child of the panel rather than the
+		     panel. Escape is handled on the box and on the list rather than on
+		     this wrapper, which is where it would read as an interactive element
+		     with no role — those two are the only things in here focus can be in.
+		-->
 		<div class="panel-surface menu-panel menu-panel-filtered lang-panel" use:keepInViewport>
 			<!-- `type="search"` for the clear affordance browsers give it; the
 			     accessible name is an `aria-label` because a visible label in a
@@ -211,19 +210,13 @@
 			{#if visible.length === 0}
 				<p class="menu-empty">{t('menu.noMatches')}</p>
 			{:else}
-				<ul
-					class="menu-list lang-list"
-					role="menu"
-					aria-label={t('lang.label')}
-					onkeydown={menu.onPanelKeydown}
-				>
+				<ul class="menu-list lang-list" aria-label={t('lang.label')}>
 					{#each visible as row (row.code)}
 						{@const isCurrent = i18n.lang === row.code}
-						<li role="none">
+						<li>
 							<button
 								type="button"
-								role="menuitemradio"
-								aria-checked={isCurrent}
+								aria-pressed={isCurrent}
 								class="menu-item"
 								class:current={isCurrent}
 								onclick={() => choose(row.code)}

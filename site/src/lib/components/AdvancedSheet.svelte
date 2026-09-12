@@ -345,11 +345,6 @@
 					</section>
 				{/if}
 
-				<!--
-					`role="switch"` and not the popover's `menuitemcheckbox`: the same
-					control, but the container it is in is what decides how it is
-					announced, and this one is a dialog rather than a menu.
-				-->
 				<section class="block">
 					<div class="switch-line">
 						<h3 class="block-title label-micro">{t('offline.label')}</h3>

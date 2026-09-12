@@ -1,6 +1,32 @@
 /**
  * The behavior half of the site's dropdown menus.
  *
+ * NONE OF THEM IS AN ARIA `menu`, AND SAYING SO WAS A PROMISE ABOUT THE
+ * KEYBOARD THAT NOTHING HERE KEEPS. `role="menu"` puts a screen reader into
+ * application mode and commits the author to the menu keyboard contract: one
+ * tab stop for the whole panel, arrows to move between items, Home and End to
+ * reach the ends. These panels do none of that. Every control in them is an
+ * ordinary button in the ordinary tab order — which works, and is what a reader
+ * who presses Tab actually gets — so the arrows a reader was told to press did
+ * nothing, on every chrome control on the site.
+ *
+ * The panels are also not menus in the sense the role is FOR. The APG reserves
+ * it for a list of commands; four of these hold form controls (a switch, a
+ * three-way choice, a size rail) and three more are a filter box over a list of
+ * choices, which is nearer a combobox than a menu. `role="none"` on every
+ * layout wrapper existed only to keep menu items reading as children of a menu
+ * that should not have been there, and went with it.
+ *
+ * SO THE ANNOUNCEMENT NOW MATCHES THE BEHAVIOUR, and it is smaller: a panel of
+ * controls is a `role="group"` with the name the trigger has, a panel of
+ * choices is the `<ul>` it already was, a toggle that draws a switch is
+ * `role="switch"`, and one-of-N is `aria-pressed` — the same spelling
+ * `/documenta`'s facets use. `aria-expanded` on the trigger stays and is the
+ * only claim any of this still makes. The alternative was to implement roving
+ * focus in all eight panels and keep the roles, which is more code to keep a
+ * contract no reader had asked for and would have taken Tab away from the ones
+ * already using it.
+ *
  * `app.css` has long carried the LOOK of these menus as shared `.menu` /
  * `.menu-trigger` / `.menu-panel` / `.menu-item` primitives. This carries the
  * matching BEHAVIOR — open state, close-on-outside-click, close-on-Escape,
@@ -14,7 +40,7 @@
  * rather than off a fixed header control.
  *
  * `AnchorMenu` is also the first consumer to take only HALF of this. It is a
- * native `popover`, so `onWindowClick` and `onPanelKeydown` are the browser's
+ * native `popover`, so `onWindowClick` and `onWindowKeydown` are the browser's
  * job there and it uses neither; what it still wants is `open`, `triggerEl`,
  * and `close` — the state, so Svelte knows whether to render the panel at
  * all, and the trigger, so the panel knows what to measure against. The four
@@ -119,11 +145,18 @@ export class Menu {
 
 	/**
 	 * Escape closes the panel and restores focus. Menus with their own
-	 * additional keys (`SettingsMenu`'s arrows) call this first and then
+	 * additional keys (`TypeMenu`'s rail arrows) call this first and then
 	 * handle the rest — this only ever acts on Escape, so it composes.
+	 *
+	 * ON THE WINDOW, BESIDE `onWindowClick`, AND NOT ON THE PANEL. It sat on
+	 * the panel element while that element claimed `role="menu"`, which is what
+	 * made a keydown listener on it legible; a `<ul>` or a `<div>` with no role
+	 * and a key handler is a control nothing announces. The guard is what makes
+	 * the move safe, and the move is also a small repair: Escape now closes the
+	 * panel from wherever focus is, rather than only from inside it.
 	 */
-	onPanelKeydown = (e: KeyboardEvent) => {
-		if (e.key !== 'Escape') return;
+	onWindowKeydown = (e: KeyboardEvent) => {
+		if (!this.open || e.key !== 'Escape') return;
 		e.preventDefault();
 		this.closeAndRefocus();
 	};

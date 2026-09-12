@@ -51,13 +51,13 @@
 	current one accented say both things in the shape of the control, and the
 	default is the second dot, one click away from anywhere.
 
-	THE ARROW KEYS MOVE ALONG THE RAIL, gated on the focus being inside it —
-	the face row is a radio group where an arrow means "the other face", which
-	the browser does not do for `<button role=menuitemradio>` but which a
-	reader may reasonably expect, and resizing the type from it would be the
-	wrong answer either way. Left and right follow the rail's own direction, so
-	an Arabic interface — where the rail runs the other way — steps toward the
-	key that was pressed rather than away from it.
+	THE ARROW KEYS MOVE ALONG THE RAIL, and the handler sits on the rail rather
+	than on the panel: the face row beside it is two alternatives where an arrow
+	could mean "the other face", and resizing the type from there would be the
+	wrong answer. Left and right follow the rail's own direction, so an Arabic
+	interface — where the rail runs the other way — steps toward the key that was
+	pressed rather than away from it. Escape is not here at all; it belongs to
+	the window, beside the outside click (`menu.svelte.ts`).
 
 	Built to the shared row template (`.field`, `.segmented` in
 	`styles/menus.css`), so the two rows here and the four in `SettingsMenu`
@@ -82,8 +82,11 @@
 	 *  what the reader has unless they said otherwise. */
 	const FACES: ReadingFace[] = ['serif', 'sans'];
 
-	function onPanelKeydown(e: KeyboardEvent) {
-		menu.onPanelKeydown(e);
+	/** On each stop rather than on the rail around them: the rail is a `group`,
+	 *  and a key handler on an element nothing announces as a control is a
+	 *  control nobody can find. A stop is where the focus is when this key is
+	 *  pressed anyway. */
+	function onRailKeydown(e: KeyboardEvent) {
 		if (!(e.target instanceof Element)) return;
 		const rail = e.target.closest('.rail');
 		if (!rail) return;
@@ -108,14 +111,13 @@
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={t('type.label')}
 		title={t('type.label')}
@@ -127,12 +129,11 @@
 		<div
 			class="panel-surface menu-panel type-panel"
 			use:keepInViewport
-			role="menu"
+			role="group"
 			tabindex="-1"
 			aria-label={t('type.label')}
-			onkeydown={onPanelKeydown}
 		>
-			<div class="field" role="none">
+			<div class="field">
 				<span class="field-label label-micro">{t('fontSize.label')}</span>
 				<div
 					class="field-control rail"
@@ -144,14 +145,14 @@
 						{@const current = fontScale.value === size.scale}
 						<button
 							type="button"
-							role="menuitemradio"
-							aria-checked={current}
+							aria-pressed={current}
 							class="stop"
 							class:current
 							style="--i: {i}"
 							aria-label={t(`fontSize.${size.name}`)}
 							title={t(`fontSize.${size.name}`)}
 							onclick={() => fontScale.set(size.scale)}
+							onkeydown={onRailKeydown}
 						>
 							<span class="dot"></span>
 						</button>
@@ -160,7 +161,7 @@
 			</div>
 
 			<!-- The same segmented control `SettingsMenu` picks a dark mode with,
-			     and `menuitemradio` for the same reason: the two faces are
+			     and `aria-pressed` for the same reason: the two faces are
 			     alternatives, where the apparatus panel's rows are not.
 
 			     `.face-field` IS A HANDLE FOR A STYLESHEET, not a style of its
@@ -171,15 +172,14 @@
 			     is hidden and not disabled — it is inapplicable here rather
 			     than unavailable — so nothing in this component needs to know
 			     which language is being read. -->
-			<div class="field face-field" role="none">
+			<div class="field face-field">
 				<span class="field-label label-micro">{t('face.label')}</span>
 				<div class="field-control segmented" role="group" aria-label={t('face.label')}>
 					{#each FACES as face (face)}
 						{@const current = readingFace.value === face}
 						<button
 							type="button"
-							role="menuitemradio"
-							aria-checked={current}
+							aria-pressed={current}
 							class="segment"
 							class:current
 							onclick={() => readingFace.set(face)}

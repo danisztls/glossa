@@ -8,10 +8,10 @@
 	icons or a list of alternatives. What makes it a panel here specifically is
 	that the choices are not exclusive: a reader can have Challoner's notes and
 	Haydock's catena beside the same verse, which is the arrangement this site
-	is named for. So the rows are `menuitemcheckbox` switches, and NOT the
-	`menuitemradio` rows `EditionMenu` and `ComparisonEditionMenu` use — those
-	two ask which single edition, and copying their ARIA here would tell a
-	screen reader the choices are mutually exclusive when they are not.
+	is named for. So the rows are `role="switch"`, each answering for itself,
+	and NOT the `aria-pressed` one-of-N rows `EditionMenu` and
+	`ComparisonEditionMenu` use — those two ask which single edition, and
+	copying their ARIA here would put these rows in a set they are not in.
 
 	IT IS NOT IN `.reading-bar-editions`, and that is deliberate. That wrapper
 	is `flex-wrap: nowrap` so its three controls read as one phrase — "this
@@ -54,7 +54,7 @@
 	const menu = new Menu();
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu" bind:this={menu.containerEl}>
 	<button
@@ -62,7 +62,6 @@
 		bind:this={menu.triggerEl}
 		class="menu-trigger"
 		data-help="apparatus"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={t('apparatus.label')}
 		title={t('apparatus.label')}
@@ -74,19 +73,18 @@
 		<div
 			class="panel-surface menu-panel apparatus-panel"
 			use:keepInViewport
-			role="menu"
+			role="group"
 			tabindex="-1"
 			aria-label={t('apparatus.label')}
-			onkeydown={menu.onPanelKeydown}
 		>
 			{#if edition}
 				{@const on = apparatusPrefs.editionNotesEnabled(edition.workId, edition.subsumed)}
-				<div class="field" role="none">
+				<div class="field">
 					<span class="field-label label-micro">{t('apparatus.editionNotes')}</span>
-					<div class="field-control" role="none">
+					<div class="field-control">
 						<button
 							type="button"
-							role="menuitemcheckbox"
+							role="switch"
 							aria-checked={on}
 							aria-label={edition.title}
 							class="switch-btn"
@@ -115,12 +113,12 @@
 			     one and small enough to arrive with the text. -->
 			{#each commentaries as work (work.id)}
 				{@const on = apparatusPrefs.commentaryEnabled(work.id, commentaryDefaultsOn(work))}
-				<div class="field" role="none">
+				<div class="field">
 					<span class="field-label label-micro">{t('apparatus.commentary')}</span>
-					<div class="field-control" role="none">
+					<div class="field-control">
 						<button
 							type="button"
-							role="menuitemcheckbox"
+							role="switch"
 							aria-checked={on}
 							aria-label={work.title}
 							class="switch-btn"

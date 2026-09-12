@@ -101,7 +101,6 @@
 	class:bookmarked
 	{href}
 	aria-label={label}
-	aria-haspopup="menu"
 	aria-expanded={menu.open}
 	data-link-preview="off"
 	onpointerdown={() => (openAtPointerDown = menu.open)}

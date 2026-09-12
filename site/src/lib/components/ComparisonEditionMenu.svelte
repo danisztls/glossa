@@ -111,14 +111,13 @@
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu comparison-edition-menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger wide"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={`${t('edition.label')}: ${triggerLabel}`}
 		title={t('edition.label')}
@@ -138,7 +137,6 @@
 					class="menu-filter"
 					bind:this={filterEl}
 					bind:value={query}
-					onkeydown={menu.onPanelKeydown}
 					placeholder={t('edition.filter')}
 					aria-label={t('edition.filter')}
 				/>
@@ -146,19 +144,13 @@
 			{#if visible.length === 0}
 				<p class="menu-empty">{t('menu.noMatches')}</p>
 			{:else}
-				<ul
-					class="menu-list"
-					role="menu"
-					aria-label={t('edition.label')}
-					onkeydown={menu.onPanelKeydown}
-				>
+				<ul class="menu-list" aria-label={t('edition.label')}>
 					{#each visible as edition (edition.id)}
 						{@const isCurrent = edition.id === current}
-						<li role="none">
+						<li>
 							<button
 								type="button"
-								role="menuitemradio"
-								aria-checked={isCurrent}
+								aria-pressed={isCurrent}
 								class="menu-item"
 								class:current={isCurrent}
 								onclick={() => choose(edition.id)}

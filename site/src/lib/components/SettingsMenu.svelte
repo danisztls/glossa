@@ -110,14 +110,13 @@
 	const MODE_ICON: Record<DarkMode, IconName> = { off: 'sun', auto: 'sun-moon', on: 'moon' };
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={t('settings.label')}
 		title={t('settings.label')}
@@ -129,23 +128,18 @@
 		<div
 			class="panel-surface menu-panel settings-panel"
 			use:keepInViewport
-			role="menu"
+			role="group"
 			tabindex="-1"
 			aria-label={t('settings.label')}
-			onkeydown={menu.onPanelKeydown}
 		>
-			<!-- The layout wrappers are `role="none"` so the menuitems inside them
-			     still read as direct children of the menu — the same job the other
-			     menus' `<li role="none">` does. -->
-			<div class="field" role="none">
+			<div class="field">
 				<span class="field-label label-micro">{t('darkMode.label')}</span>
 				<div class="field-control segmented" role="group" aria-label={t('darkMode.label')}>
 					{#each MODES as mode (mode)}
 						{@const current = appearance.mode === mode}
 						<button
 							type="button"
-							role="menuitemradio"
-							aria-checked={current}
+							aria-pressed={current}
 							aria-label={t(`darkMode.${mode}`)}
 							title={t(`darkMode.${mode}`)}
 							class="segment glyph"
@@ -158,14 +152,14 @@
 				</div>
 			</div>
 
-			<div class="field" role="none">
+			<div class="field">
 				<span class="field-label label-micro">{t('sepia.label')}</span>
-				<div class="field-control" role="none">
+				<div class="field-control">
 					<!-- The visible name is the label above, so the button carries the
 					     same string as its accessible name rather than wrapping it. -->
 					<button
 						type="button"
-						role="menuitemcheckbox"
+						role="switch"
 						aria-checked={appearance.sepia}
 						aria-label={t('sepia.label')}
 						class="switch-btn"
@@ -182,12 +176,12 @@
 				</div>
 			</div>
 
-			<div class="field" role="none">
+			<div class="field">
 				<span class="field-label label-micro">{t('oled.label')}</span>
-				<div class="field-control" role="none">
+				<div class="field-control">
 					<button
 						type="button"
-						role="menuitemcheckbox"
+						role="switch"
 						aria-checked={appearance.oled}
 						aria-label={t('oled.label')}
 						class="switch-btn"
@@ -202,12 +196,12 @@
 				</div>
 			</div>
 
-			<div class="field" role="none">
+			<div class="field">
 				<span class="field-label label-micro">{t('mono.label')}</span>
-				<div class="field-control" role="none">
+				<div class="field-control">
 					<button
 						type="button"
-						role="menuitemcheckbox"
+						role="switch"
 						aria-checked={appearance.mono}
 						aria-label={t('mono.label')}
 						title={t('mono.hint')}
@@ -223,7 +217,7 @@
 			     it takes the divider the appearance rows deliberately do
 			     without: that rule was about not carving up ONE subject, and
 			     this is a second one. -->
-			<div class="advanced" role="none">
+			<div class="advanced">
 				<!-- `.menu-more` is `LanguageMenu`'s "+ more" control, reused rather
 				     than restyled: the trailing ellipsis rather than a leading "+"
 				     is what says this one leaves the panel instead of growing it,
@@ -232,7 +226,6 @@
 				     for one subject, and the dialog is the one being read. -->
 				<button
 					type="button"
-					role="menuitem"
 					aria-haspopup="dialog"
 					class="menu-more"
 					onclick={() => {
@@ -278,7 +271,7 @@
 	   outside the button now, and is already muted. */
 	/* Drawn rather than a checkbox: `appearance: none` on a real one would
 	   need the same box anyway, and the button already carries the state via
-	   `role="menuitemcheckbox"` + `aria-checked`. Decorative, so no ARIA. */
+	   `role="switch"` + `aria-checked`. Decorative, so no ARIA. */
 	/* No wrapping: the row has a fixed height, so a second line would spill
 	   out of it. If a translation ever outgrows the space the panel widens
 	   (up to `.menu-panel`'s max-width) instead, which is the visible

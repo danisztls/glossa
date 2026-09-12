@@ -252,21 +252,21 @@
 	 *  than one — `LanguageMenu`'s own rule, and for its reason: with two on
 	 *  screen a first-match Enter picks one for reasons the reader cannot see. */
 	function onFilterKeydown(event: KeyboardEvent) {
-		menu.onPanelKeydown(event);
+		// Escape is the window's, and this input is inside the path it bubbles
+		// along — see `menu.svelte.ts`.
 		if (event.key !== 'Enter' || matches.length !== 1) return;
 		event.preventDefault();
 		choose(matches[0].code);
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 <div class="menu" bind:this={menu.containerEl}>
 	<button
 		type="button"
 		bind:this={menu.triggerEl}
 		class="menu-trigger calendar-trigger"
-		aria-haspopup="menu"
 		aria-expanded={menu.open}
 		aria-label={`${t('calendar.calendar')}: ${currentName}`}
 		title={currentName}
@@ -277,8 +277,8 @@
 	</button>
 	{#if menu.open}
 		<!-- A `<div>` rather than the `<ul>` the plain panels are: this one holds
-		     a box, a row and several grids, so `role="menu"` cannot sit on a
-		     single list. It goes on each list instead. -->
+		     a box, a row and several grids, so no one list is the panel. Each
+		     grid is a list of its own and carries its own name. -->
 		<div class="panel-surface menu-panel calendar-panel" use:keepInViewport>
 			<input
 				type="search"
@@ -296,12 +296,11 @@
 				     screen then is what MATCHED, and a row that always shows would
 				     be the one entry the box does not answer for. -->
 				<p class="label-micro region-heading">{generalName}</p>
-				<ul class="flag-grid" role="menu" aria-label={generalName} onkeydown={menu.onPanelKeydown}>
-					<li role="none">
+				<ul class="flag-grid" aria-label={generalName}>
+					<li>
 						<button
 							type="button"
-							role="menuitemradio"
-							aria-checked={value === 'general'}
+							aria-pressed={value === 'general'}
 							class="flag-cell"
 							class:current={value === 'general'}
 							aria-label={generalName}
@@ -323,19 +322,13 @@
 			{:else}
 				{#each filtered as region (region.id)}
 					<p class="label-micro region-heading">{t(`calendar.region.${region.id}`)}</p>
-					<ul
-						class="flag-grid"
-						role="menu"
-						aria-label={t(`calendar.region.${region.id}`)}
-						onkeydown={menu.onPanelKeydown}
-					>
+					<ul class="flag-grid" aria-label={t(`calendar.region.${region.id}`)}>
 						{#each region.cells as cell (cell.code)}
 							{@const isCurrent = value === cell.code}
-							<li role="none">
+							<li>
 								<button
 									type="button"
-									role="menuitemradio"
-									aria-checked={isCurrent}
+									aria-pressed={isCurrent}
 									class="flag-cell"
 									class:current={isCurrent}
 									aria-label={cell.name}

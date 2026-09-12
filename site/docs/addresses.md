@@ -344,7 +344,7 @@ short: an introduction is chapter 0, which is an address.
 one work. A reader can have Challoner's notes and Haydock's catena beside the
 same verse, and that is the arrangement this site is named for.
 `apparatus-prefs.svelte.ts` stores a set and the control is a panel of
-`menuitemcheckbox` switches.
+`role="switch"` rows, each answering for itself.
 
 **The two defaults are opposite on purpose.** An edition's own notes are ON,
 because the reader who chose the Douay chose Challoner's apparatus. A

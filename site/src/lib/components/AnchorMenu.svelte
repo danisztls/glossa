@@ -172,13 +172,12 @@
      whether it is open, and `trackAnchor` holds them for exactly as long as
      this component is mounted — which is exactly as long as it is open. -->
 
-<!-- The `<ul role="menu">` with `role="none"` wrappers is the same accessible
-     structure every other menu on the site uses (`LanguageMenu` et al.):
-     layout elements between a menu and its items would otherwise break the
-     parent/child relationship assistive tech reads. It is horizontal here, and
-     says so. Each action is icon-only, so each carries both an `aria-label`
-     (the icon has no text to attach one to — see `Icon.svelte`) and a `title`,
-     which is what actually shows the name on hover. -->
+<!-- A PLAIN LIST OF FOUR CONTROLS, which is what `menu.svelte.ts` says every
+     panel on this site is. It was a `<ul role="menu">` of `role="menuitem"`s
+     and drew horizontally, so it announced a toolbar's keyboard contract and
+     implemented none of it. Each action is icon-only, so each carries both an
+     `aria-label` (the icon has no text to attach one to — see `Icon.svelte`)
+     and a `title`, which is what actually shows the name on hover. -->
 <div
 	bind:this={card.panel}
 	popover="auto"
@@ -186,15 +185,9 @@
 	class="panel-surface floating-panel actions-panel"
 	data-link-preview="off"
 >
-	<ul
-		class="panel-actions"
-		role="menu"
-		aria-orientation="horizontal"
-		aria-label={t('anchor.actions')}
-	>
-		<li role="none">
+	<ul class="panel-actions" aria-label={t('anchor.actions')}>
+		<li>
 			<a
-				role="menuitem"
 				class="panel-action"
 				href={navHref}
 				aria-label={t('anchor.view')}
@@ -204,10 +197,9 @@
 				<Icon name="eye" />
 			</a>
 		</li>
-		<li role="none">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				class="panel-action"
 				aria-label={t('anchor.copy')}
 				title={t('anchor.copy')}
@@ -216,10 +208,9 @@
 				<Icon name={glyph('copy', 'copy')} />
 			</button>
 		</li>
-		<li role="none">
+		<li>
 			<button
 				type="button"
-				role="menuitem"
 				class="panel-action"
 				aria-label={t('anchor.copyLink')}
 				title={t('anchor.copyLink')}
@@ -228,11 +219,10 @@
 				<Icon name={glyph('copyLink', 'link')} />
 			</button>
 		</li>
-		<li role="none">
+		<li>
 			<button
 				type="button"
-				role="menuitemcheckbox"
-				aria-checked={bookmarked}
+				aria-pressed={bookmarked}
 				class="panel-action"
 				class:bookmarked
 				aria-label={bookmarkLabel}

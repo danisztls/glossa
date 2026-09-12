@@ -1239,6 +1239,30 @@ their place. Two sections, not one list, and the trace goes first.
   rather than filled — four sections divided by four hairlines in the same grey
   as every card border is a page with no landmarks in it.
 
+### Reach
+
+- **A divider may be faint and the edge of a control may not.**
+  `--color-border` is 1.24–1.50:1 against its ground and carries no
+  information; `--color-control-border` is the boundary of a field or a switch,
+  where the fill is 1.09:1 against the page and the border is the whole
+  affordance. `tokens-contrast.test.ts` measures every ink in all six palettes
+  against both grounds — text at 4.5:1, a boundary at 3:1 — and asserts that
+  the `@media` and `[data-theme]` copies of dark, OLED and mono agree.
+- **An edit is made against the palette on screen and there are six.** Sepia's
+  muted ink was under the bar on both grounds through every pass this palette
+  has had, and it is the colour of every caption, count and label-micro.
+- **No panel on this site is an ARIA `menu`.** `role="menu"` promises one tab
+  stop and arrow keys between the items; every chrome panel is ordinary buttons
+  in the ordinary tab order, so the arrows did nothing on all eight of them. A
+  panel of controls is a `role="group"`, a panel of choices is the `<ul>` it
+  already was, a switch is `role="switch"` and one-of-N is `aria-pressed` —
+  `menu.svelte.ts` argues it, and Escape lives on the window beside the outside
+  click because a `<ul>` with a key handler and no role is a control nothing
+  announces.
+- **The skip link is the first tab stop and `<main id="main">` is its
+  landing.** Twelve identical stops stand between the brand and the first word
+  on ~6,000 addresses.
+
 ## `/quaestiones`: a topic is a doorway, and one paragraph may come first
 
 Reader questions anchored to spans of the numbered works (`site/quaestiones.json`,

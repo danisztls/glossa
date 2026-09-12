@@ -371,7 +371,7 @@
 	}
 </script>
 
-<svelte:window onclick={menu.onWindowClick} />
+<svelte:window onclick={menu.onWindowClick} onkeydown={menu.onWindowKeydown} />
 
 {#if ctx && editions.length > 0}
 	<div class="menu" bind:this={menu.containerEl}>
@@ -379,7 +379,6 @@
 			type="button"
 			bind:this={menu.triggerEl}
 			class="menu-trigger wide"
-			aria-haspopup="menu"
 			aria-expanded={menu.open}
 			aria-label={`${t('edition.label')}: ${triggerLabel}`}
 			title={t('edition.label')}
@@ -395,9 +394,10 @@
 		</button>
 		{#if menu.open}
 			<!-- A `<div>` wrapping a `<ul>`, not the bare `<ul>` this used to be:
-			     an input is not a list item, so `role="menu"` moves down onto the
-			     list. The wrapper is used at every length — a three-edition Bible
-			     menu with no box in it is the same box with one child. -->
+			     an input is not a list item, so the list is a child of the panel
+			     rather than the panel. The wrapper is used at every length — a
+			     three-edition Bible menu with no box in it is the same box with
+			     one child. -->
 			<div class="panel-surface menu-panel menu-panel-filtered" use:keepInViewport>
 				{#if showFilter}
 					<input
@@ -405,7 +405,6 @@
 						class="menu-filter"
 						bind:this={filterEl}
 						bind:value={query}
-						onkeydown={menu.onPanelKeydown}
 						placeholder={t('edition.filter')}
 						aria-label={t('edition.filter')}
 					/>
@@ -413,19 +412,13 @@
 				{#if visible.length === 0}
 					<p class="menu-empty">{t('menu.noMatches')}</p>
 				{:else}
-					<ul
-						class="menu-list"
-						role="menu"
-						aria-label={t('edition.label')}
-						onkeydown={menu.onPanelKeydown}
-					>
+					<ul class="menu-list" aria-label={t('edition.label')}>
 						{#each visible as edition (edition.id)}
 							{@const current = edition.id === currentWorkId}
-							<li role="none">
+							<li>
 								<button
 									type="button"
-									role="menuitemradio"
-									aria-checked={current}
+									aria-pressed={current}
 									class="menu-item"
 									class:current
 									onclick={() => choose(edition.id)}
