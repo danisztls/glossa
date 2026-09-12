@@ -1468,12 +1468,20 @@ flat reverse-chronological list.
   `navigator.languages` and would print a different row per visitor on a page
   the build prerenders. The language the row is WRITTEN in leads it and is
   never inside the count.
+- **The subjects have a count of their own, cut by WIDTH where the languages'
+  is cut by the reader** (`chip-fit.ts`). It ESTIMATES that width from the text
+  in characters rather than measuring it — a `ResizeObserver` per row is a
+  second layout pass on 272 of them — and being wrong costs one chip either
+  way. **A live query or a chosen subject prints the lot**, since a row has to
+  be able to show what it is on the list for.
 - **That count is a disclosure and opens LEFTWARDS, into the empty half of its
   own line.** The names were a `title` for a day, which is nothing on a phone;
   a line of their own was an hour, and cost every row below a reflow for a look
   at one row. **A right-aligned row already holds the space a disclosure needs**
   — and the chip keeps the line's end and its text, so what a reader pressed is
-  where they left it (`IndexSection`'s rule, met by a chip).
+  where they left it (`IndexSection`'s rule, met by a chip). **The revealed
+  chips go where the line GROWS**: after the subjects' count, which runs from
+  the start edge, and before the languages', which runs from the end.
 - **`DocumentFilters.svelte` is rendered twice on the page** (aside above 80rem,
   `<details>` below), which is why its options are `aria-pressed` buttons and
   not checkboxes (two elements claiming one `id`) and the search text is a PROP,

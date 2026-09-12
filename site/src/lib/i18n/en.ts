@@ -1120,6 +1120,10 @@ export const en: Dictionary = {
 	// and not a sentence of its own.
 	'document.languages.label': 'Available in',
 	'document.languages.more': 'more languages',
+	// The subjects' own count, which follows a bare `+5` exactly as the
+	// languages' does — a row prints as many as its line holds and puts the
+	// rest behind this.
+	'document.subjects.more': 'more subjects',
 	'document.tableOfContents': 'Table of Contents',
 	'document.startReading': 'Start reading',
 	'document.readFullDocument': 'Read the full document',

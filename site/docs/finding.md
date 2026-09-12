@@ -1578,6 +1578,38 @@ Fourteen codes are still wider than a phone's line, so the group wraps and the
 row grows; that is the honest limit of a disclosure inside a line, and the
 reader asked for it at that width too.
 
+**The subjects took the same count, cut by a different thing** (2026-09-12, by
+direction). Eight subjects under a two-line description is a row that has
+stopped being a title with facts under it, so a row prints as many as its line
+holds and puts the rest behind `+5`. The cut is a WIDTH — one line on a phone,
+half the row above that — where the languages' cut is the reader's chain: one
+is a fact about the row, the other a fact about who is reading it.
+
+**It estimates that width and measures nothing** (`chip-fit.ts`). The browser
+is the only thing that knows a rendered width, and asking it means a
+`ResizeObserver` per row and a second layout pass after every filter on a list
+of 272. So the width is counted in CHARACTERS, from text the row already has,
+against a budget derived from the chip's own type size — and being wrong costs
+exactly one chip in either direction: a row cuts early and reads `+2` where
+`+1` would do, or cuts late and wraps, which is what every row did before.
+**Two rules keep the count from costing more than it saves**: one chip is
+always printed, and a run that would hide exactly one prints the lot, `+1`
+being as wide as the chip it replaces.
+
+**A live query or a chosen subject prints every subject on the row.** A query
+marks what it matched, and a matched subject behind a count is a row with no
+visible reason for being on the list — the exact failure this page's matcher is
+arranged to prevent — while a chosen subject is the filter the reader set, and
+the panel's `liveTags` keeps one visible for the same reason. It is
+`fold-state.svelte.ts`'s rule (a live query forces a fold open) met again, a row
+at a time.
+
+**The revealed subjects come AFTER their count and the revealed languages come
+before theirs**, which is one rule and not two: the control keeps the edge its
+line is anchored to, and the chips go where the line grows. The subjects run
+from the start edge, so everything they push moves to the right of the count and
+nothing to its left.
+
 **The languages themselves are still not controls, and the subjects are.** A
 subject is a facet of this page, so a chip that could not be clicked would be
 the worse half of a tag; a language is a property of the document, chosen on

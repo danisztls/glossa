@@ -81,6 +81,7 @@
 		loadDocumentTags,
 		loadTranslatedDescriptions
 	} from '$lib/corpus';
+	import { fitChips, TAG_BUDGET_NARROW, TAG_BUDGET_WIDE } from '$lib/chip-fit';
 	import { preferredDescription } from '$lib/document-description';
 	import { nearLanguages } from '$lib/document-langs';
 	import { filterByQuery, highlight } from '$lib/highlight';
@@ -227,6 +228,55 @@
 		);
 		return out;
 	});
+
+	/**
+	 * Whether the card's foot is at the width where the languages take a line of
+	 * their own — the one number the subjects' budget turns on, since below it
+	 * they have the whole line and above it they share it.
+	 *
+	 * TRACKED RATHER THAN READ ONCE, the reason `sidenoteRoom` tracks its own
+	 * query: a resize across the breakpoint changes how many chips a row prints,
+	 * and a value read at mount would leave the row cut for a width the reader
+	 * has left. It is `false` through the prerender — effects do not run there —
+	 * so the written document holds the wide cut, which is the one a crawler and
+	 * a reader with no script should get.
+	 */
+	const NARROW_QUERY = '(max-width: 40rem)';
+	let narrow = $state(false);
+	$effect(() => {
+		const query = window.matchMedia(NARROW_QUERY);
+		narrow = query.matches;
+		const onChange = (event: MediaQueryListEvent) => (narrow = event.matches);
+		query.addEventListener('change', onChange);
+		return () => query.removeEventListener('change', onChange);
+	});
+
+	const tagBudget = $derived(narrow ? TAG_BUDGET_NARROW : TAG_BUDGET_WIDE);
+
+	/**
+	 * How many of a row's subjects are printed, the rest being behind its count.
+	 *
+	 * THREE THINGS PRINT THE LOT, and two of them are one rule: the row has to
+	 * be able to show what it is on this list FOR. A live query marks the words
+	 * it matched, and a subject it matched behind a count is a row with no
+	 * visible reason for being there — the failure this page's own matcher is
+	 * arranged to prevent (`highlight.ts`) — while a CHOSEN subject is the
+	 * filter the reader set, and `liveTags` keeps one visible in the panel for
+	 * the same reason. The third is the reader having pressed the count.
+	 *
+	 * A live query forcing a fold open is `fold-state.svelte.ts`'s rule for a
+	 * folded index, met again a row at a time.
+	 */
+	function tagsShown(row: Row): number {
+		if (tagsOpen[row.slug] || query.trim() !== '') return row.tags.length;
+		if (row.tagKeys.some((key) => selectedTags.includes(key))) return row.tags.length;
+		return fitChips(row.tags, tagBudget);
+	}
+
+	/** Which rows have their remaining subjects open, by slug — `langsOpen`'s
+	 *  twin, and separate from it because a reader who wanted one of a row's two
+	 *  counts opened did not ask for the other. */
+	let tagsOpen = $state<Record<string, boolean>>({});
 
 	/**
 	 * Which rows have their remaining languages open, by slug.
@@ -575,6 +625,23 @@
 						>{segment.text}</mark
 					>{:else}{segment.text}{/if}{/each}{/snippet}
 
+		<!-- One subject. A control, not decoration: seeing what a document is
+		     filed under and being unable to ask for the rest of that shelf is the
+		     worse half of a tag. It takes the row rather than the tag so the
+		     lower-cased key stays beside the written form — `tagKeys` is what the
+		     facets match on and the two are parallel arrays. -->
+		{#snippet tagChip(row: Row, tag: string, i: number)}
+			<li>
+				<button
+					type="button"
+					class="doc-tag"
+					class:on={selectedTags.includes(row.tagKeys[i])}
+					aria-pressed={selectedTags.includes(row.tagKeys[i])}
+					onclick={() => toggle('tags', row.tagKeys[i])}>{@render marked(tag)}</button
+				>
+			</li>
+		{/snippet}
+
 		<!-- Digits, not a sentence: a count needs no translation and no plural
 		     rule. The name it is owed is a visually-hidden span rather than an
 		     `aria-label`, which is only reliably exposed on interactive elements
@@ -601,6 +668,7 @@
 				{#each visible as row (row.slug)}
 					{@const description = describe(row)}
 					{@const langs = nearLanguages(row.langs, langChain, row.lang)}
+					{@const tagFit = tagsShown(row)}
 					<li class="index-row">
 						<!--
 							THE CARD IS FIVE STACKED BLOCKS, each taking the row's whole
@@ -678,22 +746,44 @@
 						{#if row.tags.length > 0 || langs.shown.length > 0}
 							<div class="doc-foot">
 								{#if row.tags.length > 0}
-									<!-- Each tag is a control, not decoration: seeing what a
-									     document is filed under and being unable to ask for the
-									     rest of that shelf is the worse half of a tag. -->
+									<!--
+										THE SUBJECTS HAVE A COUNT OF THEIR OWN, on the languages'
+										argument and a different cut: theirs is the reader's chain,
+										a fact about who is reading; this one is WIDTH, a fact
+										about the row. Eight subjects under a two-line description
+										is a row that has stopped being a title with facts under it
+										(`chip-fit.ts` estimates the width and says why it
+										estimates rather than measures).
+
+										THE REVEALED SUBJECTS COME AFTER THE COUNT, where the
+										languages' come before it, and both are the same rule: the
+										control keeps the edge the line is anchored to and the
+										chips go where the line grows. This list runs from the
+										start edge, so growing it moves everything to the right of
+										the count — and nothing to its left.
+									-->
 									<ul class="doc-tags">
 										{#each row.tags as tag, i (tag)}
+											{#if i < tagFit}{@render tagChip(row, tag, i)}{/if}
+										{/each}
+										{#if tagFit < row.tags.length}
 											<li>
 												<button
 													type="button"
-													class="doc-tag"
-													class:on={selectedTags.includes(row.tagKeys[i])}
-													aria-pressed={selectedTags.includes(row.tagKeys[i])}
-													onclick={() => toggle('tags', row.tagKeys[i])}
-													>{@render marked(tag)}</button
+													class="doc-tag more"
+													aria-expanded={tagsOpen[row.slug] === true}
+													onclick={() => (tagsOpen[row.slug] = !tagsOpen[row.slug])}
+													>+{row.tags.length - tagFit}<span class="visually-hidden">
+														{t('document.subjects.more')}</span
+													></button
 												>
 											</li>
-										{/each}
+											{#if tagsOpen[row.slug]}
+												{#each row.tags as tag, i (tag)}
+													{#if i >= tagFit}{@render tagChip(row, tag, i)}{/if}
+												{/each}
+											{/if}
+										{/if}
 									</ul>
 								{/if}
 								{#if langs.shown.length > 0}
@@ -996,6 +1086,21 @@
 	}
 
 	.doc-tag.on {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-accent-contrast);
+	}
+
+	/* The subjects' count, wearing the languages' count exactly: dotted, so
+	   the one pressable scrap that is not itself a subject says so, and lit
+	   when open the way a chosen subject is lit. One idiom for both lists —
+	   a reader learns `+5` once. */
+	.doc-tag.more {
+		border-style: dotted;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.doc-tag.more[aria-expanded='true'] {
 		background: var(--color-accent);
 		border-color: var(--color-accent);
 		color: var(--color-accent-contrast);
