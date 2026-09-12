@@ -621,11 +621,25 @@
 									     each of them is a button. The name it is owed is a
 									     visually-hidden span for the reason the count above the
 									     list carries one — an `aria-label` on an element with
-									     neither a role nor a handler is dropped. -->
+									     neither a role nor a handler is dropped.
+
+									     THE CODE IS FOR THE EYE AND THE NAME IS FOR EVERYTHING
+									     ELSE. A chip holds the tag in capitals, which is the
+									     one form that is the same width in every language and
+									     does not set a Latin row beside an Arabic one; the
+									     language's own name is its `title` for a reader who
+									     cannot tell SK from SL, and visually hidden inside it so
+									     a screen reader says "Slovenčina" rather than spelling
+									     two letters. `EditionMenu` prints the pair together,
+									     having room for both. -->
 									<p class="doc-langs">
 										<span class="visually-hidden">{t('document.languages.label')}: </span>
 										{#each langs.shown as lang (lang)}
-											<span class="doc-lang">{languageDisplayName(lang)}</span>
+											<span class="doc-lang" title={languageDisplayName(lang)}
+												><span aria-hidden="true">{lang.toUpperCase()}</span><span
+													class="visually-hidden">{languageDisplayName(lang)}</span
+												></span
+											>
 										{/each}
 										{#if langs.rest.length > 0}
 											<span
@@ -899,16 +913,17 @@
 	 * bordered scrap at the END OF A ROW'S LINK, and the hover that answers on
 	 * both ends of the row is written for it.
 	 *
-	 * A language's own name, never its tag — `Português`, the way the edition
-	 * picker and the language switch both name one (`lang-names.ts`). Each name
-	 * is set in the script it is written in, so a chip may be Arabic or Han
-	 * beside a Latin one; nothing here sets a face, so each falls to the
-	 * document's own stack.
+	 * THE TAG IN CAPITALS, where the edition picker and the language switch
+	 * write the name out. Four names in their own scripts are four widths and
+	 * up to three scripts in a corner of a card the eye passes over; four codes
+	 * are one shape, and the name is a hover and a screen reader's alternative
+	 * away. Tracking because two capitals set tight read as one word.
 	 */
 	.doc-lang {
 		font-family: var(--font-sans);
 		font-size: 0.7rem;
 		line-height: 1.4;
+		letter-spacing: 0.04em;
 		padding: 0.1rem 0.4rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);

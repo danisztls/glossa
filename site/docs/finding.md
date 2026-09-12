@@ -1536,6 +1536,16 @@ reading `+13` over a Ukrainian title would be counting the language of the
 title above it. `document-langs.ts` is the whole rule, and the test is the
 reason it is a module.
 
+**A chip prints the tag in capitals and carries the name behind it**
+(2026-09-11, by direction). `EN`, `FR` — where the edition picker and the
+language switch both write the name out, having a row each to do it in. Four
+names in their own scripts are four widths and up to three scripts in a corner
+of a card the eye passes over; four codes are one shape, and a reader who
+cannot tell `SK` from `SL` gets the name from the chip's `title`. **A code is
+not an accessible name**, so each chip also holds the language's own name
+visually hidden with the code `aria-hidden` beside it: a screen reader says
+Slovenčina rather than spelling two letters, and nothing is said twice.
+
 **The languages are not controls and the subjects beside them are.** A subject
 is a facet of this page, so a chip that could not be clicked would be the worse
 half of a tag; a language is a property of the document, chosen on the
