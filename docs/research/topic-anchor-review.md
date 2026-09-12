@@ -530,12 +530,27 @@ jq -r '.topics | to_entries
   site/quaestiones.json
 ```
 
-Then write the rows. Each is `grade`, `reviewed`, the `anchors` signature and
-the `note`, keyed by slug in `quaestiones.json`'s own order. **Write `anchors` last, after the fixes**, since it states the set the
+Then write the rows. Each is `grade`, `reviewed`, the `anchors` signature, the
+`strings` signature and the `note`, keyed by slug in `quaestiones.json`'s own
+order. **Write `anchors` last, after the fixes**, since it states the set the
 grade was formed on and the fixes are part of the pass. Its shape is
 `ccc 2354,2351-2352 | csdc 204-208 | canons 1176 | lead 2283 | documents a,b`,
 each work omitted when the topic has none, and `quaestiones.test.ts` recomputes
 it — so a typo fails rather than sitting there.
+
+**`strings` is the same device over the words** — an eight-character digest of
+the English title, question and keywords, recomputed the same way. It was added
+on 2026-09-11 because the anchors had been watched since the file was written
+and the words never had, and a grade is a claim about both: it answers whether
+a reader arriving with THIS question leaves with it answered, and whether every
+keyword has text behind it. `pecunia-collocanda` is the case. It carried
+_usury_, _interest_, _loans_ and _lending_ on a reading of CCC 2409 that does
+not hold — 2409's lending clause is the borrower who does not give it back —
+and no paragraph on the page contained either word. Nothing failed, because the
+anchors were right the whole time. **A C lives in the keywords, and until this
+field the ledger could not see them.** Do not write the digest by hand: change
+the strings, run the suite, read the three lines it prints, re-read the topic,
+then take the value from the failure.
 
 A batch is one cluster. The first pass over all sixteen finished 2026-09-10, so
 a batch now is a re-read: a topic whose anchors moved and whose row the test

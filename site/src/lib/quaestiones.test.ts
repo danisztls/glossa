@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { hrefFor, parseHref } from './address';
 import { hasTopics } from './corpus';
 import { isCanonicalPath, type RouteManifest } from './route-manifest';
@@ -426,15 +427,52 @@ describe('every topic is reachable and named', () => {
  * was formed on and this recomputes it. The fix when it fails is to re-read
  * the topic, not to paste the new signature in: the point of the failure is
  * that somebody has to look.
+ *
+ * THE ANCHORS WERE HALF OF IT, AND THE OTHER HALF WENT UNWATCHED FOR MONTHS.
+ * A grade answers `does a reader arriving with this topic's own question leave
+ * with it answered` — and the question is a string in `en.ts`, not a span in
+ * `quaestiones.json`. Rewrite the question and the verdict beside it is about
+ * a question nobody asks any more, with every anchor still in place and the
+ * suite green. Same for the keywords, which are the whole surface a C is
+ * found on: `pecunia-collocanda` carried `usury`, `interest`, `loans` and
+ * `lending` on a misreading of CCC 2409 while its anchors never moved once.
+ * So `strings` is the second signature, over the English title, question and
+ * keywords together, and a row is stale if EITHER has changed.
+ *
+ * WHY A DIGEST AND NOT THE STRINGS THEMSELVES: they live in `en.ts`, and a
+ * copy here would be a second place to edit and a second place to be wrong —
+ * the same reason this file holds no anchor spans either. What the failure
+ * prints is the three strings as they now read, which is what somebody
+ * re-reading the topic needs in front of them.
+ *
+ * ENGLISH ONLY, and that is a real limit rather than an oversight. The pass
+ * is written in English against the English strings; a Portuguese keyword
+ * that over-promises is invisible here and is caught, if at all, by the
+ * dictionary tests that hold the two in step.
  */
 const review = JSON.parse(readFileSync('quaestiones-review.json', 'utf8')) as {
 	reviewed: Record<
 		string,
-		{ grade: string; reviewed: string; was?: string; anchors: string; note: string }
+		{ grade: string; reviewed: string; anchors: string; strings: string; note: string }
 	>;
 };
 
 describe('quaestiones-review.json', () => {
+	/** The three strings a reader meets, as one short signature. Not readable
+	 *  by eye and not meant to be — `anchors` is not readable without opening
+	 *  the source either, and in both the mechanism is the failing test. */
+	const stringsOf = (slug: string): string =>
+		createHash('sha256')
+			.update(
+				[
+					en[`quaestiones.${slug}.title`] ?? '',
+					en[`quaestiones.${slug}.question`] ?? '',
+					en[`quaestiones.${slug}.keywords`] ?? ''
+				].join('\n')
+			)
+			.digest('hex')
+			.slice(0, 8);
+
 	/** The same statement the ledger's `anchors` field holds, from the source. */
 	const signature = (topic: (typeof source.topics)[string]): string => {
 		const parts: string[] = [];
@@ -482,6 +520,40 @@ describe('quaestiones-review.json', () => {
 		expect(
 			drifted,
 			`re-read these topics against their new passages, then update quaestiones-review.json:\n${drifted.join('\n')}`
+		).toEqual([]);
+	});
+
+	it('was formed on the words the reader still meets', () => {
+		const drifted = Object.entries(review.reviewed)
+			.filter(([slug, row]) => row.strings !== stringsOf(slug))
+			.map(
+				([slug]) =>
+					`${slug} -> ${stringsOf(slug)}\n` +
+					`  title:    ${en[`quaestiones.${slug}.title`] ?? '(none)'}\n` +
+					`  question: ${en[`quaestiones.${slug}.question`] ?? '(none)'}\n` +
+					`  keywords: ${en[`quaestiones.${slug}.keywords`] ?? '(none)'}`
+			);
+		expect(
+			drifted,
+			're-read these topics against the words above — a grade is a claim that THIS question\n' +
+				'is answered and that every keyword has text behind it, so a rewrite of either is a\n' +
+				'new claim. Then update `strings` in quaestiones-review.json:\n' +
+				drifted.join('\n')
+		).toEqual([]);
+	});
+
+	/**
+	 * ABSENCE IS NOT A PASS, and until 2026-09-11 nothing but prose said so.
+	 * `spectacula` shipped with no row and the suite stayed green; a topic can
+	 * therefore reach a reader ungraded, which is the state the blocklist's own
+	 * argument exists to prevent — a topic that answers badly is worse than no
+	 * topic, and nobody has asked whether this one answers at all.
+	 */
+	it('grades every topic that ships', () => {
+		const ungraded = Object.keys(source.topics).filter((slug) => !review.reviewed[slug]);
+		expect(
+			ungraded,
+			`these topics ship ungraded; read them and write their rows:\n${ungraded.join('\n')}`
 		).toEqual([]);
 	});
 });
