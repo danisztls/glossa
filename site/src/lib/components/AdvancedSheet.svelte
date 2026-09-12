@@ -1,11 +1,11 @@
 <!--
 	The Advanced panel: the offline library, the offline switch that decides
-	what the library is for, and — quietly, at the foot — the build this page
-	is running.
+	what the library is for, the reader's answer to being counted, and —
+	quietly, at the foot — the build this page is running.
 
-	WHY THE TWO ARE ONE PANEL. They were a fold inside `SettingsMenu`'s
-	popover — a "+ Advanced" row that uncovered a switch and a link to a second
-	dialog. Two problems, and the second is the one that mattered. The panel is
+	WHY THE LIBRARY AND THE SWITCH ARE ONE PANEL. They were a fold inside
+	`SettingsMenu`'s popover — a "+ Advanced" row that uncovered a switch and a
+	link to a second dialog. Two problems, and the second is the one that mattered. The panel is
 	~11rem wide, so a switch whose price is a whole sentence could only carry
 	that sentence as a `title` nobody hovers on a phone. And the pair are one
 	subject read in one order: the library is what you fill, offline mode is
@@ -17,7 +17,10 @@
 	prerequisite: offline mode turns downloads OFF, so a reader who meets the
 	switch first flips it and then finds a library they can no longer fill.
 	`library.offlineNote` is what that reader gets instead of six inert
-	buttons.
+	buttons. Usage measurement comes last because it is the only block that
+	costs the reader nothing either way: the two above decide what this device
+	can read without a network, and this one decides what it says about having
+	read it.
 
 	THE ROWS ARE WAVES, NOT WORKS, and the difference is worth knowing before
 	changing it. A wave is every edition of a kind in the reader's language
@@ -65,6 +68,7 @@
 	import { library } from '$lib/library.svelte';
 	import { formatBytes } from '$lib/library';
 	import { offline } from '$lib/offline.svelte';
+	import { usagePref } from '$lib/usage-pref.svelte';
 	import { serviceWorker } from '$lib/sw.svelte';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { version } from '$app/environment';
@@ -362,6 +366,38 @@
 					<!-- The sentence the popover could only afford as a `title`, which
 					     is the width this panel was opened to buy. -->
 					<p class="lede">{t('offline.hint')}</p>
+				</section>
+
+				<!--
+					USAGE MEASUREMENT, under offline mode because offline mode is the
+					blunt version of it: a reader who wants nothing sent and will pay
+					every download for it has already been served two blocks up, and
+					this is the same answer at the price of nothing. Offline mode
+					stops the beacon while it is on whatever this switch says
+					(`usage.ts`'s `#send` gates on both), so the two never disagree
+					about what happens — only about what was asked for, which is why
+					this one is not disabled while the other is on.
+
+					NOT GATED ON `controlled`, for the library's reason in reverse:
+					no service worker is involved at all. The switch is a
+					localStorage flag two modules read, and it works under
+					`npm run dev` where half this panel does not.
+				-->
+				<section class="block">
+					<div class="switch-line">
+						<h3 class="block-title label-micro">{t('measure.label')}</h3>
+						<button
+							type="button"
+							role="switch"
+							aria-checked={usagePref.enabled}
+							aria-label={t('measure.label')}
+							class="switch-btn"
+							onclick={() => usagePref.toggle()}
+						>
+							<span class="switch" class:on={usagePref.enabled}></span>
+						</button>
+					</div>
+					<p class="lede">{t('measure.hint')}</p>
 				</section>
 
 				<!--

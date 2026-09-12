@@ -16,7 +16,9 @@
  * colophon promises is what this sends.
  *
  * OFFLINE MODE WITHHOLDS IT ENTIRELY — see `offline.svelte.ts`, and `#send`
- * for why the answer is "do not send" rather than "send later".
+ * for why the answer is "do not send" rather than "send later". So does the
+ * reader's own switch in the Advanced panel (`usage-pref.svelte.ts`), which is
+ * the same withholding without the price of offline mode.
  *
  * ONE BEACON PER SESSION, AND ONLY FOR A READER. Nothing is sent until the
  * session has had `ENGAGEMENT_MIN_MS` of *visible* time and at least one real
@@ -35,6 +37,7 @@ import { setContentReadObserver } from './corpus';
 import { manifests } from './corpus-index';
 import { i18n } from './i18n.svelte';
 import { offline } from './offline.svelte';
+import { usagePref } from './usage-pref.svelte';
 import { readStoredJson, readStoredString, writeStoredJson, writeStoredString } from './storage';
 import {
 	SCHEMA_VERSION,
@@ -469,6 +472,11 @@ class UsageSession {
 		// the staleness counter and every bucket below are local, and a session
 		// that stopped counting itself would corrupt the NEXT one's numbers.
 		if (offline.enabled) return;
+		// THE READER'S OWN SWITCH, gated in the same place and pausing in the
+		// same way: `usage-pref.svelte.ts` is a standing answer rather than a
+		// consequence of some other setting, and it is also how this site's own
+		// devices stay out of a report about its readers.
+		if (!usagePref.enabled) return;
 		this.#sent = true;
 
 		// Carry this session's answer forward for the next one's `behind`.

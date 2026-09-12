@@ -2089,6 +2089,11 @@ assessment.
   and the kill switch. `site/docs/usage.md` is their only record. The free plan
   allows exactly one rate-limiting rule, which is why the write ceiling is a
   counter in `usage-store.ts`.
+- **The reader can switch the beacon off, and the switch stores only the
+  "off"** — `usage-pref.svelte.ts`, gated in `usage.ts`'s `#send` beside
+  offline mode. It withholds the send and leaves the device record alone: a
+  reader who turns it back on would otherwise report as a device that has never
+  been here. `site/docs/usage.md` carries the Art. 18 argument.
 - **Retention is a cron** — `scheduled()` in `src/worker.ts` drops rows past
   `RETENTION_DAYS` daily; `npm run usage -- --prune` forces it. The script
   duplicates the constant (plain Node cannot import the `.ts`);

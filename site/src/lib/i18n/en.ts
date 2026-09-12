@@ -681,6 +681,16 @@ export const en: Dictionary = {
 	'offline.hint':
 		'Uses no network at all: nothing is downloaded, no update is checked for, nothing is measured. Only texts already on this device will open.',
 	'offline.notDownloaded': 'Not on this device',
+	// USAGE MEASUREMENT — `AdvancedSheet.svelte`'s third block, the reader's
+	// own answer to being counted. It names what is counted rather than what
+	// the switch turns off, because a reader deciding this is deciding about
+	// the first; the colophon's Privacy section is the long form and says the
+	// switch is here. "this device" throughout: the answer is stored on the
+	// device and is the only thing it can speak for.
+	'measure.label': 'Usage measurement',
+	'measure.hint':
+		'One anonymous count per visit \u2014 how long you stayed and which works you opened, never what you typed or where you were reading. Turn it off and this device sends nothing.',
+
 	// Reached from `+error.svelte` when a load threw while ONLINE — a dropped
 	// request, not a wrong address. In all 37 since 2026-09-06; it was English
 	// everywhere until then, which was better than `NotFound`'s wrong answer in
@@ -1252,6 +1262,11 @@ export const en: Dictionary = {
 	// counted, what never leaves the device. site/docs/usage.md carries the
 	// reasoning — a reader wants the claims, not the argument for them.
 	//
+	// The second paragraph ends by naming where the switch is
+	// (`AdvancedSheet.svelte`'s third block). A measurement offered on
+	// legitimate interest has to be refusable, and a refusal nobody can find
+	// is not one — site/docs/usage.md §The law.
+	//
 	// The retention is interpolated from `RETENTION_DAYS` rather than typed, the
 	// rule the work counts follow. It is 400 and not 365 deliberately: thirteen
 	// months, so a month has the same month a year earlier to be compared with.
@@ -1259,7 +1274,7 @@ export const en: Dictionary = {
 	'colophon.privacyBody1':
 		'No accounts, no cookies, no advertising, no third-party code. Nothing here follows you off this site.',
 	'colophon.privacyBody2':
-		'We do count how the site is used: one measurement per visit, every field a range rather than a value \u2014 how long you stayed, how often you have been here, which works you opened. Your country is counted separately, with nothing joining it to the rest. It describes a visit, not a visitor, and is kept for {days} days.',
+		'We do count how the site is used: one measurement per visit, every field a range rather than a value \u2014 how long you stayed, how often you have been here, which works you opened. Your country is counted separately, with nothing joining it to the rest. It describes a visit, not a visitor, and is kept for {days} days. You can switch it off for this device under Advanced in the settings menu.',
 	'colophon.privacyBody3':
 		'Never sent: what you type into the search box, which passage you had open, or anything that could recognise your device again. Your settings, bookmarks and downloaded texts stay on your device.',
 	'colophon.copyrightTitle': 'Copyright',

@@ -28,6 +28,18 @@ snapshots and leaves without scrolling, and keeps no localStorage between
 crawls, so every visit looks like a brand-new device that came once and never
 returned — precisely the row this exists to count.
 
+**The reader can refuse it, and the refusal is one switch in the Advanced
+panel.** `usage-pref.svelte.ts` stores nothing but the "off" — an absent key is
+a reader who never chose — and `usage.ts`'s `#send` gates on it beside offline
+mode. It withholds the beacon and does NOT wipe the device record: a reader who
+turns it back on would otherwise report as a device that has never been here,
+which is the one number this exists to establish. Offline mode already stopped
+the beacon, at the price of every download and every update; this is the same
+answer for a reader who wants to keep those. **It is also what keeps this
+site's own devices out of a report about its readers** — they open every work,
+on every build, from one place, and a handful of such sessions is the whole
+difference between the two reports.
+
 **The country is recorded and never meets the session.** Eighteen bucketed
 fields in one row is already a weak quasi-identifier; adding the country makes
 an unusual reader unique in the table. `geo_lang` is a separate counter with no
@@ -116,6 +128,14 @@ data, is not combined with other tracking, and builds no profiles. Every
 condition is satisfied by construction — one first-party origin, no third
 party, no identifier, buckets instead of values, and `geo_lang` with no key
 back to `session`.
+
+**Legitimate interest is refusable, and Art. 18 is why the switch is not a
+courtesy.** A basis that is not consent still owes the data subject an
+objection they can actually exercise, so the colophon's Privacy section names
+where the switch is rather than only asserting the measurement is harmless. It
+is a client-side stop: a reader who has turned it off sends nothing, and there
+is nothing at the edge to delete afterwards because nothing identifying was
+ever stored to find.
 
 **The device record expires after twelve months, absolutely.** The guide
 rejects indeterminate durations outright. Twelve months is where it lands
