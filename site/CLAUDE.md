@@ -1334,12 +1334,15 @@ rationale in `site/docs/topics.md`, selection in `docs/research/topics.md`).
 
 ## `/documenta` filters, and the one editorial file behind them
 
-A search box over a facet panel (author, kind, subject) above a flat
-reverse-chronological list.
+A search box over a facet panel (author, kind, language, subject) above a
+flat reverse-chronological list.
 
-- **Author and kind ADD, subject SUBTRACTS, and that asymmetry is the field's
-  arity**: a document has exactly one author and one kind (AND of two is empty
-  by construction) and carries three subjects on average. Two parts break if the
+- **Author, kind and language ADD; subject SUBTRACTS, and that asymmetry is the
+  field's arity** — except the language's, which is the field's MEANING: a
+  document has exactly one author and one kind (AND of two is empty by
+  construction) and carries three subjects on average, where it is held in
+  several languages and nobody reads it twice, so a second language is another
+  way in and never a conjunction. Two parts break if the
   predicate is flipped back: the subject counts are taken against the FULLY
   filtered set, itself included, so a term's number is exactly what survives the
   click; and `liveTags` drops terms at 0 rather than greying them — a dead term
@@ -1353,11 +1356,17 @@ reverse-chronological list.
   one document each. **The predicate and the facet must fold the same way** or a
   selection matches nothing. The row's chip and the search box still read the
   raw `document_kind` (`src/lib/document-labels.ts`).
-- **Each facet is a `<details>` and SUBJECT is closed**, being the tallest and
-  the axis a reader narrows with rather than arrives on. Its `open` is read ONCE
-  (`subjectStartOpen`) and deliberately not `$derived` — a reactive expression
-  shuts the section under a reader who unpicks their last term. The badge on a
+- **Every facet is a `<details>` and every one is CLOSED** (2026-09-12, by
+  direction; subject alone was). Shut, the panel is its four axes in four rows,
+  and the axis is what a reader picks before a value. Each `open` is read ONCE
+  (`startOpen`) and deliberately not `$derived` — a reactive expression shuts
+  the section under a reader who unpicks their last value. The badge on a
   summary is how many values are chosen inside a folded one.
+- **The language facet is ordered by the reader's chain and then by weight**, so
+  the four codes at the end of every row are the four options at the head of the
+  facet; each option is the language's own name with its tag as the `note`, which
+  is where a row's `EN` is learnt. It counts the languages a document is HELD in,
+  never the one its row happens to be written in.
 - **The author facet's years come from `src/lib/pontificates.ts`, a TABLE.**
   Deriving the span from the documents is wrong in a way that looks right
   (first/last `promulgated` shorts every reign). The corpus CHECKS the table

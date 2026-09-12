@@ -23,8 +23,9 @@
 
 <script lang="ts">
 	/**
-	 * The `/documenta` facet panel: author, kind and subject, each a list of
-	 * values with the number of documents that value would leave standing.
+	 * The `/documenta` facet panel: author, kind, language and subject, each a
+	 * list of values with the number of documents that value would leave
+	 * standing.
 	 *
 	 * ## Why buttons and not checkboxes
 	 *
@@ -38,7 +39,7 @@
 	 * `aria-pressed` toggle needs no id and no label element, which removes
 	 * the collision rather than working around it.
 	 *
-	 * ## Author and kind ADD, subject SUBTRACTS
+	 * ## Author, kind and language ADD; subject SUBTRACTS
 	 *
 	 * A document has one author and one kind, so a second choice in either can
 	 * only mean "and these as well" — AND-ing them is an empty list by
@@ -46,6 +47,13 @@
 	 * the other reading available, the documents about BOTH, and that is the one
 	 * a reader narrowing 272 titles wants. The route holds the predicates; two
 	 * things here follow from them.
+	 *
+	 * LANGUAGE HAS THE ARITY OF A SUBJECT AND THE MEANING OF AN AUTHOR, which
+	 * is why it adds. A document is held in several languages, so AND-ing two
+	 * is a list that exists — and it is a list nobody wants: nobody reads a
+	 * document twice, so a second language is another way IN and never a
+	 * property the reader is after a conjunction of. A reader who picks French
+	 * and Italian reads French and Italian.
 	 *
 	 * ## Which is why the counts come from two different pools
 	 *
@@ -90,25 +98,30 @@
 	interface Props {
 		authors: Facet[];
 		kinds: Facet[];
+		/** One value per content language the corpus holds a document in, the
+		 *  language's own name as its label and its tag as its note — the code
+		 *  the row chips print, so the panel is where that vocabulary is
+		 *  learnt. */
+		langs: Facet[];
 		tags: Facet[];
-		selected: { authors: string[]; kinds: string[]; tags: string[] };
+		selected: { authors: string[]; kinds: string[]; langs: string[]; tags: string[] };
 		/** The route's search text, READ AND NEVER WRITTEN here — the field
 		 *  itself is `DocumentSearch`, outside this panel. It is a prop because
 		 *  "Clear" clears the query too, so this component has to know whether
 		 *  there is one. */
 		query: string;
-		onToggle: (facet: 'authors' | 'kinds' | 'tags', value: string) => void;
+		onToggle: (facet: 'authors' | 'kinds' | 'langs' | 'tags', value: string) => void;
 		onClear: () => void;
 	}
 
-	let { authors, kinds, tags, selected, query, onToggle, onClear }: Props = $props();
+	let { authors, kinds, langs, tags, selected, query, onToggle, onClear }: Props = $props();
 
 	/* The query counts: "Clear" has to reach it, or a reader who typed
 	   something and then pressed Clear is left looking at a list still narrowed
 	   by a box they have stopped thinking about. */
 	const anySelected = $derived(
-		selected.authors.length + selected.kinds.length + selected.tags.length > 0 ||
-			query.trim() !== ''
+		selected.authors.length + selected.kinds.length + selected.langs.length + selected.tags.length >
+			0 || query.trim() !== ''
 	);
 
 	/** The terms still worth clicking. Subject subtracts, so a count of 0 means
@@ -126,17 +139,22 @@
 	   sort, and the route's `tagFacets` is where the order is decided. */
 	const cloudTags = $derived(buildTagCloud(liveTags));
 
-	/* Whether the subject facet starts open, read ONCE and deliberately not
-	   `$derived`. The `open` attribute is the reader's to set after that, and a
-	   reactive expression fights them for it: a reader who opens the cloud,
-	   picks a term and then unpicks it would have the section shut under their
-	   cursor, because the expression fell back to false. So this answers "was a
-	   subject already chosen when this panel appeared", which is the only
+	/* Which facets start open, read ONCE and deliberately not `$derived`. The
+	   `open` attribute is the reader's to set after that, and a reactive
+	   expression fights them for it: a reader who opens a facet, picks a value
+	   and then unpicks it would have the section shut under their cursor,
+	   because the expression fell back to false. So this answers "was anything
+	   in this facet already chosen when the panel appeared", which is the only
 	   moment the default is anyone's to decide. `untrack` states that in the
 	   code rather than only here, and is what keeps `svelte-check` quiet — a
 	   prop read at init is not reactive anyway, but the warning cannot tell
 	   meaning it from forgetting. */
-	const subjectStartOpen = untrack(() => selected.tags.length > 0);
+	const startOpen = untrack(() => ({
+		authors: selected.authors.length > 0,
+		kinds: selected.kinds.length > 0,
+		langs: selected.langs.length > 0,
+		tags: selected.tags.length > 0
+	}));
 </script>
 
 <div class="doc-filters">
@@ -150,19 +168,21 @@
 	<!--
 		The heading of one facet, and the reason each is a `<details>`.
 
-		THREE FACETS OPEN AT ONCE IS TALLER THAN THE ASIDE'S SCROLLPORT — six
-		authors and a closed kind vocabulary would fit, sixteen and thirteen and
-		a cloud of subjects do not — so the panel's own shape was what a reader
-		had to scroll past to reach the axis they wanted. Collapsing is the
-		cheapest thing that gives back a whole panel at a glance, and
-		`<details>` is what the page already reaches for (`.filters-inline` on
-		the route, `.toc-inline` on the document reader): the browser owns the
-		keyboard handling and the ARIA, and find-in-page can open a closed one.
+		FOUR FACETS OPEN AT ONCE IS TALLER THAN THE ASIDE'S SCROLLPORT — six
+		authors and a closed kind vocabulary would fit, sixteen and thirteen, a
+		column of languages and a cloud of subjects do not — so the panel's own
+		shape was what a reader had to scroll past to reach the axis they wanted.
+		Collapsing is the cheapest thing that gives back a whole panel at a
+		glance, and `<details>` is what the page already reaches for
+		(`.filters-inline` on the route, `.toc-inline` on the document reader):
+		the browser owns the keyboard handling and the ARIA, and find-in-page can
+		open a closed one.
 
-		SUBJECT IS THE ONE CLOSED BY DEFAULT. It is far the tallest — the whole
-		vocabulary at once, where the other two are lists that end — and it is
-		the axis a reader narrows WITH after picking an author or a kind rather
-		than the one they arrive on.
+		EVERY FACET IS CLOSED BY DEFAULT (2026-09-12, by direction), where subject
+		alone was. Shut, the panel is its four axes in four rows, which is the
+		question a reader arrives with — what has to be picked first is the AXIS
+		and not the value. Open, the two lists that fitted said nothing their own
+		headings do not, and cost the other two being off the bottom of the panel.
 
 		A CLOSED FACET STILL SAYS WHAT IT IS DOING. The badge is the number of
 		values chosen inside it, so a selection made and then folded away is not
@@ -180,7 +200,7 @@
 
 	{#snippet facetList(
 		heading: string,
-		facet: 'authors' | 'kinds' | 'tags',
+		facet: 'authors' | 'kinds' | 'langs' | 'tags',
 		items: Facet[],
 		chosen: string[],
 		startOpen: boolean
@@ -215,14 +235,32 @@
 		</details>
 	{/snippet}
 
-	{@render facetList(t('document.filter.author'), 'authors', authors, selected.authors, true)}
-	{@render facetList(t('document.filter.kind'), 'kinds', kinds, selected.kinds, true)}
+	{@render facetList(
+		t('document.filter.author'),
+		'authors',
+		authors,
+		selected.authors,
+		startOpen.authors
+	)}
+	{@render facetList(t('document.filter.kind'), 'kinds', kinds, selected.kinds, startOpen.kinds)}
+	<!-- THIRD, WHICH IS WHERE THE READER'S QUESTION TURNS. Author and kind ask
+	     what a document IS; language asks whether they can read it, and subject
+	     what it is about. It is a list like the two above it rather than the
+	     cloud below — a count of editions is not a weight anybody is reading the
+	     panel for, and the language's own name is longer than a term. -->
+	{@render facetList(
+		t('document.filter.language'),
+		'langs',
+		langs,
+		selected.langs,
+		startOpen.langs
+	)}
 
 	{#if cloudTags.length > 0}
 		<!-- Closed unless something in it was already chosen when the panel
 		     appeared — a reader who arrives with a subject set must be able to
-		     see the one they set. `subjectStartOpen` says why it is read once. -->
-		<details class="facet fold" open={subjectStartOpen}>
+		     see the one they set. `startOpen` says why it is read once. -->
+		<details class="facet fold" open={startOpen.tags}>
 			{@render facetHead(t('document.filter.subject'), selected.tags.length)}
 			<!-- The count is the one thing size cannot carry to a reader who is
 			     not looking, so it goes in a visually-hidden span INSIDE the

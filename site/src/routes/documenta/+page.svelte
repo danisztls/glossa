@@ -242,21 +242,29 @@
 	let query = $state('');
 	let selectedAuthors = $state<string[]>([]);
 	let selectedKinds = $state<string[]>([]);
+	let selectedLangs = $state<string[]>([]);
 	let selectedTags = $state<string[]>([]);
 
 	const selected = $derived({
 		authors: selectedAuthors,
 		kinds: selectedKinds,
+		langs: selectedLangs,
 		tags: selectedTags
 	});
 
-	function toggle(facet: 'authors' | 'kinds' | 'tags', value: string) {
-		const lists = { authors: selectedAuthors, kinds: selectedKinds, tags: selectedTags };
+	function toggle(facet: 'authors' | 'kinds' | 'langs' | 'tags', value: string) {
+		const lists = {
+			authors: selectedAuthors,
+			kinds: selectedKinds,
+			langs: selectedLangs,
+			tags: selectedTags
+		};
 		const next = lists[facet].includes(value)
 			? lists[facet].filter((v) => v !== value)
 			: [...lists[facet], value];
 		if (facet === 'authors') selectedAuthors = next;
 		else if (facet === 'kinds') selectedKinds = next;
+		else if (facet === 'langs') selectedLangs = next;
 		else selectedTags = next;
 	}
 
@@ -264,6 +272,7 @@
 		query = '';
 		selectedAuthors = [];
 		selectedKinds = [];
+		selectedLangs = [];
 		selectedTags = [];
 	}
 
@@ -290,8 +299,17 @@
 	const byKind = (row: Row) =>
 		selectedKinds.length === 0 ||
 		selectedKinds.includes(documentKindKey(row.manifest.document_kind));
+	/* ADDS, though a document has several languages and so could AND them like
+	   a subject. The arity allows it and the meaning refuses it: nobody reads a
+	   document twice, so a second language is a second way IN — a reader who
+	   picks French and Italian reads French and Italian, and asking for the
+	   documents held in BOTH answers a question about the library rather than
+	   about them. It is the row chips' own rule as a filter: `langs` holds
+	   every language the document is in, not the one this row is written in. */
+	const byLang = (row: Row) =>
+		selectedLangs.length === 0 || selectedLangs.some((lang) => row.langs.includes(lang));
 	const byTag = (row: Row) => selectedTags.every((tag) => row.tagKeys.includes(tag));
-	/* The fourth axis, and the only one that is a SET rather than a predicate.
+	/* The fifth axis, and the only one that is a SET rather than a predicate.
 
 	   `filterByQuery` decides, for the list as a whole, whether the query was
 	   read literally or had to be guessed at — a decision no per-row predicate
@@ -311,7 +329,7 @@
 	const bySearch = (row: Row) => searched.has(row.slug);
 
 	const visible = $derived(
-		rows.filter((row) => byAuthor(row) && byKind(row) && byTag(row) && bySearch(row))
+		rows.filter((row) => byAuthor(row) && byKind(row) && byLang(row) && byTag(row) && bySearch(row))
 	);
 
 	/* A FRACTION ONLY ONCE THERE IS SOMETHING TO COMPARE. Unfiltered, both
@@ -369,7 +387,7 @@
 	   and not something derived from these very documents. */
 	const authorFacets = $derived(
 		buildFacet(
-			rows.filter((row) => byKind(row) && byTag(row) && bySearch(row)),
+			rows.filter((row) => byKind(row) && byLang(row) && byTag(row) && bySearch(row)),
 			// FOLDED, so a body that has been renamed is one option and not two —
 			// see `documentAuthorKey`. The row's own masthead still prints the
 			// name the document was issued under.
@@ -381,12 +399,43 @@
 
 	const kindFacets = $derived(
 		buildFacet(
-			rows.filter((row) => byAuthor(row) && byTag(row) && bySearch(row)),
+			rows.filter((row) => byAuthor(row) && byLang(row) && byTag(row) && bySearch(row)),
 			(row) => [documentKindKey(row.manifest.document_kind)],
 			(key) => documentKindLabel(key),
 			([, a], [, b]) => b - a
 		)
 	);
+
+	/**
+	 * The languages, the reader's own chain first and the rest by weight.
+	 *
+	 * THE SAME ORDER THE ROW CHIPS ARE IN, which is the point: a reader meeting
+	 * `PT ES EN LA` at the end of every row finds those four at the head of the
+	 * facet, and the panel is then where the codes are learnt — each option is
+	 * the language's own name with its tag as the note, the fact about the
+	 * VALUE `Facet.note` is for.
+	 *
+	 * Weight decides the tail rather than the alphabet, because below the chain
+	 * the question is which languages this library actually holds much of; ties
+	 * go to the tag so the sequence is fixed whatever the corpus does. The
+	 * chain's own half cannot move under a reader at all — it is a table, and
+	 * their language chose it.
+	 */
+	const langFacets = $derived(
+		buildFacet(
+			rows.filter((row) => byAuthor(row) && byKind(row) && byTag(row) && bySearch(row)),
+			(row) => row.langs,
+			(key) => languageDisplayName(key),
+			([ka, a], [kb, b]) => chainRank(ka) - chainRank(kb) || b - a || ka.localeCompare(kb)
+		).map((facet) => ({ ...facet, note: facet.value.toUpperCase() }))
+	);
+
+	/** Where a language sits in the reader's chain, and past its end for one it
+	 *  does not name. */
+	function chainRank(lang: string): number {
+		const at = langChain.indexOf(lang);
+		return at === -1 ? langChain.length : at;
+	}
 
 	/** The written form of each tag key, for display. `sync-corpus.mjs`
 	 *  refuses two tags differing only in case, so every key has exactly one
@@ -482,6 +531,7 @@
 			<DocumentFilters
 				authors={authorFacets}
 				kinds={kindFacets}
+				langs={langFacets}
 				tags={tagFacets}
 				{selected}
 				{query}
@@ -718,6 +768,7 @@
 		<DocumentFilters
 			authors={authorFacets}
 			kinds={kindFacets}
+			langs={langFacets}
 			tags={tagFacets}
 			{selected}
 			{query}
@@ -957,6 +1008,26 @@
 		gap: 0.3rem;
 		margin: 0;
 		margin-inline-start: auto;
+	}
+
+	/*
+	 * ON A PHONE THERE IS NO EMPTY HALF TO OPEN INTO (2026-09-12, by direction),
+	 * so the languages stop sharing the subjects' line and take one of their
+	 * own, from the start edge. The count is then the last chip rather than the
+	 * line's end, and pressing it grows the row to the RIGHT — which is the same
+	 * bargain the wide layout makes, read in the other direction: a disclosure
+	 * opens into whatever space the line actually has.
+	 *
+	 * 40rem is where the card's own line stops holding a run of subjects and
+	 * four codes at once; it is well below `.index-aside`'s 80rem, this being a
+	 * question about the row's width and not about the page's shape.
+	 */
+	@media (max-width: 40rem) {
+		.doc-langs {
+			flex: 0 0 100%;
+			justify-content: flex-start;
+			margin-inline-start: 0;
+		}
 	}
 
 	/*

@@ -1568,10 +1568,15 @@ hidden word stays "more languages" in both states. No `aria-controls`: it is
 optional on a disclosure, and the alternative is rendering every row's hidden
 languages to keep one id honest — thousands of scraps on a page of 272 rows.
 
-**What it cannot promise is a narrow screen.** Fourteen codes are wider than
-the line there, so the group wraps like any other and the row grows after all.
-That is the honest limit of a disclosure inside a line rather than under one,
-and the reader asked for it at that width too.
+**Below 40rem it stops sharing the line at all** (2026-09-12, by direction).
+There is no empty half on a phone, so the languages take a line of their own
+under the subjects and start from the leading edge, and the count — now the last
+chip rather than the line's end — opens to the RIGHT. It is the same bargain
+read in the other direction: **a disclosure opens into whatever space its line
+actually has**, and at that width the space is ahead of it rather than behind.
+Fourteen codes are still wider than a phone's line, so the group wraps and the
+row grows; that is the honest limit of a disclosure inside a line, and the
+reader asked for it at that width too.
 
 **The languages themselves are still not controls, and the subjects are.** A
 subject is a facet of this page, so a chip that could not be clicked would be
@@ -1668,16 +1673,37 @@ predicate and the facet have to fold the same way**, or a selection matches
 nothing; the row's own chip does not fold at all, so a doctrinal note still
 says it is one.
 
-**Each facet is a `<details>`, and subject is the one closed.** Three facets
-open at once is taller than the aside's scrollport — sixteen authors, the
-kinds, and the whole vocabulary — so the panel's own height was what a reader
-scrolled past to reach the axis they wanted. Subject is the tallest and the
-axis a reader narrows WITH rather than arrives on. **Its `open` is read once
-and is deliberately not `$derived`**: a reactive expression takes the
-attribute back off the reader, so opening the cloud, picking a term and
-unpicking it would shut the section under their cursor. A folded facet still
-says what it is doing — the badge on its summary is the number of values
-chosen inside it, drawn only when there is one.
+**Each facet is a `<details>`, and every one of them is closed**
+(2026-09-12, by direction). Four facets open at once is far taller than the
+aside's scrollport — sixteen authors, the kinds, a column of languages and the
+whole subject vocabulary — so the panel's own height was what a reader scrolled
+past to reach the axis they wanted. Subject was the one closed while there were
+three, on the grounds of height and of being the axis a reader narrows WITH
+rather than arrives on; with four, the open ones were not earning their space
+either. **A panel of four shut headings is the question a reader actually
+arrives with**, which is which axis, not which value — and the two lists that
+fitted were saying nothing their own headings do not.
+
+**Each `open` is read once and is deliberately not `$derived`**: a reactive
+expression takes the attribute back off the reader, so opening a facet, picking
+a value and unpicking it would shut the section under their cursor. A folded
+facet still says what it is doing — the badge on its summary is the number of
+values chosen inside it, drawn only when there is one.
+
+**The language facet adds where a subject subtracts, and the arity is not what
+decides it.** A document is held in several languages, so AND-ing two is a list
+that exists — the documents published in both — and it is a list nobody is
+looking for: nobody reads a document twice, so a second language is another way
+IN, and a reader who picks French and Italian reads French and Italian. It is
+the one facet whose semantics come from what the field MEANS rather than from
+how many values a document has.
+
+**Its order is the row chips' order**: the reader's own chain first, then by how
+many documents the library holds in each, ties by tag. So the four codes at the
+end of every row are the four options at the head of the facet, and each option
+is the language's own name with the tag as its `note` — the panel is where `EN`
+is learnt, which is the whole reason the chips can afford to be codes. It counts
+what a document is HELD in and never what one row happens to be written in.
 
 **The author facet prints each pontificate's years, from a table and not from
 the documents.** Twelve regnal names in reverse-chronological order asks the

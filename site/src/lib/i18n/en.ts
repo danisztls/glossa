@@ -1094,6 +1094,10 @@ export const en: Dictionary = {
 	'document.filter.author': 'Author',
 	'document.filter.kind': 'Type',
 	'document.filter.subject': 'Subject',
+	// The fourth facet: which languages this library holds a document in, not
+	// which one it was written in. Each option is the language's own name with
+	// its code beside it, so the panel is where a row's `EN` chip is learnt.
+	'document.filter.language': 'Language',
 	// The box at the head of the panel. It reads title, author, kind,
 	// description and tags together, so it is 'search documents' and not
 	// 'search titles' — and it is what makes the 53-term subject facet
