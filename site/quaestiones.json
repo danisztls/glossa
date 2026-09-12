@@ -441,7 +441,7 @@
 				[1338, 1339],
 				[1373, 1381]
 			],
-			"documents": ["eccl-de-euch", "sacramentum-caritatis"]
+			"documents": ["mysterium", "eccl-de-euch", "sacramentum-caritatis"]
 		},
 		"unitas-christianorum": {
 			"doorway": "argument",
@@ -586,7 +586,7 @@
 			"doorway": "argument",
 			"cluster": "the-rules",
 			"ccc": [[2382, 2386]],
-			"documents": ["familiaris-consortio", "casti-connubii"]
+			"documents": ["familiaris-consortio", "casti-connubii", "arcanum"]
 		},
 		"homosexualitas": {
 			"doorway": "argument",
@@ -619,7 +619,12 @@
 				[1579, 1580],
 				[1618, 1620]
 			],
-			"documents": ["sacerdotalis", "presbyterorum-ordinis"]
+			"documents": [
+				"sacerdotalis",
+				"sacra-virginitas",
+				"presbyterorum-ordinis",
+				"sacrum-diaconatus"
+			]
 		},
 		"abortus": {
 			"doorway": "argument",
@@ -938,7 +943,7 @@
 				[1103, 1103],
 				[1671, 1673]
 			],
-			"documents": ["familiaris-consortio"]
+			"documents": ["mitis-iudex-dominus-iesus", "familiaris-consortio"]
 		},
 		"communio-post-divortium": {
 			"doorway": "life-event",

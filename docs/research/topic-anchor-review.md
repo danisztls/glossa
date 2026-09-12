@@ -54,6 +54,47 @@ it is a sentence somebody can act on rather than a letter; the row used to carry
 the old grade in a `was` field as well, and that was dropped on 2026-09-11 for
 being neither.
 
+## The recheck of 2026-09-12, and what a "no document" row is worth
+
+Fifty CDF documents were described on 2026-09-11. Until that day none of them
+could be named by any topic — `quaestiones.json` checks every document slug
+against `descriptions.json` — so a reviewer who looked for one found nothing
+available and wrote down that the corpus had nothing. `apparitiones` is the
+case that proves it: graded A, note reading "the corpus has no text", six texts
+on the shelf, and `approved` and `medjugorje` among its keywords.
+
+So every row claiming an absence was rechecked against the described set. There
+were **eleven** older than the descriptions: `canon-scripturae`, `purgatorium`,
+`iustificatio`, `ordinatio-mulierum`, `caelibatus`, `mendacium`, `islam`,
+`matrimonium`, `morbus-mentis`, `experientia-mortis-proximae`, `ieiunium`.
+**Seven held.** There is no Tridentine decree and no joint declaration on
+justification, no _Paenitemini_, nothing on truthful speech as such, nothing on
+near-death experiences, and _Quran_, _mohammed_ and _sharia_ appear in no work
+this site quotes.
+
+**Two moved, and two more turned up in topics that had made no claim at all** —
+which is the finding worth keeping. `caelibatus` gained _Sacra Virginitas_ and
+_Sacrum Diaconatus_; `nullitas-matrimonii` gained _Mitis Iudex Dominus Iesus_,
+which rewrote the three canons it already quotes; `eucharistia` gained
+_Mysterium Fidei_ and `divortium` _Arcanum_, neither of which any row had
+listed as missing, because a row only records what somebody went looking for.
+**The absence claims were not where the gap was.** A topic that says nothing
+about documents is not thereby complete, and searching the descriptions by
+subject found more than re-reading the rows that complained.
+
+The search is one pass over the descriptions rather than the works:
+
+```sh
+jq -r '.descriptions | to_entries[] | select(.key|endswith(".en"))
+  | "\(.key)\t\(.value.en.text // "")"' site/descriptions.json \
+  | grep -iE 'indissolub|nullity|celibac'   # the subject, not the title
+```
+
+**Read the description and not the title**, which is the rule `quaestiones.json`
+already states for naming a document and which applies just as much to finding
+one: `mysterium` is the Real Presence, `arcanum` is marriage, and neither says
+so.
+
 ## Reviewed
 
 The grades themselves are in **`site/quaestiones-review.json`**, one row per

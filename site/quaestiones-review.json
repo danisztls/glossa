@@ -198,10 +198,10 @@
 		},
 		"eucharistia": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 1338-1339,1373-1381 | documents eccl-de-euch,sacramentum-caritatis",
+			"reviewed": "2026-09-12",
+			"anchors": "ccc 1338-1339,1373-1381 | documents mysterium,eccl-de-euch,sacramentum-caritatis",
 			"strings": "6d504441",
-			"note": "1374–1377 answers “is it bread, or is it not” about as directly as the Catechism answers anything, transubstantiation named and defined at 1376. Was C on _last supper_: the words the whole question turns on — “This is my body which is given for you” — were on no page here. Fixed 2026-09-10 with 1338–1339, which now open it, so the reader meets the claim in Christ’s words before meeting the Church’s account of them."
+			"note": "Re-read 2026-09-12. _Mysterium Fidei_ (1965) named first and was named nowhere, though it is the document written for this page's question: Paul VI wrote it while the Council was still sitting, against opinions “that would reduce the Real Presence to symbolism or put transignification in the place of transubstantiation”. The reader who asks “is it bread, or is it not?” is asking exactly what it answers, and the two documents already here are a 2003 encyclical on the Eucharist and the Church and a 2007 exhortation on the Synod — both larger and neither aimed at the doubt."
 		},
 		"unitas-christianorum": {
 			"grade": "A",
@@ -296,10 +296,10 @@
 		},
 		"divortium": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 2382-2386 | documents familiaris-consortio,casti-connubii",
+			"reviewed": "2026-09-12",
+			"anchors": "ccc 2382-2386 | documents familiaris-consortio,casti-connubii,arcanum",
 			"strings": "fe8a554b",
-			"note": "The whole of the Catechism’s _Divorce_ heading, and it earns being taken whole: 2382 is the indissolubility, 2383 concedes that civil divorce “can be tolerated” for legal rights and the care of children, and 2386 distinguishes the spouse unjustly abandoned from the one who destroyed the marriage. A reader who stops at 2384 has read the hardest sentence; the two after it are why the page must not stop there."
+			"note": "Re-read 2026-09-12. _Arcanum_ (1880) added last, oldest of the three and named for the half the other two assume: it argues indissolubility against marriage “as a merely civil contract subject to the state”, and sets out the evils that follow from divorce. A reader who asks why a marriage cannot simply end is usually asking why the Church will not follow the civil law, which is the question this document was written to answer and the others were not. It is 1880 and it is named last so the page does not open in the vocabulary of 1880."
 		},
 		"homosexualitas": {
 			"grade": "A",
@@ -324,10 +324,10 @@
 		},
 		"caelibatus": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 1579-1580,1618-1620 | documents sacerdotalis,presbyterorum-ordinis",
+			"reviewed": "2026-09-12",
+			"anchors": "ccc 1579-1580,1618-1620 | documents sacerdotalis,sacra-virginitas,presbyterorum-ordinis,sacrum-diaconatus",
 			"strings": "0b988898",
-			"note": "1579 gives the reason and 1580 gives the reader the fact that usually surprises them, in the Catechism’s own words: in the Eastern Churches married men are ordained deacons and priests, and the practice “has long been considered legitimate”. So the page answers _why_ without pretending the discipline is universal. _Shortage of priests_ is a keyword nothing anchored takes up, and nothing in the corpus argues it either way."
+			"note": "Re-read 2026-09-12 in the pass over every row that claimed an absence before the fifty CDF descriptions landed. The old claim stands and is narrower than it read: _shortage of priests_ still has no anchored sentence and no document in the corpus argues the discipline either way. What the search found instead is two documents that were nameable all along and named nowhere. _Sacra Virginitas_ (1954) is the one addressed to the objection a reader actually arrives with, refuting “claims that chastity harms human nature”, which no anchored paragraph answers. _Sacrum Diaconatus_ (1967) is the turn the page needed and could not make: the Latin Church restored the permanent diaconate and ordains married men to it, so the reader who asks why a priest must be celibate can see for themselves that the rule is a discipline at one degree of orders and not a law of nature. It is named last for that reason."
 		},
 		"abortus": {
 			"grade": "B",
@@ -585,10 +585,10 @@
 		},
 		"nullitas-matrimonii": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 1629,1650-1651 | canons 1095,1103,1671-1673 | documents familiaris-consortio",
+			"reviewed": "2026-09-12",
+			"anchors": "ccc 1629,1650-1651 | canons 1095,1103,1671-1673 | documents mitis-iudex-dominus-iesus,familiaris-consortio",
 			"strings": "8b417fb6",
-			"note": "Was C: \"Am I still married?\" was answered with venue rules — which tribunal is competent — and never with the grounds, though _defect of consent_ is a keyword. Fixed 2026-09-10 with can. 1095 and 1103."
+			"note": "Re-read 2026-09-12. _Mitis Iudex Dominus Iesus_ (2015) is named first and was named nowhere: it is the motu proprio that rewrote cann. 1671–1691, which is to say the three canons this page already quotes. CHECKED BEFORE NAMING, because the alternative was worse than a missing document: can. 1673 §1 in the corpus reads “the judge in first instance ... is the diocesan bishop”, which is the reformed text and not the 1983 one, so the page was quoting current law and only the instrument was missing. A reader asking “am I still married?” is owed what the reform actually changed — one conforming sentence instead of two, a briefer process before the bishop in manifest cases — and the canons state the result without ever saying it was a change. The Eastern parallel _Mitis et Misericors Iesus_ is deliberately not named: this topic quotes the Latin Code, and naming a second law a reader is not under would be a page about two."
 		},
 		"communio-post-divortium": {
 			"grade": "A",
