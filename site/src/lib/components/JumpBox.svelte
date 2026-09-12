@@ -1230,7 +1230,9 @@
 		align-items: center;
 		gap: 0.4rem;
 		padding: 0.5rem 0.6rem;
-		border: 1px solid var(--color-border);
+		/* The boundary is the whole affordance — `--color-control-border`,
+		   styles/tokens.css. */
+		border: 1px solid var(--color-control-border);
 		border-radius: var(--radius-md);
 		background: var(--color-bg-elevated);
 	}

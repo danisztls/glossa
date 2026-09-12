@@ -76,7 +76,9 @@
 		line-height: 1.5;
 		color: var(--color-text);
 		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
+		/* The boundary is the whole affordance on a field whose fill is 1.09:1
+		   against the page — see `--color-control-border` in styles/tokens.css. */
+		border: 1px solid var(--color-control-border);
 		border-radius: var(--radius-md);
 	}
 

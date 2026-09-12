@@ -455,6 +455,29 @@
 	--color-bg: #ffffff;
 	--color-bg-elevated: #f6f5f1;
 	--color-border: #ddd9d0;
+	/*
+	 * THE EDGE OF SOMETHING A READER OPERATES, and a second token because a
+	 * hairline between two paragraphs and the edge of a text field are not the
+	 * same decision even where they have always been the same colour.
+	 *
+	 * `--color-border` is 1.41:1 against the page and 1.29:1 against the
+	 * elevated surface, which is right for a divider — WCAG exempts decoration
+	 * — and is a failure of 1.4.11 on the four fields a reader types into
+	 * (`.list-filter`, `.menu-filter`, `.doc-search`, `.jump-field`) and on the
+	 * switch track, because those draw their ground in `--color-bg-elevated`
+	 * over a `--color-bg` page: 1.09:1, so the border is the whole affordance
+	 * and there is nothing else saying where to click or how far the knob
+	 * travels.
+	 *
+	 * Each palette's value is the LIGHTEST point on the line from
+	 * `--color-border` toward that palette's `--color-text` that clears 3:1
+	 * against BOTH grounds — the page outside the field and the field's own
+	 * fill. Solved rather than picked, so the fields gained the contrast and
+	 * not a gram more weight than that: 3.30 and 3.02 here.
+	 * `tokens-contrast.test.ts` recomputes all four palettes and fails if a
+	 * value drifts under the bar.
+	 */
+	--color-control-border: #918d87;
 	--color-text: #1c1a17;
 	--color-text-muted: #6b6559;
 	--color-accent: #8f2119;
@@ -868,15 +891,31 @@
 	--color-bg: #f4ecd8;
 	--color-bg-elevated: #ecdfc2;
 	--color-border: #d9c9a3;
+	--color-control-border: #8c7e64;
 	--color-text: #3b2f22;
-	--color-text-muted: #7a6a51;
+	/*
+	 * DARKENED FROM #7a6a51, WHICH WAS THE ONE PALETTE WHERE MUTED TEXT MISSED
+	 * THE BAR — 4.45:1 on the paper and 3.97:1 on the elevated surface, against
+	 * 4.5. It reads as a rounding error and is not one: the header, the footer,
+	 * every panel and every chip draw the elevated ground, and muted is the
+	 * colour of a caption, a credit, a count and a label-micro, so the failing
+	 * pair is most of the site's small type in sepia.
+	 *
+	 * The other five palettes clear it with room (5.30 to 6.85 on the harder
+	 * ground). This is 14% of the way to `--color-text`, the least that takes
+	 * both pairs over: 5.08 and 4.53.
+	 */
+	--color-text-muted: #71614a;
 	--color-accent: #8f2119;
 	--color-accent-contrast: #f4ecd8;
 	--color-link: #8f2119;
 	--color-initial: #b03024;
 	--color-apparatus: #22409a;
 	--color-focus-ring: #22409a;
-	--color-bookmark: #8a6410;
+	/* A step darker than the paper palette's #8a6410, for the reason muted ink
+	   above is: 4.56:1 on the paper was fine and 4.07:1 on the elevated surface
+	   was not, and the header the bookmark control sits in IS that surface. */
+	--color-bookmark: #805e12;
 }
 
 /* Explicit light: nothing to restate but the scheme, since light is the
@@ -893,6 +932,7 @@
 		--color-bg: #161313;
 		--color-bg-elevated: #1f1b1b;
 		--color-border: #3a3333;
+		--color-control-border: #6c6663;
 		--color-text: #e9e6de;
 		--color-text-muted: #9e9187;
 		--color-accent: #ff2f27;
@@ -922,6 +962,7 @@
 	--color-bg: #161313;
 	--color-bg-elevated: #1f1b1b;
 	--color-border: #3a3333;
+	--color-control-border: #6c6663;
 	--color-text: #e9e6de;
 	--color-text-muted: #9e9187;
 	--color-accent: #ff2f27;
@@ -980,6 +1021,7 @@
 		--color-bg-chrome: #000000;
 		--color-bg-elevated: #0f0d0d;
 		--color-border: #312a2a;
+		--color-control-border: #635e5b;
 		--color-accent-contrast: #000000;
 	}
 }
@@ -989,6 +1031,7 @@
 	--color-bg-chrome: #000000;
 	--color-bg-elevated: #0f0d0d;
 	--color-border: #312a2a;
+	--color-control-border: #635e5b;
 	--color-accent-contrast: #000000;
 }
 
