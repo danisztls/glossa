@@ -209,7 +209,7 @@
 			"grade": "A",
 			"reviewed": "2026-09-10",
 			"anchors": "ccc 799-801,2003,1508",
-			"note": "“Was what I felt from God” is answered by 800 and 801 in their own words — accepted with gratitude “provided they really are genuine gifts”, and “no charism is exempt from being referred and submitted to the Church’s shepherds” — with charity named as the measure. 2003 already carried _tongues_. Was C on _faith healing_; 1508 was added 2026-09-10, and it is the honest one: a special charism of healing exists, and “even the most intense prayers do not always obtain the healing of all illnesses”. Shared with `aegritudo`. No document: nothing in the corpus is addressed to the charismatic renewal."
+			"note": "“Was what I felt from God” is answered by 800 and 801 in their own words — accepted with gratitude “provided they really are genuine gifts”, and “no charism is exempt from being referred and submitted to the Church’s shepherds” — with charity named as the measure. 2003 already carried _tongues_. Was C on _faith healing_; 1508 was added 2026-09-10, and it is the honest one: a special charism of healing exists, and “even the most intense prayers do not always obtain the healing of all illnesses”. Shared with `aegritudo`. No document, and the claim now names the text it can be wrong about: _Iuvenescit Ecclesia_ (2016), the CDF letter on the relationship between the hierarchical and charismatic gifts, is not in the corpus. Rechecked 2026-09-11 against the fifty CDF documents described that day, since “no document” had just been found to mean “none was nameable” on `apparitiones`. What arrived is about particular movements and not this one — `opus-angelorum` went to `angeli`, and the de Mello notification is the yoga row's in docs/research/topics.md — so nothing here changes. CCC 801 carries the page alone and carries it well."
 		},
 		"caritas": {
 			"grade": "A",
@@ -683,15 +683,15 @@
 		},
 		"angeli": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 328-336 | lead 336",
-			"note": "Was C by ordering: the guardian angel is 336, last of nine. `lead` 336 set 2026-09-10."
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 328-336 | lead 336 | documents opus-angelorum",
+			"note": "Was C by ordering: the guardian angel is 336, last of nine. `lead` 336 set 2026-09-10. `opus-angelorum` named 2026-09-11, the day its description landed, and it is the only document in the corpus about angels: a 1992 decree on a movement whose angelology came out of private revelations, judging the angels' personal names, groupings and functions foreign to Scripture and Tradition and forbidding the consecrations built on them. It bounds the page's own answer, which is what a reader who arrived through _archangel_ or _prayer to saint michael_ needs — 328–336 says what the Church holds about angels, and this says what it will not hold, which nothing anchored here could."
 		},
 		"apparitiones": {
 			"grade": "A",
-			"reviewed": "2026-09-10",
-			"anchors": "ccc 66-67",
-			"note": "Two paragraphs, and 67 answers \"does a Catholic have to believe\" outright. Nothing on how an apparition is approved; the corpus has no text."
+			"reviewed": "2026-09-11",
+			"anchors": "ccc 66-67 | documents norms-on-alleged-supernatural-phenomena,the-message-of-fatima,spiritual-experience-of-medjugorje,alleged-apparitions-in-amsterdam",
+			"note": "Two paragraphs, and 67 answers \"does a Catholic have to believe\" outright. WAS A C, AND THE ROW ITSELF WAS THE EVIDENCE: it read \"Nothing on how an apparition is approved; the corpus has no text\", while the keywords said _approved_ and _medjugorje_ and the corpus held six texts. None of them was nameable, because none had a description and `quaestiones.json` checks every slug against descriptions.json — so the reviewer saw no document, found none available, and wrote down that there was none. Fixed 2026-09-11, the day the descriptions landed. Four are named and the order is the question's: the 2024 Norms are how it is judged, and they are the answer to _approved_ — discernment now ends in one of six graded conclusions and, as a rule, in no declaration of supernatural character at all; _The Message of Fatima_ carries Ratzinger's commentary on the standing of private revelation, which is CCC 67 at length and by somebody with the authority to write it; the Medjugorje note is the newest case and the first decided under the Norms; and Amsterdam is the one that went the other way, _constat de non supernaturalitate_, so the page does not read as a list of approvals. TWO ARE DELIBERATELY NOT NAMED and that is an editorial act owing a reason: the 1978 Normae, which the 2024 Norms \"entirely replace\", and the 2011 preface to them. A page that prints no dates (PLAN.md gap 19) and names a replaced procedure beside the one that replaced it is the stale-answer error in its milder form — the reader cannot tell which is operative. They come back the day a topic page carries dates."
 		},
 		"miracula-et-reliquiae": {
 			"grade": "B",

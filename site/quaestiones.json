@@ -1236,13 +1236,18 @@
 			"cluster": "the-unseen",
 			"ccc": [[328, 336]],
 			"lead": 336,
-			"documents": []
+			"documents": ["opus-angelorum"]
 		},
 		"apparitiones": {
 			"doorway": "ordinary",
 			"cluster": "the-unseen",
 			"ccc": [[66, 67]],
-			"documents": []
+			"documents": [
+				"norms-on-alleged-supernatural-phenomena",
+				"the-message-of-fatima",
+				"spiritual-experience-of-medjugorje",
+				"alleged-apparitions-in-amsterdam"
+			]
 		},
 		"miracula-et-reliquiae": {
 			"doorway": "ordinary",

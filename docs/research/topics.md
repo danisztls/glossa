@@ -442,7 +442,7 @@ is what falls short.
 | Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                                                                      |
 | Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                                                                               |
 | Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner                                                       |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                                                                      |
+| Yoga and Christian meditation | _Orationis Formas_ absent; the de Mello notification (1998) arrived 2026-09-11 and is one author judged, not the norm                                                                          |
 | Same-sex blessings            | _Fiducia Supplicans_ arrived 2026-09-11, so this row is now about the anchor rather than the corpus: CCC 2357–2359 is the teaching, not the blessing                                           |
 | Video games                   | Searched _game_, _play_, _recreation_, _amusement_, _entertainment_, _sport_ across CCC and CSDC: only 2413 (games of chance) and 2187 (Sunday sport), and no document is addressed to playing |
 
