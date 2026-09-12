@@ -1435,10 +1435,12 @@ reverse-chronological list.
   `navigator.languages` and would print a different row per visitor on a page
   the build prerenders. The language the row is WRITTEN in leads it and is
   never inside the count.
-- **That count is a disclosure and opens BELOW itself.** The names were a
-  `title` for a day, which is nothing on a phone; the revealed codes take a new
-  line and the chip keeps its text, so the control a reader just pressed is the
-  same width in both states — `IndexSection`'s rule, met by a chip.
+- **That count is a disclosure and opens LEFTWARDS, into the empty half of its
+  own line.** The names were a `title` for a day, which is nothing on a phone;
+  a line of their own was an hour, and cost every row below a reflow for a look
+  at one row. **A right-aligned row already holds the space a disclosure needs**
+  — and the chip keeps the line's end and its text, so what a reader pressed is
+  where they left it (`IndexSection`'s rule, met by a chip).
 - **`DocumentFilters.svelte` is rendered twice on the page** (aside above 80rem,
   `<details>` below), which is why its options are `aria-pressed` buttons and
   not checkboxes (two elements claiming one `id`) and the search text is a PROP,

@@ -1553,15 +1553,25 @@ pointer to decode it with. It is the subjects' own argument one list over —
 **a scrap that says what is there and refuses to show it is the worse half of a
 scrap.**
 
-**It may not move under the press**, which is `IndexSection`'s rule about the
-heading that opens a fold, and it decides both halves of the design: the
-revealed codes take a line of their own BELOW rather than filling in ahead of
-the chip, and the chip's text does not change — it goes on reading `+13` and
-takes the accent, the way a chosen subject does, so it is the same width open
-and shut. `aria-expanded` is what says which way it is, so the hidden word
-stays "more languages" in both states. No `aria-controls`: it is optional on a
-disclosure, and the alternative is rendering every row's hidden languages to
-keep one id honest — thousands of scraps on a page of 272 rows.
+**It opens LEFTWARDS, into the empty half of the line** (2026-09-12, by
+direction). The line is right-aligned and the space beside the subjects is
+already empty, so the revealed codes fill it and nothing below the card moves —
+where a line of their own, which is what this had for an hour, cost every row
+under it a reflow for a look at one row. **The space a disclosure grows into
+does not have to be found; a right-aligned row already has it.**
+
+**The chip keeps the end of the line and its own text**, so the thing a reader
+pressed is where they left it — `IndexSection`'s rule about the heading that
+opens a fold, met by a chip. It goes on reading `+13` and takes the accent the
+way a chosen subject does; `aria-expanded` is what says which way it is, so the
+hidden word stays "more languages" in both states. No `aria-controls`: it is
+optional on a disclosure, and the alternative is rendering every row's hidden
+languages to keep one id honest — thousands of scraps on a page of 272 rows.
+
+**What it cannot promise is a narrow screen.** Fourteen codes are wider than
+the line there, so the group wraps like any other and the row grows after all.
+That is the honest limit of a disclosure inside a line rather than under one,
+and the reader asked for it at that width too.
 
 **The languages themselves are still not controls, and the subjects are.** A
 subject is a facet of this page, so a chip that could not be clicked would be

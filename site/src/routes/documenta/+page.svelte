@@ -656,6 +656,9 @@
 									<p class="doc-langs">
 										<span class="visually-hidden">{t('document.languages.label')}: </span>
 										{#each langs.shown as lang (lang)}{@render langChip(lang)}{/each}
+										{#if langsOpen[row.slug]}
+											{#each langs.rest as lang (lang)}{@render langChip(lang)}{/each}
+										{/if}
 										{#if langs.rest.length > 0}
 											<!--
 												THE COUNT IS A DISCLOSURE, and a `title` is why it had to
@@ -666,14 +669,23 @@
 												what is there and refusing to show it is the worse half of
 												a scrap.
 
-												IT MUST NOT MOVE UNDER THE PRESS, which is `IndexSection`'s
-												rule about the heading that opens a fold. So the revealed
-												codes take a line of their own BELOW rather than filling
-												in ahead of this chip, and the chip's own text does not
-												change width: it goes on reading `+13` and takes the
-												accent, the way a chosen subject does. `aria-expanded` is
-												what says which way it is, and is why the hidden word
-												stays "more languages" in both states.
+												IT OPENS LEFTWARDS, INTO THE EMPTY HALF OF THE LINE (by
+												direction). The line is already right-aligned and the
+												space beside the subjects is already empty, so the
+												revealed codes fill it and NOTHING BELOW THE CARD MOVES —
+												where a line of their own cost every row under this one a
+												reflow, for a look at one row. The chip keeps the line's
+												end, keeps its text at `+13` and takes the accent the way
+												a chosen subject does, so the thing a reader pressed is
+												where they left it. `aria-expanded` says which way it is,
+												and is why the hidden word stays "more languages" in both
+												states.
+
+												WHAT IT CANNOT PROMISE IS A NARROW SCREEN, where fourteen
+												codes are wider than the line and the group wraps like
+												any other. That is the honest limit of a row that grows:
+												it costs a line where there is no line to spare, and the
+												reader asked for it there too.
 
 												NO `aria-controls`, which is optional on a disclosure and
 												would be a reference to an id that is not in the document
@@ -692,11 +704,6 @@
 												></button
 											>
 										{/if}
-									</p>
-								{/if}
-								{#if langs.rest.length > 0 && langsOpen[row.slug]}
-									<p class="doc-langs rest">
-										{#each langs.rest as lang (lang)}{@render langChip(lang)}{/each}
 									</p>
 								{/if}
 							</div>
@@ -975,13 +982,6 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		color: var(--color-text-muted);
-	}
-
-	/* The revealed languages, on a line of their own so the control that
-	   revealed them keeps its place. `flex-basis: 100%` inside `.doc-foot`,
-	   which is what wraps it rather than seating it beside the subjects. */
-	.doc-langs.rest {
-		flex: 0 0 100%;
 	}
 
 	/* The count of the languages the chain above did not reach, and the control
