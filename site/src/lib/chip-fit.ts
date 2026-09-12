@@ -6,58 +6,91 @@
  * chips under a two-line description — the row stops being a title with facts
  * under it and becomes a list of tags with a title on top.
  *
- * ## It measures nothing, and that is the decision
+ * ## It measures, and the first version estimated
  *
- * The honest criterion is a WIDTH — one line on a phone, half the row above
- * that — and the browser is the only thing that knows one. Asking it means a
- * `ResizeObserver` per row, a second layout pass after every filter, and a
- * visible settle on a list of 272; so the width is ESTIMATED from the text, in
- * characters, which is a number the row already has.
+ * The estimate was characters: a label's length plus three for its padding,
+ * against a budget derived from the chip's type size. It was wrong on the
+ * layout it mattered most on — a phone row took six subjects onto two lines,
+ * which is the one thing the count exists to prevent — because a character
+ * count is not a width in a proportional face, where `social doctrine` and
+ * `illlllllllllll` are the same fifteen characters and nothing like the same
+ * chip. **A rule about a width has to be given a width.**
  *
- * The estimate is deliberately crude, because being wrong costs a chip either
- * way and nothing else: a row that cuts one chip early shows `+2` where it
- * could have shown `+1`, and one that cuts late wraps to a second line. Both
- * are what the reader gets today on every row.
+ * ## What it costs is one hidden element and no layout pass per row
  *
- * ## The arithmetic behind the two budgets
- *
- * A `.doc-tag` is set at 0.7rem — 11.2px at the browser's own default root —
- * and a lowercase character in Source Sans 3 advances about half its size, so
- * roughly 5.6px. Its padding (0.4rem either side) and the gap after it
- * (0.3rem) come to 17.6px, near enough three characters: `CHIP_CHROME`.
- *
- * `WIDE` is half of `--index-width` (62rem → 31rem → 496px → ~88 characters),
- * which is the row the subjects share with the languages at its end. `NARROW`
- * is one line of the card on a phone (~350px inside a 390px viewport → ~62),
- * where the languages have taken a line of their own and the subjects have the
- * whole of this one.
+ * `ChipRuler` writes a label into one probe chip the page renders — the real
+ * class, the real face, the real padding — and reads the box back. Per LABEL
+ * and not per row: the subject vocabulary is closed at a few dozen terms
+ * (`site/document-tags.json`), so the whole list is measured once and kept,
+ * where a `ResizeObserver` per row would be a second layout pass on 272 of
+ * them after every filter. A ruler holds its answers for as long as the caller
+ * holds the ruler, which is what makes a font arriving cheap to answer: the
+ * route takes a fresh one, and `document.fonts.ready` is the signal.
  */
-
-/** A chip's padding and the gap after it, in characters of its own size. */
-export const CHIP_CHROME = 3;
-
-/** Half the row, for the layout that has an aside beside it. */
-export const TAG_BUDGET_WIDE = 88;
-
-/** One line of a phone's card. */
-export const TAG_BUDGET_NARROW = 62;
 
 /**
- * How many of `labels` to print. The rest belong behind a count.
+ * How many of `widths` fit in `available`, in pixels.
  *
- * TWO RULES KEEP A COUNT FROM COSTING MORE THAN IT SAVES. One chip is always
- * printed, so a single long subject is shown rather than hidden behind a `+1`
- * that says nothing about it; and a run that would hide exactly one chip
- * prints the lot, since `+1` is about as wide as the chip it replaces and the
- * reader would be pressing it to learn one word.
+ * EACH WIDTH CARRIES THE GAP THAT FOLLOWS IT, which over-counts the last chip
+ * in the run by one gap — the direction that cuts a chip early rather than
+ * late, and the only direction worth being wrong in here.
+ *
+ * `countWidth` IS RESERVED WHENEVER A COUNT IS NEEDED and never otherwise,
+ * which is what the first pass does: a run that fits entire has no count to
+ * make room for, so asking for the count's own width first would hide a chip
+ * in order to say that a chip was hidden. It also replaces the rule the
+ * estimate needed — that a run hiding exactly one chip prints the lot — since
+ * a `+1` no wider than the chip it stands for now keeps the chip it stands
+ * for, by arithmetic rather than by exception.
  */
-export function fitChips(labels: readonly string[], budget: number): number {
-	let used = 0;
+export function fitChips(widths: readonly number[], available: number, countWidth: number): number {
+	let whole = 0;
+	for (const width of widths) whole += width;
+	if (whole <= available) return widths.length;
+
+	let used = countWidth;
 	let fit = 0;
-	for (const label of labels) {
-		used += label.length + CHIP_CHROME;
-		if (used > budget && fit > 0) break;
+	for (const width of widths) {
+		// ONE CHIP ALWAYS PRINTS. A subject long enough to fill the row on its
+		// own is still what the row is filed under, and a row whose only visible
+		// subject is `+1` says nothing at all.
+		if (used + width > available && fit > 0) break;
+		used += width;
 		fit += 1;
 	}
-	return fit >= labels.length - 1 ? labels.length : fit;
+	return fit;
+}
+
+/**
+ * The width a chip carrying a given label would take, measured on the page's
+ * own probe element.
+ *
+ * NOT A FONT STACK AND A CANVAS: the probe wears the same class as the chips
+ * it stands for, so the face, the size, the padding, the border and every
+ * theme that moves any of them are the browser's answer rather than a table
+ * here that would have to be kept true.
+ */
+export class ChipRuler {
+	#probe: HTMLElement;
+	#widths = new Map<string, number>();
+
+	constructor(probe: HTMLElement) {
+		this.#probe = probe;
+	}
+
+	/** The chip's border box, fractional — `getBoundingClientRect` and not
+	 *  `offsetWidth`, which rounds, and rounding down a dozen chips is a line
+	 *  that wraps for a pixel nobody can see. */
+	width(label: string, variant?: string): number {
+		const key = variant ? `${variant}\n${label}` : label;
+		const seen = this.#widths.get(key);
+		if (seen !== undefined) return seen;
+		if (variant) this.#probe.classList.add(variant);
+		this.#probe.textContent = label;
+		const width = this.#probe.getBoundingClientRect().width;
+		this.#probe.textContent = '';
+		if (variant) this.#probe.classList.remove(variant);
+		this.#widths.set(key, width);
+		return width;
+	}
 }

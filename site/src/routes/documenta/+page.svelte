@@ -81,7 +81,7 @@
 		loadDocumentTags,
 		loadTranslatedDescriptions
 	} from '$lib/corpus';
-	import { fitChips, TAG_BUDGET_NARROW, TAG_BUDGET_WIDE } from '$lib/chip-fit';
+	import { ChipRuler, fitChips } from '$lib/chip-fit';
 	import { preferredDescription } from '$lib/document-description';
 	import { nearLanguages } from '$lib/document-langs';
 	import { filterByQuery, highlight } from '$lib/highlight';
@@ -93,6 +93,7 @@
 	import { formatPromulgated } from '$lib/dates';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import { pontificate } from '$lib/pontificates';
+	import { tick, untrack } from 'svelte';
 	import type { DocumentManifest } from '$lib/types';
 
 	interface Row {
@@ -251,7 +252,67 @@
 		return () => query.removeEventListener('change', onChange);
 	});
 
-	const tagBudget = $derived(narrow ? TAG_BUDGET_NARROW : TAG_BUDGET_WIDE);
+	/**
+	 * The subjects' run, in pixels: the whole row on a phone, where the
+	 * languages have a line of their own, and half of it above that, where they
+	 * share one. The half IS the criterion — a row of chips that reaches the
+	 * languages at the far end has stopped being a line of facts under a title.
+	 *
+	 * The list's own box, watched rather than read once: the aside arrives at
+	 * 80rem and the reading column changes width under it, so a width read at
+	 * mount would cut every row for a layout the reader has left.
+	 */
+	let listEl = $state<HTMLElement | undefined>(undefined);
+	let listWidth = $state(0);
+	$effect(() => {
+		const el = listEl;
+		if (!el) return;
+		const observer = new ResizeObserver(([entry]) => (listWidth = entry.contentRect.width));
+		observer.observe(el);
+		return () => observer.disconnect();
+	});
+
+	const tagRoom = $derived(narrow ? listWidth : listWidth / 2);
+
+	/**
+	 * Every subject's chip width, measured on the probe and kept by label.
+	 *
+	 * THE VOCABULARY IS CLOSED AND SMALL (`site/document-tags.json`), so this
+	 * is a few dozen measurements for 272 rows — the whole reason the ruler is
+	 * per LABEL. It runs when the tags land and again when a font does: a width
+	 * measured in the fallback face is wrong by whatever the two faces differ
+	 * by, and `document.fonts.ready` is the page's own signal for that.
+	 */
+	let probe = $state<HTMLElement | undefined>(undefined);
+	let probeList = $state<HTMLElement | undefined>(undefined);
+	let chipWidths = $state<Record<string, number>>({});
+	let countWidth = $state(0);
+	/** The space after a chip, asked of the list's own `gap` rather than
+	 *  written down here: the rule is one line of CSS away from this file and a
+	 *  second copy of it would be wrong the first time anybody tuned it. */
+	let chipGap = $state(0);
+	let facesReady = $state(false);
+	$effect(() => {
+		document.fonts.ready.then(() => (facesReady = true));
+	});
+	$effect(() => {
+		const el = probe;
+		// Read as dependencies: the tags arriving and the faces settling are the
+		// two things that change an answer here.
+		const vocabulary = rows.flatMap((row) => row.tags);
+		facesReady;
+		if (!el) return;
+		const ruler = new ChipRuler(el);
+		const widths: Record<string, number> = {};
+		for (const tag of vocabulary) widths[tag] ||= ruler.width(tag);
+		untrack(() => {
+			chipWidths = widths;
+			// `+99` rather than each row's own figure: one measurement for the
+			// page, and being a shade wide only ever cuts a chip early.
+			countWidth = ruler.width('+99', 'more');
+			chipGap = probeList ? parseFloat(getComputedStyle(probeList).columnGap) || 0 : 0;
+		});
+	});
 
 	/**
 	 * How many of a row's subjects are printed, the rest being behind its count.
@@ -266,11 +327,23 @@
 	 *
 	 * A live query forcing a fold open is `fold-state.svelte.ts`'s rule for a
 	 * folded index, met again a row at a time.
+	 *
+	 * A FOURTH PRINTS THE LOT AND IS NOT A DECISION: nothing measured yet. That
+	 * is every row until the first `ResizeObserver` callback, and every row of
+	 * the prerendered document, where there is no browser to ask — so what the
+	 * written page holds is the full list, and the cut arrives with hydration.
 	 */
 	function tagsShown(row: Row): number {
 		if (tagsOpen[row.slug] || query.trim() !== '') return row.tags.length;
 		if (row.tagKeys.some((key) => selectedTags.includes(key))) return row.tags.length;
-		return fitChips(row.tags, tagBudget);
+		if (tagRoom <= 0) return row.tags.length;
+		const widths = row.tags.map((tag) => chipWidths[tag] ?? 0);
+		if (widths.some((width) => width === 0)) return row.tags.length;
+		return fitChips(
+			widths.map((width) => width + chipGap),
+			tagRoom,
+			countWidth + chipGap
+		);
 	}
 
 	/** Which rows have their remaining subjects open, by slug — `langsOpen`'s
@@ -381,6 +454,70 @@
 	const visible = $derived(
 		rows.filter((row) => byAuthor(row) && byKind(row) && byLang(row) && byTag(row) && bySearch(row))
 	);
+
+	/**
+	 * How many rows are drawn, and the button that asks for more.
+	 *
+	 * 432 documents is 432 titles, 432 descriptions and some three thousand
+	 * chips in one list — a page a phone lays out for a reader who is going to
+	 * read the first twenty of them. A page is 100 rows where the aside fits
+	 * beside the list and 50 where it does not, which is the same reasoning the
+	 * subjects' own count runs on: what the row and the list can carry is a
+	 * question about the width in front of the reader.
+	 *
+	 * A SEARCH IS NOT PAGED, by direction and for a reason the page already
+	 * states elsewhere: a reader who has typed a word has asked a question of
+	 * the whole corpus, and an answer cut at fifty is an answer that lies about
+	 * how many there were. The facets do not bypass it — those NARROW, and a
+	 * narrowed list is still a list somebody is scrolling.
+	 *
+	 * THE PRERENDERED DOCUMENT IS CUT TOO, which is the one cost worth naming:
+	 * a crawler reading `/documenta` meets 100 of the documents rather than all
+	 * of them. Every one of them is in `sitemap.xml` and in `works.json`, which
+	 * is where discovery has always come from here — this page's job is to be
+	 * read.
+	 */
+	const PAGE_WIDE = 100;
+	const PAGE_NARROW = 50;
+	const pageSize = $derived(narrow ? PAGE_NARROW : PAGE_WIDE);
+	let pages = $state(1);
+	const searching = $derived(query.trim() !== '');
+	const drawn = $derived(searching ? visible : visible.slice(0, pages * pageSize));
+	const held = $derived(visible.length - drawn.length);
+
+	/* Back to the first page whenever the list itself changes. Without it a
+	   reader who loaded four pages and then picked an author would meet four
+	   pages of a list they had just cut to thirty — and the cap would only ever
+	   be reached again by luck. The write is untracked so this effect cannot
+	   re-run itself. */
+	$effect(() => {
+		selectedAuthors;
+		selectedKinds;
+		selectedLangs;
+		selectedTags;
+		query;
+		untrack(() => (pages = 1));
+	});
+
+	/**
+	 * Another page, and the focus goes to the first row of it.
+	 *
+	 * The button is the last thing in the list's flow, so loading pushes it down
+	 * and — on the last page — takes it off the document entirely, which leaves
+	 * a keyboard reader's focus on nothing and their next Tab at the top of the
+	 * page. The first new row is where the button was standing, so moving focus
+	 * there is both the repair and the answer to "where was I": `preventScroll`
+	 * because the row is already under the reader's eye and a scroll would be
+	 * the page jumping for no reason.
+	 */
+	async function loadMore() {
+		const first = drawn.length;
+		pages += 1;
+		await tick();
+		listEl?.querySelectorAll<HTMLAnchorElement>('.doc-link')[first]?.focus({
+			preventScroll: true
+		});
+	}
 
 	/* A FRACTION ONLY ONCE THERE IS SOMETHING TO COMPARE. Unfiltered, both
 	   halves are the same number and `298 / 298` is a ratio saying nothing —
@@ -664,8 +801,22 @@
 			     `PreviewTarget` stopped refusing an unanchored document: the
 			     refusal WAS the marker, and a tap that peeked instead of opening
 			     would have been the whole index. -->
-			<ul class="docs index-list" data-link-preview="hover">
-				{#each visible as row (row.slug)}
+			<!--
+				THE RULER'S OWN CHIP, and it is in the markup rather than built in
+				script because what it has to answer for is the CSS: a probe made
+				with `createElement` carries none of this component's scoped
+				classes, so it would be measuring a browser default and reporting
+				it as a subject. Hidden with `visibility` and taken out of the
+				flow, so it is laid out — an element with `display: none` has no
+				box to measure — and read by nobody: `aria-hidden`, and it holds
+				no text between measurements.
+			-->
+			<ul class="doc-tags chip-probe" aria-hidden="true" bind:this={probeList}>
+				<li><span class="doc-tag" bind:this={probe}></span></li>
+			</ul>
+
+			<ul class="docs index-list" data-link-preview="hover" bind:this={listEl}>
+				{#each drawn as row (row.slug)}
 					{@const description = describe(row)}
 					{@const langs = nearLanguages(row.langs, langChain, row.lang)}
 					{@const tagFit = tagsShown(row)}
@@ -851,6 +1002,18 @@
 					</li>
 				{/each}
 			</ul>
+			{#if held > 0}
+				<!-- The count is the chip the folded filter panel already puts on a
+				     summary — digits need no translation and no plural rule — and it
+				     says how many rows are still behind the button rather than how
+				     many the press will bring, because the first is a fact and the
+				     second is a page size the reader never chose. -->
+				<div class="load-more">
+					<button type="button" onclick={loadMore}>
+						{t('document.loadMore')}<span class="chip">{held}</span>
+					</button>
+				</div>
+			{/if}
 		{/if}
 	</div>
 	<aside class="index-aside">
@@ -988,6 +1151,53 @@
 	.no-results {
 		color: var(--color-text-muted);
 		margin: 1.5rem 0;
+	}
+
+	/* The ruler's chip. Out of the flow and invisible, but laid out — a
+	   `display: none` box has no width to read — and never a reader's business.
+	   `nowrap` because a shrink-to-fit box in a narrow column would break a
+	   two-word subject and report half of it. */
+	.chip-probe {
+		position: absolute;
+		visibility: hidden;
+		pointer-events: none;
+		white-space: nowrap;
+	}
+
+	/* The way on, at the foot of the list. Centred and full width: it is the
+	   one thing under 100 rows and a button hugging the start edge reads as
+	   another row's control rather than as the list's own. */
+	.load-more {
+		display: flex;
+		justify-content: center;
+		margin: 1.5rem 0 0;
+	}
+
+	.load-more button {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		padding: 0.45rem 1.1rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		background: none;
+		color: var(--color-text);
+		cursor: pointer;
+	}
+
+	.load-more button:hover {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
+	}
+
+	/* The chip inside it follows the button's own hover, the way a row's kind
+	   chip follows its link — a word that lights beside a number that does not
+	   is two ends of one control disagreeing (components.css). */
+	.load-more button:hover .chip {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
 	}
 
 	/* The list, its rows, the row-filling link, its title and its kind chip are

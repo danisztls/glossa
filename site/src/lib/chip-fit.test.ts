@@ -1,46 +1,46 @@
 import { describe, expect, it } from 'vitest';
-import { CHIP_CHROME, fitChips, TAG_BUDGET_NARROW, TAG_BUDGET_WIDE } from './chip-fit';
+import { fitChips } from './chip-fit';
 
-/** `n` labels of `len` characters each. */
-const run = (n: number, len: number) => Array.from({ length: n }, () => 'x'.repeat(len));
+/** `n` chips of `px` each, gaps included — what the route hands in. */
+const run = (n: number, px: number) => Array.from({ length: n }, () => px);
+
+const COUNT = 40;
 
 describe('fitChips', () => {
-	it('prints everything that fits', () => {
-		expect(fitChips(run(3, 8), TAG_BUDGET_WIDE)).toBe(3);
+	it('prints a run that fits entire, with no room kept for a count', () => {
+		// 300 of 320 used, and the 40 a count would want is never asked for.
+		expect(fitChips(run(3, 100), 320, COUNT)).toBe(3);
 	});
 
-	it('cuts where the budget runs out', () => {
-		// 10 + 3 per chip, so six fill 78 and the seventh passes 88.
-		expect(fitChips(run(9, 10), TAG_BUDGET_WIDE)).toBe(6);
+	it('cuts where the line runs out', () => {
+		// 40 for the count leaves 260: two chips of 100 fit, the third does not.
+		expect(fitChips(run(5, 100), 300, COUNT)).toBe(2);
 	});
 
-	it('cuts sooner on a phone than beside an aside', () => {
-		expect(fitChips(run(9, 10), TAG_BUDGET_NARROW)).toBeLessThan(
-			fitChips(run(9, 10), TAG_BUDGET_WIDE)
-		);
+	it('measures chips one by one rather than by their average', () => {
+		// The long one is what does not fit, and a mean would have hidden the
+		// two short ones with it.
+		expect(fitChips([60, 60, 400], 300, COUNT)).toBe(2);
 	});
 
-	// A `+1` is about as wide as the chip it replaces, so hiding one buys the
-	// row nothing and costs the reader a press to learn one word.
-	it('never hides exactly one chip', () => {
-		expect(fitChips(run(7, 10), TAG_BUDGET_WIDE)).toBe(7);
+	// The count's own chip is why: hiding one 100px chip to print a 40px count
+	// frees 60px, so the run really is shorter.
+	it('keeps a chip a narrower count cannot pay for', () => {
+		expect(fitChips(run(4, 100), 360, COUNT)).toBe(3);
 	});
 
-	// Otherwise a subject long enough to fill the row on its own would be a
-	// row whose only visible subject is `+1`.
-	it('always prints one, however long it is', () => {
-		expect(fitChips(['x'.repeat(200)], TAG_BUDGET_NARROW)).toBe(1);
-		expect(fitChips(['x'.repeat(200), 'war', 'peace'], TAG_BUDGET_NARROW)).toBe(1);
+	it('always prints one, however wide it is', () => {
+		expect(fitChips([900], 300, COUNT)).toBe(1);
+		expect(fitChips([900, 40, 40], 300, COUNT)).toBe(1);
 	});
 
-	it('is zero for a row with no subjects', () => {
-		expect(fitChips([], TAG_BUDGET_WIDE)).toBe(0);
+	it('is zero for a row with no chips', () => {
+		expect(fitChips([], 300, COUNT)).toBe(0);
 	});
 
-	// The chrome is what stops a budget from being read as a character count of
-	// the labels alone: ten one-letter subjects cost forty characters, not ten.
-	it('charges every chip for its own padding', () => {
-		expect(fitChips(run(10, 1), 10 * (1 + CHIP_CHROME))).toBe(10);
-		expect(fitChips(run(12, 1), 10 * (1 + CHIP_CHROME))).toBe(10);
+	// A width the route could not measure yet arrives as 0; the guard is the
+	// route's, and this only has to not divide by anything.
+	it('prints everything when the line has not been measured', () => {
+		expect(fitChips(run(3, 0), 0, 0)).toBe(3);
 	});
 });

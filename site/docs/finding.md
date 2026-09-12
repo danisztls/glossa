@@ -1585,16 +1585,33 @@ holds and puts the rest behind `+5`. The cut is a WIDTH — one line on a phone,
 half the row above that — where the languages' cut is the reader's chain: one
 is a fact about the row, the other a fact about who is reading it.
 
-**It estimates that width and measures nothing** (`chip-fit.ts`). The browser
-is the only thing that knows a rendered width, and asking it means a
-`ResizeObserver` per row and a second layout pass after every filter on a list
-of 272. So the width is counted in CHARACTERS, from text the row already has,
-against a budget derived from the chip's own type size — and being wrong costs
-exactly one chip in either direction: a row cuts early and reads `+2` where
-`+1` would do, or cuts late and wraps, which is what every row did before.
-**Two rules keep the count from costing more than it saves**: one chip is
-always printed, and a run that would hide exactly one prints the lot, `+1`
-being as wide as the chip it replaces.
+**It estimated that width for a day, and the estimate is the lesson.** The
+first cut counted CHARACTERS — a label's length plus three for its padding,
+against a budget derived from the chip's type size — on the argument that
+asking the browser means a `ResizeObserver` per row and a second layout pass
+after every filter on a list of 272. It was wrong on the layout it mattered
+most on, a phone row taking six subjects onto two lines, which is the one thing
+the count exists to prevent. **A character count is not a width in a
+proportional face**: `social doctrine` and `illlllllllllll` are the same
+fifteen characters and nothing like the same chip. **A rule about a width has
+to be given a width.**
+
+**What it costs to measure is one hidden element** (`ChipRuler`). The page
+renders a probe wearing the real class, and each label is written into it and
+its box read back — so the face, the padding, the border and every theme that
+moves any of them are the browser's answer rather than a table here that would
+have to be kept true. Per LABEL and not per row: the subject vocabulary is
+closed at a few dozen terms, so the whole list is measured once and kept, and
+272 rows cost nothing further. A font arriving is what invalidates it, and
+`document.fonts.ready` is the signal. The probe is hidden with `visibility` and
+taken out of the flow — `display: none` has no box to measure — and carries
+`aria-hidden` with no text between measurements.
+
+**One chip always prints**, however wide it is: a row whose only visible
+subject is `+1` says nothing at all. The rule that a run hiding exactly one
+chip prints the lot is gone, and what replaced it is arithmetic — the count's
+own chip is reserved out of the line whenever there is a count, so a `+1` no
+narrower than the chip it stands for keeps that chip on its own.
 
 **A live query or a chosen subject prints every subject on the row.** A query
 marks what it matched, and a matched subject behind a count is a row with no
@@ -1637,6 +1654,35 @@ under a title, read as a block to decide whether to open a document. **Nothing
 in an index is set in the reading grid's measure.** With the description
 filling the row there is no empty half left for anything to be moved into, and
 the rows lost half their height on the way.
+
+**The list is cut to a page, and a search is not** (2026-09-12, by direction).
+432 documents is 432 titles, 432 descriptions and some three thousand chips in
+one list, laid out by a phone for a reader who will read the first twenty. A
+page is 100 rows where the aside fits beside the list and 50 where it does not
+— the subjects' own criterion at the scale of the list, since what a list can
+carry is a question about the width in front of the reader — and a button at
+the foot says how many rows are still behind it.
+
+**A query draws every match**, because a reader who typed a word asked a
+question of the whole corpus and an answer cut at fifty is an answer that lies
+about how many there were. **The facets are paged like anything else**: they
+NARROW, and a narrowed list is still a list somebody is scrolling. Any change to
+either sends the list back to its first page, or a reader who loaded four pages
+and then picked an author would meet four pages of a list they had just cut to
+thirty.
+
+**Loading more moves focus to the first new row.** The button is the last thing
+in the list's flow, so a press pushes it down and the last press takes it off
+the document — which leaves a keyboard reader's focus on nothing and their next
+Tab at the top of the page. The first new row is standing where the button was,
+so it is both the repair and the answer to "where was I", and the focus call
+prevents the scroll that would otherwise jump a page that has not moved.
+
+**What it costs is the prerendered document**, which is cut with everything
+else: a crawler reading `/documenta` meets 100 of the documents rather than all
+of them. `sitemap.xml` lists every address and `works.json` publishes the whole
+corpus, which is where discovery here has always come from — this page's job is
+to be read.
 
 **The count prints a fraction only once there is one.** `298 / 298` is a ratio
 saying nothing, and a page that opens with one reads as a state the reader is

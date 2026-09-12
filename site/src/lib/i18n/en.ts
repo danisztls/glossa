@@ -1124,6 +1124,10 @@ export const en: Dictionary = {
 	// languages' does — a row prints as many as its line holds and puts the
 	// rest behind this.
 	'document.subjects.more': 'more subjects',
+	// The foot of the library, where the list is cut to a page. The chip
+	// beside it holds how many rows are still behind it, so the label itself
+	// stays the plain thing a reader presses.
+	'document.loadMore': 'Load more',
 	'document.tableOfContents': 'Table of Contents',
 	'document.startReading': 'Start reading',
 	'document.readFullDocument': 'Read the full document',

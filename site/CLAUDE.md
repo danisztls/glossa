@@ -1469,11 +1469,23 @@ flat reverse-chronological list.
   the build prerenders. The language the row is WRITTEN in leads it and is
   never inside the count.
 - **The subjects have a count of their own, cut by WIDTH where the languages'
-  is cut by the reader** (`chip-fit.ts`). It ESTIMATES that width from the text
-  in characters rather than measuring it — a `ResizeObserver` per row is a
-  second layout pass on 272 of them — and being wrong costs one chip either
-  way. **A live query or a chosen subject prints the lot**, since a row has to
-  be able to show what it is on the list for.
+  is cut by the reader** (`chip-fit.ts`) — half the row where the aside fits
+  beside it, the whole line on a phone. **The width is measured and was
+  estimated for a day**: a character budget put six subjects onto two phone
+  lines, because a character count is not a width in a proportional face.
+  `ChipRuler` writes each label into one hidden chip the page renders and reads
+  the box back, per LABEL and not per row — the vocabulary is closed, so a few
+  dozen measurements answer 272 rows, where a `ResizeObserver` per row is a
+  second layout pass on all of them. **A live query or a chosen subject prints
+  the lot**, since a row has to be able to show what it is on the list for.
+- **The list is cut to a page and the search is not** (2026-09-12, by
+  direction): 100 rows where the aside fits beside it, 50 where it does not,
+  and a button at the foot carrying how many are still behind it. A reader who
+  typed a word asked the whole corpus, so a query draws every match; the facets
+  NARROW rather than ask, so they are paged like anything else. **The
+  prerendered document is cut too** — a crawler meets 100 of the documents on
+  this page, and `sitemap.xml` and `works.json` are where discovery comes from
+  here.
 - **That count is a disclosure and opens LEFTWARDS, into the empty half of its
   own line.** The names were a `title` for a day, which is nothing on a phone;
   a line of their own was an hour, and cost every row below a reflow for a look
