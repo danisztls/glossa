@@ -54,9 +54,27 @@
 				"origin": "read"
 			}
 		},
+		"cdf.accidit-in-diversis.en": {
+			"en": {
+				"text": "A decree on public Masses for Christians who have died outside full communion with the Catholic Church. The general rule forbidding them stands, out of regard for the conscience of the deceased; but until the new Code is promulgated, exceptions are allowed where relatives or friends ask for a genuinely religious motive and the Ordinary sees no scandal — the name not being said in the eucharistic prayer, which presupposes full communion.",
+				"origin": "read"
+			}
+		},
 		"cdf.ad-resurgendum-cum-christo.en": {
 			"en": {
 				"text": "The Congregation for the Doctrine of the Faith’s 2016 Instruction on Christian burial and cremation, approved by Francis. It reaffirms the Church’s preference for burying the faithful departed in cemeteries or sacred places as an expression of hope in the resurrection, permits cremation where doctrinally sound, and sets norms requiring the ashes to remain intact in a sacred place — forbidding their conservation at home, scattering, or division among mementos.",
+				"origin": "read"
+			}
+		},
+		"cdf.alleged-apparitions-in-amsterdam.en": {
+			"en": {
+				"text": "A press release publishing for the first time the decision the Congregation reached on 27 March 1974 about the apparitions and revelations alleged at Amsterdam between 1945 and 1959, and the devotion to “The Lady of All Nations”: on the doctrinal judgment, unanimously constat de non supernaturalitate, and against investigating the phenomenon further. Paul VI approved it on 5 April 1974; it is made known now because doubts persisted.",
+				"origin": "read"
+			}
+		},
+		"cdf.annus-internationalis-familiae.en": {
+			"en": {
+				"text": "A letter to the bishops, written for the International Year of the Family, on whether the divorced and remarried may receive communion. It rejects the pastoral solutions proposed in several regions, by which such faithful might approach the Eucharist on a judgement of their own conscience — unjust abandonment, private conviction of nullity, a long penance — and restates the discipline, while asking pastors to carry their burden with them in charity.",
 				"origin": "read"
 			}
 		},
@@ -66,9 +84,61 @@
 				"origin": "read"
 			}
 		},
+		"cdf.ardens-felicitatis.en": {
+			"en": {
+				"text": "An instruction on prayer meetings held to obtain healing from God, which had multiplied and were often joined to liturgical celebrations, sometimes with appeal to a claimed charism of healing. A doctrinal part on sickness and prayer is followed by ten disciplinary articles: the diocesan bishop’s authority over such services, the separation of the Ritual’s exorcism prayers from them, their exclusion from Mass, the sacraments and the Hours, and how testimony of a healing is collected.",
+				"origin": "read"
+			}
+		},
+		"cdf.artificial-nutrition-and-hydration.en": {
+			"en": {
+				"text": "Two responses to the United States bishops on patients in a vegetative state: food and water, by natural or artificial means, are in principle an ordinary and proportionate means of preserving life and so morally obligatory, except where the body cannot assimilate them or they cause significant discomfort; and they may not be withdrawn when physicians judge that the patient will never recover consciousness.",
+				"origin": "read"
+			}
+		},
 		"cdf.aspects-of-evangelization.en": {
 			"en": {
 				"text": "The Congregation for the Doctrine of the Faith’s 2007 note defends the Church’s mandate to proclaim Christ explicitly and invite conversion, against theories holding that such proclamation limits others’ freedom or that salvation without explicit faith makes it unnecessary. It grounds evangelization in the human search for truth, describes it as incorporation into the community of the baptized, and holds that Christian disunity undermines the credibility of that mission.",
+				"origin": "read"
+			}
+		},
+		"cdf.banalization-of-sexuality.en": {
+			"en": {
+				"text": "A note correcting readings of Benedict XVI’s interview-book Light of the World that took his remarks for a change in the teaching on contraception. His words concern prostitution, not conjugal morality, and license nothing. That someone with HIV uses a condom to reduce the risk to another may be a first step towards a more human sexuality, while the act stays gravely disordered — which is not the theory of the lesser evil.",
+				"origin": "read"
+			}
+		},
+		"cdf.baptism-conferred-by-the-mormons.fr": {
+			"fr": {
+				"text": "Réponse à un doute demandant si le baptême conféré dans la communauté dite « L’Église de Jésus-Christ des Saints des derniers jours », communément appelée « mormons », est valide. La réponse tient en un mot : non. Jean-Paul II l’a approuvée lors de l’audience accordée au cardinal préfet et en a ordonné la publication, le 5 juin 2001.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A response to a dubium asking whether baptism conferred in the community called “The Church of Jesus Christ of Latter-day Saints”, commonly known as the Mormons, is valid. The answer is a single word: no. John Paul II approved it at the audience granted to the Cardinal Prefect and ordered its publication, on 5 June 2001.",
+				"origin": "translated",
+				"from": "fr"
+			}
+		},
+		"cdf.burial-in-irregular-marriages.en": {
+			"en": {
+				"text": "A circular letter telling the episcopal conferences that the discipline on church funerals for Catholics who die in an irregular marital situation is to be relaxed. Derogating from canon 1240 so far as necessary, a decree soon to come will no longer forbid religious funerals to those who, though in manifest sin, kept their adherence to the Church and gave some sign of repentance, provided public scandal is avoided.",
+				"origin": "read"
+			}
+		},
+		"cdf.burial-of-manifest-sinners.it": {
+			"it": {
+				"text": "Decreto che leva il divieto delle esequie ecclesiastiche ai peccatori manifesti: i Padri della Congregazione stabiliscono, nell’Assemblea Plenaria del 14-15 novembre 1972, che le esequie non siano più vietate se prima della morte il defunto ha dato qualche segno di penitenza e se si evita il pubblico scandalo degli altri fedeli, abrogando per quanto necessario il can. 1240 § 1 del Codice allora vigente.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A decree lifting the ban on ecclesiastical funeral rites for manifest sinners: the Fathers of the Congregation determine, in the Plenary Assembly of 14–15 November 1972, that the rites are no longer forbidden where the deceased gave some sign of penitence before death and public scandal to the other faithful is avoided, abrogating so far as necessary can. 1240 §1 of the Code then in force.",
+				"origin": "translated",
+				"from": "it"
+			}
+		},
+		"cdf.canons-1399-and-2318.en": {
+			"en": {
+				"text": "After the 1966 Notification abolishing the Index of prohibited books, the Congregation was asked to keep canon 1399, which prohibited certain books by law, and canon 2318, which penalized breaches of the law on censorship. Both requests are refused — though the moral law absolutely forbidding whatever endangers faith and morals remains — and anyone under the censures of canon 2318 is held absolved by the abrogation itself.",
 				"origin": "read"
 			}
 		},
@@ -89,9 +159,32 @@
 				"from": "pt"
 			}
 		},
+		"cdf.christi-ecclesia.it": {
+			"it": {
+				"text": "Dichiarazione che, dopo l’ammonizione del 1975, constata che Hans Küng ha ripresentato ancora più espressamente l’opinione che mette in dubbio il dogma dell’infallibilità o lo riduce a una indefettibilità fondamentale della Chiesa nella verità, e che il conseguente disprezzo del Magistero ha toccato altri punti della fede — la consustanzialità di Cristo con il Padre, la Beata Vergine. Non può più essere considerato teologo cattolico né insegnare come tale.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A declaration finding that, after the 1975 admonition, Hans Küng has restated still more expressly the opinion which doubts the dogma of infallibility or reduces it to a basic indefectibility of the Church in the truth, and that the contempt for the Magisterium following from it has reached other points of the faith — Christ’s consubstantiality with the Father, the Blessed Virgin. He may no longer be considered a Catholic theologian, nor teach as one.",
+				"origin": "translated",
+				"from": "it"
+			}
+		},
+		"cdf.clarification-on-procured-abortion.en": {
+			"en": {
+				"text": "Issued in answer to letters received by the Congregation, and built almost wholly of citations: the Catechism on human life from the moment of conception and on the latae sententiae excommunication attached to formal cooperation in abortion, Donum Vitae on the law’s duty to protect the unborn, and Evangelium Vitae 62. It closes by distinguishing “therapeutic” abortion, never licit, from a procedure whose unintended effect is the child’s death.",
+				"origin": "read"
+			}
+		},
 		"cdf.collaboration-of-men-and-women.en": {
 			"en": {
 				"text": "On the active collaboration of men and women, responding to two contemporary tendencies — treating the sexes as adversaries, and treating sexual difference itself as a construct to overcome — with a biblical account of created complementarity from Genesis through Paul’s letter to the Galatians, then feminine values such as receptivity to the other in both society and the Church.",
+				"origin": "read"
+			}
+		},
+		"cdf.communion-by-intinction.en": {
+			"en": {
+				"text": "Four responses on communion where illness prevents the ordinary form. A priest who cannot take consecrated wine, through alcoholism or another infirmity, is to be encouraged to communicate by intinction at a concelebration, and his Ordinary may allow him to do so even celebrating alone; the faithful suffering from coeliac disease may be allowed to communicate under the species of wine alone, but gluten-free hosts may not be consecrated for them.",
 				"origin": "read"
 			}
 		},
@@ -99,6 +192,29 @@
 			"en": {
 				"text": "A 1992 letter from the Congregation for the Doctrine of the Faith on the Church understood as communion. It holds that the universal Church is not a federation or a product of the particular Churches but is ontologically and temporally prior to them, born whole at Pentecost and giving rise to the local Churches as her daughters, their unity rooted in the Eucharist and the episcopate.",
 				"origin": "read"
+			}
+		},
+		"cdf.complementary-norms-anglicanorum-coetibus.en": {
+			"en": {
+				"text": "Fourteen articles giving practical shape to the apostolic constitution Anglicanorum Coetibus. Each personal ordinariate for former Anglicans answers to this Congregation; its Ordinary, a bishop or presbyter appointed from a terna, sits in the national episcopal conference, incardinates former Anglican ministers, and governs with a Governing Council half elected by his priests and a Pastoral Council. The last article provides for personal parishes and quasi-parishes.",
+				"origin": "read"
+			}
+		},
+		"cdf.cum-de-fragmentis.en": {
+			"en": {
+				"text": "Answers queries put to the Apostolic See about hosts left over after communion: those hosts, and any particles fallen from them that still have the form of bread, are to be reserved or consumed with the reverence due to the eucharistic presence of Christ, while other fragments follow the prescriptions on purifying the chalice and paten in the General Instruction of the Roman Missal.",
+				"origin": "read"
+			}
+		},
+		"cdf.cum-oecumenicum-concilium.fr": {
+			"fr": {
+				"text": "Lettre confidentielle aux présidents des conférences épiscopales sur les abus dans l’interprétation de Vatican II. Elle énumère les erreurs signalées : les formules dogmatiques livrées à l’évolution historique, le magistère ordinaire ramené aux libres opinions, le relativisme, un Christ devenu peu à peu conscient de sa filiation divine, un symbolisme eucharistique substitué à la transsubstantiation, la pénitence sans confession personnelle, le péché originel obscurci, la morale de situation, un œcuménisme tournant à l’irénisme.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A confidential letter to the presidents of the episcopal conferences on abuses in the interpretation of Vatican II. It lists the errors reported: dogmatic formulas surrendered to historical evolution, the ordinary Magisterium reduced to free opinion, relativism, a Christ who gradually became aware of his divine sonship, a eucharistic symbolism put in place of transubstantiation, penance without personal confession, original sin obscured, situation ethics, and an ecumenism turning to irenicism.",
+				"origin": "translated",
+				"from": "fr"
 			}
 		},
 		"cdf.declaration-on-masonic-associations.en": {
@@ -116,6 +232,18 @@
 		"cdf.dignitas-personae.en": {
 			"en": {
 				"text": "The Congregation for the Doctrine of the Faith’s instruction extends Donum vitae to techniques developed in the twenty years since, addressing in vitro fertilization, embryo freezing, preimplantation diagnosis, gene therapy, human cloning, stem-cell research, and the use of biological material of illicit origin, judging each by whether it respects the dignity, unity, and identity of the human person from conception.",
+				"origin": "read"
+			}
+		},
+		"cdf.dispensation-from-priestly-celibacy.en": {
+			"en": {
+				"text": "A letter to Ordinaries and general moderators on petitions for dispensation from priestly celibacy, written after John Paul II’s 1979 Holy Thursday letter had restated its value. A man binds himself freely and knowingly at ordination; the Ordinary owes such a priest spiritual fatherhood and every help — brother priests, friends, relatives, physicians, psychologists — before recourse to the Holy See. Procedural norms for preparing the petition are attached.",
+				"origin": "read"
+			}
+		},
+		"cdf.divulging-confessions.en": {
+			"en": {
+				"text": "A decree attaching latae sententiae excommunication to the recording or broadcasting of confession: anyone who by any technical device records what the priest or the penitent says in a sacramental confession, real or simulated, whether personally or through another, or who divulges it through the means of social communication, incurs it — without prejudice to can. 1388. It binds from the day of its promulgation.",
 				"origin": "read"
 			}
 		},
@@ -137,9 +265,73 @@
 				"origin": "read"
 			}
 		},
+		"cdf.dubia-on-ecclesiae-pastorum.en": {
+			"en": {
+				"text": "Two doubts on reading the decree Ecclesiae Pastorum, which governs the pastors’ vigilance over books, both answered in the negative: article 4 §1 does not suppress the obligation to seek the Holy See’s approval for catechisms and national catechetical directories, and the word “recommended” in article 5 §1 does not derogate from an Ordinary’s right to require that books be approved.",
+				"origin": "read"
+			}
+		},
+		"cdf.ecclesiae-pastorum.en": {
+			"en": {
+				"text": "Norms on the pastors’ vigilance over writings, issued after the Index was abolished. Scripture and its vernacular translations, liturgical books, catechisms and books of private prayer require ecclesiastical approval; books on Scripture, theology, canon law or Church history need it to serve as school texts or to be sold in churches. Episcopal conferences may keep lists of censors, who judge by the Magisterium alone and must give written reasons.",
+				"origin": "read"
+			}
+		},
+		"cdf.fiducia-supplicans.en": {
+			"en": {
+				"text": "A declaration on the pastoral meaning of blessings, holding firm the doctrine of marriage — no liturgical rite, and nothing resembling one, that could create confusion — while broadening the classical understanding of a blessing beyond the liturgical. Within that horizon it admits blessings for couples in irregular situations and for couples of the same sex: spontaneous, unfixed in form, claiming no legitimation of their state but begging God’s help.",
+				"origin": "read"
+			}
+		},
+		"cdf.gestis-verbisque.pt": {
+			"pt": {
+				"text": "Nota doutrinal sobre a validade dos Sacramentos, escrita depois de o Dicastério ter tido de declarar inválidos baptismos celebrados com fórmulas alteradas. A Igreja é ministra e não proprietária dos Sacramentos: a sua potestas limita-se à substância — matéria, forma e intenção do ministro — que não lhe cabe mudar. A última parte trata da presidência litúrgica, in persona Christi e nomine Ecclesiae, como diaconia e não poder arbitrário.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A doctrinal note on the validity of the sacraments, written after the Dicastery had had to declare invalid baptisms celebrated with altered formulas. The Church is the minister of the sacraments and not their owner: her potestas reaches only their substance — matter, form, and the minister’s intention — which is not hers to change. The last part treats liturgical presidency, in persona Christi and nomine Ecclesiae, as a diaconia and not an arbitrary power.",
+				"origin": "translated",
+				"from": "pt"
+			}
+		},
+		"cdf.guidelines-on-sexual-abuse-of-minors.en": {
+			"en": {
+				"text": "A circular letter telling every episcopal conference to draw up guidelines on the sexual abuse of minors by clerics. It puts the victims first — listening, spiritual and psychological help, safe-environment programmes — then sets what the guidelines must contain: the diocesan bishop’s own responsibility and potestas regiminis, respect for privacy and the accused’s right to answer, allowance for the country’s law on notifying civil authorities, and no return to ministry that endangers minors.",
+				"origin": "read"
+			}
+		},
 		"cdf.homosexualitatis-problema.en": {
 			"en": {
 				"text": "On the pastoral care of homosexual persons, addressed to the Bishops of the Catholic Church, it restates the 1975 declaration’s distinction between the homosexual condition and homosexual acts, traces the biblical witness from Genesis through Paul, calls the inclination itself an objective disorder while condemning violence and malice against homosexual persons, and urges bishops to found pastoral programmes on chastity while withdrawing support from organizations that dissent from the teaching.",
+				"origin": "read"
+			}
+		},
+		"cdf.impotence-and-nullity-of-marriage.en": {
+			"en": {
+				"text": "A decree fixing what impotence means in marriage law, occasioned by men who have undergone a vasectomy and others whose impotence is not established with certainty, who are not impeded from marrying. Two doubts are answered: the impotence that nullifies a marriage is the antecedent and perpetual incapacity, absolute or relative, to complete the conjugal act; and that act does not require semen produced in the testicles.",
+				"origin": "read"
+			}
+		},
+		"cdf.inde-ab-aliquot-annis.en": {
+			"en": {
+				"text": "A letter to Ordinaries on prayer groups that seek deliverance from demons without performing a true exorcism, often led by lay people. It recalls canon 1172, which reserves exorcism to priests expressly permitted by the local Ordinary; forbids the faithful to use Leo XIII’s exorcism formula, whole or in extract; and asks bishops to stop meetings in which demons are addressed directly and their identity sought.",
+				"origin": "read"
+			}
+		},
+		"cdf.indissolubility-of-marriage.pt": {
+			"pt": {
+				"text": "Carta aos Ordinários do lugar perante a difusão de opiniões que negam ou põem em dúvida a indissolubilidade do matrimónio — em livros e periódicos, nos seminários e escolas católicas e na praxe de alguns tribunais eclesiásticos — e que servem de argumento para abusos na admissão aos sacramentos de quem vive em união irregular. Pede vigilância sobre quem ensina religião e sobre os tribunais, e solicitude pastoral por esses fiéis no foro interno.",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A letter to local Ordinaries on the spread of opinions denying or casting doubt on the indissolubility of marriage — in books and periodicals, in seminaries and Catholic schools, and in the practice of some ecclesiastical tribunals — used as an argument for abuses in admitting to the sacraments those living in irregular unions. It asks for vigilance over religious teachers and tribunal officers, and pastoral care of such faithful in the internal forum.",
+				"origin": "translated",
+				"from": "pt"
+			}
+		},
+		"cdf.instauratio-liturgica.en": {
+			"en": {
+				"text": "A declaration on what the Apostolic See’s approval of a vernacular translation of a sacramental formula means. The liturgical reform altered some of the essential sacramental words, and rendering them in the vernacular raised difficulties; such translations must express the sense of the Latin typical text faithfully, and an approved one is to be understood in the sense the Church expressed in that Latin.",
 				"origin": "read"
 			}
 		},
@@ -161,6 +353,12 @@
 				"origin": "read"
 			}
 		},
+		"cdf.letter-on-reduction-to-the-lay-state.en": {
+			"en": {
+				"text": "A letter to bishops and superiors general transmitting new norms for a priest’s petition to be reduced to the lay state with dispensation from celibacy. Grounded in Sacerdotalis Caelibatus, it insists that every means be tried first to restore such a priest; the prelate who conducted the investigation now communicates the rescript himself, and may dispense from the secrecy hitherto required about the dispensation and the canonical marriage.",
+				"origin": "read"
+			}
+		},
 		"cdf.libertatis-conscientia.en": {
 			"en": {
 				"text": "The Congregation for the Doctrine of the Faith’s companion to Libertatis Nuntius, presenting the Christian doctrine of freedom it promised. It traces freedom from the modern quest for liberation, through sin’s distortion of it, to the freedom Christ’s Paschal mystery restores, then sets out the Church’s social doctrine — persons before structures, the dignity of work, solidarity — as liberation’s Christian practice, closing with Mary’s Magnificat.",
@@ -173,9 +371,51 @@
 				"origin": "read"
 			}
 		},
+		"cdf.litteris-apostolicis.en": {
+			"en": {
+				"text": "An instruction urging every episcopal conference that lacks one to set up a doctrinal commission. Since Integrae Servandae reformed this dicastery in 1965, and since religious questions now travel worldwide through the means of social communication, bishops are asked to watch the writings published in their territory, foster sound religious study, help evaluate books, and report to the Congregation whatever bears importantly on faith and morals.",
+				"origin": "read"
+			}
+		},
+		"cdf.mater-populi-fidelis.en": {
+			"en": {
+				"text": "A doctrinal note on the Marian titles that bear on Mary’s cooperation in salvation, answering requests that had reached the Holy See over decades. It judges it inappropriate to use “Co-redemptrix” to define that cooperation, admits “Mediatrix” only within the unique mediation of Christ, and rests the whole question on her motherhood towards believers — her intercession and maternal closeness — closing with Mother of the Faithful People of God.",
+				"origin": "read"
+			}
+		},
 		"cdf.mysterium-ecclesiae.en": {
 			"en": {
 				"text": "A 1973 declaration of the Congregation for the Doctrine of the Faith defending Catholic teaching on the Church against errors gaining currency among theologians. It affirms the infallibility of the whole People of God and of the Magisterium, addresses how historical conditioning limits without falsifying dogmatic formulas, and closes by distinguishing the common priesthood of the faithful from the ministerial priesthood within Christ’s one priesthood.",
+				"origin": "read"
+			}
+		},
+		"cdf.mysterium-filii-dei.en": {
+			"en": {
+				"text": "A declaration reaffirming belief in the Incarnation and the Trinity against recent errors. Drawing on the Creed of Constantinople, Chalcedon and the later councils, it restates that the Son, consubstantial with the Father and begotten before all ages, is one person in two natures, and holds that any account leaving the Holy Spirit less than a person in God distinct from the Father and the Son is out of line with the faith.",
+				"origin": "read"
+			}
+		},
+		"cdf.normae-de-delictis-reservatis.en": {
+			"en": {
+				"text": "The 2021 recension of the norms on delicts reserved to this Congregation. Part one names them: heresy, apostasy and schism; the graver delicts against the Eucharist and against Penance, the violation of the seal among them; the attempted ordination of a woman; and, against morals, a cleric’s sin with a minor under eighteen and clerical possession or distribution of child pornography. Part two governs the tribunal, the judicial and extrajudicial processes, and the pontifical secret.",
+				"origin": "read"
+			}
+		},
+		"cdf.norms-on-alleged-supernatural-phenomena.en": {
+			"en": {
+				"text": "The 2024 norms, which entirely replace those of 1978. Discernment normally no longer ends in a declaration of supernatural character but in one of six graded conclusions — Nihil obstat, Prae oculis habeatur, Curatur, Sub mandato, Prohibetur et obstruatur, Declaratio de non supernaturalitate. The diocesan bishop keeps watch afterwards, applies penal law where deception for gain is proven, and the Dicastery may intervene motu proprio at any stage.",
+				"origin": "read"
+			}
+		},
+		"cdf.norms-on-presumed-apparitions.en": {
+			"en": {
+				"text": "The 1978 norms on how ecclesiastical authority is to proceed when a presumed apparition or revelation is reported — quickly, since news now travels by mass media and pilgrimages follow. The Ordinary judges the facts by positive and negative criteria, then, if the result is favourable, permits some public devotion under the formula pro nunc nihil obstare, and pronounces on the supernatural character only later, weighing the spiritual fruits.",
+				"origin": "read"
+			}
+		},
+		"cdf.nova-agendi-ratio.en": {
+			"en": {
+				"text": "The Congregation’s procedure for examining books, publications and lectures. The Saturday staff meeting sorts a case into an extraordinary route, where a clearly erroneous opinion already harming the faithful goes at once to the author’s Ordinary, or an ordinary one, where two experts and a relator pro auctore prepare studies. The author is told which opinions are judged erroneous, answers in writing within a month, and may be summoned to a discussion.",
 				"origin": "read"
 			}
 		},
@@ -185,9 +425,21 @@
 				"origin": "read"
 			}
 		},
+		"cdf.opus-angelorum.en": {
+			"en": {
+				"text": "A decree on the Opus Angelorum (Engelwerk), examined at Cardinal Höffner’s request because of the private revelations attributed to Gabriele Bitterlich. The angelology drawn from them — the angels’ personal names, groupings and functions — is judged foreign to Scripture and Tradition and may neither be taught nor used; the consecrations to the angels, the remote administration of the sacraments and the “promise of silence” are forbidden, and a papal delegate is appointed.",
+				"origin": "read"
+			}
+		},
 		"cdf.pastoralis-actio.en": {
 			"en": {
 				"text": "A 1980 instruction defending the Church’s practice of baptizing infants against proposals to delay the sacrament until a child can make a personal profession of faith. It restates the doctrine and the Magisterium’s teaching on infant baptism, answers objections concerning the child’s freedom and today’s sociological situation, and directs pastors on dialogue with believing families and with families of little or no faith.",
+				"origin": "read"
+			}
+		},
+		"cdf.penalties-for-illicit-ordinations.en": {
+			"en": {
+				"text": "A notification renewing the 1976 decree against Archbishop Pierre Martin Ngô-đình-Thục, who after being absolved ordained more priests from 1981 and consecrated Guérard des Lauriers, Moisés Carmona and Adolfo Zamora without pontifical mandate — Carmona consecrating three more — and who declared at Munich in 1982 that the Roman See was vacant. The penalties are applied in full, and the faithful are warned not to take part in these men’s liturgies or works.",
 				"origin": "read"
 			}
 		},
@@ -197,9 +449,21 @@
 				"origin": "read"
 			}
 		},
+		"cdf.petitions-for-reduction-to-the-lay-state.en": {
+			"en": {
+				"text": "The procedural norms attached to the 1971 letter. The Ordinary or major superior must first try, over an appropriate time and by every means, to help the petitioner overcome his difficulties; only then is an investigation opened — interrogations, documents, depositions, expert medical opinion — and the acts sent to the Congregation. The rescript carries conditions on liturgical role, pastoral office and teaching posts. A final section covers cases opened ex officio.",
+				"origin": "read"
+			}
+		},
 		"cdf.placuit-deo.en": {
 			"en": {
 				"text": "A 2018 letter to the bishops from the Congregation for the Doctrine of the Faith, warning against two contemporary distortions of Christian salvation: a neo-Pelagian individualism that trusts self-realization by one’s own strength, and a neo-Gnostic disregard for the body that reduces salvation to a merely interior experience. Against both, it presents Christ as Savior and the Church, through her sacraments, as the visible communion in which salvation is received.",
+				"origin": "read"
+			}
+		},
+		"cdf.preface-to-the-norms-on-presumed-apparitions.en": {
+			"en": {
+				"text": "The preface accompanying the first official publication of the 1978 Normae on judging presumed apparitions and revelations, which Paul VI approved but which went to bishops unpublished and had since circulated without permission. It sets them in the frame Benedict XVI gave in Verbum Domini: a private revelation does not complete Christ’s definitive revelation but helps one live by it, and is judged by whether it orients the reader to him.",
 				"origin": "read"
 			}
 		},
@@ -209,10 +473,27 @@
 				"origin": "read"
 			}
 		},
+		"cdf.responsa-on-the-doctrine-of-the-church.en": {
+			"en": {
+				"text": "Five questions on ecclesiology, answered to fix expressions of the magisterium that had been misread: whether Vatican II changed the doctrine on the Church, what “subsists in” means, why that verb was chosen over “is”, why the Eastern Churches separated from Rome are called particular Churches and yet lack something, and why the communities born of the Reformation are not — having no apostolic succession in the sacrament of Orders.",
+				"origin": "read"
+			}
+		},
 		"cdf.responsum-ordinatio-sacerdotalis.en": {
 			"en": {
 				"text": "A dubium asking whether the teaching that the Church has no authority whatsoever to confer priestly ordination on women, presented as to be held definitively in Ordinatio Sacerdotalis, belongs to the deposit of faith. The reply is affirmative, adding that the teaching is founded on the written Word of God, constantly preserved in Tradition, and set forth infallibly by the ordinary and universal Magisterium.",
 				"origin": "read"
+			}
+		},
+		"cdf.revision-of-catechism-2267.es": {
+			"es": {
+				"text": "Rescripto ex audientia por el que Francisco aprueba la nueva redacción del n. 2267 del Catecismo sobre la pena de muerte y dispone que se traduzca y se incluya en todas las ediciones. El texto recuerda que durante mucho tiempo se la consideró respuesta apropiada, y enseña que hoy «la pena de muerte es inadmisible, porque atenta contra la inviolabilidad y la dignidad de la persona».",
+				"origin": "read"
+			},
+			"en": {
+				"text": "A rescript ex audientia by which Francis approves the new wording of no. 2267 of the Catechism on the death penalty and orders it translated and included in every edition. The text recalls that recourse to it was long held an appropriate response, and teaches that today “the death penalty is inadmissible, because it is an attack on the inviolability and dignity of the person”.",
+				"origin": "translated",
+				"from": "es"
 			}
 		},
 		"cdf.sacerdotium-ministeriale.en": {
@@ -221,9 +502,63 @@
 				"origin": "read"
 			}
 		},
+		"cdf.sacra-congregatio.en": {
+			"en": {
+				"text": "Issued as a volume containing the texts of true or simulated sacramental confessions was about to appear: whoever holds the sacrament of Penance in contempt by tape-recording confessions, real or simulated, as author or as collaborator, places himself by that very fact outside the communion of the Church — falling ipso facto under excommunication, from which, if duly disposed, any priest legitimately authorized to hear confessions may absolve him.",
+				"origin": "read"
+			}
+		},
+		"cdf.sacramentum-paenitentiae.en": {
+			"en": {
+				"text": "Pastoral norms on general sacramental absolution, sought by Ordinaries troubled by a shortage of priests in some regions, by erroneous theories about penance, and by a growing practice of absolving those who had made only a generic confession. Confession of each mortal sin to a priest remains of divine law; general absolution is confined to stated conditions, its use outside them is called a serious abuse, and priests are told not to discourage devotional confession.",
+				"origin": "read"
+			}
+		},
 		"cdf.samaritanus-bonus.en": {
 			"en": {
 				"text": "On the pastoral and medical care of persons in the critical and terminal stages of life, read through the Good Samaritan’s care for the wounded man. It excludes euthanasia and assisted suicide as morally impermissible, requires basic nutrition and hydration and access to palliative care, and addresses pastoral and sacramental accompaniment, healthcare workers’ conscientious objection, and the reform of medical formation.",
+				"origin": "read"
+			}
+		},
+		"cdf.spiritual-experience-of-medjugorje.en": {
+			"en": {
+				"text": "The note closing the Medjugorje question under the 2024 Norms with a Nihil obstat — which authorizes public acts of devotion without asserting the supernatural authenticity of the phenomenon, and judges nothing about the visionaries’ moral life. It surveys the fruits and the themes of the messages, from the Queen of Peace to conversion, prayer and the centrality of the Mass, then flags the reprimands, threats and self-exaltation found in some of them.",
+				"origin": "read"
+			}
+		},
+		"cdf.summary-of-dignitas-personae.en": {
+			"en": {
+				"text": "The Congregation’s own summary of the instruction Dignitas Personae, section by section: its aim, title, doctrinal weight and recipients; then the two fundamental principles on human life and procreation; then the new questions of in vitro fertilization, ICSI, the freezing of embryos and of oocytes, embryo reduction and preimplantation diagnosis; and finally gene therapy, cloning, stem cells, hybridization, and the use of biological material of illicit origin.",
+				"origin": "read"
+			}
+		},
+		"cdf.the-message-of-fatima.en": {
+			"en": {
+				"text": "The dossier published when John Paul II released the third part of the secret of Fatima. It prints all three parts with the related documents and a photostatic reproduction, Archbishop Bertone’s account of the events and of his conversation with Sister Lucia, and Cardinal Ratzinger’s theological commentary on the standing of private revelation, on interior vision, and on what “my Immaculate Heart will triumph” means.",
+				"origin": "read"
+			}
+		},
+		"cdf.two-works-of-hans-kung.en": {
+			"en": {
+				"text": "A declaration on Hans Küng’s Die Kirche and Unfehlbar? Eine Anfrage, after he twice declined to show how their views accord with Catholic doctrine. Three are named: doubting the Church’s infallibility or reducing it to a basic indefectibility, against Vatican I and II; refusing the bishops’ authentic Magisterium; and holding that the unordained may validly consecrate the Eucharist in case of necessity. He is admonished not to teach them.",
+				"origin": "read"
+			}
+		},
+		"cdf.unlawful-ordinations.en": {
+			"en": {
+				"text": "A decree on the ordinations carried out at Palmar de Troya by Archbishop Pierre Martin Ngô-đình-Thục — priests ordained against the Cardinal Archbishop of Seville’s express prohibition on 31 December 1975, and five bishops without pontifical mandate on 11 January 1976, who then ordained others. Those consecrating and consecrated incur excommunication reserved specialissimo modo, the priests are suspended, and the Church does not and will not recognize these ordinations.",
+				"origin": "read"
+			}
+		},
+		"cdf.validity-of-baptismal-formulas.en": {
+			"en": {
+				"text": "Two responses on the form of baptism: whether baptism conferred with the formulas “I baptize you in the name of the Creator, and of the Redeemer, and of the Sanctifier” and “of the Creator, and of the Liberator, and of the Sustainer” is valid — negative — and whether those baptized with them must be baptized in forma absoluta — affirmative. Approved by Benedict XVI, 1 February 2008.",
+				"origin": "read"
+			}
+		},
+		"cdf.writings-of-anthony-de-mello.en": {
+			"en": {
+				"text": "A notification on the books of the Indian Jesuit Anthony de Mello (1931–1987), whose brief stories carry valid elements of oriental wisdom and, in the early works, stay within Christian spirituality. The later ones are judged to depart from it: God becomes a formless void known only by unknowing, Scripture says nothing valid about him, religion itself obstructs truth, Jesus is one awakened master among others, and morality has no objective rules.",
 				"origin": "read"
 			}
 		},

@@ -64,6 +64,14 @@
 			"date": "2026-09-09",
 			"reason": "Parse defeat found by the apostolic letter/constitution/motu proprio/bull ingestion: the edition captured 0 sections against 25 in all eleven other editions: the whole 37 KB is unnumbered matter."
 		},
+		"cdf.baptism-conferred-by-the-mormons.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 378 characters against 782 in fr — 48% of the edition this document was read from — with its 7 siblings spanning 413 (pl) to 782 (fr). Coverage reports 0.95 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the fr edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
+		"cdf.burial-of-manifest-sinners.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 352 characters against 802 in it — 44% of the edition this document was read from — with its 7 siblings spanning 599 (pl) to 802 (it). Coverage reports 0.79 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the it edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
 		"cdf.catholics-who-join-masonic-associations.en": {
 			"date": "2026-09-11",
 			"reason": "Keeps 30% of its own page (502 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
@@ -72,9 +80,17 @@
 			"date": "2026-09-11",
 			"reason": "Keeps 31% of its own page (675 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
 		},
+		"cdf.christi-ecclesia.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 789 characters against 6,284 in it — 13% of the edition this document was read from — with its 7 siblings spanning 6,050 (pt) to 6,689 (la). Coverage reports 0.98 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the it edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
 		"cdf.collaboration-of-men-and-women.hu": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 4 sections against 17 in the median edition of this document and one of them holds 51% of its 38 KB, i.e. this page's numbering was not recognised and most of its text was swept into one section. Its other editions are unaffected."
+		},
+		"cdf.cum-oecumenicum-concilium.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 2,086 characters against 7,077 in fr — 29% of the edition this document was read from — with its 7 siblings spanning 1,836 (pl) to 7,077 (fr). Coverage reports 1.01 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the fr edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
 		},
 		"cdf.donum-vitae.it": {
 			"date": "2026-09-03",
@@ -88,6 +104,10 @@
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 60 sections against 9 in the median edition, because this page's footnote list is a bare-numbered run its body cannot be told from (find_bare_footnote_run_start reads that shape but is not corroborated here). 51 of the 60 'sections' are bibliography. Its other editions are unaffected."
 		},
+		"cdf.gestis-verbisque.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 3,607 characters against 21,662 in pt — 17% of the edition this document was read from — with its 7 siblings spanning 3,610 (pl) to 22,939 (hr). Coverage reports 0.93 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the pt edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
 		"cdf.inter-insigniores.pl": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition stores 4,855 characters against 32,092 in the median edition of this document -- 85% of the declaration is missing from the parse, not from the source. Its other editions are unaffected."
@@ -99,6 +119,10 @@
 		"cdf.persona-humana.de": {
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 5 sections against 13 in the median edition of this document and one of them holds 56% of its 37 KB, i.e. this page's numbering was only partly recognised. Its other editions are unaffected."
+		},
+		"cdf.revision-of-catechism-2267.en": {
+			"date": "2026-09-11",
+			"reason": "Stores 931 characters against 1,831 in es — 51% of the edition this document was read from — with its 7 siblings spanning 1,072 (pl) to 1,831 (es). Coverage reports 0.89 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the es edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
 		},
 		"constitution.indulgentiarum-doctrina.hu": {
 			"date": "2026-09-09",
