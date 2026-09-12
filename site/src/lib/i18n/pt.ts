@@ -794,6 +794,10 @@ export const pt: Dictionary = {
 	'quaestiones.colonialismus.question': 'Os missionários vieram com os conquistadores. E agora?',
 	'quaestiones.colonialismus.keywords':
 		'colonização, missões, povos originários, amazônia, terra, cultura ancestral, evangelização, catequese',
+	'quaestiones.persecutio.title': 'A perseguição',
+	'quaestiones.persecutio.question': 'Isso é novidade?',
+	'quaestiones.persecutio.keywords':
+		'mártires, martírio, tribulação, bem-aventuranças, sangue dos santos, testemunho, oriente médio',
 	'quaestiones.beata-virgo.title': 'Maria',
 	'quaestiones.beata-virgo.question': 'Por que os católicos dão tanto a ela?',
 	'quaestiones.beata-virgo.keywords':

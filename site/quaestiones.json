@@ -357,6 +357,17 @@
 			],
 			"documents": ["querida-amazonia", "ecclesia-in-america"]
 		},
+		"persecutio": {
+			"doorway": "argument",
+			"cluster": "credibility",
+			"ccc": [
+				[769, 769],
+				[1716, 1717],
+				[2474, 2474]
+			],
+			"csdc": [[382, 382]],
+			"documents": ["ecclesia-in-medio-oriente", "dignitatis-humanae"]
+		},
 		"beata-virgo": {
 			"doorway": "argument",
 			"cluster": "other-christians",

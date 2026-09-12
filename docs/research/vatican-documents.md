@@ -430,3 +430,57 @@ the fix is a parser, not a crawl.
   edition those families lack is an UNCHECKED absence — which is precisely the
   distinction that ledger exists to draw. `capture-pdfs` has not been run over
   them either, so `pdf-only` is unrecorded there too.
+
+## 10. The wanted list — documents a named defect on the site is waiting for
+
+Every section above asks what is worth capturing from vatican.va and in what
+order. This one asks the opposite question and answers it from the other end:
+**which absent documents does a written-down defect already name?** Each row
+below is a text the corpus lacks, a place on the site that says so, and what
+would change the day it arrived. Compiled 2026-09-12 from
+`site/quaestiones-review.json` and `docs/research/topics.md`, and every absence
+re-verified against `$CORPUS_DIR/build` that day.
+
+**This list exists because the other kind of list rots differently.** A phased
+plan is a claim about what is worth having; it goes stale when priorities move.
+A wanted row is a claim about a defect that is currently shipping, and it goes
+stale the moment somebody fixes the defect another way — so a row here is
+checkable against the file it cites, in one search, which the phases above are
+not.
+
+| Document                                                                    | Wanted by                             | What changes                                                                                                                                                  |
+| --------------------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Vix Pervenit** (Benedict XIV, 1745)                                       | `usura`, a B                          | CSDC 341 forbids usury and permits equitable profit in one breath and never says where one becomes the other. This is the text that does.                     |
+| **Orationis Formas** (CDF, 1989)                                            | the yoga row in `topics.md`           | Lifts the row, which names it.                                                                                                                                |
+| **Iuvenescit Ecclesia** (CDF, 2016)                                         | `charismata`, an A with no document   | The row says nothing in the corpus is addressed to the charismatic renewal. This is.                                                                          |
+| **Letter to the Bishops on the new revision of CCC 2267** (CDF, 1 Aug 2018) | `poena-capitalis`, `carceres`         | Not the rescript, which the corpus holds as `cdf.revision-of-catechism-2267`. The companion letter argues the development, where the rescript only enacts it. |
+| **The CDF's 1985 reflection on Freemasonry**                                | `associationes-massonicae`, an A      | Its note names this as the one text that would deepen the page. Supplementary rather than operative — the 2023 DDF note reaffirms 1983, not 1985.             |
+| **Trent, Session IV, decree on the canon** (1546)                           | `canon-scripturae`, a B               | The keywords say _trent_, _apocrypha_ and _protestant bible_ and no anchored sentence names the disagreement.                                                 |
+| **Trent, Session VI, decree on justification** (1547)                       | `iustificatio`, an A with no document | The row says the corpus has no decree of Trent and no joint declaration.                                                                                      |
+| **Joint Declaration on the Doctrine of Justification** (1999)               | `iustificatio`                        | The other half of the same row.                                                                                                                               |
+| **Letter to Artists** (John Paul II, 1999)                                  | no topic yet                          | CCC 2500–2503 and 2513 are unanchored and there is no page on art; this is the document that would carry one.                                                 |
+| **Communio et Progressio** (1971), **Aetatis Novae** (1992)                 | `spectacula`, a B                     | It ships on _Inter Mirifica_ and `ideal-film` and therefore stops at what is screened. These reach the press and the rest.                                    |
+
+**Two of these are not Holy See publications and are a scope decision before
+they are a capture.** Trent is the case: it would fix two rows, and
+`../decisions.md` §Scope already places Denzinger, the Roman Catechism and
+Vatican I outside this pipeline on the same ground, while `../decisions.md`
+refuses IntraText as a blanket source because quality there is per work rather
+than per site. A Tridentine decree wants the treatment the Bible texts got —
+a named source, read once, argued in writing — and not a slug added to
+`vatican_docs.py`.
+
+**The 2018 letter is the cheapest row here and the one most likely to be
+missed**, because the corpus already holds a document with almost its name. The
+rescript's URL is `rc_con_cfaith_doc_20180801_catechismo-penadimorte`; the
+letter is a different page of the same date, and the scraper's own table called
+the rescript "Letter to the Bishops on the New Revision of Number 2267" until
+2026-09-11. Whoever fetches it should confirm the slug rather than trust the
+one inferred from the sibling (`..._lettera-vescovi-penadimorte`).
+
+**What is NOT here is as much of the point.** `apparitiones` was a C for months
+against six documents the corpus already held, and no wanted row would have
+found them — they were present and undescribed, which looks identical to absent
+from inside `quaestiones-review.json`. Before adding a row here, check
+`site/descriptions.json` for the slug: a document with no description cannot be
+named by any topic, and a reviewer meeting that reads it as a gap in the shelf.

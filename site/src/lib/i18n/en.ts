@@ -1901,6 +1901,16 @@ export const en: Dictionary = {
 	'quaestiones.colonialismus.question': 'The missionaries came with the conquerors. What now?',
 	'quaestiones.colonialismus.keywords':
 		'conquest, missions, native, amazon, colonisation, land rights, ancestral culture, evangelisation',
+	'quaestiones.persecutio.title': 'Persecution',
+	'quaestiones.persecutio.question': 'Is this something new?',
+	// The keywords stop where the anchored text stops, which for this subject
+	// means no country and no incident: nothing here reports a number, names a
+	// place or dates an attack, and a reader who typed one would meet a page
+	// that answers a different question well. `middle east` is the exception
+	// and rests on a named document rather than on a sentence —
+	// _Ecclesia in Medio Oriente_ is addressed to the people living it.
+	'quaestiones.persecutio.keywords':
+		'martyrs, martyrdom, tribulation, beatitudes, blood of the saints, witness, middle east',
 	'quaestiones.beata-virgo.title': 'Mary',
 	'quaestiones.beata-virgo.question': 'Why do Catholics give her so much?',
 	'quaestiones.beata-virgo.keywords':
