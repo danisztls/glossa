@@ -4,8 +4,8 @@ Written 2026-09-12. **Nothing here is implemented.** A strategy pass, not a
 plan: it exists because a Google Ads account was opened and the keyword list
 Google proposed was wrong in a way worth writing down. Everything about the
 corpus is measured locally; everything about Google's rules was fetched from
-Google's own help pages on the date given; everything about CPC is an estimate
-and labelled.
+Google's own help pages on the date given; CPC is third-party benchmark data,
+sourced and caveated in §7.1.
 
 Companion to `audiences.md` (who arrives and where they stop),
 `catholic-growth-and-catechism-languages.md` (where the Church is growing and
@@ -36,9 +36,14 @@ where they are cheap.
 about money: it mandates conversion tracking, which means third-party script on
 the page, which the project's posture forbids.
 
-**The country to try is Brazil, in Portuguese** — not because it is the cheapest
-or the fastest-growing, but because the binding constraint is the maintainer's
-time, and it is the only market where that time is cheap. The Philippines is the
+**Brazil is an expensive ad market, not a cheap one** — within 11% of the United
+States, above Germany and France, and 3–5× a sub-Saharan click (§7.1). The
+cheap-Africa play that works is **English**, which is a doctrinal language across
+the growth belt and the corpus's deepest, saving 55–74% with no content work.
+
+**The country to try is still Brazil, in Portuguese** — not because it is cheap
+or fastest-growing, but because the binding constraint is the maintainer's time
+and it is the only market where that time is free. The Philippines is the
 zero-preparation control to run beside it.
 
 ## 1. The constraint that decides everything else
@@ -157,11 +162,18 @@ terms are unaffordable in the United States.
 
 So, by market:
 
-- **Expensive markets** (US, UK, CA, AU, Western Europe): citation tail only,
-  exact match, pennies per term, no head terms at any price.
-- **Cheap markets** (Brazil, Philippines, Nigeria, Kenya, DR Congo, India):
-  head terms in the local doctrinal language — `catecismo da igreja católica`,
+- **Expensive markets** (US, UK, CA, AU, Western Europe, **and Brazil** — §7.1
+  measures it within 11% of the United States): citation tail only, exact match,
+  pennies per term, no head terms at any price.
+- **Cheap markets** (Philippines, India, Kenya, Tanzania, Nigeria, South Africa,
+  DR Congo): head terms in the local doctrinal language —
   `catechism of the catholic church`, `catéchisme de l'Église catholique`.
+
+**Brazil sits on the expensive side of this line, which was a surprise** and is
+the one place a plausible assumption about it was wrong. It does not change the
+recommendation in §7, because that rests on the maintainer's time and on corpus
+depth rather than on price — but a Brazilian campaign is a tail campaign, bought
+the way a United States campaign is bought.
 
 Four constraints on the cheap-market half, all of which bite before CPC does:
 
@@ -209,19 +221,77 @@ concurrent campaigns in one country are not separable at all.
 
 ## 7. The country to run it in
 
-Ranked for a single experiment. Catholic populations are orders of magnitude
-from standing references, not measured here; CPC is an estimate; corpus depth is
-measured 2026-09-12 against `glossa-corpus/build`.
+Ranked for a single experiment. Catholic populations are orders of magnitude from
+standing references, not measured here; corpus depth is measured 2026-09-12
+against `glossa-corpus/build`; CPC is sourced in §7.1.
 
-| Country     | Content lang | Corpus depth                          | CPC      | Catholic-marked demand | Prep cost to maintainer                  |
-| ----------- | ------------ | ------------------------------------- | -------- | ---------------------- | ---------------------------------------- |
-| Brazil      | `pt` ✓       | second-deepest; CCC, Compendium, CSDC | low      | high                   | ~none — native                           |
-| Philippines | `en` ✓       | deepest                               | very low | high                   | none — already English                   |
-| Mexico      | `es` ✓       | third-deepest                         | low      | high                   | low                                      |
-| DR Congo    | `fr` ✓       | fourth-deepest; CCC held              | lowest   | medium                 | none, but worst bandwidth                |
-| Nigeria     | `en` ✓       | deepest                               | very low | low — Pentecostal      | none, but high invalid clicks            |
-| Kenya/TZ    | `sw` ✓       | CSDC only, **no CCC**                 | very low | medium                 | high — the Swahili CCC is off vatican.va |
-| Kerala      | `ml` ✗       | no content                            | very low | medium                 | prohibitive — needs a corpus             |
+| Country      | Content lang  | Corpus depth                          | CPC vs US        | Catholic-marked demand | Prep cost to maintainer                   |
+| ------------ | ------------- | ------------------------------------- | ---------------- | ---------------------- | ----------------------------------------- |
+| Brazil       | `pt` ✓        | second-deepest; CCC, Compendium, CSDC | **−11%**         | high                   | ~none — native                            |
+| Mexico       | `es` ✓        | third-deepest                         | −50%             | high                   | low                                       |
+| South Africa | `en` ✓        | deepest                               | −55%             | medium                 | none                                      |
+| Kenya / TZ   | `en` / `sw`   | English deepest; `sw` has **no CCC**  | −74%             | medium                 | none in English; high in Swahili          |
+| Philippines  | `en` ✓        | deepest                               | −75%             | high                   | none — already English                    |
+| India/Kerala | `en` / `ml` ✗ | English deepest; no `ml` content      | −77%             | medium                 | none in English; prohibitive in Malayalam |
+| Nigeria      | `en` ✓        | deepest                               | ~−90% (modelled) | low — Pentecostal      | none, but highest invalid-click risk      |
+| DR Congo     | `fr` ✓        | fourth-deepest; CCC held              | no data          | medium                 | none, but worst bandwidth                 |
+
+### 7.1 How much cheaper Africa is than Brazil
+
+Measured 2026-09-12 from two independent cross-industry sources. **Read the
+ratios, never the absolutes** — the two disagree on the United States by a factor
+of four ($7.66 at Statista/Semrush, December 2024; a stated $1–2 Search baseline
+at WordStream, September 2025), because each averages a different basket of
+verticals.
+
+WordStream indexes 97 countries against the United States on 15,000+
+high-volume **English** keywords. Against that index:
+
+| Market       | vs US | Implied vs Brazil |
+| ------------ | ----- | ----------------- |
+| Brazil       | −11%  | —                 |
+| Mexico       | −50%  | ~1.8× cheaper     |
+| South Africa | −55%  | ~2× cheaper       |
+| Kenya        | −74%  | **~3.4× cheaper** |
+| Philippines  | −75%  | ~3.6× cheaper     |
+| India        | −77%  | ~4× cheaper       |
+
+Nigeria is in neither dataset; a modelled figure puts it at **₦487** average CPC
+(~US$0.32), with Lagos retail around ₦800. Absent from the major benchmarks is
+itself the signal — thin data because thin market.
+
+**So: a sub-Saharan click runs roughly 3–5× cheaper than a Brazilian one, and
+Brazil is an expensive market, not a cheap one** — within 11% of the United
+States, above Germany and France. Brazil has a large mature advertising industry
+and its auction reflects that.
+
+Three reasons the 3–5× is an **upper bound** on what this site would actually
+save, and the first is the largest:
+
+- **Cross-industry averages are set by insurance, legal and finance.**
+  Religious-reference keywords carry near-zero commercial intent and sit near the
+  auction floor in every market. Floors differ far less than averages do, so the
+  gap compresses for exactly the terms §4 recommends buying.
+- **The index is built on English keywords.** Brazil's auction that matters here
+  is the Portuguese one, which the index does not measure, and which is thinner.
+  This caveat cuts in Brazil's favour and is not quantified.
+- **Cheap clicks are only cheap if a budget can be spent.** Catholic-marked
+  reference volume in Swahili or Malagasy is very small; a US$5/day budget in
+  Tanzania may not clear.
+
+**And CPC is the wrong denominator anyway.** The figure that decides this is cost
+per _returning_ reader, and three things move it harder than a 3–5× price gap:
+available query volume, bounce from the payload on metered 3G (§5), and whether
+the landing language has content at all. A click 3× cheaper onto a language with
+21 editions and no Catechism costs more per reader than a Brazilian click onto
+258 editions, not less.
+
+**The cheap-Africa play that does work is English, not a vernacular.** English is
+a doctrinal language in Nigeria, Kenya, Tanzania, Uganda, Ghana and South Africa;
+the corpus is deepest in English; and the saving is 55–74% with **no content work
+at all**. That is strictly better than a Swahili campaign, which needs a
+Catechism the Holy See does not publish
+(`catholic-growth-and-catechism-languages.md`).
 
 **Recommendation: Brazil, in Portuguese.** Not the fastest-growing — Africa is,
 decisively, and `catholic-growth-and-catechism-languages.md` should be read
@@ -232,7 +302,12 @@ before concluding otherwise. Brazil wins on the constraint that actually binds:
   market is true.
 - Portuguese is already the second-deepest language in the corpus and carries
   the CCC, the Compendium and the Social Doctrine — enough to land an ad on.
-- Largest Catholic population in the world in absolute terms, and cheap clicks.
+- Largest Catholic population in the world in absolute terms, and real
+  Portuguese query volume to buy — which the cheapest markets do not have.
+- **Not on price.** §7.1 measures Brazil within 11% of the United States, so the
+  clicks are expensive and the budget buys the citation tail rather than head
+  terms. The case for Brazil is time and corpus depth; it survives the price
+  finding rather than depending on it.
 - Institutional follow-up (seminaries, diocesan formation offices) is possible
   in the maintainer's own language and timezone.
 
