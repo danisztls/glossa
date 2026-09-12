@@ -64,6 +64,11 @@ export const en: Dictionary = {
 	// announced as "Menu" is a screen reader telling a reader they are back
 	// where they started.
 	'nav.sections': 'Sections',
+	// The first tab stop on every page, and English-only on the same rule:
+	// a dictionary that has not been revisited shows this one line in English
+	// above a header in its own language, which is what a reader who needs it
+	// would rather have than nothing to press.
+	'nav.skipToContent': 'Skip to the text',
 	// The two column heads, and the split is the site's own: a WORK is text
 	// somebody else wrote and this site reproduces, a PAGE is something this
 	// site made — a catalogue, a calendar computed in the browser, a guide,

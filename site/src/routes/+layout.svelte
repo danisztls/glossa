@@ -432,6 +432,29 @@
 {/snippet}
 
 <div class="app-shell">
+	<!--
+		THE FIRST TAB STOP ON EVERY PAGE, AND THE ONLY CONTROL HERE THAT IS NOT
+		FOR EVERYONE. Between the brand and the first word of the text sit the
+		five doors, the bookmarks glyph and five more chrome controls — twelve
+		stops, identical on all ~6,000 addresses, in front of a reader whose
+		only way past them is Tab. A reader following a citation into
+		`/catechismus/1234` pays that to reach one paragraph.
+
+		It is a plain fragment link and takes no handler: `anchor-scroll.ts`
+		deliberately does not intercept a same-page jump, so the browser
+		performs it — history entry, `hashchange` and focus move included — and
+		the glide replays the travel. `tabindex="-1"` on the `<main>` is what
+		makes the focus half of that land in every engine rather than only in
+		the ones that move focus with the scroll.
+
+		NOT `visually-hidden`, WHICH WOULD BE THE WRONG UTILITY. That class
+		clips to a 1px box permanently; this has to be invisible until it has
+		focus and then be READ, so it is offset off the top of the screen and
+		comes back on `:focus-visible`. A reader who never presses Tab never
+		learns it is here, which is the point.
+	-->
+	<a class="skip-link" href="#main">{t('nav.skipToContent')}</a>
+
 	<header class="site-header">
 		<div class="header-bar">
 			<a class="brand" href="/"><Wordmark variant="brand" /></a>
@@ -539,7 +562,11 @@
 		</dialog>
 	</header>
 
-	<main>
+	<!-- `tabindex="-1"` is the skip link's landing and nothing else: it keeps
+	     the element out of the tab order and lets `focus()` reach it, which is
+	     what a fragment jump needs in the engines that scroll without moving
+	     focus. -->
+	<main id="main" tabindex="-1">
 		{@render children()}
 	</main>
 
@@ -647,6 +674,50 @@
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
+	}
+
+	/*
+	 * Off the top of the screen rather than clipped, so it is announced and
+	 * reachable at all times and drawn only while it has focus. `position:
+	 * fixed` and not `absolute`: the shell is the flex column the whole page
+	 * is in, and an absolutely positioned first child of it would be measured
+	 * against a header that has not laid out yet at the moment the link is
+	 * painted.
+	 *
+	 * It wears the panel chrome rather than inventing any — the same ground,
+	 * border and radius every popover on the site is drawn with — because what
+	 * it is, when it appears, is a single thing to press.
+	 */
+	.skip-link {
+		position: fixed;
+		inset-block-start: 0;
+		inset-inline-start: 0.5rem;
+		z-index: 100;
+		translate: 0 -150%;
+		padding: 0.5rem 0.9rem;
+		font-family: var(--font-sans);
+		font-size: 0.85rem;
+		color: var(--color-text);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-control-border);
+		border-radius: 0 0 var(--radius-md) var(--radius-md);
+		border-block-start: 0;
+	}
+
+	.skip-link:focus-visible {
+		translate: 0 0;
+	}
+
+	/*
+	 * NO RING ON THE LANDING. `main` is focusable only so the skip link can
+	 * put the reader in it (`tabindex="-1"` above); it is not a control, and
+	 * an outline drawn around the whole page announces the arrival as though
+	 * the reader had tabbed onto something. What tells them they arrived is
+	 * that the next Tab lands in the text.
+	 */
+	main:focus,
+	main:focus-visible {
+		outline: none;
 	}
 
 	/*
