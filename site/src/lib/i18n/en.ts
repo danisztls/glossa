@@ -1565,10 +1565,10 @@ export const en: Dictionary = {
 		'The passages appointed by the Ordo Lectionum Missae, linked to this ' +
 		'site’s own editions — not the translation proclaimed in any particular ' +
 		'church, and a conference may adapt the schedule.',
-	// `/calendarium/liturgia`. Five keys, and the page is otherwise labelled out
+	// `/calendarium/liturgia`'s own keys; the page is otherwise labelled out
 	// of `calendar.*` and `lectionary.*`, which are written in all thirty-seven:
 	// it prints the same day, the same slots and the same caveat, at length.
-	// These four are English-only until they are not, on the rule this file
+	// These are English-only until they are not, on the rule this file
 	// opens with — `t()` falls back key by key — and the page is deliberately
 	// outside `CHROME_PATHS`, so no cluster claims otherwise (`route-manifest.ts`).
 	'liturgy.title': 'The day’s liturgy',
@@ -1588,6 +1588,11 @@ export const en: Dictionary = {
 	// citation above it is still a link to the chapter.
 	'liturgy.passageWithheld':
 		'This edition cannot give the whole passage, so none of it is printed here.',
+	// Paper only, at the foot of the readings: the edition picker is a screen
+	// control and does not print, so this is the one place a sheet carried to
+	// Mass says whose Scripture it is. A field label over a value, not a
+	// sentence — the edition's title follows in its own language.
+	'liturgy.editionLabel': 'Edition',
 	'calendar.transferredFrom': 'Transferred from',
 	'calendar.season.advent': 'Advent',
 	'calendar.season.christmas': 'Christmas Time',

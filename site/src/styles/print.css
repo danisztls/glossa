@@ -48,7 +48,9 @@
 	/* The reading bar is a screen affordance end to end: two edition pickers, a
 	   bookmark button, a toggle out of compare mode and the print control that
 	   produced this page. The editions it names are already stated by the
-	   copyright notices below it. */
+	   copyright notices below it — or, on a page that has none because its
+	   subject is a day rather than a work, by a printed line of its own
+	   (`MassLiturgy`). */
 	.reading-bar,
 	/* Every edition/comparison picker trigger (`EditionMenu`,
 	   `ComparisonEditionMenu`), wherever it's placed — the bar above is not

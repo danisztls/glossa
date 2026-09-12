@@ -27,6 +27,7 @@
 	 */
 	import { content } from '$lib/content.svelte';
 	import { chapterVerseSep } from '$lib/citation-style';
+	import { getWork } from '$lib/corpus';
 	import { i18n, t } from '$lib/i18n.svelte';
 	import HintNote from './HintNote.svelte';
 	import { slotKey, type MassReadings, type Pericope } from '$lib/lectionary';
@@ -50,6 +51,24 @@
 	 */
 	const citeLang = $derived(content.langFor('bible'));
 	const bibleWorkId = $derived(content.workIdFor('bible'));
+
+	/**
+	 * The edition itself, for the line paper gets in place of the picker.
+	 *
+	 * The bar names it on screen and prints nothing: `print.css` drops the bar
+	 * because a reading page's copyright notice names its edition underneath,
+	 * and this page has no such notice — its subject is a day rather than a
+	 * work. Without this the passages come off the printer as anonymous
+	 * Scripture.
+	 *
+	 * `title` and not `short_title`, the chapter reader's `.edition-label`
+	 * being set the same way: a sheet carried to Mass is read away from
+	 * anything that would gloss "CPDV".
+	 *
+	 * The prayers under it need no such line — `DayPrayers` links to them and
+	 * sets out no text, so one edition's words are all this page prints.
+	 */
+	const bibleWork = $derived(bibleWorkId ? getWork(bibleWorkId) : undefined);
 	const cite = (text: string) => localizeCite(text, citeLang, t('lectionary.cf'));
 
 	/**
@@ -200,6 +219,19 @@
 	     and this is the one copy whose reader cannot press anything.
 	     `aria-hidden` so it is not read twice. -->
 	<p class="caveat-print" aria-hidden="true">{t('lectionary.caveat')}</p>
+	{#if bibleWork}
+		<!-- Under the caveat rather than over it: the caveat qualifies the
+		     schedule, and this answers the question it raises — which edition
+		     "this site's own editions" turned out to mean. A field label and its
+		     value, `CopyrightNotice`'s shape, because the title is set in the
+		     edition's own language and a sentence wrapped around it would put
+		     English word order in the dictionary. `aria-hidden` for the reason
+		     the caveat above carries it: the screen states this through the
+		     picker, which is a control rather than a line to read twice. -->
+		<p class="edition-print" aria-hidden="true">
+			{t('liturgy.editionLabel')}: <span lang={bibleWork.language}>{bibleWork.title}</span>
+		</p>
+	{/if}
 </section>
 
 <style>
@@ -223,7 +255,8 @@
 	/* `SiglumGloss`'s card at this one's measure: where it goes is
 	   `.floating-panel` in app.css, and what is left here is that a sentence and
 	   a half wants a narrower column than a paragraph of commentary. */
-	.caveat-print {
+	.caveat-print,
+	.edition-print {
 		display: none;
 	}
 	.mass {
@@ -304,14 +337,22 @@
 	}
 
 	@media print {
-		.caveat-print {
+		.caveat-print,
+		.edition-print {
 			display: block;
-			margin: 1.5rem 0 0;
-			padding-top: 0.7rem;
-			border-top: 1px solid var(--color-border);
 			font-size: 0.75rem;
 			line-height: 1.45;
 			color: var(--color-text-muted);
+		}
+		/* The rule belongs to the foot as a whole, so it stays on whichever of
+		   the two opens it — the caveat, which is unconditional. */
+		.caveat-print {
+			margin: 1.5rem 0 0;
+			padding-top: 0.7rem;
+			border-top: 1px solid var(--color-border);
+		}
+		.edition-print {
+			margin: 0.35rem 0 0;
 		}
 	}
 </style>
