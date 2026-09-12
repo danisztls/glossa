@@ -605,10 +605,13 @@ enumeration.
   `catholics-who-join-masonic-associations.en` loses its whole body to it and
   is withheld until this is read.
 
-**Four repairs are measured and unmade**, with the scan, the proposed rule and
-what would verify each, in `docs/parsing.md` §Four repairs. Read that before
-touching `extract_document_header`, the stub floor, the enumerator rules or
-`translation_url_for` — the measurement is the expensive half and it is done.
+**Five repairs are measured and unmade**, with the scan, the proposed rule and
+what would verify each, in `docs/parsing.md` §Five repairs. Read that before
+touching `extract_document_header`, the stub floor, the enumerator rules, the
+footnote boundary or `translation_url_for` — the measurement is the expensive
+half and it is done. **Two are clusters**, and between them they are why nine
+editions are withheld: the `N)` run read as a footnote list, and the definition
+anchor believed with no test on what it leaves below it.
 
 ### Three page conventions, two of them corpus-wide bugs
 

@@ -377,14 +377,22 @@ address is recovered as a RANGE rather than fabricated as a number. The
 chapters take `position: "leading"` (`pipeline/docs/corpus.md`), because
 rendered as back matter _Dei Filius_ would read backwards.
 
-## Four repairs, measured and not made
+## Five repairs, measured and not made
 
 Each was found by one document and measured over the whole of `raw/` before it
 was written down, which is the only part of a repair that can be done without
 touching the parser. None has been made, because a change here runs under every
 family and `pipeline/CLAUDE.md` asks for the corpus-wide comparison first. They
-are in the order worth doing: the first buys back text, the second buys back
-editions, the last two stop losses nothing currently reports.
+are in the order worth doing: the first two buy back editions the site is not
+publishing, the third buys back text, and the last two stop losses nothing
+currently reports.
+
+**Two of them are what `audit.py editions` reports as a CLUSTER**, and the
+shape is the argument for fixing the parser rather than filing entries: an
+edition alone outside its document's band is that edition, and six of eight
+outside it are the parser. Both clusters were found that way on 2026-09-12,
+and the nine editions they cost are withheld in `site/unpublished.json` until
+one of these is made.
 
 **Read a measurement before trusting it.** Every count below is a date-stamped
 scan, not an invariant, and the scans are cheap — re-run one rather than
@@ -404,6 +412,19 @@ its Portuguese edition reads at 1,551, and its `unpublished.json` entry names
 this repair. Verification is a re-parse: exactly those 30 pages gain sections,
 nothing else moves, and the baselined failures on `penalties-for-illicit-
 ordinations`, `unlawful-ordinations` and `cum-oecumenicum-concilium` clear.
+
+**This is the larger of the two clusters, and it costs nine editions.**
+`audit.py editions` names them: `cum-oecumenicum-concilium` in de, en, it, la,
+pl and pt, and `catholics-who-join-masonic-associations` in en, es and fr. The
+mechanism is visible in the boundary rather than in the sections — the letter's
+numbered points are read as a footnote list, so `find_footnote_region_start`
+reports `numbered definition run` and the body ends on the sentence that
+introduces them ("…both from the reports of competent persons and in published
+writings"), with `1) First of all regarding Sacred Revelation itself` opening
+what the parse calls the notes. **The two sound editions are sound by
+accident**: French and Spanish fall through to `last <hr>` because the run
+detector does not fire on them, and keep 7,345 and 6,463 characters where the
+other six keep 1,836 to 2,544.
 
 ### 2. The masthead cut is bounded by nothing but the text
 
@@ -445,6 +466,29 @@ answer was filed against the document.
 Verification has a second half most repairs do not: the absent ledger's entries
 for every URL that changes have to be WITHDRAWN rather than bypassed, or the
 corpus keeps a recorded absence for a page nobody ever asked for.
+
+### 5. The definition-anchor boundary is bounded by nothing, where the rule is
+
+The last `<hr>` is believed only where it leaves a footnote list's worth below
+it — `_HR_MAX_SHARE`, measured over every raw page that boundaries on one. The
+**definition anchor** is a stronger signal and carries no such test, and on one
+page family it fires in the middle of the document and takes the rest of it.
+
+`gestis-verbisque` is the case, and it costs six of its eight editions.
+Croatian splits 71 body paragraphs from 65 note paragraphs and stores 22,905
+characters; English cuts after **21** body paragraphs and leaves 120 below the
+boundary carrying 125 bracketed markers, for a document with 64 notes. Both
+report the same evidence, `definition anchor`, so the signal is not wrong about
+what it found — it is wrong about the first one being the list's start. German,
+Spanish, French, Italian and Polish fail identically, at 3,608 to 4,322
+characters against Croatian's 22,905 and Portuguese's 21,648.
+
+The proposed rule is the one `_HR_MAX_SHARE` already states, applied to the
+other signal: a boundary is not believed where what it leaves below is larger
+than a footnote list for the markers the body actually carries. Verification is
+the corpus-wide re-parse — the six editions come back at Croatian's shape, the
+count of works whose apparatus resolves does not fall, and `audit.py editions`
+loses exactly these six leads.
 
 ## The rebuild
 

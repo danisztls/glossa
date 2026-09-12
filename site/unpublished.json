@@ -76,6 +76,10 @@
 			"date": "2026-09-11",
 			"reason": "Keeps 30% of its own page (502 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
 		},
+		"cdf.catholics-who-join-masonic-associations.es": {
+			"date": "2026-09-12",
+			"reason": "Stores 1,585 characters of its own 3,689-character page (43%) where the IT edition stores 3,247 of 3,428 (95%), with its 8 siblings spanning 675 (en) to 3,254 (la). Coverage reports 0.91 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the declaration's `N)` points are read as a footnote list. Fix the parser rather than this entry."
+		},
 		"cdf.catholics-who-join-masonic-associations.fr": {
 			"date": "2026-09-11",
 			"reason": "Keeps 31% of its own page (675 characters) where de, es and pt keep 1,406-1,551 and it, la, pl and sk keep 2,898-3,262. The document's three points are written `1)` on this edition's page and `1.` on the others, and only the second is a section number this parser reads, so the whole numbered body is dropped. Remove when `1)` is read as an address on a page carrying no `N.` numbering at all — 30 raw pages do, 26 of them CDF."
@@ -88,9 +92,29 @@
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 4 sections against 17 in the median edition of this document and one of them holds 51% of its 38 KB, i.e. this page's numbering was not recognised and most of its text was swept into one section. Its other editions are unaffected."
 		},
+		"cdf.cum-oecumenicum-concilium.de": {
+			"date": "2026-09-12",
+			"reason": "Stores 2,544 characters of its own 7,324-character page (35%) where the FR edition stores 7,280 of 7,718 (94%), with its 7 siblings spanning 1,992 (la) to 7,280 (fr). Coverage reports 0.97 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the letter's `N)` points are read as a footnote list, so the body ends on the sentence introducing them. Fix the parser rather than this entry."
+		},
 		"cdf.cum-oecumenicum-concilium.en": {
 			"date": "2026-09-11",
 			"reason": "Stores 2,086 characters against 7,077 in fr — 29% of the edition this document was read from — with its 7 siblings spanning 1,836 (pl) to 7,077 (fr). Coverage reports 1.01 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the fr edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
+		"cdf.cum-oecumenicum-concilium.it": {
+			"date": "2026-09-12",
+			"reason": "Stores 2,473 characters of its own 6,948-character page (36%) where the FR edition stores 7,280 of 7,718 (94%), with its 7 siblings spanning 1,992 (la) to 7,280 (fr). Coverage reports 1.00 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the letter's `N)` points are read as a footnote list, so the body ends on the sentence introducing them. Fix the parser rather than this entry."
+		},
+		"cdf.cum-oecumenicum-concilium.la": {
+			"date": "2026-09-12",
+			"reason": "Stores 1,992 characters of its own 6,463-character page (31%) where the FR edition stores 7,280 of 7,718 (94%), with its 7 siblings spanning 2,064 (pt) to 7,280 (fr). Coverage reports 0.92 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the letter's `N)` points are read as a footnote list, so the body ends on the sentence introducing them. Fix the parser rather than this entry."
+		},
+		"cdf.cum-oecumenicum-concilium.pl": {
+			"date": "2026-09-12",
+			"reason": "Stores 2,108 characters of its own 6,253-character page (34%) where the FR edition stores 7,280 of 7,718 (94%), with its 7 siblings spanning 1,992 (la) to 7,280 (fr). Coverage reports 0.97 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the letter's `N)` points are read as a footnote list, so the body ends on the sentence introducing them. Fix the parser rather than this entry."
+		},
+		"cdf.cum-oecumenicum-concilium.pt": {
+			"date": "2026-09-12",
+			"reason": "Stores 2,064 characters of its own 6,304-character page (33%) where the FR edition stores 7,280 of 7,718 (94%), with its 7 siblings spanning 1,992 (la) to 7,280 (fr). Coverage reports 0.93 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the nine editions lost to repair 1 in pipeline/docs/parsing.md: the letter's `N)` points are read as a footnote list, so the body ends on the sentence introducing them. Fix the parser rather than this entry."
 		},
 		"cdf.donum-vitae.it": {
 			"date": "2026-09-03",
@@ -104,9 +128,29 @@
 			"date": "2026-09-03",
 			"reason": "Parse defeat found by the CDF ingestion: the edition captured 60 sections against 9 in the median edition, because this page's footnote list is a bare-numbered run its body cannot be told from (find_bare_footnote_run_start reads that shape but is not corroborated here). 51 of the 60 'sections' are bibliography. Its other editions are unaffected."
 		},
+		"cdf.gestis-verbisque.de": {
+			"date": "2026-09-12",
+			"reason": "Stores 4,322 characters of its own 44,143-character page (10%) where the HR edition stores 23,130 of 36,648 (63%), with its 7 siblings spanning 3,770 (pl) to 23,130 (hr). Coverage reports 0.94 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the six editions lost to repair 5 in pipeline/docs/parsing.md: the first definition anchor is believed to open the footnote list with no test on what it leaves below it. Fix the parser rather than this entry."
+		},
 		"cdf.gestis-verbisque.en": {
 			"date": "2026-09-11",
 			"reason": "Stores 3,607 characters against 21,662 in pt — 17% of the edition this document was read from — with its 7 siblings spanning 3,610 (pl) to 22,939 (hr). Coverage reports 0.93 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the pt edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
+		"cdf.gestis-verbisque.es": {
+			"date": "2026-09-12",
+			"reason": "Stores 4,168 characters of its own 41,535-character page (10%) where the HR edition stores 23,130 of 36,648 (63%), with its 7 siblings spanning 3,770 (pl) to 23,130 (hr). Coverage reports 0.92 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the six editions lost to repair 5 in pipeline/docs/parsing.md: the first definition anchor is believed to open the footnote list with no test on what it leaves below it. Fix the parser rather than this entry."
+		},
+		"cdf.gestis-verbisque.fr": {
+			"date": "2026-09-12",
+			"reason": "Stores 4,039 characters of its own 41,720-character page (10%) where the HR edition stores 23,130 of 36,648 (63%), with its 7 siblings spanning 3,770 (pl) to 23,130 (hr). Coverage reports 0.94 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the six editions lost to repair 5 in pipeline/docs/parsing.md: the first definition anchor is believed to open the footnote list with no test on what it leaves below it. Fix the parser rather than this entry."
+		},
+		"cdf.gestis-verbisque.it": {
+			"date": "2026-09-12",
+			"reason": "Stores 4,006 characters of its own 40,627-character page (10%) where the HR edition stores 23,130 of 36,648 (63%), with its 7 siblings spanning 3,770 (pl) to 23,130 (hr). Coverage reports 0.94 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the six editions lost to repair 5 in pipeline/docs/parsing.md: the first definition anchor is believed to open the footnote list with no test on what it leaves below it. Fix the parser rather than this entry."
+		},
+		"cdf.gestis-verbisque.pl": {
+			"date": "2026-09-12",
+			"reason": "Stores 3,770 characters of its own 39,786-character page (9%) where the HR edition stores 23,130 of 36,648 (63%), with its 7 siblings spanning 3,842 (en) to 23,130 (hr). Coverage reports 0.94 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do. One of the six editions lost to repair 5 in pipeline/docs/parsing.md: the first definition anchor is believed to open the footnote list with no test on what it leaves below it. Fix the parser rather than this entry."
 		},
 		"cdf.inter-insigniores.pl": {
 			"date": "2026-09-03",
@@ -123,6 +167,14 @@
 		"cdf.revision-of-catechism-2267.en": {
 			"date": "2026-09-11",
 			"reason": "Stores 931 characters against 1,831 in es — 51% of the edition this document was read from — with its 7 siblings spanning 1,072 (pl) to 1,831 (es). Coverage reports 0.89 and is wrong: the boundary error that lost the text shrank the denominator with it (pipeline/docs/oracles.md). The description is filed on the es edition and reaches English as a translation, so this page would show a summary of a document it does not hold. Remove the entry when the English parse matches its siblings."
+		},
+		"cdf.the-message-of-fatima.hu": {
+			"date": "2026-09-12",
+			"reason": "Stores 26,269 characters of its own 52,317-character page (50%) where the IT edition stores 58,758 of 60,507 (97%), with its 7 siblings spanning 55,676 (pt) to 61,733 (de). Coverage reports 0.99 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do."
+		},
+		"cdf.validity-of-baptismal-formulas.la": {
+			"date": "2026-09-12",
+			"reason": "Stores 644 characters of its own 899-character page (72%) where the EN edition stores 1,242 of 1,251 (99%), with its 7 siblings spanning 1,063 (pt) to 1,263 (it). Coverage reports 0.72 and cannot see this: the boundary error that loses the text shrinks its denominator too (pipeline/docs/oracles.md). Remove the entry when this edition stores what its siblings do."
 		},
 		"constitution.indulgentiarum-doctrina.hu": {
 			"date": "2026-09-09",
