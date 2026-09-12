@@ -317,24 +317,30 @@
 	/**
 	 * How many of a row's subjects are printed, the rest being behind its count.
 	 *
-	 * THREE THINGS PRINT THE LOT, and two of them are one rule: the row has to
-	 * be able to show what it is on this list FOR. A live query marks the words
-	 * it matched, and a subject it matched behind a count is a row with no
-	 * visible reason for being there — the failure this page's own matcher is
-	 * arranged to prevent (`highlight.ts`) — while a CHOSEN subject is the
-	 * filter the reader set, and `liveTags` keeps one visible in the panel for
-	 * the same reason. The third is the reader having pressed the count.
+	 * IT DOES NOT READ `tagsOpen`, AND IT DID FOR A DAY. A fit that answers
+	 * "all of them" while the row is open is a fit that says there is nothing
+	 * behind the count — so the control drew itself only while it was shut and
+	 * vanished the moment it was used, leaving the row expanded with no way
+	 * back. What the reader opened is a property of the ROW's state, not of
+	 * what fits on its line: this answers where the cut FALLS, and the template
+	 * decides how much of it to obey.
 	 *
-	 * A live query forcing a fold open is `fold-state.svelte.ts`'s rule for a
-	 * folded index, met again a row at a time.
+	 * TWO THINGS PRINT THE LOT, and they are one rule: the row has to be able
+	 * to show what it is on this list FOR. A live query marks the words it
+	 * matched, and a subject it matched behind a count is a row with no visible
+	 * reason for being there — the failure this page's own matcher is arranged
+	 * to prevent (`highlight.ts`) — while a CHOSEN subject is the filter the
+	 * reader set, and `liveTags` keeps one visible in the panel for the same
+	 * reason. A live query forcing a fold open is `fold-state.svelte.ts`'s rule
+	 * for a folded index, met again a row at a time.
 	 *
-	 * A FOURTH PRINTS THE LOT AND IS NOT A DECISION: nothing measured yet. That
+	 * A THIRD PRINTS THE LOT AND IS NOT A DECISION: nothing measured yet. That
 	 * is every row until the first `ResizeObserver` callback, and every row of
 	 * the prerendered document, where there is no browser to ask — so what the
 	 * written page holds is the full list, and the cut arrives with hydration.
 	 */
 	function tagsShown(row: Row): number {
-		if (tagsOpen[row.slug] || query.trim() !== '') return row.tags.length;
+		if (query.trim() !== '') return row.tags.length;
 		if (row.tagKeys.some((key) => selectedTags.includes(key))) return row.tags.length;
 		if (tagRoom <= 0) return row.tags.length;
 		const widths = row.tags.map((tag) => chipWidths[tag] ?? 0);
@@ -345,6 +351,25 @@
 			countWidth + chipGap
 		);
 	}
+
+	/**
+	 * What an open count reads instead of its figure.
+	 *
+	 * `×` (U+00D7) and not `x`: it is the close mark every panel on the web
+	 * uses, it is in the core Latin subset both text faces already ship, and it
+	 * is a SYMBOL rather than a letter, so no face renders it as the letter
+	 * beside the codes next to it. Read by nobody — it is `aria-hidden` and the
+	 * button's words are beside it — since a screen reader announcing "times"
+	 * is what a glyph standing in for a verb always costs.
+	 *
+	 * A COUNT THAT IS OPEN COUNTS NOTHING (by direction): `+13` beside the
+	 * thirteen it was standing for is a number claiming there are thirteen
+	 * more. What it costs is the chip's width, which changes between the two
+	 * states and shifts the chips beside it by a few pixels — the control still
+	 * keeps the EDGE its line is anchored to, which is the half of "it must not
+	 * move under the press" that a reader's finger is on.
+	 */
+	const CLOSE_MARK = '×';
 
 	/** Which rows have their remaining subjects open, by slug — `langsOpen`'s
 	 *  twin, and separate from it because a reader who wanted one of a row's two
@@ -917,6 +942,9 @@
 										{#each row.tags as tag, i (tag)}
 											{#if i < tagFit}{@render tagChip(row, tag, i)}{/if}
 										{/each}
+										<!-- The control is drawn by what does not FIT and never by
+										     what is shown, so opening the row cannot take away the
+										     one thing that closes it again. -->
 										{#if tagFit < row.tags.length}
 											<li>
 												<button
@@ -924,9 +952,11 @@
 													class="doc-tag more"
 													aria-expanded={tagsOpen[row.slug] === true}
 													onclick={() => (tagsOpen[row.slug] = !tagsOpen[row.slug])}
-													>+{row.tags.length - tagFit}<span class="visually-hidden">
-														{t('document.subjects.more')}</span
-													></button
+													>{#if tagsOpen[row.slug]}<span aria-hidden="true">{CLOSE_MARK}</span><span
+															class="visually-hidden">{t('document.subjects.fewer')}</span
+														>{:else}+{row.tags.length - tagFit}<span class="visually-hidden">
+															{t('document.subjects.more')}</span
+														>{/if}</button
 												>
 											</li>
 											{#if tagsOpen[row.slug]}
@@ -990,9 +1020,11 @@
 												class="doc-lang more"
 												aria-expanded={langsOpen[row.slug] === true}
 												onclick={() => (langsOpen[row.slug] = !langsOpen[row.slug])}
-												>+{langs.rest.length}<span class="visually-hidden">
-													{t('document.languages.more')}</span
-												></button
+												>{#if langsOpen[row.slug]}<span aria-hidden="true">{CLOSE_MARK}</span><span
+														class="visually-hidden">{t('document.languages.fewer')}</span
+													>{:else}+{langs.rest.length}<span class="visually-hidden">
+														{t('document.languages.more')}</span
+													>{/if}</button
 											>
 										{/if}
 									</p>
@@ -1003,15 +1035,15 @@
 				{/each}
 			</ul>
 			{#if held > 0}
-				<!-- The count is the chip the folded filter panel already puts on a
-				     summary — digits need no translation and no plural rule — and it
-				     says how many rows are still behind the button rather than how
-				     many the press will bring, because the first is a fact and the
-				     second is a page size the reader never chose. -->
+				<!-- NO COUNT ON IT (2026-09-12, by direction). It carried how many
+				     rows were still behind it, and a figure beside a button is read
+				     as what the button will DO — so `332` promised a press that
+				     brought 332 rows and delivered a hundred. The number that
+				     answers "how many are there" is already on the line that opens
+				     the list, where it is a fact about the list rather than a
+				     promise about a control. -->
 				<div class="load-more">
-					<button type="button" onclick={loadMore}>
-						{t('document.loadMore')}<span class="chip">{held}</span>
-					</button>
+					<button type="button" onclick={loadMore}>{t('document.loadMore')}</button>
 				</div>
 			{/if}
 		{/if}
@@ -1174,9 +1206,6 @@
 	}
 
 	.load-more button {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
 		font-family: var(--font-sans);
 		font-size: 0.85rem;
 		padding: 0.45rem 1.1rem;
@@ -1188,14 +1217,6 @@
 	}
 
 	.load-more button:hover {
-		color: var(--color-accent);
-		border-color: var(--color-accent);
-	}
-
-	/* The chip inside it follows the button's own hover, the way a row's kind
-	   chip follows its link — a word that lights beside a number that does not
-	   is two ends of one control disagreeing (components.css). */
-	.load-more button:hover .chip {
 		color: var(--color-accent);
 		border-color: var(--color-accent);
 	}

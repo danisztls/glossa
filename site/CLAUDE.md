@@ -1499,10 +1499,15 @@ flat reverse-chronological list.
   own line.** The names were a `title` for a day, which is nothing on a phone;
   a line of their own was an hour, and cost every row below a reflow for a look
   at one row. **A right-aligned row already holds the space a disclosure needs**
-  — and the chip keeps the line's end and its text, so what a reader pressed is
-  where they left it (`IndexSection`'s rule, met by a chip). **The revealed
-  chips go where the line GROWS**: after the subjects' count, which runs from
-  the start edge, and before the languages', which runs from the end.
+  — and the chip keeps the line's end, so what a reader pressed is where they
+  left it (`IndexSection`'s rule, met by a chip). **The revealed chips go where
+  the line GROWS**: after the subjects' count, which runs from the start edge,
+  and before the languages', which runs from the end.
+- **An open count reads `×` and not its figure** (2026-09-12, by direction):
+  `+13` beside the thirteen it stood for is a number claiming there are
+  thirteen more. **And the control is drawn by what does not FIT, never by what
+  is shown** — the subjects' fit read the open state for a day, so the one
+  thing that could close a row vanished the moment it was used.
 - **`DocumentFilters.svelte` is rendered twice on the page** (aside above 80rem,
   `<details>` below), which is why its options are `aria-pressed` buttons and
   not checkboxes (two elements claiming one `id`) and the search text is a PROP,

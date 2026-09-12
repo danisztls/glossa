@@ -1120,13 +1120,20 @@ export const en: Dictionary = {
 	// and not a sentence of its own.
 	'document.languages.label': 'Available in',
 	'document.languages.more': 'more languages',
+	// Its open state, where the chip prints a close mark. A glyph is not an
+	// accessible name, and `aria-expanded` says which way the control is set —
+	// so what these two supply is the thing it acts ON, in the words of the
+	// state the press will produce.
+	'document.languages.fewer': 'fewer languages',
 	// The subjects' own count, which follows a bare `+5` exactly as the
 	// languages' does — a row prints as many as its line holds and puts the
 	// rest behind this.
 	'document.subjects.more': 'more subjects',
-	// The foot of the library, where the list is cut to a page. The chip
-	// beside it holds how many rows are still behind it, so the label itself
-	// stays the plain thing a reader presses.
+	'document.subjects.fewer': 'fewer subjects',
+	// The foot of the library, where the list is cut to a page. The label is
+	// the whole control: a figure beside a button reads as what the press will
+	// bring, and the number of rows still behind it is not that number. How
+	// many documents there are is on the line that opens the list.
 	'document.loadMore': 'Load more',
 	'document.tableOfContents': 'Table of Contents',
 	'document.startReading': 'Start reading',

@@ -1560,13 +1560,19 @@ where a line of their own, which is what this had for an hour, cost every row
 under it a reflow for a look at one row. **The space a disclosure grows into
 does not have to be found; a right-aligned row already has it.**
 
-**The chip keeps the end of the line and its own text**, so the thing a reader
-pressed is where they left it — `IndexSection`'s rule about the heading that
-opens a fold, met by a chip. It goes on reading `+13` and takes the accent the
-way a chosen subject does; `aria-expanded` is what says which way it is, so the
-hidden word stays "more languages" in both states. No `aria-controls`: it is
-optional on a disclosure, and the alternative is rendering every row's hidden
-languages to keep one id honest — thousands of scraps on a page of 272 rows.
+**The chip keeps the end of the line**, so the thing a reader pressed is where
+they left it — `IndexSection`'s rule about the heading that opens a fold, met by
+a chip — and it takes the accent the way a chosen subject does. What it does not
+keep is its own text: **an open count counts nothing** (2026-09-12, by
+direction), so it reads `×` while the row is open, `+13` beside the thirteen it
+stood for being a number claiming there are thirteen more. That costs a few
+pixels of width, which shifts the chips beside it and never the edge the reader's
+finger is on. The glyph is `aria-hidden` and the button's name is the word beside
+it — a mark standing in for a verb is not an accessible name — so the two states
+are "more languages" and "fewer languages", with `aria-expanded` saying which is
+current. No `aria-controls`: it is optional on a disclosure, and the alternative
+is rendering every row's hidden languages to keep one id honest — thousands of
+scraps on a page of 272 rows.
 
 **Below 40rem it stops sharing the line at all** (2026-09-12, by direction).
 There is no empty half on a phone, so the languages take a line of their own
@@ -1612,6 +1618,13 @@ subject is `+1` says nothing at all. The rule that a run hiding exactly one
 chip prints the lot is gone, and what replaced it is arithmetic — the count's
 own chip is reserved out of the line whenever there is a count, so a `+1` no
 narrower than the chip it stands for keeps that chip on its own.
+
+**The count is drawn by what does not FIT, and never by what is shown.** The
+subjects' fit read the open state for a day — so a row that was open reported
+nothing left over, the control drew itself only while shut, and the one thing
+that could close the row vanished the moment it was used. Where the cut falls is
+a property of the LINE; how much of it to obey is the row's state, and the two
+belong in different places.
 
 **A live query or a chosen subject prints every subject on the row.** A query
 marks what it matched, and a matched subject behind a count is a row with no
@@ -1660,8 +1673,12 @@ the rows lost half their height on the way.
 one list, laid out by a phone for a reader who will read the first twenty. A
 page is 100 rows where the aside fits beside the list and 50 where it does not
 — the subjects' own criterion at the scale of the list, since what a list can
-carry is a question about the width in front of the reader — and a button at
-the foot says how many rows are still behind it.
+carry is a question about the width in front of the reader — and a plain button
+at the foot asks for the next one. **It carried a count for an hour and the
+count was worse than nothing**: a figure beside a button is read as what the
+press will DO, so `332` promised 332 rows and brought a hundred. How many
+documents there are is already on the line that opens the list, where it is a
+fact about the list rather than a promise about a control.
 
 **A query draws every match**, because a reader who typed a word asked a
 question of the whole corpus and an answer cut at fifty is an answer that lies
