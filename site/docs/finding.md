@@ -1501,11 +1501,47 @@ check, and the site has no visual regression suite. `layout-placement.test.ts`
 reads the `class="…"` attributes under `src/routes/` and is what catches the
 next one.
 
-**A card is four stacked full-width blocks**: title with its kind chip at the
-end of the line, date and author, the description, the subjects. The title row
-is `.index-link`'s own title-and-chip shape, the one `/preces`,
+**A card is five stacked full-width blocks**: title with its kind chip at the
+end of the line, date and author, the description, then the subjects and the
+languages sharing a last line at either end of it. The title row is
+`.index-link`'s own title-and-chip shape, the one `/preces`,
 `/doctores/summa` and `/colophon` share and the one the both-ends hover is
 written for; the chips stay outside the anchor, being buttons.
+
+**The languages are the one fact about a document the row did not carry**
+(2026-09-11, by direction). One row is one document and not one edition — two
+editions showing as two rows would double the list — so which languages a
+document exists in was visible only after opening it, and the edition picker
+there is not where a reader browsing a catalogue is looking.
+
+**Printed whole they would be a texture rather than information.** A document
+in fourteen languages would carry the longest line on the card, and very nearly
+the same line as every other card. So the row prints the reader's own chain —
+`contentLangChain`: their content language, its neighbour, and the `en`/`la`
+tail every row of `CONTENT_LANG_FALLBACK` ends in — and counts the rest behind
+a `+13` whose `title` names them. **Three or four chips by construction**, not
+by a cap: the chain's own length is the limit, and each one is a language this
+reader would actually be given, because that is the same table `editionInLang`
+resolves the document with.
+
+**It is deliberately not `readerLangChain`, which the edition MENUS rank on.**
+That one leads with `navigator.languages`, and a panel the reader opened can
+afford to be reader-shaped where a prerendered catalogue cannot: the rows would
+differ per visitor, and the document the build wrote would be one more of them.
+
+**The language the row is WRITTEN in leads and is never counted.** It is
+usually the head of the chain anyway; where it is not — a reader who pinned one
+document's edition, or a document the chain reaches in nothing at all — a row
+reading `+13` over a Ukrainian title would be counting the language of the
+title above it. `document-langs.ts` is the whole rule, and the test is the
+reason it is a module.
+
+**The languages are not controls and the subjects beside them are.** A subject
+is a facet of this page, so a chip that could not be clicked would be the worse
+half of a tag; a language is a property of the document, chosen on the
+document's own page and by default not chosen at all. Same clothes, no hover
+and no pressed state — and `.chip` is the wrong family for them, that being the
+scrap at the end of the row's LINK, which answers the link's hover.
 
 **The description carries no max-width, and getting there took two wrong
 answers** (2026-09-06, by direction). It was capped at 60ch inside a 62rem

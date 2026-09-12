@@ -951,9 +951,10 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   so the column is auto-placed into the 21.5rem apparatus lane with the reading
   track empty beside it, and nothing errors. `layout-placement.test.ts` catches
   the next one. Its width is `--index-width` (62rem), not `--landing-width`: an
-  index is sized by its row's first line. **A document card is four stacked
-  full-width blocks** — title and kind, date and author, the description, the
-  subjects — and **the description carries no max-width**. Two attempts to fill
+  index is sized by its row's first line. **A document card is five stacked
+  full-width blocks** — title and kind, date and author, the description, then
+  the subjects and the languages at either end of one last line — and **the
+  description carries no max-width**. Two attempts to fill
   the empty half a 60ch measure left in a 62rem track failed the same way, by
   moving things into it rather than letting the text have it.
 - **A section of a folded index is `IndexSection.svelte`** — the
@@ -1427,6 +1428,13 @@ reverse-chronological list.
   outline because three chips inside a paragraph do need an edge.
 - **The terms are not translated and render verbatim** — a closed list could
   carry i18n keys, but that is ~2,000 strings and nobody has asked.
+- **A row names the languages of the reader's own chain and folds the rest into
+  a count** (`document-langs.ts`): the cut is `contentLangChain`, the table
+  `editionInLang` resolves the document WITH, so a chip is a language that
+  reader would actually be given — never `readerLangChain`, which leads with
+  `navigator.languages` and would print a different row per visitor on a page
+  the build prerenders. The language the row is WRITTEN in leads it and is
+  never inside the count.
 - **`DocumentFilters.svelte` is rendered twice on the page** (aside above 80rem,
   `<details>` below), which is why its options are `aria-pressed` buttons and
   not checkboxes (two elements claiming one `id`) and the search text is a PROP,

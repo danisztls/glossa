@@ -1102,6 +1102,14 @@ export const en: Dictionary = {
 	'document.filter.clear': 'Clear',
 	'document.filter.results': 'Documents shown',
 	'document.filter.noResults': 'No document matches these filters.',
+	// The scraps at the end of a catalogue row, naming the languages this
+	// library holds that document in. Both strings are visually hidden: the
+	// chips are language names in their own languages, which need no label to
+	// be read, and a screen reader meeting a run of them needs to be told what
+	// they are. `languages.more` follows a bare `+13`, so it is the rest of
+	// that phrase and not a sentence of its own.
+	'document.languages.label': 'Available in',
+	'document.languages.more': 'more languages',
 	'document.tableOfContents': 'Table of Contents',
 	'document.startReading': 'Start reading',
 	'document.readFullDocument': 'Read the full document',

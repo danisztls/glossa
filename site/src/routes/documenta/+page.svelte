@@ -73,8 +73,16 @@
 	 * and are both absent-by-default: the page renders its author and kind
 	 * facets immediately and grows the subject facet when the tags land.
 	 */
-	import { listDocuments, loadDocumentTags, loadTranslatedDescriptions } from '$lib/corpus';
+	import {
+		baseLang,
+		contentLangChain,
+		languageDisplayName,
+		listDocuments,
+		loadDocumentTags,
+		loadTranslatedDescriptions
+	} from '$lib/corpus';
 	import { preferredDescription } from '$lib/document-description';
+	import { nearLanguages } from '$lib/document-langs';
 	import { filterByQuery, highlight } from '$lib/highlight';
 	import DocumentFilters, { type Facet } from '$lib/components/DocumentFilters.svelte';
 	import DocumentSearch from '$lib/components/DocumentSearch.svelte';
@@ -89,6 +97,13 @@
 	interface Row {
 		slug: string;
 		manifest: DocumentManifest;
+		/** The bare language of the manifest above — what this row's own title
+		 *  and description are written in. */
+		lang: string;
+		/** Every bare language the document has an edition in, the row's own
+		 *  included. One row is one document (see below), so this is the only
+		 *  place the other editions are named at all. */
+		langs: string[];
 		/** As written, for display. */
 		tags: string[];
 		/** Lower-cased, for matching — the key the facets are built on. */
@@ -164,6 +179,12 @@
 		return preferredDescription(row.manifest, i18n.lang, translated, row.slug) ?? null;
 	}
 
+	/** The reader's content-language chain, read once for the whole list rather
+	 *  than per row: it is the same question about the same table 272 times,
+	 *  and it moves only when the interface language does. `document-langs.ts`
+	 *  is what a row does with it. */
+	const langChain = $derived(contentLangChain(i18n.lang));
+
 	// One row per document SLUG, in the reader's effective language for that
 	// document — not one row per language edition. Two editions per document
 	// showing up as two rows here would double this list and make it
@@ -193,6 +214,8 @@
 			out.push({
 				slug: group.slug,
 				manifest,
+				lang: baseLang(manifest.language),
+				langs: Object.keys(group.manifests),
 				tags,
 				tagKeys: tags.map((tag) => tag.toLowerCase())
 			});
@@ -498,11 +521,13 @@
 			<ul class="docs index-list" data-link-preview="hover">
 				{#each visible as row (row.slug)}
 					{@const description = describe(row)}
+					{@const langs = nearLanguages(row.langs, langChain, row.lang)}
 					<li class="index-row">
 						<!--
-							THE CARD IS FOUR STACKED BLOCKS, each taking the row's whole
+							THE CARD IS FIVE STACKED BLOCKS, each taking the row's whole
 							width: title and kind on one line, then date and author, then
-							the description, then the subjects.
+							the description, then the subjects and the languages sharing a
+							last line at either end of it.
 
 							THE RAIL IS GONE (2026-09-06, by direction). Date, author and
 							kind rode the end of the title's line for a day, on the
@@ -554,23 +579,66 @@
 						{#if description}
 							<p class="doc-description">{@render marked(description)}</p>
 						{/if}
-						{#if row.tags.length > 0}
-							<!-- Each tag is a control, not decoration: seeing what a
-							     document is filed under and being unable to ask for the
-							     rest of that shelf is the worse half of a tag. -->
-							<ul class="doc-tags">
-								{#each row.tags as tag, i (tag)}
-									<li>
-										<button
-											type="button"
-											class="doc-tag"
-											class:on={selectedTags.includes(row.tagKeys[i])}
-											aria-pressed={selectedTags.includes(row.tagKeys[i])}
-											onclick={() => toggle('tags', row.tagKeys[i])}>{@render marked(tag)}</button
-										>
-									</li>
-								{/each}
-							</ul>
+						<!--
+							THE FIFTH BLOCK IS TWO GROUPS AND ONE LINE: what the document is
+							about at the start of it, what it can be read in at the end.
+							They are the row's two lists of scraps and neither is worth a
+							line of its own — the subjects wrap and the languages follow at
+							the far end of whatever line is left, which is the row's bottom
+							corner at every width the aside allows.
+
+							THE LANGUAGES ARE NOT CONTROLS, where the subjects beside them
+							are. A subject is a facet of this page and clicking one narrows
+							it; a language is a property of the document, and the place to
+							choose one is the edition picker on the document's own page —
+							the reader gets their own by default, which is what
+							`document-langs.ts` prints first.
+						-->
+						{#if row.tags.length > 0 || langs.shown.length > 0}
+							<div class="doc-foot">
+								{#if row.tags.length > 0}
+									<!-- Each tag is a control, not decoration: seeing what a
+									     document is filed under and being unable to ask for the
+									     rest of that shelf is the worse half of a tag. -->
+									<ul class="doc-tags">
+										{#each row.tags as tag, i (tag)}
+											<li>
+												<button
+													type="button"
+													class="doc-tag"
+													class:on={selectedTags.includes(row.tagKeys[i])}
+													aria-pressed={selectedTags.includes(row.tagKeys[i])}
+													onclick={() => toggle('tags', row.tagKeys[i])}
+													>{@render marked(tag)}</button
+												>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+								{#if langs.shown.length > 0}
+									<!-- A `<p>` and not a list: these are three or four scraps
+									     read as one line, where the subjects are a list because
+									     each of them is a button. The name it is owed is a
+									     visually-hidden span for the reason the count above the
+									     list carries one — an `aria-label` on an element with
+									     neither a role nor a handler is dropped. -->
+									<p class="doc-langs">
+										<span class="visually-hidden">{t('document.languages.label')}: </span>
+										{#each langs.shown as lang (lang)}
+											<span class="doc-lang">{languageDisplayName(lang)}</span>
+										{/each}
+										{#if langs.rest.length > 0}
+											<span
+												class="doc-lang more"
+												title={langs.rest.map((lang) => languageDisplayName(lang)).join(', ')}
+												>+{langs.rest.length}<span class="visually-hidden">
+													{t('document.languages.more')}</span
+												></span
+											>
+										{/if}
+									</p>
+								{/if}
+							</div>
 						{/if}
 					</li>
 				{/each}
@@ -759,12 +827,35 @@
 		color: var(--color-text-muted);
 	}
 
+	/*
+	 * THE LAST LINE HOLDS BOTH LISTS, THE LANGUAGES AT ITS END. The subjects
+	 * take the space (`flex: 1`) and wrap inside it; the languages keep the far
+	 * end of the line whatever the subjects do. `margin-inline-start: auto`
+	 * rather than `justify-content: space-between`, which puts a lone list at
+	 * whichever end it happens to be — a row with no subjects would open with
+	 * its languages. Logical, so the card's bottom RIGHT is its bottom left in
+	 * Arabic and Hebrew.
+	 *
+	 * `align-items: flex-end` and not `baseline`, which is the same answer
+	 * until the subjects take a second line: both kinds of scrap are set at one
+	 * size in one box, so the two agree exactly wherever the row is one line
+	 * high, and where it is not the languages belong at the bottom of it.
+	 */
+	.doc-foot {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: 0.3rem 1rem;
+		margin-top: 0.45rem;
+	}
+
 	.doc-tags {
 		display: flex;
+		flex: 1 1 auto;
 		flex-wrap: wrap;
 		gap: 0.3rem;
 		list-style: none;
-		margin: 0.45rem 0 0;
+		margin: 0;
 		padding: 0;
 	}
 
@@ -789,5 +880,47 @@
 		background: var(--color-accent);
 		border-color: var(--color-accent);
 		color: var(--color-accent-contrast);
+	}
+
+	.doc-langs {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.3rem;
+		margin: 0;
+		margin-inline-start: auto;
+	}
+
+	/*
+	 * A SUBJECT'S CLOTHES WITHOUT ITS AFFORDANCE: same size, same outline, same
+	 * radius as `.doc-tag`, and no hover, no cursor and no pressed state — the
+	 * two lists are the same kind of scrap and only one of them does anything.
+	 * `.chip` is the other candidate and is the wrong one here: it is the
+	 * bordered scrap at the END OF A ROW'S LINK, and the hover that answers on
+	 * both ends of the row is written for it.
+	 *
+	 * A language's own name, never its tag — `Português`, the way the edition
+	 * picker and the language switch both name one (`lang-names.ts`). Each name
+	 * is set in the script it is written in, so a chip may be Arabic or Han
+	 * beside a Latin one; nothing here sets a face, so each falls to the
+	 * document's own stack.
+	 */
+	.doc-lang {
+		font-family: var(--font-sans);
+		font-size: 0.7rem;
+		line-height: 1.4;
+		padding: 0.1rem 0.4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		color: var(--color-text-muted);
+	}
+
+	/* The count of the languages the chain above did not reach. Tabular for the
+	   reason `.chip` is — a column of counts down the page's edge whose digits
+	   change — and dotted, because a scrap saying "+13" is the one in this line
+	   that answers nothing on its own: the names are in its `title`. */
+	.doc-lang.more {
+		border-style: dotted;
+		font-variant-numeric: tabular-nums;
 	}
 </style>
