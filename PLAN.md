@@ -579,16 +579,6 @@ writes. Pick one clock before writing that check, not after.
 
 ## Defects in documents already shipped
 
-- **Three of the six editions of the 1981 CDF declaration on Freemasonry lose
-  most of their text.** `cdf.catholics-who-join-masonic-associations` parses to
-  three numbered sections in `pt`, `de` and `es` — 1,554 characters in the
-  Portuguese — and to **zero sections and a single 502-character block in
-  `appendix.json`** in `en`, `it` and `la`. The document is named on
-  `associationes-massonicae`, so an English reader following the link meets
-  roughly a third of what a Portuguese reader meets, with nothing saying so.
-  The shape says the divide is in how the body is recognised as numbered at
-  all, which makes it a parser question and not three strings to move.
-
 - **Every hand-titled CDF document carries an English `short_title` in every
   language.** The titles for these come from a literal table in
   `vatican_docs.py` keyed by date and URL slug, and the table holds one English
