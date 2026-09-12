@@ -228,6 +228,17 @@
 		return out;
 	});
 
+	/**
+	 * Which rows have their remaining languages open, by slug.
+	 *
+	 * Keyed by SLUG rather than by position, so a row keeps its state through a
+	 * filter or a search that moves it — and it is local to this page load
+	 * rather than stored: opening a count is a look at one row, not a
+	 * preference about documents, which is the same line `fold-state` draws for
+	 * a folded index and the filters draw for themselves.
+	 */
+	let langsOpen = $state<Record<string, boolean>>({});
+
 	let query = $state('');
 	let selectedAuthors = $state<string[]>([]);
 	let selectedKinds = $state<string[]>([]);
@@ -490,6 +501,24 @@
 			this across lines inserts a space before and after every mark and
 			the marked words drift apart from the words either side of them.
 		-->
+		<!--
+			ONE LANGUAGE, AS A CODE FOR THE EYE AND A NAME FOR EVERYTHING ELSE.
+			The tag in capitals is the one form that is the same width in every
+			language and does not set a Latin scrap beside an Arabic one; the
+			language's own name is the `title`, for a reader who cannot tell SK
+			from SL, and is visually hidden inside the chip so a screen reader
+			says "Slovenčina" rather than spelling two letters — a code is not an
+			accessible name. `EditionMenu` prints the pair side by side, having a
+			row each to do it in.
+		-->
+		{#snippet langChip(lang: string)}
+			<span class="doc-lang" title={languageDisplayName(lang)}
+				><span aria-hidden="true">{lang.toUpperCase()}</span><span class="visually-hidden"
+					>{languageDisplayName(lang)}</span
+				></span
+			>
+		{/snippet}
+
 		{#snippet marked(
 			text: string
 		)}{#each highlight(text, query, { loose: true }) as segment}{#if segment.hit}<mark
@@ -587,12 +616,14 @@
 							the far end of whatever line is left, which is the row's bottom
 							corner at every width the aside allows.
 
-							THE LANGUAGES ARE NOT CONTROLS, where the subjects beside them
-							are. A subject is a facet of this page and clicking one narrows
-							it; a language is a property of the document, and the place to
+							A LANGUAGE IS NOT A CONTROL AND THE COUNT BEHIND THEM IS. A
+							subject is a facet of this page, so clicking one narrows the
+							list; a language is a property of the document, and the place to
 							choose one is the edition picker on the document's own page —
 							the reader gets their own by default, which is what
-							`document-langs.ts` prints first.
+							`document-langs.ts` prints first. What the count does is show
+							the rest of its own row, which is the only thing it could ever
+							do and the only reason it is pressable.
 						-->
 						{#if row.tags.length > 0 || langs.shown.length > 0}
 							<div class="doc-foot">
@@ -621,35 +652,51 @@
 									     each of them is a button. The name it is owed is a
 									     visually-hidden span for the reason the count above the
 									     list carries one — an `aria-label` on an element with
-									     neither a role nor a handler is dropped.
-
-									     THE CODE IS FOR THE EYE AND THE NAME IS FOR EVERYTHING
-									     ELSE. A chip holds the tag in capitals, which is the
-									     one form that is the same width in every language and
-									     does not set a Latin row beside an Arabic one; the
-									     language's own name is its `title` for a reader who
-									     cannot tell SK from SL, and visually hidden inside it so
-									     a screen reader says "Slovenčina" rather than spelling
-									     two letters. `EditionMenu` prints the pair together,
-									     having room for both. -->
+									     neither a role nor a handler is dropped. -->
 									<p class="doc-langs">
 										<span class="visually-hidden">{t('document.languages.label')}: </span>
-										{#each langs.shown as lang (lang)}
-											<span class="doc-lang" title={languageDisplayName(lang)}
-												><span aria-hidden="true">{lang.toUpperCase()}</span><span
-													class="visually-hidden">{languageDisplayName(lang)}</span
-												></span
-											>
-										{/each}
+										{#each langs.shown as lang (lang)}{@render langChip(lang)}{/each}
 										{#if langs.rest.length > 0}
-											<span
+											<!--
+												THE COUNT IS A DISCLOSURE, and a `title` is why it had to
+												become one: the names behind it were a hover, which is
+												nothing at all on a phone — the reader who most needs the
+												count is the one who could not open it. It is the
+												subjects' own argument one list over, that a scrap saying
+												what is there and refusing to show it is the worse half of
+												a scrap.
+
+												IT MUST NOT MOVE UNDER THE PRESS, which is `IndexSection`'s
+												rule about the heading that opens a fold. So the revealed
+												codes take a line of their own BELOW rather than filling
+												in ahead of this chip, and the chip's own text does not
+												change width: it goes on reading `+13` and takes the
+												accent, the way a chosen subject does. `aria-expanded` is
+												what says which way it is, and is why the hidden word
+												stays "more languages" in both states.
+
+												NO `aria-controls`, which is optional on a disclosure and
+												would be a reference to an id that is not in the document
+												while the row is shut: what it controls is the next thing
+												in reading order, and rendering all of it hidden on 272
+												rows to hold the id honest is thousands of scraps nobody
+												asked for.
+											-->
+											<button
+												type="button"
 												class="doc-lang more"
-												title={langs.rest.map((lang) => languageDisplayName(lang)).join(', ')}
+												aria-expanded={langsOpen[row.slug] === true}
+												onclick={() => (langsOpen[row.slug] = !langsOpen[row.slug])}
 												>+{langs.rest.length}<span class="visually-hidden">
 													{t('document.languages.more')}</span
-												></span
+												></button
 											>
 										{/if}
+									</p>
+								{/if}
+								{#if langs.rest.length > 0 && langsOpen[row.slug]}
+									<p class="doc-langs rest">
+										{#each langs.rest as lang (lang)}{@render langChip(lang)}{/each}
 									</p>
 								{/if}
 							</div>
@@ -930,12 +977,36 @@
 		color: var(--color-text-muted);
 	}
 
-	/* The count of the languages the chain above did not reach. Tabular for the
-	   reason `.chip` is — a column of counts down the page's edge whose digits
-	   change — and dotted, because a scrap saying "+13" is the one in this line
-	   that answers nothing on its own: the names are in its `title`. */
+	/* The revealed languages, on a line of their own so the control that
+	   revealed them keeps its place. `flex-basis: 100%` inside `.doc-foot`,
+	   which is what wraps it rather than seating it beside the subjects. */
+	.doc-langs.rest {
+		flex: 0 0 100%;
+	}
+
+	/* The count of the languages the chain above did not reach, and the control
+	   that shows them. Tabular for the reason `.chip` is — a column of counts
+	   down the page's edge whose digits change — and dotted, which is the one
+	   thing separating it from the inert codes beside it: solid says a
+	   language, dotted says there is something behind this. */
 	.doc-lang.more {
 		border-style: dotted;
 		font-variant-numeric: tabular-nums;
+		background: none;
+		cursor: pointer;
+	}
+
+	.doc-lang.more:hover {
+		color: var(--color-accent);
+		border-color: var(--color-accent);
+	}
+
+	/* OPEN IS THE SUBJECT'S OWN PRESSED STATE, and the text keeps reading
+	   `+13` so the chip is exactly as wide in both — a control that resized
+	   itself would move the next press out from under the finger. */
+	.doc-lang.more[aria-expanded='true'] {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-accent-contrast);
 	}
 </style>

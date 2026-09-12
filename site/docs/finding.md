@@ -1519,7 +1519,7 @@ in fourteen languages would carry the longest line on the card, and very nearly
 the same line as every other card. So the row prints the reader's own chain —
 `contentLangChain`: their content language, its neighbour, and the `en`/`la`
 tail every row of `CONTENT_LANG_FALLBACK` ends in — and counts the rest behind
-a `+13` whose `title` names them. **Three or four chips by construction**, not
+a `+13`. **Three or four chips by construction**, not
 by a cap: the chain's own length is the limit, and each one is a language this
 reader would actually be given, because that is the same table `editionInLang`
 resolves the document with.
@@ -1546,12 +1546,30 @@ not an accessible name**, so each chip also holds the language's own name
 visually hidden with the code `aria-hidden` beside it: a screen reader says
 Slovenčina rather than spelling two letters, and nothing is said twice.
 
-**The languages are not controls and the subjects beside them are.** A subject
-is a facet of this page, so a chip that could not be clicked would be the worse
-half of a tag; a language is a property of the document, chosen on the
-document's own page and by default not chosen at all. Same clothes, no hover
-and no pressed state — and `.chip` is the wrong family for them, that being the
-scrap at the end of the row's LINK, which answers the link's hover.
+**The count is a disclosure, and a `title` is why it had to become one**
+(2026-09-11, by direction). The names behind `+13` were a hover, which is
+nothing at all on a phone: the reader who most needs a count is the one with no
+pointer to decode it with. It is the subjects' own argument one list over —
+**a scrap that says what is there and refuses to show it is the worse half of a
+scrap.**
+
+**It may not move under the press**, which is `IndexSection`'s rule about the
+heading that opens a fold, and it decides both halves of the design: the
+revealed codes take a line of their own BELOW rather than filling in ahead of
+the chip, and the chip's text does not change — it goes on reading `+13` and
+takes the accent, the way a chosen subject does, so it is the same width open
+and shut. `aria-expanded` is what says which way it is, so the hidden word
+stays "more languages" in both states. No `aria-controls`: it is optional on a
+disclosure, and the alternative is rendering every row's hidden languages to
+keep one id honest — thousands of scraps on a page of 272 rows.
+
+**The languages themselves are still not controls, and the subjects are.** A
+subject is a facet of this page, so a chip that could not be clicked would be
+the worse half of a tag; a language is a property of the document, chosen on
+the document's own page and by default not chosen at all. So a code chip has no
+hover and no pressed state, and the one pressable scrap in the line is dotted
+where they are solid. `.chip` is the wrong family for all of them, that being
+the scrap at the end of the row's LINK, which answers the link's hover.
 
 **The description carries no max-width, and getting there took two wrong
 answers** (2026-09-06, by direction). It was capped at 60ch inside a 62rem
