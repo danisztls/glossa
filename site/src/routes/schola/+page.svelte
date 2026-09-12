@@ -589,7 +589,11 @@
 				<li class="book">
 					<span class="book-icon"><Icon name={WORK_ICONS[work.type]} /></span>
 					<div class="book-text">
-						<h4><a href={work.href}>{t(work.titleKey)}</a></h4>
+						<!-- h3 AND NOT h4: this list is the section's own, directly under
+						     `books-heading`, with no rung between. The places below are a
+						     level deeper because they have a heading of their own, which is
+						     why a card title is styled by the card and not by its level. -->
+						<h3><a href={work.href}>{t(work.titleKey)}</a></h3>
 						<p class="book-what">{t(`schola.what.${work.key}`)}</p>
 					</div>
 				</li>
@@ -1425,7 +1429,8 @@
 		color: var(--color-text-muted);
 	}
 
-	.book h4 {
+	/* The card's title, at whichever level its depth in the page puts it. */
+	.book :is(h3, h4) {
 		font-family: var(--font-serif);
 		font-size: 1.05rem;
 		/* Below a heading's bold: the card is one line of name over one line of
@@ -1448,12 +1453,12 @@
 	 * already sets `text-decoration-color: currentColor`, so nothing here has
 	 * to name a colour at all.
 	 */
-	.book h4 a {
+	.book :is(h3, h4) a {
 		text-decoration: none;
 	}
 
-	.book h4 a:hover,
-	.book h4 a:focus-visible {
+	.book :is(h3, h4) a:hover,
+	.book :is(h3, h4) a:focus-visible {
 		text-decoration: underline;
 	}
 
