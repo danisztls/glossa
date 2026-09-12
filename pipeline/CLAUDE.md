@@ -657,6 +657,13 @@ editions were switched off for a signature the parser no longer produces (9
 sections with §1 at 59%/64%; now 44 and 130 sections, largest at 8% and 3%). The
 file says its entries are temporary; nothing enforces it.
 
+**`audit.py editions` is what finds them, and it is the only check that can.**
+Stored text over the WHOLE raw page, against the upper-half median of the
+document's own editions — the one length no parse defect can move, since
+`coverage`'s denominator is cut at the boundary the defect moved and reported
+0.79–1.01 for every edition withheld on 2026-09-11. Its reason strings are what
+an `unpublished.json` entry wants, written from the measurement.
+
 ### What is not held is a command, not a table
 
 `uv run pipeline/scrapers/vatican_docs.py discover-cdf [--unselected]` — index

@@ -444,6 +444,11 @@ def measure(corpus: Path) -> list[dict]:
                 "work": work_id,
                 "coverage": stored / body_len,
                 "body": body_len,
+                # The WHOLE page, furniture included, which is the one length
+                # here a parse defect cannot move: `body` is cut at a sniffed
+                # boundary and a boundary error shrinks it along with `stored`.
+                # `editions` is what needs that (pipeline/docs/oracles.md).
+                "page": len(V.strip_tags(raw)),
                 "stored": stored,
                 "sections": len(json.loads((work / "sections.json").read_text())),
                 "nodes": len(json.loads((work / "structure.json").read_text())),
@@ -751,6 +756,187 @@ def report_withheld(rows: list[dict]) -> int:
     # Not gated in reverse: a work may be withheld for reasons the parser has
     # no marker for (rights, or a defect found by eye), so withheld-but-not-
     # defeated is expected and says nothing.
+    return 0
+
+
+# --------------------------------------------------------------------------
+# Damaged editions of one document
+# --------------------------------------------------------------------------
+#
+# THE GAP THIS FILLS. Every other check here is blind to a document edition
+# that lost its body:
+#
+#   - `coverage` divides by a region cut at a sniffed boundary, and the
+#     boundary error that loses the text shrinks the denominator with it.
+#     Measured on the six editions withheld on 2026-09-11, it reported
+#     0.79-1.01 for every one of them.
+#   - `check-symmetry` compares section-number SETS, which says nothing when
+#     a whole body lands inside one section that exists in both editions.
+#   - `balance` is the check shaped for this and excludes documents on
+#     purpose: a section number is not the same section in two editions, so
+#     it cannot compare unit against unit here.
+#
+# What is comparable across editions of one document is not a unit but the
+# WHOLE EDITION, and the instrument is `keep` -- stored text over the whole
+# raw page. Crude, and that is the point: the denominator is the file, so no
+# parse defect can move it, and two translations of one document are within a
+# few percent of each other in length.
+
+#: Below three editions there is no norm to be outside of. Two cannot say
+#: which of them is speaking -- the rule `trees` states for the same reason.
+EDITION_MIN_EDITIONS = 3
+
+#: A lead is CONJUNCTIVE, and the corpus is why. Either half alone convicts
+#: editions that are merely terse or merely short: `alleged-apparitions-in-
+#: amsterdam` keeps 0.64-0.76 across all eight of its editions and
+#: `responsa-on-the-doctrine-of-the-church` 0.37-0.54 across all nine, both
+#: uniform, both footnote apparatus and page furniture on a short document.
+EDITION_KEEP_RATIO = 0.7
+EDITION_STORED_RATIO = 0.6
+
+
+def upper_median(values) -> float:
+    """The median of the better half -- the reference an edition is judged
+    against.
+
+    NEITHER THE MAXIMUM NOR THE MEDIAN WORKS, and the corpus says so from both
+    sides. The maximum lets one anomalous edition condemn its siblings:
+    `summorum-pontificum.hu` stores 101% of its own page and put all seven
+    other editions outside the band. The median fails the case that matters
+    most, where the parser is broken for a whole document and the median is
+    broken with it: six of `gestis-verbisque`'s eight editions keep a tenth of
+    their page, so the median is that tenth and nothing is outside it.
+    """
+    ordered = sorted(values)
+    return statistics.median(ordered[len(ordered) // 2 :])
+
+
+def measure_editions(rows: list[dict]) -> dict:
+    """`{"documents": [...], "leads": [...]}` -- every document with enough
+    editions to be compared, and the editions that fall outside their own
+    document's band.
+
+    Built entirely from `measure`'s rows, so it reads no file of its own."""
+    by_document: dict[str, list[dict]] = collections.defaultdict(list)
+    for row in rows:
+        if row["page"] <= 0:
+            continue
+        base, _, lang = row["work"].rpartition(".")
+        by_document[base].append(
+            {**row, "lang": lang, "keep": row["stored"] / row["page"]}
+        )
+
+    documents, leads = [], []
+    for base, editions in sorted(by_document.items()):
+        if len(editions) < EDITION_MIN_EDITIONS:
+            continue
+        best_keep = upper_median(e["keep"] for e in editions)
+        best_stored = upper_median(e["stored"] for e in editions)
+        if not best_keep or not best_stored:
+            continue
+        for edition in editions:
+            edition["keep_ratio"] = edition["keep"] / best_keep
+            edition["stored_ratio"] = edition["stored"] / best_stored
+        documents.append(
+            {
+                "document": base,
+                "editions": sorted(e["lang"] for e in editions),
+                "best": max(editions, key=lambda e: e["keep"])["lang"],
+                "keep_range": [
+                    round(min(e["keep"] for e in editions), 3),
+                    round(best_keep, 3),
+                ],
+            }
+        )
+        for edition in editions:
+            if (
+                edition["keep_ratio"] < EDITION_KEEP_RATIO
+                and edition["stored_ratio"] < EDITION_STORED_RATIO
+            ):
+                leads.append(
+                    {
+                        "work": edition["work"],
+                        "document": base,
+                        "stored": edition["stored"],
+                        "page": edition["page"],
+                        "keep": round(edition["keep"], 3),
+                        "keep_ratio": round(edition["keep_ratio"], 3),
+                        "stored_ratio": round(edition["stored_ratio"], 3),
+                        "coverage": round(edition["coverage"], 3),
+                        "against": sorted(
+                            (e["lang"], e["stored"])
+                            for e in editions
+                            if e["work"] != edition["work"]
+                        ),
+                        "reason": edition_reason(edition, editions),
+                    }
+                )
+    leads.sort(key=lambda lead: lead["keep_ratio"])
+    return {"documents": documents, "leads": leads}
+
+
+def edition_reason(edition: dict, editions: list[dict]) -> str:
+    """The sentence an `unpublished.json` entry wants, written from the
+    measurement rather than by hand.
+
+    That file's header asks for a reason specific enough to tell the next
+    person whether the entry can go, and names 'quality issues' as what does
+    not qualify. A generated one cannot drift from what was measured."""
+    others = sorted((e["stored"], e["lang"]) for e in editions if e is not edition)
+    lo, hi = others[0], others[-1]
+    # Name a sibling that is sound rather than the highest-scoring one: `keep`
+    # above 1.0 means the page measured shorter than what was stored from it,
+    # which is a fact about `strip_tags` and not about the edition, and citing
+    # it as the standard reads as nonsense ("stores 1,238 of 1,087").
+    sound = [e for e in editions if e is not edition and e["keep"] <= 1.0]
+    best = max(sound or editions, key=lambda e: e["keep"])
+    return (
+        f"Stores {edition['stored']:,} characters of its own "
+        f"{edition['page']:,}-character page ({edition['keep']:.0%}) where the "
+        f"{best['lang'].upper()} edition stores {best['stored']:,} of {best['page']:,} "
+        f"({best['keep']:.0%}), with its "
+        f"{len(others)} siblings spanning {lo[0]:,} ({lo[1]}) to {hi[0]:,} ({hi[1]}). "
+        f"Coverage reports {edition['coverage']:.2f} and cannot see this: the boundary "
+        f"error that loses the text shrinks its denominator too "
+        f"(pipeline/docs/oracles.md). Remove the entry when this edition stores what "
+        f"its siblings do."
+    )
+
+
+def report_editions(measured: dict, limit: int) -> int:
+    """Reports every lead and gates on the ones we publish anyway.
+
+    THE SAME SHAPE AS `withheld`, one signal further out: that check gates on
+    a parse that reported its own defeat, this one on a parse that did not
+    report anything and is damaged against its own siblings. Withheld leads
+    are listed and not gated -- an entry in `unpublished.json` is the decision
+    already taken, and this is where its measurement comes from."""
+    documents, leads = measured["documents"], measured["leads"]
+    withheld = withheld_ids()
+    published = [lead for lead in leads if lead["work"] not in withheld]
+    print(
+        f"{len(documents)} document(s) with {EDITION_MIN_EDITIONS}+ editions; "
+        f"{len(leads)} edition(s) outside their document's band, "
+        f"{len(leads) - len(published)} of them already withheld.\n"
+    )
+    for lead in leads[:limit]:
+        mark = " " if lead["work"] in withheld else "!"
+        print(
+            f" {mark} {lead['work']:46} keep {lead['keep']:.2f} "
+            f"({lead['keep_ratio']:.2f} of best), stored {lead['stored']:>6} "
+            f"({lead['stored_ratio']:.2f}), coverage {lead['coverage']:.2f}"
+        )
+    if len(leads) > limit:
+        print(f"   ... and {len(leads) - limit} more (--limit)")
+    if published:
+        print(
+            f"\nFAIL: {len(published)} edition(s) are damaged against their own "
+            "siblings and published:"
+        )
+        for lead in published:
+            print(f"  {lead['work']}\n    {lead['reason']}")
+        return 1
+    print("\nOK: every edition outside its document's band is withheld.")
     return 0
 
 
@@ -2524,6 +2710,7 @@ def main() -> int:
         choices=[
             "coverage",
             "withheld",
+            "editions",
             "toc",
             "balance",
             "divisions",
@@ -2566,6 +2753,8 @@ def main() -> int:
             json.dump(measure_refs(corpus), sys.stdout, indent=2, default=str)
         elif args.check == "apparatus":
             json.dump(measure_apparatus(corpus), sys.stdout, indent=2, default=str)
+        elif args.check == "editions":
+            json.dump(measure_editions(rows), sys.stdout, indent=2, default=str)
         else:
             json.dump(rows, sys.stdout, indent=2)
         print()
@@ -2578,6 +2767,10 @@ def main() -> int:
         print()
     if args.check in ("withheld", "all"):
         status |= report_withheld(rows)
+    if args.check in ("editions", "all"):
+        if args.check == "all":
+            print()
+        status |= report_editions(measure_editions(rows), args.limit)
     if args.check in ("toc", "all"):
         print()
         status |= report_toc(corpus)
