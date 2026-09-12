@@ -18,6 +18,13 @@
 	 * prints and the printed copy is the one whose reader cannot press
 	 * anything.
 	 *
+	 * WHICH EDITION IS THE SECOND LINE OF THAT NOTE, for the same reason the
+	 * first is in it: it qualifies the passages rather than saying them. The
+	 * card has no such line because it sets out no text. On screen the reading
+	 * bar's picker is the other place it is stated, and that is a control a
+	 * reader has to open; on paper the picker is gone and the note is the only
+	 * place left.
+	 *
 	 * THE TEXT IS THE READER'S OWN EDITION AND CARRIES NONE OF ITS APPARATUS.
 	 * `AnnotatedText` renders a chapter's footnote marks on `/scriptura`, and
 	 * nothing here does: a pericope is set out to be read through, and a
@@ -131,7 +138,26 @@
 <section class="mass-liturgy" aria-labelledby="liturgy-readings">
 	<div class="head">
 		<h2 id="liturgy-readings">{t('lectionary.heading')}</h2>
-		<HintNote label={t('lectionary.about')} text={t('lectionary.caveat')} />
+		<!-- `children` AND NOT `text`, which is the difference between this note
+		     and the card's: `DayReadings` qualifies a list of citations and has
+		     one sentence to do it with, and this qualifies the passages
+		     themselves, which are an edition's words before they are anything
+		     else. `HintNote` takes a line of small print as `text` and anything
+		     longer as markup the consumer sets, so the type of these two is
+		     below. -->
+		<HintNote label={t('lectionary.about')}>
+			<span class="note-caveat">{t('lectionary.caveat')}</span>
+			{#if bibleWork}
+				<!-- A field label and its value, `CopyrightNotice`'s shape, because
+				     the title is set in the edition's own language and a sentence
+				     wrapped around it would put English word order in the
+				     dictionary. -->
+				<span class="note-edition"
+					>{t('liturgy.editionLabel')}:
+					<span lang={bibleWork.language}>{bibleWork.title}</span></span
+				>
+			{/if}
+		</HintNote>
 	</div>
 
 	{#each masses as mass (mass.olm)}
@@ -220,14 +246,9 @@
 	     `aria-hidden` so it is not read twice. -->
 	<p class="caveat-print" aria-hidden="true">{t('lectionary.caveat')}</p>
 	{#if bibleWork}
-		<!-- Under the caveat rather than over it: the caveat qualifies the
-		     schedule, and this answers the question it raises — which edition
-		     "this site's own editions" turned out to mean. A field label and its
-		     value, `CopyrightNotice`'s shape, because the title is set in the
-		     edition's own language and a sentence wrapped around it would put
-		     English word order in the dictionary. `aria-hidden` for the reason
-		     the caveat above carries it: the screen states this through the
-		     picker, which is a control rather than a line to read twice. -->
+		<!-- The note's second line, in the note's own order: the caveat above
+		     qualifies the schedule, and this answers the question it raises —
+		     which edition "this site's own editions" turned out to mean. -->
 		<p class="edition-print" aria-hidden="true">
 			{t('liturgy.editionLabel')}: <span lang={bibleWork.language}>{bibleWork.title}</span>
 		</p>
@@ -255,6 +276,21 @@
 	/* `SiglumGloss`'s card at this one's measure: where it goes is
 	   `.floating-panel` in app.css, and what is left here is that a sentence and
 	   a half wants a narrower column than a paragraph of commentary. */
+	/* WHAT `text` WOULD HAVE SET, set here because these are `children`:
+	   `HintNote`'s panel brings its measure and its padding and the consumer
+	   brings the note, so a note of two lines carries its own type — the same
+	   small muted setting every other surface's one-liner gets from the
+	   component. */
+	.note-caveat,
+	.note-edition {
+		display: block;
+		font-size: 0.8rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+	}
+	.note-edition {
+		margin-block-start: 0.4rem;
+	}
 	.caveat-print,
 	.edition-print {
 		display: none;
