@@ -253,6 +253,9 @@ opposite directions:
   other country's 9. **Brazil is therefore the one country whose campaign cannot
   be measured cleanly** — an argument on measurement grounds, independent of
   §7.1's price finding, for the first test being the Philippines or India.
+  The switch added since (`site/docs/usage.md`) keeps a device out of the
+  counter from the day it is turned off; the 161 rows already filed stay, so
+  the clean comparison starts whenever it is set and not before.
 
 **The retention test that does work, and costs no new instrumentation:
 persistence of the country's own counter after spend stops.** `geo_lang` is keyed
