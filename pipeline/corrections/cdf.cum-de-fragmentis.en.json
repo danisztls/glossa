@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cum-de-fragmentis.en-doubled-opening-paragraph",
+    "locator": {
+      "raw_substring": "<p align=\"left\">Regarding hosts left over after communion, several queries have  ..."
+    },
+    "field": "raw_text",
+    "from": "<p align=\"left\">Regarding hosts left over after communion, several queries have been directed to the Apostolic See. Therefore this Congregation, after consultation with the Congregations for the Discipline of the Sacraments and for Divine Worship, has decided on the following response.</p> <p align=\"left\">Regarding hosts left over after communion, several queries have been directed to the Apostolic See. Therefore this Congregation, after consultation with the Congregations for the Discipline of the Sacraments and for Divine Worship, has decided on the following response.</p>",
+    "to": "<p align=\"left\">Regarding hosts left over after communion, several queries have been directed to the Apostolic See. Therefore this Congregation, after consultation with the Congregations for the Discipline of the Sacraments and for Divine Worship, has decided on the following response.</p>",
+    "reason": "The declaration's opening paragraph is printed twice, back to back, as two byte-identical <p align=\"left\"> blocks separated by a single space. A 290-character block repeated verbatim is a slip in the source page, not rhetorical repetition: the second copy adds no word the first does not have, and the sentence it repeats is the one that announces the response the rest of the document gives, which is said once or not at all. Left standing it is 22% of everything this edition stores, so a reader meets the same sentence twice and every measurement of the edition counts it twice.",
+    "evidence": "raw/vatican-docs/cdf__cum-de-fragmentis__en.html: the block '<p align=\"left\">Regarding hosts left over after communion ... has decided on the following response.</p>' occurs exactly twice and nowhere else, at offsets 4741 and 5032, with ' ' between them. The French edition of the same declaration prints its equivalent opening paragraph once.",
+    "added": "2026-09-11"
+  }
+]

@@ -631,6 +631,13 @@ touching `extract_document_header`, the stub floor, the enumerator rules or
   survived narrowing as escaped text and came back through `html_to_text` as
   literal markup in the reader's prose. Fifteen editions, caught by the
   round-trip check.
+- **A stray `Â` before punctuation is decoding, not a correction, and the
+  follow-set is what keeps it safe.** cp1252 text encoded as Latin-1 leaves the
+  lead byte standing in front of every mark it introduced;
+  `repair_encoding_residue` undoes it pre-parse, and refuses any run holding a
+  character outside U+0080–U+00BF and the cp1252 C1 repertoire — because `Â` is
+  a letter, and Vietnamese writes `Phúc Âm`. 23 editions, 1,550 stray
+  characters to 141, all of what is left real text.
 
 ### Judging a damaged edition needs a conjunctive signature
 

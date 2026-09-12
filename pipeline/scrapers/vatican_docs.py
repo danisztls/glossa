@@ -5920,6 +5920,141 @@ def repair_markup(html_text: str, work_id: str) -> str:
     return html_text
 
 
+# One atom of a residue run: an HTML entity, or a single character.
+_RESIDUE_ATOM = re.compile(
+    r"&[A-Za-z][A-Za-z0-9]{1,9};|&\#x?[0-9A-Fa-f]{1,6};|.", re.DOTALL
+)
+
+#: The 27 characters cp1252 puts where Latin-1 keeps the C1 controls, mapped
+#: back to the byte each one was. Residue arrives in whichever form the mirror
+#: had reached when it stopped decoding -- a stray Â before the raw byte
+#: 0x98, or before the `˜` that byte means. The second form is the one
+#: `strip_double_encoding` meets on the Compendium's path.
+_CP1252_BYTE = {
+    bytes([b]).decode("cp1252"): b
+    for b in range(0x80, 0xA0)
+    if b not in (0x81, 0x8D, 0x8F, 0x90, 0x9D)  # undefined in cp1252
+}
+
+#: A run of residue. Deliberately loose -- what makes a run a defect is that it
+#: CONTAINS a stray Â, which `repair_encoding_residue` tests after matching
+#: rather than trying to express here. The alphabet holds no letter: Â and â
+#: are named so they can open or join a run, and everything else is either a
+#: C1 byte, one of the cp1252 characters above, or Latin-1 punctuation.
+#: Everything a residue run may be built from, and the refusal is the
+#: point: an atom outside this set means the run is not residue, and the
+#: whole match is returned untouched. No letter is in it -- a letter is
+#: ASCII or U+00C0 and above, and the two exceptions named are the stray
+#: lead bytes themselves.
+_RESIDUE_CHARS = frozenset(
+    "\u00c2\u00e2" + "".join(chr(c) for c in range(0x80, 0xC0)) + "".join(_CP1252_BYTE)
+)
+
+#: A run of residue, in either spelling. Deliberately loose -- what makes a
+#: run a defect is that it CONTAINS a stray U+00C2, tested after matching
+#: rather than expressed here, because the stray byte and the character it
+#: damaged can each be written as a literal or as an entity, and the two are
+#: mixed inside one run on the same page.
+_ENCODING_RESIDUE = re.compile(
+    r"(?:&[A-Za-z][A-Za-z0-9]{1,9};|&\#x?[0-9A-Fa-f]{1,6};|["
+    + "".join(sorted(_RESIDUE_CHARS))
+    + r"])+"
+)
+
+
+def _undo_encoding_residue(run: str) -> str | None:
+    """What a residue run was before the mis-encoding, or None if it does not
+    decode -- in which case the run is left exactly as the page prints it,
+    because a repair that has to guess is an invention."""
+    atoms = [ihtml.unescape(a) for a in _RESIDUE_ATOM.findall(run)]
+    out: list[str] = []
+    buf = bytearray()
+
+    def flush() -> bool:
+        if not buf:
+            return True
+        raw = bytes(buf)
+        buf.clear()
+        for codec in ("utf-8", "cp1252"):
+            try:
+                out.append(raw.decode(codec))
+                return True
+            except UnicodeDecodeError:
+                continue
+        return False
+
+    for atom in atoms:
+        if atom not in _RESIDUE_CHARS:
+            return None  # not residue after all -- leave the page alone
+        if atom == "Â":  # the stray lead byte: what the damage added
+            continue
+        if atom in _CP1252_BYTE:  # the byte, already decoded once
+            buf.append(_CP1252_BYTE[atom])
+        else:
+            buf.append(ord(atom))
+    if not flush():
+        return None
+    return "".join(out) or None
+
+
+def repair_encoding_residue(html_text: str) -> tuple[str, int]:
+    """Undoes the mirror's mis-encoding, returning the page and how many runs
+    were repaired.
+
+    THE DEFECT. Some pages were published as cp1252 text encoded as though it
+    were Latin-1, so every character the source wrote above ASCII arrives with
+    the lead byte of its UTF-8 encoding still standing as a letter: a stray
+    U+00C2 in front of the character it was supposed to introduce. Where the
+    mirror did it twice, the run opens with the U+00E2 of an en dash's own
+    encoding and carries a stray U+00C2 before each of the remaining bytes.
+    A reader meets `Â«` for `«`, `ÂÂÂ` for an em dash.
+
+    WHY THIS IS THE PARSER'S BUSINESS AND NOT `pipeline/corrections/`. That
+    layer's claim is that the SOURCE IS WRONG about a word, and it earns a
+    locator so the change can be audited. This is not about a word: the bytes
+    the source sent say exactly what it meant, and only the wrapper is wrong,
+    so undoing it restores the page rather than amending it -- the posture
+    `martini.py` takes toward its broken tags. It is also a class and not an
+    instance: 24 pages, some 530 runs in 22 spellings, every one of them the
+    same shape.
+
+    THE SAME CLAIM `strip_double_encoding` MAKES, one decoding stage earlier.
+    `ccc/compendium.py` strips a stray U+00C2 before an already-decoded mark
+    in the General Punctuation block; here the mark has not been decoded yet,
+    so what follows the stray byte is the cp1252 byte itself. Its rule is the
+    one that matters and is inherited: THE FOLLOW-SET MAY NEVER CONTAIN A
+    LETTER, because Â is a letter -- French prints it in `GRÂCE` and `ton
+    ÂME`, and a rule reading Â alone eats them silently. U+0080-U+00BF holds
+    no letter in any alphabet, which is what makes this one checkable rather
+    than hopeful: a letter is ASCII or it is U+00C0 and above.
+
+    WHY THIS IS SAFE TO RUN ON EVERY PAGE. The pattern is its own witness. Â
+    is never written glued to the front of a guillemet, a section sign or --
+    the majority here -- a C1 control, which no text prints at all. On a page
+    that was encoded correctly it matches nothing.
+
+    NOTHING IS GUESSED. A run that does not decode is returned untouched; the
+    caller reports the count, so a page this cannot read is visible rather
+    than silently half-repaired."""
+    repaired = 0
+
+    def replace(match: re.Match) -> str:
+        nonlocal repaired
+        run = match.group(0)
+        # The stray U+00C2 is the whole evidence. Without one the run is a
+        # guillemet, a dash or a section sign the page meant to print, and the
+        # loose alphabet above matched it only because it had to be loose.
+        if "Â" not in run and "&Acirc;" not in run:
+            return run
+        fixed = _undo_encoding_residue(run)
+        if fixed is None:
+            return run
+        repaired += 1
+        return fixed
+
+    return _ENCODING_RESIDUE.sub(replace, html_text), repaired
+
+
 def apply_raw_text_corrections(
     html_text: str, corrections: list[dict], applied_log: list[dict], seen_ids: set[str]
 ) -> str:
@@ -10157,6 +10292,9 @@ def parse_and_write(ref: DocRef, lang: str, title_hint: str, html: str) -> dict:
     html = apply_raw_text_corrections(html, corrections, pre_applied, pre_seen)
     try:
         html = repair_markup(html, work_id)
+        html, residue_repaired = repair_encoding_residue(html)
+        if residue_repaired:
+            result["encoding_residue_repaired"] = residue_repaired
         parse = parse_document(
             html,
             lang,
