@@ -353,6 +353,14 @@ like. India also escapes the §5 payload constraint in a way no African market
 does: mobile data there is abundant and cheap, so a 124/184 KB boot is not a toll
 on the reader.
 
+**Improving the language first is not available here, and the reason is the
+Swahili reason.** There is no official Malayalam edition of the Catechism to
+acquire — what exists is diocesan and regional grade-school catechism series, not
+a translation of the CCC — so `ml` content is outside the scraper model
+altogether rather than merely unscheduled
+(`catholic-growth-and-catechism-languages.md` on the general form). Checked
+2026-09-12. India is therefore an English campaign or none.
+
 It has a landing asset nothing generic competes with. `/calendarium/india` is
 published, in English, and carries the saints Kerala actually keeps — Kuriakose
 Chavara, Alphonsa, Euphrasia, Mariam Thresia, Joseph Vaz, John de Britto,
@@ -439,6 +447,12 @@ fontes or AAS references, no PCLT authentic interpretations.** Without them the
 site is a fast lookup rather than a working tool. The 1917 Code is public
 domain, which makes it the cheapest of the four to close and the one a canonist
 reaches for most.
+
+**Only three of those four are completeness. The CCEO is correctness**, and §7.2
+is where that shows: a reader of one of the Eastern churches is not missing a
+canon, they are being shown the wrong code without being able to tell. Rank it
+accordingly against the 1917 Code, which is cheaper but costs no reader a wrong
+answer.
 
 The Latin paths _are_ a barrier for a different reader: nobody searching in
 English guesses `/catechismus/2267`. English aliases redirecting to the Latin
