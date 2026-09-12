@@ -204,7 +204,7 @@ since 2026-08-27. Two of its fields are exactly the ad questions —
 
 - **`geo_lang`**, a country × language counter with no key back to the session
   row, which is the before/after signal for a single-country campaign.
-- **Retention buckets** (`1`, `4-7`, `15-28` days, from a 28-bit device-local
+- **Retention buckets** (`days28`, `visits`, `age`, from a 28-bit device-local
   bitmask), which answer whether arrivals became readers — the only outcome
   worth buying.
 
@@ -218,6 +218,61 @@ this buy readers".
 Design consequence: **run one country at a time.** Without attribution,
 concurrent campaigns in two countries are still separable by `geo_lang`, but
 concurrent campaigns in one country are not separable at all.
+
+### 6.1 What `npm run usage` actually returns, and the one thing it cannot
+
+Run 2026-09-12 against the live D1. Three limits are structural and one is
+temporary, and the temporary one is the one that picks the country.
+
+**Structural, and each is a deliberate choice in `migrations/0001_usage.sql` or
+`usage-device.ts`:**
+
+- **Country crosses with nothing.** `session` has no country column, on the
+  stated ground that eighteen bucketed fields plus a country make an unusual
+  reader unique. So engagement, retention and device can be read site-wide or
+  per country, never both. There is no cohort.
+- **No landing page.** `entry` holds `home | deep | search` — not which page. A
+  campaign pointed at `/catechismus/2267` and one pointed at
+  `/calendarium/india` are the same row.
+- **An ad click is indistinguishable from an organic one.** `classifyEntry`
+  reads `document.referrer` against a list of search hosts, and a paid Google
+  click carries the same `google.*` referrer as a free one. Both are `search`.
+
+**Temporary, and decisive: there is no baseline yet.** 124 sessions over 30
+days, of which 41% came from devices with 21–100 lifetime visits and 19% from
+devices past 100 — the maintainer, not a readership. Two consequences pull in
+opposite directions:
+
+- **Signal-to-noise will be excellent.** Every country except Brazil sits at 8–9
+  sessions a month, several with a per-language spread uniform enough to be one
+  agent sweeping editions rather than readers. A campaign cannot hide in that.
+  The dilution this section worried about does not exist.
+- **Brazil's counter is the maintainer's own.** `shouldCollect` excludes `dev`
+  and localhost but not the production site, so browsing glossacatholica.org by
+  hand lands in `BR`, which stands at 161 Portuguese-chrome rows against every
+  other country's 9. **Brazil is therefore the one country whose campaign cannot
+  be measured cleanly** — an argument on measurement grounds, independent of
+  §7.1's price finding, for the first test being the Philippines or India.
+
+**The retention test that does work, and costs no new instrumentation:
+persistence of the country's own counter after spend stops.** `geo_lang` is keyed
+by day and pruned at 400 days, so: spend one month, stop, watch that country for
+two more. Decay to baseline bought clicks; a plateau above baseline bought
+readers. This is the §6 claim made operational, and it needs nothing the schema
+does not already have.
+
+**And one derived number worth computing by hand.** The beacon fires only after
+five seconds visible and one interaction, so it counts readers and never counts a
+bounce. Google Ads will report clicks. **Clicks ÷ the country's `geo_lang` session
+delta is the share of paid clicks that became a five-second reader** — which is
+exactly the §5 payload question, answerable with a calculator and no new field.
+
+Operationally: read with `--all` (cells under 5 are hidden by default, and an
+experiment this size lives under 5) and `--days` spanning the whole campaign
+rather than sampling daily.
+
+**Verdict: enough to decide whether to continue, not enough to optimise.** That
+is the right amount, because §2 establishes there is nothing to optimise toward.
 
 ## 7. The country to run it in
 
@@ -395,7 +450,9 @@ this document for a specific acquisition.
 **The Philippines remains the better first cheap-market test** on the same price
 (−75%): it has roughly four times India's Catholic population at 79% of the
 country against 1.6%, no rite complication, and therefore no page that can answer
-the wrong question correctly.
+the wrong question correctly. §6.1 adds a second reason to start outside Brazil
+that has nothing to do with price: the Brazilian counter already holds the
+maintainer's own daily sessions, and the Philippines' and India's do not.
 
 ## 8. Wikipedia: why a link gets reverted, and the five cases where it does not
 
