@@ -344,6 +344,51 @@ in exactly that market.
 terms anyway — the Bible is the one work with a strong free incumbent and the
 one with live exposure, which is a coincidence worth exploiting.
 
+### 7.2 India, and the one market where a gap becomes a wrong answer
+
+The cheapest market in §7.1 (−77%), and English carries it — formation and
+reference among Indian Catholics run in English, so the campaign needs **no
+content work**, and `ml` chrome over English text is not the obstacle it looks
+like. India also escapes the §5 payload constraint in a way no African market
+does: mobile data there is abundant and cheap, so a 124/184 KB boot is not a toll
+on the reader.
+
+It has a landing asset nothing generic competes with. `/calendarium/india` is
+published, in English, and carries the saints Kerala actually keeps — Kuriakose
+Chavara, Alphonsa, Euphrasia, Mariam Thresia, Joseph Vaz, John de Britto,
+Devasahayam (canonised 2022, so interest is live). Those are Catholic-marked,
+cheap, high-intent names with a page behind each.
+
+**But India is where the missing CCEO stops being a coverage gap and becomes a
+correctness problem.** Of roughly 23 million Indian Catholics, about 4 million
+are Syro-Malabar — the second-largest Eastern Catholic church in the world, with
+2.3 million in Kerala — plus the Syro-Malankara. They are governed by the **Code
+of Canons of the Eastern Churches, not the 1983 Code this corpus holds.** A
+Syro-Malabar reader who searches a canon and lands on `/ius-canonicum` is given
+law that does not bind them, which is worse than an absence: a reader cannot see
+that the answer is the wrong book. §9 treats the CCEO as completeness; here it is
+accuracy.
+
+The calendar has the softer form of the same defect. `/calendarium/india` is the
+Latin-rite conference's keeping of the General Roman Calendar; the Syro-Malabar
+liturgical year is structurally its own. The saints are right and the seasons are
+not.
+
+**So India is buyable, as a Catechism, encyclicals and calendar market — and
+canon-law terms must stay out of it until the CCEO is in the corpus.**
+
+And the inversion worth keeping: **India is the one market where this corpus's
+largest gap faces its largest underserved audience.** The CCEO has no good free
+per-canon presence anywhere online. Were it added, `/ius-canonicum` would address
+a second code and India would become the best canon-law market in the world
+rather than the one to withhold canon law from. That is the strongest argument in
+this document for a specific acquisition.
+
+**The Philippines remains the better first cheap-market test** on the same price
+(−75%): it has roughly four times India's Catholic population at 79% of the
+country against 1.6%, no rite complication, and therefore no page that can answer
+the wrong question correctly.
+
 ## 8. Wikipedia: why a link gets reverted, and the five cases where it does not
 
 The default position is against us and is correct. **`WP:ELNO` #1 excludes a
