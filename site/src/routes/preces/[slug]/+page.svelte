@@ -927,8 +927,16 @@
 		padding-bottom: 0.35rem;
 	}
 
+	/* `.label-micro` pins the muted colour on the heading, which would keep
+	   `.fold`'s hover and focus answer off it — so the row carries the colour
+	   and the heading inherits. */
+	.prayer-instructions > summary {
+		color: var(--color-text-muted);
+	}
+
 	.prayer-instructions h2 {
 		margin: 0;
+		color: inherit;
 	}
 
 	/* The gap belongs to the OPEN state: closed, it would be a panel's worth of

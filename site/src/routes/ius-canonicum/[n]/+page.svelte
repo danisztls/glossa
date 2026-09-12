@@ -291,8 +291,9 @@
 		color: var(--color-text-muted);
 	}
 
+	/* The cursor and the mark are `.fold`; the row inherits the muted colour
+	   of the block above, and with it `.fold`'s hover and focus answer. */
 	.superseded summary {
-		cursor: pointer;
 		font-size: 0.85rem;
 		line-height: 1.5;
 	}

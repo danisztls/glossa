@@ -7,8 +7,7 @@
 	 * of prayers and `/schola` one per catechetical formula, and the first two had
 	 * arrived at the same object twice: the
 	 * `<details class="fold">`, the `<summary>` with a heading in it, the
-	 * heading set in the interface face, the hover that answers on the words
-	 * because the words are the only thing in the row, the sticky-chrome
+	 * heading set in the interface face, the sticky-chrome
 	 * `scroll-margin-top` a fragment needs, and the one row's worth of space
 	 * above every heading so a run of them reads as a list of rows rather than
 	 * as sections with nothing in them.
@@ -125,14 +124,6 @@
 		margin-bottom: 0.5rem;
 	}
 
-	/* The heading is the only word in the row, so the hover answers on it —
-	   the same "this is a control" job `.facet-option`'s ground does in the
-	   `/documenta` panel, at a size that does not want a filled band. */
-	summary:hover .index-heading,
-	summary:focus-visible .index-heading {
-		color: var(--color-accent);
-	}
-
 	/*
 	 * THE SECTION HEADING IS THE PAGE'S STRUCTURE, so it is set as something
 	 * to choose between rather than as a label over a list: text colour, not
@@ -144,12 +135,17 @@
 	 * `/preces` and `/schola` they are the source's, and take this face anyway
 	 * because what the reader operates here is the row — CLAUDE.md §Type carries
 	 * that exception.
+	 *
+	 * NO COLOUR OF ITS OWN: the row's is the summary's, so `.fold`'s one hover
+	 * and focus rule reaches these words. The heading is the only thing in the
+	 * row, which is why that answer is a colour here rather than the ground
+	 * `.facet-option` takes in the `/documenta` panel.
 	 */
 	.index-heading {
 		font-family: var(--font-sans);
 		font-size: 1.1rem;
 		font-weight: 600;
-		color: var(--color-text);
+		color: inherit;
 		margin: 0;
 	}
 

@@ -995,7 +995,12 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   open one and they had reached three different marks — a chevron at the row's
   end, a `▸` at its start, the browser's triangle on the rest — which is one
   mark too many for a reader who learns it once. The class carries the mark, the
-  native-marker reset and the coarse-pointer target; a summary's own layout
+  native-marker reset, the coarse-pointer target and the ROW'S ANSWER — accent
+  on hover and on focus, three surfaces having lit their words and six the mark
+  alone, and only one of the three answering a keyboard. **A summary states its
+  resting colour on the summary**, its heading or label taking `color:
+inherit`: a colour pinned on the child is out of that rule's reach, which is
+  how six of them came to be written by hand. A summary's own LAYOUT still
   stays with the surface. **A glyph is the wrong instrument for a mark**: `▸`
   sizes with the text, so at an index heading's 0.85rem it lands at seven pixels
   and reads as a speck.

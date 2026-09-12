@@ -221,9 +221,18 @@
 
 	/* Our label for the panel, not a heading the work wrote — interface face,
 	   like every other uppercase letterspaced label. */
+	.cited-in-fold > summary {
+		color: var(--color-text-muted);
+	}
+
+	/* `color: inherit` against `.label-micro`'s pinned muted: the row is where
+	   the colour is stated, so `.fold`'s hover and focus answer reaches the
+	   label and the count inside it — both ends of the only row a shut panel
+	   has, which is what `.index-row` does with its own chip. */
 	.cited-in h2 {
 		margin: 0;
 		font-weight: 600;
+		color: inherit;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;

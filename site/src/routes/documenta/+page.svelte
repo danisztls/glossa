@@ -621,12 +621,20 @@
 		}
 	}
 
+	/* THE COLOUR IS ON THE ROW AND NOT ON THE HEADING, so `.fold`'s one hover
+	   and focus rule reaches these words: a colour pinned on the child is out
+	   of its reach, and this panel's label would have been the one summary on
+	   the site that never answered. */
+	.filters-inline summary {
+		color: var(--color-text-muted);
+	}
+
 	.filters-inline summary h2 {
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: var(--color-text-muted);
+		color: inherit;
 		margin: 0;
 	}
 

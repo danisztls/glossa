@@ -314,17 +314,25 @@
 		margin-bottom: 0.35rem;
 		padding: 0.1rem 0.35rem;
 		border-radius: var(--radius-md);
+		/* Stated here rather than on the `h3`, which inherits it: the panel is
+		   rendered inside a second disclosure below 80rem, so the ambient colour
+		   is not the same in both places, and a colour on the child is out of
+		   `.fold`'s reach. */
+		color: var(--color-text);
 	}
 
 	.facet > summary:hover {
 		background: var(--color-bg-elevated);
 	}
 
+	/* `inherit`, so the accent `.fold` gives a hovered or focused row reaches
+	   the heading — the same answer `.facet-option` makes below, ground and
+	   colour together. */
 	.facet h3 {
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		font-weight: 600;
-		color: var(--color-text);
+		color: inherit;
 		margin: 0;
 	}
 

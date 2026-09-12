@@ -755,8 +755,10 @@
 		font-size: 0.9rem;
 	}
 
+	/* The cursor, the mark and the tap target are `.fold`; this row's own
+	   colour is the accent, which is also what its hover would set — so it
+	   answers with the mark alone. */
 	.picker summary {
-		cursor: pointer;
 		color: var(--color-accent);
 	}
 

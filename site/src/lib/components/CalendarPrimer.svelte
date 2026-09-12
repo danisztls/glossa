@@ -67,72 +67,66 @@
 		blue: true
 	} satisfies Record<Colour, true>;
 
-	const seasons = Object.keys(SEASONS) as Season[];
-	const ranks = Object.keys(RANKS) as Rank[];
-	const colours = Object.keys(COLOURS) as Colour[];
-
 	/** The three counters, which have no union to be total over — they are
 	 *  fields of `LiturgicalDay`, and the dictionary keys are their names. */
 	const CYCLES = ['sundayCycle', 'weekdayCycle', 'psalterWeek'] as const;
+
+	interface Group {
+		/** Also the second half of `calendar.primer.*`, this fold's own name. */
+		id: string;
+		terms: readonly string[];
+		/** Where the dictionary keeps this term. A term's NAME and its GLOSS sit
+		 *  at one stem under two prefixes — `calendar.rank.feast` and
+		 *  `calendar.gloss.rank.feast` — which is the one fact these four folds
+		 *  share and the reason they can be a table rather than four copies of
+		 *  the same `<details>`. The counters are the odd row: they are stored at
+		 *  the top of the namespace because they are fields of a day, not members
+		 *  of a union. */
+		stem: (term: string) => string;
+		/** The colours alone, whose term is also a thing to look at. */
+		swatch?: boolean;
+		/** A sentence before the list, where the terms need one to be read at
+		 *  all: three counters mean nothing without knowing what cycles. */
+		lead?: string;
+	}
+
+	const GROUPS: Group[] = [
+		{ id: 'seasons', terms: Object.keys(SEASONS), stem: (term) => `season.${term}` },
+		{ id: 'ranks', terms: Object.keys(RANKS), stem: (term) => `rank.${term}` },
+		{ id: 'colours', terms: Object.keys(COLOURS), stem: (term) => `colour.${term}`, swatch: true },
+		{
+			id: 'cycles',
+			terms: CYCLES,
+			stem: (term) => term,
+			lead: 'calendar.primer.cyclesLead'
+		}
+	];
 </script>
 
 <section class="primer">
 	<h2>{t('calendar.primer.title')}</h2>
 	<p class="lead">{t('calendar.primer.lead')}</p>
 
-	<details class="fold">
-		<summary>{t('calendar.primer.seasons')}</summary>
-		<dl>
-			{#each seasons as season (season)}
-				<div>
-					<dt>{t(`calendar.season.${season}`)}</dt>
-					<dd>{t(`calendar.gloss.season.${season}`)}</dd>
-				</div>
-			{/each}
-		</dl>
-	</details>
-
-	<details class="fold">
-		<summary>{t('calendar.primer.ranks')}</summary>
-		<dl>
-			{#each ranks as rank (rank)}
-				<div>
-					<dt>{t(`calendar.rank.${rank}`)}</dt>
-					<dd>{t(`calendar.gloss.rank.${rank}`)}</dd>
-				</div>
-			{/each}
-		</dl>
-	</details>
-
-	<details class="fold">
-		<summary>{t('calendar.primer.colours')}</summary>
-		<dl>
-			{#each colours as colour (colour)}
-				<div>
-					<!-- The same swatch the card draws, so the word in this list and
-					     the disc beside the day are recognisably one thing. -->
-					<dt>
-						<span class="swatch" data-colour={colour} aria-hidden="true"></span>
-						{t(`calendar.colour.${colour}`)}
-					</dt>
-					<dd>{t(`calendar.gloss.colour.${colour}`)}</dd>
-				</div>
-			{/each}
-		</dl>
-	</details>
-
-	<details class="fold">
-		<summary>{t('calendar.primer.cycles')}</summary>
-		<p class="group-lead">{t('calendar.primer.cyclesLead')}</p>
-		<dl>
-			{#each CYCLES as cycle (cycle)}
-				<div>
-					<dt>{t(`calendar.${cycle}`)}</dt>
-					<dd>{t(`calendar.gloss.${cycle}`)}</dd>
-				</div>
-			{/each}
-		</dl>
-	</details>
+	{#each GROUPS as group (group.id)}
+		<details class="fold">
+			<summary>{t(`calendar.primer.${group.id}`)}</summary>
+			{#if group.lead}<p class="group-lead">{t(group.lead)}</p>{/if}
+			<dl>
+				{#each group.terms as term (term)}
+					<div>
+						<!-- The swatch is the same one the card draws, so the word in this
+						     list and the disc beside the day are recognisably one thing. -->
+						<dt>
+							{#if group.swatch}<span class="swatch" data-colour={term} aria-hidden="true"
+								></span>{/if}
+							{t(`calendar.${group.stem(term)}`)}
+						</dt>
+						<dd>{t(`calendar.gloss.${group.stem(term)}`)}</dd>
+					</div>
+				{/each}
+			</dl>
+		</details>
+	{/each}
 </section>
 
 <style>
@@ -170,13 +164,12 @@
 		border-top: 1px solid var(--color-border);
 		padding: 0.45rem 0;
 	}
+	/* The section around these is muted, and a term is not — so the row states
+	   its colour, and the hover and focus answer that reaches it is `.fold`'s
+	   one rule (styles/components.css) rather than a second copy here. */
 	summary {
-		cursor: pointer;
 		color: var(--color-text);
 		font-weight: 600;
-	}
-	summary:hover {
-		color: var(--color-accent);
 	}
 
 	/*

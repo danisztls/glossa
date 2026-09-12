@@ -262,7 +262,7 @@
  * and the two hand-drawn ones had already been copied twice each with the
  * numbers drifting a little every time.
  *
- * WHAT IS SHARED IS THE MARK AND THE RESET, nothing else. A summary's own
+ * WHAT IS SHARED IS THE MARK, THE RESET AND THE ROW'S ANSWER. A summary's own
  * layout stays with the surface — a rule under it, a count at its end, the
  * face and weight of its heading — because those are what the surfaces
  * genuinely differ in. `list-style: none` removes the native triangle in
@@ -350,6 +350,25 @@
    summary, so the mark would sit grey beside a heading that had lit. */
 .fold > summary:hover::before,
 .fold > summary:focus-visible::before {
+	color: var(--color-accent);
+}
+
+/*
+ * AND SO DOES THE ROW IT LEADS. Three of the nine surfaces lit their words and
+ * six lit the mark alone, so the same gesture answered differently depending
+ * which disclosure the reader was on; of the three, only `IndexSection` also
+ * answered a KEYBOARD, which is the half nobody sees go wrong — tab to a
+ * summary and a mark changed colour beside a heading that did not.
+ *
+ * SO A SUMMARY STATES ITS RESTING COLOUR ON THE SUMMARY, and whatever heading
+ * or label it holds takes `color: inherit`. A colour pinned on the child is
+ * out of this rule's reach, which is how six of them came to be written by
+ * hand in the first place; stated on the row, the surface keeps its own voice
+ * — muted for a rubric's label, accent for the book picker — and the answer
+ * is still one declaration. A count or chip that pins its own colour keeps it.
+ */
+.fold > summary:hover,
+.fold > summary:focus-visible {
 	color: var(--color-accent);
 }
 
