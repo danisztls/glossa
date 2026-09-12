@@ -379,7 +379,7 @@ export const JURISDICTION_NAMES: Record<string, string> = {
  *    Calendar`, the same kind of phrase for the site's fallback language
  *    (`CALENDAR_NAMES_EN`);
  * 3. the interface's own words for the calendar, joined to the place it
- *    belongs to — `Kalendarz liturgiczny — Brazylia`. Composed, and the one
+ *    belongs to — `Kalendarz liturgiczny: Brazylia`. Composed, and the one
  *    rung that is: `calendar.title` is translated into every interface
  *    language and `Intl.DisplayNames` knows nearly every territory in all of
  *    them, so this is a name in the reader's language for a calendar nobody
@@ -390,6 +390,15 @@ export const JURISDICTION_NAMES: Record<string, string> = {
  * form reads better for Hong Kong and abbreviates the United States to
  * `É.-U.`, and either way it would be a second name for the place whose cell
  * the reader just pressed.
+
+ * A COLON AND NOT A DASH, for two reasons that agree: the em dash already
+ * separates a name from the site's in every `<title>` on this site, so a name
+ * containing one spends the same mark on two joins — `Kalendarz liturgiczny —
+ * Brazylia — Glossa Catholica`; and a label and its value take a colon here
+ * already (`copyright.sourceLabel`, `liturgy.editionLabel`). It is a plain
+ * ASCII colon in all forty languages, as those are: French wants a narrow
+ * no-break space before one and CJK a fullwidth `：`, and this joins a
+ * compromise the interface already makes rather than starting one.
  *
  * IT IS APPOSITION AND NOT A SENTENCE, which is what makes rung 3 safe where
  * `calendar.national.tagline` records an earlier attempt failing: a territory
@@ -442,7 +451,7 @@ export function calendarName(
 	// condition tested at the point of use and not a list kept here.
 	if (!namesPlacesIn(lang)) return english;
 	const place = JURISDICTION_NAMES[id] ?? territoryName(id, lang);
-	return place === id.toUpperCase() ? english : { text: `${general} — ${place}`, lang };
+	return place === id.toUpperCase() ? english : { text: `${general}: ${place}`, lang };
 }
 
 /**

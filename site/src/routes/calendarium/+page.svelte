@@ -390,7 +390,7 @@
 	 * THE NAME FOLLOWS THE READER AND THE SENTENCE AROUND IT ALWAYS DID —
 	 * `Calendário Litúrgico Brasileiro` where the interface is Portuguese,
 	 * `Brazilian Liturgical Calendar` where it is English, and `Kalendarz
-	 * liturgiczny — Brazylia` where it is neither (`calendarName`, which owns
+	 * liturgiczny: Brazylia` where it is neither (`calendarName`, which owns
 	 * the three rungs and why each is where it is). Until 2026-09-11 the
 	 * endonym was the only answer, and an English page about Brazil's calendar
 	 * named it in Portuguese while every proper under it read in English.

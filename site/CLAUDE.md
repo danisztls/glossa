@@ -3208,7 +3208,7 @@ parses an id.
   the `<title>` and `calendar.national.tagline`'s `{name}` take.
 - **Everyone else gets one of two rungs under it** (`calendarName`): the
   written English name where the reader is English (`CALENDAR_NAMES_EN`), and
-  `calendar.title` joined to the place otherwise — `Kalendarz liturgiczny —
+  `calendar.title` joined to the place otherwise — `Kalendarz liturgiczny:
 Brazylia`. Composing is safe here and not in a sentence, because a label
   joined to a label needs no article. It must reach for the JURISDICTION and
   not the territory on the three ids that are a vicariate or a patriarchate,

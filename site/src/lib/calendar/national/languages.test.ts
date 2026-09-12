@@ -179,7 +179,7 @@ describe('calendarName', () => {
 	 *  language either. */
 	it('composes a name in the reader’s own language for everyone else', () => {
 		expect(calendarName('br', 'pl', 'Kalendarz liturgiczny')).toEqual({
-			text: 'Kalendarz liturgiczny — Brazylia',
+			text: 'Kalendarz liturgiczny: Brazylia',
 			lang: 'pl'
 		});
 	});
@@ -192,7 +192,7 @@ describe('calendarName', () => {
 			lang: 'en'
 		});
 		expect(calendarName('ca', 'pl', 'Kalendarz liturgiczny')).toEqual({
-			text: 'Kalendarz liturgiczny — Kanada',
+			text: 'Kalendarz liturgiczny: Kanada',
 			lang: 'pl'
 		});
 	});
@@ -220,10 +220,10 @@ describe('calendarName', () => {
 	 *  Emirates' calendar, and it is Oman's and Yemen's too. */
 	it('names a jurisdiction rather than one of its countries', () => {
 		expect(calendarName('ae', 'pl', 'Kalendarz liturgiczny').text).toBe(
-			'Kalendarz liturgiczny — Southern Arabia'
+			'Kalendarz liturgiczny: Southern Arabia'
 		);
 		expect(calendarName('ps', 'pl', 'Kalendarz liturgiczny').text).toBe(
-			'Kalendarz liturgiczny — Jerusalem'
+			'Kalendarz liturgiczny: Jerusalem'
 		);
 	});
 

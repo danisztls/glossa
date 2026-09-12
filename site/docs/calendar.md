@@ -512,7 +512,7 @@ language, then English — so an English page about Brazil's calendar printed
 `Calendário Litúrgico Brasileiro`, and titled the tab the same. What answers
 now is `calendarName`: the endonym to a reader of its language,
 `CALENDAR_NAMES_EN`'s written English to an English one, and
-`Kalendarz liturgiczny — Brazylia` to everyone else — `calendar.title` in the
+`Kalendarz liturgiczny: Brazylia` to everyone else — `calendar.title` in the
 interface's own words, joined to the place the calendar belongs to. English
 keeps a written name because twenty-nine of these calendars are published in
 English already, and composing the other fifty-three would give one reader two
