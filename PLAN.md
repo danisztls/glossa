@@ -511,6 +511,98 @@ was the first heading written here and went because Portuguese "Contribuir"
 reads as money. `Participate` has a cognate in most of the forty, which is why
 it survives the crossing. The note is on the key.
 
+## Gap 19 — the widening it got on 2026-09-11
+
+The row above was written as a `/quaestiones` problem with a note that the
+reading routes have it too. That understates it, and two decisions taken on
+2026-09-11 are the evidence, both of them compromises made **because** a page
+cannot print a date.
+
+- **`carceres` stays a B and cannot be fixed by anchoring.** Its Compendium
+  block ends on CSDC 405, which states the death-penalty teaching as it stood
+  before CCC 2267 was revised. The rescript that revised it is now named on the
+  page, so a reader sees a title saying a revision happened — and nothing
+  saying the paragraph above predates it, or which way it went.
+- **`apparitiones` deliberately does not name the 1978 _Normae_ or the 2011
+  preface to them**, though both are in the corpus and both are now described.
+  The 2024 Norms "entirely replace" the 1978 ones; naming a replaced procedure
+  beside its replacement, undated, leaves the reader unable to tell which is
+  operative. Two real documents are withheld from a page that wants them, and
+  the only reason is this gap.
+
+**The Code and the magisterium want it as much as the Catechism, and want a
+different fact.** A canon carries the Code's own promulgation date and says
+nothing about the 1917 Code it replaced or a later amending motu proprio; a
+document carries `promulgated` and nothing about a later text superseding it.
+So there are at least four dates in play and the page currently prints none:
+
+| Fact                     | Where it is                     | What it answers                   |
+| ------------------------ | ------------------------------- | --------------------------------- |
+| promulgation of the work | `manifest.promulgated`          | when was this published           |
+| edition                  | `manifest.edition`              | which printing is this            |
+| revision of the unit     | nowhere                         | is this paragraph still as it was |
+| capture                  | `raw/<source>/captured-at.json` | when did we fetch the page        |
+
+The fourth is the one a **"date parsed"** would be, and it is a fact about this
+project rather than about the text — worth showing somewhere, and never the
+answer to "is this current". Deciding which of the four a reader is owed, and
+where it goes without becoming a sentence of ours between a heading and a
+quotation, is the whole of the work. The cheap end remains reading the date the
+manifest already has.
+
+## The sitemap advertises neither `/calendarium/liturgia` nor `/bibliotheca/census`
+
+Both are real addresses — in `STATIC_PATHS`, served to a cold load, reachable
+from the nav — and neither is in `sitemapPaths`, so nothing points a crawler at
+them. Offered twice and not taken, so it is recorded rather than left as a
+standing question.
+
+The reason it is a decision and not an oversight is `assertNamed`: the sync
+refuses a build where an address on the sitemap has no name of its own in the
+dictionaries. Adding either is therefore a copy commitment as well as a line,
+and the census page has the further problem in its own section below — it is
+written in one language of forty.
+
+## The lastmod ledger dates in UTC and the editorial files date locally
+
+`site/scripts/lastmod.json` stamps an address from the build clock in UTC;
+`quaestiones-review.json`, the blocklist and every other tracked editorial file
+are dated by hand in local time. Work done in the evening in Brazil therefore
+lands with a sitemap entry one day ahead of the row that produced it —
+`/quaestiones/spectacula` is dated 2026-09-12 against a review row reading
+2026-09-11, and both are correct.
+
+Nothing reads the two against each other today, so nothing is broken. It
+becomes a defect the moment anything does — a check that a topic's row is not
+older than its address, say, which is exactly the kind of check this project
+writes. Pick one clock before writing that check, not after.
+
+## Defects in documents already shipped
+
+- **Three of the six editions of the 1981 CDF declaration on Freemasonry lose
+  most of their text.** `cdf.catholics-who-join-masonic-associations` parses to
+  three numbered sections in `pt`, `de` and `es` — 1,554 characters in the
+  Portuguese — and to **zero sections and a single 502-character block in
+  `appendix.json`** in `en`, `it` and `la`. The document is named on
+  `associationes-massonicae`, so an English reader following the link meets
+  roughly a third of what a Portuguese reader meets, with nothing saying so.
+  The shape says the divide is in how the body is recognised as numbered at
+  all, which makes it a parser question and not three strings to move.
+
+- **Every hand-titled CDF document carries an English `short_title` in every
+  language.** The titles for these come from a literal table in
+  `vatican_docs.py` keyed by date and URL slug, and the table holds one English
+  string per document; nothing derives a sibling-language title, so `ccc.pt`'s
+  reader meets "Declaration on the Status of Catholics Who Become Freemasons".
+  It was recorded as a Portuguese defect and is not one — it is every edition
+  but the English.
+
+  **A hand-written title is the one piece of a document's metadata no parse can
+  contradict**, which is also why it was wrong about which document it named:
+  the same table called the 2018 rescript on CCC 2267 a "Letter to the Bishops",
+  a different text at a different URL that the corpus does not hold, until
+  2026-09-11.
+
 ## Recommended order
 
 A priority argument, not a dependency one — nothing here gates anything else.
