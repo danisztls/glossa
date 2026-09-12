@@ -107,19 +107,35 @@
 	popover="auto"
 	role="note"
 	ontoggle={note.onToggle}
-	class="panel-surface floating-panel note"
+	class="panel-surface floating-panel hint-panel"
 >
-	{#if children}{@render children()}{:else}<span class="line">{text}</span>{/if}
+	{#if children}{@render children()}{:else}<span class="hint-line">{text}</span>{/if}
 </div>
 
 <style>
+	/*
+	 * THE MARK IS SIZED BY THE TYPE IT STANDS BESIDE, which a fixed `rem` box
+	 * cannot be: these sit next to headings from 0.8rem to a page title, and
+	 * at 1.6rem square with a 0.95rem glyph the mark beside the smallest of
+	 * them was half again the height of the words it was offering a footnote
+	 * about. Everything here is `em` off `--hint-size`, whose default is the
+	 * ROW's size — which is the heading's only where the heading does not set
+	 * its own, so a surface whose type is smaller than its row says so (see
+	 * `DayReadings`). `font-size` is declared because a `<button>` does not
+	 * inherit one: without it every `em` below would be the UA's 13.33px.
+	 *
+	 * The box is 1.75em against a 0.9em glyph, so the hit area stays in the
+	 * padding — a mark this size is a small target, and the whitespace around
+	 * it is free.
+	 */
 	.hint-trigger {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		flex: none;
-		width: 1.6rem;
-		height: 1.6rem;
+		font-size: var(--hint-size, 1em);
+		inline-size: 1.75em;
+		block-size: 1.75em;
 		padding: 0;
 		border: 0;
 		background: none;
@@ -133,10 +149,10 @@
 	}
 
 	/* `:global` because the glyph is `Icon`'s element and carries `Icon`'s
-	   scope, not this component's. */
+	   scope, not this component's. `em`, so it follows the rule above. */
 	.hint-trigger :global(svg) {
-		width: 0.95rem;
-		height: 0.95rem;
+		width: 0.9em;
+		height: 0.9em;
 	}
 
 	/*
@@ -147,8 +163,9 @@
 	 * 2.25rem because a header control is a primary tap target with neighbours
 	 * to be told apart from; this one sits alone on a picture, is the least
 	 * important control on the page, and at that size reads as a button
-	 * somebody left on a painting. The glyph sizes in `em` off the `font-size`
-	 * here, which is why the rule above is `.hint-trigger`'s and not both.
+	 * somebody left on a painting. Its glyph sizes in `em` off the `font-size`
+	 * here and takes no `--hint-size`: a picture has no type beside the mark
+	 * for it to agree with.
 	 *
 	 * NOTHING HERE RESETS ANYTHING, deliberately, and the hour that cost is
 	 * worth a line: a scoped rule compiles to `.overlay.svelte-hash`, two
@@ -171,18 +188,25 @@
 	 * `.floating-panel` (styles/menus.css), and what is left here is that a
 	 * note wants a narrower column than a paragraph of commentary.
 	 *
+	 * NAMED `hint-panel` AND NOT `note`, which is not fussiness: a scoped
+	 * class is `.note.svelte-hash` in this file's own rules and a bare `note`
+	 * in the markup, so it also wears every GLOBAL rule of that name — and
+	 * `.note` in styles/menus.css is a settings-panel caption carrying
+	 * `white-space: nowrap`. The panel came out one unwrapped line wide with a
+	 * scrollbar under it, styled by a file this component never mentions.
+	 *
 	 * `text-align` is declared because a caption is a host — a plate's
 	 * figcaption centres its own line, and the panel is a DOM child of it
 	 * however far from it the top layer draws it.
 	 */
-	.note {
+	.hint-panel {
 		max-inline-size: min(24rem, calc(100vw - 1rem));
 		padding: 0.5rem 0.7rem;
 		text-align: start;
 		overflow-wrap: break-word;
 	}
 
-	.line {
+	.hint-line {
 		display: block;
 		font-size: 0.8rem;
 		line-height: 1.5;

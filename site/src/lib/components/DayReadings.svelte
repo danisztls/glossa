@@ -166,6 +166,11 @@
 		align-items: center;
 		gap: 0.3rem;
 		margin-bottom: 0.5rem;
+		/* The heading is the smallest type on the site that carries an `i`, and
+		   the row it sits in is not: `HintNote` sizes its mark off this rather
+		   than off the row, which is the only way a sibling's size can reach
+		   it. */
+		--hint-size: 0.8rem;
 	}
 	h3 {
 		margin: 0;

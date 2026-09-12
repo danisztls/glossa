@@ -817,6 +817,13 @@ inherit` beat the square that class exists to draw, and the overlay trigger
   variant wants belongs there. The mirror of the rule above it — a class
   borrowed across a component boundary is silently unstyled, and a class
   restyled inside one silently wins.
+- **A scoped class still wears every GLOBAL rule of the same name**, scoping
+  narrowing what a component's own rules reach and not what reaches its
+  markup. `HintNote`'s panel was `note`, and `.note` in `styles/menus.css` is a
+  settings caption carrying `white-space: nowrap`: the caveat rendered as one
+  unwrapped line off the side of the card, styled by a file that component
+  never mentions. **Check a new class name against `styles/` before using it**,
+  the generic ones — `note`, `line`, `title`, `head` — being where this lives.
 - **Extract a component when a POLICY is being decided twice, not when the CSS
   looks similar.** Those two agreed on 18 of the 36 declarations in their four
   paired rules, which on its own would not have been worth a third file: most
@@ -999,6 +1006,13 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   hand and had drifted to two measures. **Paper is the caller's half** — a
   popover never prints, so each prints its own line (`.caveat-print` and its
   siblings) where the reader cannot press anything.
+- **A mark beside a heading is sized by the heading, and a fixed `rem` box
+  cannot be.** These stand next to type from 0.8rem to a page title; at one
+  size the smallest of them was half again the height of the words it was
+  offering a footnote about. **A sibling's font-size cannot be read in CSS**,
+  so the row declares `--hint-size` and the mark is `em` off that — the row's
+  own size being the default, and right wherever the heading does not set one
+  of its own.
 - **The catalogue is one component**: `ShelfGrid.svelte` over `$lib/shelves.ts`
   (the entries and `visibleShelves()`) and `ShelfCard.svelte`, because
   `/bibliotheca` and the home page both draw it. The list, the card and the grid
