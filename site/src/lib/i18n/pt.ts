@@ -1226,6 +1226,10 @@ export const pt: Dictionary = {
 	'quaestiones.telephonum.question': 'Por que eu não consigo largar?',
 	'quaestiones.telephonum.keywords':
 		'celular, telemóvel, smartphone, tempo de tela, rolar o feed, redes sociais, notificações, atenção, perder tempo, viciado, aplicativos, antes de rezar',
+	'quaestiones.spectacula.title': 'O que assistir',
+	'quaestiones.spectacula.question': 'Devo assistir a isso?',
+	'quaestiones.spectacula.keywords':
+		'filmes, cinema, televisão, séries, streaming, classificação indicativa, proteger as crianças, má influência',
 	'quaestiones.initiatio-adultorum.title': 'Tornar-se católico já adulto',
 	'quaestiones.initiatio-adultorum.question': 'Por onde é que se começa?',
 	'quaestiones.initiatio-adultorum.keywords':

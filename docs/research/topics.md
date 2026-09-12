@@ -437,13 +437,25 @@ say, which is worse than never offering the topic. So the list below is the
 shipping blocklist, and every line is a claim that the corpus — not the Church —
 is what falls short.
 
-| Held back                     | Why                                                                                                                                                  |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                            |
-| Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                                     |
-| Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner             |
-| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                            |
-| Same-sex blessings            | _Fiducia Supplicans_ arrived 2026-09-11, so this row is now about the anchor rather than the corpus: CCC 2357–2359 is the teaching, not the blessing |
+| Held back                     | Why                                                                                                                                                                                            |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Addiction; self-harm          | CCC 2288–2291 is all there is, and it is about temperance, not compulsion                                                                                                                      |
+| Loneliness                    | CCC says it once, at 2218, and says it to the adult children of a lonely parent rather than to the lonely person                                                                               |
+| Grief that does not lift      | _Salvifici Doloris_ has arrived, but a topic's Catechism block is the page's answer and CCC 1680–1683 is the funeral and not the mourner                                                       |
+| Yoga and Christian meditation | _Orationis Formas_ absent                                                                                                                                                                      |
+| Same-sex blessings            | _Fiducia Supplicans_ arrived 2026-09-11, so this row is now about the anchor rather than the corpus: CCC 2357–2359 is the teaching, not the blessing                                           |
+| Video games                   | Searched _game_, _play_, _recreation_, _amusement_, _entertainment_, _sport_ across CCC and CSDC: only 2413 (games of chance) and 2187 (Sunday sport), and no document is addressed to playing |
+
+**The video-games row is the first written in the form the rest of this section
+now asks for**, and it is a row about the QUOTED works rather than about an
+absent document — there is no text to wait for, so there is nothing to recheck
+with the recipe below and the search is the whole evidence. `spectacula` ships
+the half that is answerable: CCC 2496 and 2525 and CSDC 560–562 are about
+choosing what to watch, and a reader who plays is not watching. _Christus
+Vivit_ and _Antiqua et Nova_ are the nearest documents and are `telephonum`'s,
+where they answer compulsion rather than the thing itself; a page resolving to
+them would be the page whose only real answer is documents, which is the test
+grief fails two rows above.
 
 The absent documents are to be acquired later, at which point the held topics
 become shippable without the list changing shape. What must not happen is a

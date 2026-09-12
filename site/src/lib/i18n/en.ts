@@ -2330,6 +2330,18 @@ export const en: Dictionary = {
 	'quaestiones.telephonum.question': 'Why can’t I put it down?',
 	'quaestiones.telephonum.keywords':
 		'smartphone, screen time, doomscrolling, social media, notifications, attention, wasting time, addicted, apps, before prayer',
+	'quaestiones.spectacula.title': 'What to watch',
+	'quaestiones.spectacula.question': 'Should I be watching this?',
+	// `spectacula` is CCC 2496's and 2525's own word in ccc.la, which is what
+	// keeps a modern subject on a Latin address. The keywords stop at what is
+	// broadcast or screened and do not say `music` or `books`: the anchored
+	// sentences are about the mass media and _Inter Mirifica_ is about the
+	// press, cinema, radio and television, so a reader who typed either would
+	// be promised a page nothing here writes. `bad influence` is 2496's own
+	// closing clause, `resist less honourable influences`, and
+	// `protecting children` is the decree's.
+	'quaestiones.spectacula.keywords':
+		'films, movies, cinema, television, series, streaming, age ratings, protecting children, bad influence',
 	'quaestiones.initiatio-adultorum.title': 'Becoming Catholic as an adult',
 	'quaestiones.initiatio-adultorum.question': 'Where does anyone even start?',
 	'quaestiones.initiatio-adultorum.keywords':

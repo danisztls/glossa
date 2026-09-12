@@ -1314,6 +1314,16 @@
 			],
 			"documents": ["christus-vivit", "fratelli-tutti", "laudato-si"]
 		},
+		"spectacula": {
+			"doorway": "ordinary",
+			"cluster": "practice",
+			"ccc": [
+				[2496, 2496],
+				[2525, 2525]
+			],
+			"csdc": [[560, 562]],
+			"documents": ["inter-mirifica", "ideal-film"]
+		},
 		"initiatio-adultorum": {
 			"doorway": "ordinary",
 			"cluster": "practice",
