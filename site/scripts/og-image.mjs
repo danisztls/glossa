@@ -10,8 +10,8 @@
  * out to two system binaries (`woff2_decompress` and `rsvg-convert`) that are
  * on nobody's dependency list, and a deploy that needs them is a deploy that
  * fails on a machine which is otherwise fine. The card changes when the site's
- * NAME or DESCRIPTION changes, which is roughly never; a committed PNG is the
- * honest representation of that.
+ * NAME changes, which is roughly never; a committed PNG is the honest
+ * representation of that.
  *
  * WHY A SCRIPT AT ALL, RATHER THAN AN IMAGE SOMEBODY DREW. The card is the
  * wordmark, and the wordmark is `src/lib/components/Wordmark.svelte` — live
@@ -21,8 +21,20 @@
  * exact failure that component's docblock spends a paragraph warning about.
  * Here the ratio, the tracking, the two reds and the paper are read from the
  * same places the running site reads them, and the words themselves come from
- * `static/manifest.webmanifest` — so the card cannot claim a name or a
- * description the site does not.
+ * `static/manifest.webmanifest` — so the card cannot claim a name the site
+ * does not.
+ *
+ * WHY THERE IS NO LINE OF PROSE ON IT. There was one until 2026-09-12 — the
+ * first clause of the manifest description, "Scripture and the Magisterium",
+ * set under the rule — and it failed in two directions at once. The library
+ * outgrew it: the Summa, the Code of Canon Law, the Compendium of the Social
+ * Doctrine, the prayers and the calendar are neither of those two things. And
+ * ONE image answers every address of a site read in forty interface
+ * languages, so a sentence on it is the one part of a shared link that can
+ * never follow the reader — the `<title>` and the description beside it are
+ * per address and could one day be per language, where the PNG cannot be.
+ * The wordmark is Latin and the domain is a domain, so what is left is true
+ * wherever the link is pasted.
  *
  * WHY THE FONTS TAKE A DETOUR. `static/fonts/` holds woff2, which is what a
  * browser wants and what no rasterizer will load: librsvg resolves families
@@ -92,41 +104,54 @@ const CATHOLICA_RATIO = 0.6181;
 const GLOSSA_TRACKING = 0.01; // em
 const CATHOLICA_TRACKING = 0.08; // em
 
-/** Type sizes, in px on the 1200x630 canvas. */
-const GLOSSA_SIZE = 190;
+/**
+ * Type sizes, in px on the 1200x630 canvas.
+ *
+ * The wordmark grew from 190 when the subline went: it is the card now, and a
+ * 190px lockup with nothing under it left the frame reading as empty rather
+ * than as airy. 215 is the largest that keeps the air above the ink wider
+ * than the air below it (see the baselines) — past it the lockup crowds the
+ * rule it sits in.
+ */
+const GLOSSA_SIZE = 215;
 const CATHOLICA_SIZE = GLOSSA_SIZE * CATHOLICA_RATIO;
-const SUBLINE_SIZE = 44;
 const DOMAIN_SIZE = 24;
 
 /**
  * Baselines and rules, balanced against the RENDERED INK rather than against
- * the boxes: the measured ink of everything below spans y 101-539 inside a
- * frame whose inner edge is 47-583, i.e. 54px of air above and 44px below,
+ * the boxes: the measured ink of everything below spans y 105-536 inside a
+ * frame whose inner edge is 47-583, i.e. 58px of air above and 47px below,
  * which reads as centred because the eye puts optical centre slightly high.
- * Moving any of these means re-measuring (`magick og.png -fuzz 5% -trim
- * info:`), not re-deriving — the wordmark's ink box is nothing a font metric
- * hands you.
+ * Moving any of these means re-measuring, not re-deriving — the wordmark's
+ * ink box is nothing a font metric hands you. Measure INSIDE the frame, which
+ * a plain trim would otherwise find first:
+ *
+ *     magick static/og.png -crop 1094x486+53+53 +repage -fuzz 8% -trim info:
+ *
+ * reports the ink offset from (53, 53).
  */
-const GLOSSA_BASELINE = 248;
-const CATHOLICA_BASELINE = 366;
-const DIVIDER_Y = 418;
-const DIVIDER_HALF_WIDTH = 70;
-const SUBLINE_BASELINE = 478;
-const DOMAIN_BASELINE = 533;
+const GLOSSA_BASELINE = 271;
+const CATHOLICA_BASELINE = 405;
+const DIVIDER_Y = 464;
+const DIVIDER_HALF_WIDTH = 80;
+const DOMAIN_BASELINE = 530;
 
 /** The domain, which is `wrangler.jsonc`'s `routes` pattern. */
 const DOMAIN = 'glossacatholica.org';
 
 /**
- * The three faces the card sets, as they are named in `static/fonts/` and as
+ * The two faces the card sets, as they are named in `static/fonts/` and as
  * fontconfig will report them once decompressed. The family names are the
  * fonts' own — `fc-scan` says so — and NOT the `@font-face` family names
  * `app.css` invents ("EB Garamond Variable", "Pirata One Subset"), which exist
  * only inside a browser's CSS.
+ *
+ * EB Garamond left with the subline it set. A staged face nothing draws is
+ * still a woff2 decompressed and a family fontconfig offers, so the list is
+ * what the card sets and not what the site ships.
  */
 const FACES = [
 	{ file: 'pirata-one-dropcap.woff2', family: 'Pirata One' },
-	{ file: 'eb-garamond-latin-wght-normal.woff2', family: 'EB Garamond' },
 	{ file: 'source-sans-3-latin-wght-normal.woff2', family: 'Source Sans 3' }
 ];
 
@@ -144,17 +169,9 @@ function readWords() {
 		);
 	}
 
-	// The description's first clause. The whole sentence names four bodies of
-	// text and a licence posture — right for a search result, four lines of
-	// small type in an image. The clause before the em dash is the sentence's
-	// own summary of itself, so the card says what the description says
-	// without the card being a second description to keep in sync.
-	const [clause] = String(manifest.description).split(' — ');
-	if (!clause || clause === manifest.description) {
-		throw new Error('manifest description has no leading clause (expected " — " in it)');
-	}
-
-	return { words, clause, description: String(manifest.description) };
+	// The description is deliberately not read. See the header: the card sets
+	// no sentence, so the manifest's may change without the PNG going stale.
+	return { words };
 }
 
 const escapeXml = (text) =>
@@ -180,7 +197,7 @@ function trackedLine({ text, size, tracking, baseline, extra = '' }) {
 	return `<text x="${x.toFixed(2)}" y="${baseline}" font-size="${size.toFixed(2)}" letter-spacing="${spacing.toFixed(2)}"${extra}>${text}</text>`;
 }
 
-function buildSvg({ words, clause }) {
+function buildSvg({ words }) {
 	const [first, second] = words;
 	// The initial is a `tspan` for the same reason the component makes it a
 	// `<span>`: it is the drop-cap letterform in the drop-cap colour, which is
@@ -198,7 +215,6 @@ function buildSvg({ words, clause }) {
 		${trackedLine({ text: escapeXml(second), size: CATHOLICA_SIZE, tracking: CATHOLICA_TRACKING, baseline: CATHOLICA_BASELINE })}
 	</g>
 	<line x1="${WIDTH / 2 - DIVIDER_HALF_WIDTH}" y1="${DIVIDER_Y}" x2="${WIDTH / 2 + DIVIDER_HALF_WIDTH}" y2="${DIVIDER_Y}" stroke="${VERMILION}" stroke-width="2"/>
-	<text x="${WIDTH / 2}" y="${SUBLINE_BASELINE}" font-family="EB Garamond" font-size="${SUBLINE_SIZE}" fill="${INK}" text-anchor="middle">${escapeXml(clause)}</text>
 	<text x="${WIDTH / 2}" y="${DOMAIN_BASELINE}" font-family="Source Sans 3" font-weight="400" font-size="${DOMAIN_SIZE}" fill="${MUTED}" text-anchor="middle" letter-spacing="2.5">${escapeXml(DOMAIN)}</text>
 </svg>
 `;
@@ -254,12 +270,12 @@ function pngSize(file) {
 }
 
 function main() {
-	const { words, clause, description } = readWords();
+	const { words } = readWords();
 	const dir = mkdtempSync(path.join(tmpdir(), 'glossa-og-'));
 	try {
 		const configPath = stageFonts(dir);
 		const svgPath = path.join(dir, 'og.svg');
-		writeFileSync(svgPath, buildSvg({ words, clause }));
+		writeFileSync(svgPath, buildSvg({ words }));
 
 		run('rsvg-convert', ['-w', String(WIDTH), '-h', String(HEIGHT), svgPath, '-o', outputPath], {
 			env: { ...process.env, FONTCONFIG_FILE: configPath }
@@ -273,12 +289,7 @@ function main() {
 		throw new Error(`rsvg-convert wrote ${width}x${height}, expected ${WIDTH}x${HEIGHT}`);
 	}
 
-	console.log(
-		`wrote static/og.png (${width}x${height})\n` +
-			`  wordmark: ${words.join(' ')}\n` +
-			`  subline:  ${clause}\n` +
-			`  (from manifest description: ${description})`
-	);
+	console.log(`wrote static/og.png (${width}x${height})\n  wordmark: ${words.join(' ')}`);
 }
 
 main();
