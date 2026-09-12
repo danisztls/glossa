@@ -302,8 +302,14 @@
 	   space between it and the NEXT heading to read as smaller than the space
 	   inside its own section, or three collapsed facets are three unrelated
 	   rows rather than one list of axes. */
+	/* The row's ink, stated on the surface and inherited by the summary — the
+	   spelling `.fold` requires (components.css), and it also settles a
+	   question the `h3` could not: this panel is rendered inside a second
+	   disclosure below 80rem, so the ambient colour is not the same in both
+	   places. */
 	.facet {
 		margin-bottom: 0.9rem;
+		--fold-ink: var(--color-text);
 	}
 
 	/* The whole heading row is the toggle, so it takes the row's full width and
@@ -314,11 +320,6 @@
 		margin-bottom: 0.35rem;
 		padding: 0.1rem 0.35rem;
 		border-radius: var(--radius-md);
-		/* Stated here rather than on the `h3`, which inherits it: the panel is
-		   rendered inside a second disclosure below 80rem, so the ambient colour
-		   is not the same in both places, and a colour on the child is out of
-		   `.fold`'s reach. */
-		color: var(--color-text);
 	}
 
 	.facet > summary:hover {

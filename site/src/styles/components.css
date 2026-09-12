@@ -288,6 +288,9 @@
 	gap: 0.55rem;
 	cursor: pointer;
 	list-style: none;
+	/* `--fold-ink` and not a `color` a surface overrides — see the answer rule
+	   below for why that override cannot be allowed to happen. */
+	color: var(--fold-ink, inherit);
 }
 
 .fold > summary::-webkit-details-marker {
@@ -360,16 +363,27 @@
  * answered a KEYBOARD, which is the half nobody sees go wrong — tab to a
  * summary and a mark changed colour beside a heading that did not.
  *
- * SO A SUMMARY STATES ITS RESTING COLOUR ON THE SUMMARY, and whatever heading
- * or label it holds takes `color: inherit`. A colour pinned on the child is
- * out of this rule's reach, which is how six of them came to be written by
- * hand in the first place; stated on the row, the surface keeps its own voice
- * — muted for a rubric's label, accent for the book picker — and the answer
- * is still one declaration. A count or chip that pins its own colour keeps it.
+ * A SURFACE DECLARES `--fold-ink` ON ITS OWN ELEMENT, NEVER A `color` ON THE
+ * SUMMARY, and this rule sets the property rather than the colour. That is not
+ * a style; it is the only spelling that WORKS. `.fold > summary:hover` is
+ * (0,2,1) and a scoped `.cited-in-fold > summary` compiles to exactly (0,2,1)
+ * too — Svelte 5 puts the hash in `:where()` on every compound but the first —
+ * so the two tie, the component's stylesheet is loaded after this one, and
+ * source order hands the tie to the resting colour. Five surfaces were written
+ * that way and four stopped answering, silently, which is the failure
+ * `PlateViewer`'s credit records: two rules setting `color` on one element,
+ * the survivor looking deliberate.
+ *
+ * SET ON THE SUMMARY, INHERITED FROM THE SURFACE, so no comparison happens at
+ * all: a declaration on the element always beats a value inherited into it,
+ * whatever the specificity and whatever the order. The surface keeps its own
+ * voice — muted for a rubric's label, accent for the book picker — and a
+ * heading inside the row takes `color: inherit` to follow it. A count or chip
+ * that pins its own colour keeps it.
  */
 .fold > summary:hover,
 .fold > summary:focus-visible {
-	color: var(--color-accent);
+	--fold-ink: var(--color-accent);
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -221,8 +221,11 @@
 
 	/* Our label for the panel, not a heading the work wrote — interface face,
 	   like every other uppercase letterspaced label. */
-	.cited-in-fold > summary {
-		color: var(--color-text-muted);
+	/* `--fold-ink` on the surface and never a `color` on the summary: the two
+	   would tie at (0,2,1) and this stylesheet is loaded second, so the resting
+	   colour would win and the row would stop answering (components.css). */
+	.cited-in-fold {
+		--fold-ink: var(--color-text-muted);
 	}
 
 	/* `color: inherit` against `.label-micro`'s pinned muted: the row is where

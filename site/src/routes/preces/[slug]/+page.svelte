@@ -914,10 +914,15 @@
 	   between the copyright notice and the mysteries, and the line says which
 	   side of it the directions are on. A rule above would have ruled off the
 	   notice instead. */
+	/* `.label-micro` pins the muted colour on the heading, which would keep
+	   `.fold`'s answer off it; stated on the summary it would tie with that
+	   answer and win on source order. `--fold-ink` is the spelling that works
+	   (components.css), and the `h2` takes `color: inherit` to follow it. */
 	.prayer-instructions {
 		margin: 0 0 1.5rem;
 		padding-bottom: 0.75rem;
 		border-bottom: 1px solid var(--color-border);
+		--fold-ink: var(--color-text-muted);
 	}
 
 	/* Closed, this row IS one of the section names, so its rule sits where
@@ -925,13 +930,6 @@
 	   panel and takes the wider gap. */
 	.prayer-instructions:not([open]) {
 		padding-bottom: 0.35rem;
-	}
-
-	/* `.label-micro` pins the muted colour on the heading, which would keep
-	   `.fold`'s hover and focus answer off it — so the row carries the colour
-	   and the heading inherits. */
-	.prayer-instructions > summary {
-		color: var(--color-text-muted);
 	}
 
 	.prayer-instructions h2 {

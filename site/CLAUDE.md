@@ -997,11 +997,17 @@ cover`; `/bibliotheca`'s 300px band is a WINDOW, `expandable` putting the
   mark too many for a reader who learns it once. The class carries the mark, the
   native-marker reset, the coarse-pointer target and the ROW'S ANSWER — accent
   on hover and on focus, three surfaces having lit their words and six the mark
-  alone, and only one of the three answering a keyboard. **A summary states its
-  resting colour on the summary**, its heading or label taking `color:
-inherit`: a colour pinned on the child is out of that rule's reach, which is
-  how six of them came to be written by hand. A summary's own LAYOUT still
-  stays with the surface. **A glyph is the wrong instrument for a mark**: `▸`
+  alone, and only one of the three answering a keyboard. **A surface declares
+  `--fold-ink` on its own element and never a `color` on its summary**, the
+  heading inside taking `color: inherit`: the shared answer and a scoped
+  `.x > summary` are both (0,2,1) — Svelte 5 hides the hash in `:where()` — so
+  they tie and the component's later stylesheet wins, which silenced four
+  surfaces in one commit. Set on the summary and inherited from the surface,
+  no comparison happens at all. `disclosure.test.ts` scans for the `color`.
+  A summary's own LAYOUT still stays with the surface, and **the space belongs
+  to the OPEN state** — one row's worth above every heading whatever it is
+  doing, the extra below an open one, four surfaces at four values.
+  **A glyph is the wrong instrument for a mark**: `▸`
   sizes with the text, so at an index heading's 0.85rem it lands at seven pixels
   and reads as a speck.
 - **A line that qualifies rather than says goes behind `HintNote`**, not into

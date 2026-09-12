@@ -58,3 +58,56 @@ describe('the site has one accordion', () => {
 		}
 	});
 });
+
+/**
+ * AND NONE OF THEM STATES A `color` ON ITS SUMMARY, which is a rule about the
+ * CASCADE rather than about taste.
+ *
+ * `.fold > summary:hover` (styles/components.css) is (0,2,1). A scoped
+ * `.cited-in-fold > summary` compiles to exactly (0,2,1) as well — Svelte 5
+ * puts the scoping hash in `:where()` on every compound but the first — so the
+ * two tie, and a component's stylesheet is loaded after the global one, which
+ * hands the tie to the resting colour. Five surfaces were written that way in
+ * one commit and four stopped answering hover and focus, silently.
+ *
+ * So a surface declares `--fold-ink` on its own element and the shared rule
+ * sets that property on the summary: a declaration on the element beats a
+ * value inherited into it whatever the specificity and whatever the order. The
+ * one spelling still allowed is `color: inherit`, which is how a heading inside
+ * the row follows the surface rather than pinning a colour of its own.
+ *
+ * NOTHING ELSE CAN SEE THIS. The page renders, the colour is the one the
+ * surface asked for, and the only symptom is a row that does not light.
+ */
+function summaryColourRules(source: string): string[] {
+	const style = source.match(/<style[^>]*>([\s\S]*)<\/style>/)?.[1] ?? '';
+	const css = style.replace(/\/\*[\s\S]*?\*\//g, '');
+	const offenders: string[] = [];
+	// `[^{}]` on both halves matches innermost rules only, so a rule nested in
+	// an `@media` is found rather than swallowed along with its at-rule.
+	for (const rule of css.matchAll(/([^{}]*)\{([^{}]*)\}/g)) {
+		const selector = rule[1].trim().replace(/\s+/g, ' ');
+		if (!/\bsummary\b/.test(selector) || selector.includes('::')) continue;
+		// The lookahead spans the whitespace rather than sitting after it: with
+		// `color\s*:\s*(?!inherit)` the `\s*` backtracks to nothing and the
+		// lookahead then passes on the space, flagging `color: inherit`.
+		if (/(^|[;{\s])color\s*:(?!\s*inherit\b)/.test(rule[2])) offenders.push(selector);
+	}
+	return offenders;
+}
+
+describe('a disclosure takes its ink from the surface', () => {
+	const styled = walk(SRC)
+		.map((path) => ({
+			path: path.slice(SRC.length + 1),
+			offenders: summaryColourRules(readFileSync(path, 'utf8'))
+		}))
+		.filter((file) => file.offenders.length > 0);
+
+	it('no component states a colour on a summary', () => {
+		expect(
+			styled.map((file) => `${file.path}: ${file.offenders.join(', ')}`),
+			'declare `--fold-ink` on the surface instead — components.css says why'
+		).toEqual([]);
+	});
+});

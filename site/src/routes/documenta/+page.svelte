@@ -608,25 +608,22 @@
 		max-width: 40rem;
 	}
 
+	/* THE COLOUR IS THE ROW'S AND IS DECLARED HERE, not on the summary and not
+	   on the `h2`: `--fold-ink` is what `.fold`'s hover and focus answer reads
+	   (components.css), and either of the other two spellings silently wins
+	   against it. */
 	.filters-inline {
 		margin: 0 0 1.25rem;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		padding: 0.5rem 0.75rem;
+		--fold-ink: var(--color-text-muted);
 	}
 
 	@media (min-width: 80rem) {
 		.filters-inline {
 			display: none;
 		}
-	}
-
-	/* THE COLOUR IS ON THE ROW AND NOT ON THE HEADING, so `.fold`'s one hover
-	   and focus rule reaches these words: a colour pinned on the child is out
-	   of its reach, and this panel's label would have been the one summary on
-	   the site that never answered. */
-	.filters-inline summary {
-		color: var(--color-text-muted);
 	}
 
 	.filters-inline summary h2 {

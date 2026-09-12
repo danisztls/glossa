@@ -750,16 +750,13 @@
 {/if}
 
 <style>
+	/* The cursor, the mark and the tap target are `.fold`, and `--fold-ink` is
+	   how it takes this row's colour (components.css). The accent is also what
+	   a hover would set, so this row answers with its mark alone. */
 	.picker {
 		margin: 1rem 0;
 		font-size: 0.9rem;
-	}
-
-	/* The cursor, the mark and the tap target are `.fold`; this row's own
-	   colour is the accent, which is also what its hover would set — so it
-	   answers with the mark alone. */
-	.picker summary {
-		color: var(--color-accent);
+		--fold-ink: var(--color-accent);
 	}
 
 	/*

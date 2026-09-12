@@ -27,8 +27,11 @@
 	 * definitions in this section's quiet scale under a 0.95rem
 	 * `h2` — so a fold here takes the rule drawn only while open and the room
 	 * an open one adds below, and keeps the size the paragraph above argues
-	 * for. `<details class="fold">` and no component: what would be shared is
-	 * the element's own behaviour, which costs no script.
+	 * for. `<details class="primer-fold fold">` and no component: what would be
+	 * shared is the element's own behaviour, which costs no script. The surface
+	 * names itself, as the other eight disclosures do — a bare `details {}` is
+	 * bounded by Svelte's scoping but not by anything inside this file, and it
+	 * is the one fold nobody could grep for by name.
 	 *
 	 * ONLY THE CALENDAR PAGE RENDERS IT. The home page shows the day's card
 	 * too, and does not want a lesson under it — that page is a door, and its
@@ -115,7 +118,7 @@
 	<p class="lead">{t('calendar.primer.lead')}</p>
 
 	{#each GROUPS as group (group.id)}
-		<details class="fold">
+		<details class="primer-fold fold">
 			<summary><h3>{t(`calendar.primer.${group.id}`)}</h3></summary>
 			{#if group.lead}<p class="group-lead">{t(group.lead)}</p>{/if}
 			<dl>
@@ -173,14 +176,19 @@
 	 * move the words the reader just pressed (`IndexSection`). No padding on
 	 * the summary — `.fold` owns that row's height where a finger needs 44px.
 	 */
-	details {
+	.primer-fold {
 		margin-block: 0.5rem;
+		/* The section around these is muted and a term is not. `--fold-ink` and
+		   not a `color` on the summary: that is what `.fold`'s hover and focus
+		   answer reads, and a `color` there ties with it and wins on source
+		   order (components.css). */
+		--fold-ink: var(--color-text);
 	}
 
 	/* WHAT AN OPEN FOLD ADDS IS UNDERNEATH, and it is for its definitions:
 	   without it the last line of one vocabulary and the name of the next are
 	   a row apart, and the name reads as the end of the list above it. */
-	details[open] {
+	.primer-fold[open] {
 		margin-block-end: 1.25rem;
 	}
 
@@ -189,16 +197,9 @@
 	   empty ruled boxes — the state `IndexSection`'s docblock argues out, and
 	   the Advanced panel's shelves the same from the other side. Shut, these
 	   draw none and the fold mark is all the structure the list has. */
-	details[open] > summary {
+	.primer-fold[open] > summary {
 		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 0.4rem;
-	}
-
-	/* The section around these is muted and a term is not, so the ROW states
-	   its colour and the name inherits — which is what lets `.fold`'s one
-	   hover and focus rule (styles/components.css) reach the words. */
-	summary {
-		color: var(--color-text);
 	}
 
 	/* The vocabulary's own name, and now in the document's outline: `h3` under
@@ -208,7 +209,7 @@
 	   scale). The SCALE is the primer's own — the docblock above says why
 	   these must not compete with the day they explain — and it is the one
 	   thing here that is not the house default. */
-	summary h3 {
+	.primer-fold h3 {
 		font-family: inherit;
 		font-size: inherit;
 		font-weight: 600;
