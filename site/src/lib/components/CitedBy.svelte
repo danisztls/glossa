@@ -144,7 +144,7 @@
 		<summary>
 			<h2 id={headingId} class="label-micro">
 				{heading}
-				<span class="count">{total}</span>
+				<span class="chip">{total}</span>
 			</h2>
 		</summary>
 		{#if filtering}
@@ -228,10 +228,10 @@
 		--fold-ink: var(--color-text-muted);
 	}
 
-	/* `color: inherit` against `.label-micro`'s pinned muted: the row is where
-	   the colour is stated, so `.fold`'s hover and focus answer reaches the
-	   label and the count inside it — both ends of the only row a shut panel
-	   has, which is what `.index-row` does with its own chip. */
+	/* `color: inherit` against `.label-micro`'s pinned muted, so the row's own
+	   `--fold-ink` reaches the LABEL. It does not reach the chip beside it and
+	   is not meant to: `.chip` pins its colour, the heading is what the reader
+	   is pressing, and the number is a fact about what is behind it. */
 	.cited-in h2 {
 		margin: 0;
 		font-weight: 600;
@@ -241,11 +241,13 @@
 		gap: 0.5rem;
 	}
 
-	.count {
-		font-variant-numeric: tabular-nums;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		padding: 0 0.3rem;
+	/* `.chip` is the whole of it (styles/components.css) — the border, the
+	   radius, the figures and the muted colour that declines the heading's
+	   hover. What is this surface's own is the TRACKING: `<summary>` takes one
+	   heading and not a heading with a sibling beside it, so this is the one
+	   chip on the site nested INSIDE a `.label-micro`, and its 0.04em would
+	   otherwise letterspace a number. */
+	.chip {
 		letter-spacing: 0;
 	}
 

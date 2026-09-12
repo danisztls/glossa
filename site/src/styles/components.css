@@ -121,10 +121,26 @@
  * THE CHIP: a bordered scrap at the end of a row saying what kind of thing
  * it is, or how many. Small, muted and outlined rather than filled — a
  * filled badge in a list of 300 rows reads as 300 marks.
+ *
+ * TABULAR FIGURES BELONG TO THE OBJECT, not to the surface: all three chips
+ * that hold a number wrote that declaration out separately, which is what a
+ * copied style looks like. It is inert on the ones holding a word — a
+ * document's kind — and
+ * wanted on every one that holds a number, since a column of counts that
+ * shifts as the digits change is the thing the property exists for.
+ *
+ * THE MUTED COLOUR IS LOAD-BEARING AND NOT A DEFAULT. A chip beside a fold's
+ * heading must not answer that heading's hover: the row is one control, the
+ * heading is what names it, and the number is a fact about what is behind the
+ * door rather than part of the door. Pinning the colour here is what declines
+ * the accent `--fold-ink` hands the summary (see the accordion below). The
+ * one hover a chip DOES follow is `.index-link`'s, and that is the opposite
+ * case — there the whole row is the link, so both of its ends have to say so.
  */
 .chip {
 	flex-shrink: 0;
 	font-size: 0.75rem;
+	font-variant-numeric: tabular-nums;
 	color: var(--color-text-muted);
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-sm);

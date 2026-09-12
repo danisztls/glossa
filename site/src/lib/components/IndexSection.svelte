@@ -149,12 +149,12 @@
 		margin: 0;
 	}
 
-	/* BESIDE THE HEADING AND NOT AT THE ROW'S END. The row is as wide as the
-	   column, so an auto margin put the count a thousand pixels from the words
-	   it counts — a number floating in the margin of a page it had stopped
-	   belonging to. `.chip` is the shared primitive; the figures are this
-	   row's own. */
-	.chip {
-		font-variant-numeric: tabular-nums;
-	}
+	/* NO CHIP RULE HERE, AND NO AUTO MARGIN. The count sits beside the heading
+	   rather than at the row's end: the row is as wide as the column, so an
+	   auto margin put the number a thousand pixels from the words it counts —
+	   floating in the margin of a page it had stopped belonging to. Everything
+	   it wears is `.chip`'s (styles/components.css), the tabular figures
+	   included. `/documenta`'s phone panel is the one surface that DOES push
+	   its chip to the end, its summary being a bordered box and not a
+	   page-wide row. */
 </style>

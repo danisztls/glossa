@@ -635,9 +635,11 @@
 		margin: 0;
 	}
 
+	/* THE PLACEMENT ALONE IS THIS PANEL'S. The summary is a bordered box rather
+	   than a page-wide row, so the chip rides its end where `IndexSection`'s
+	   sits beside the heading; the figures are `.chip`'s own. */
 	.filters-inline summary .chip {
 		margin-inline-start: auto;
-		font-variant-numeric: tabular-nums;
 	}
 
 	.filters-inline :global(.doc-filters) {
