@@ -20,8 +20,15 @@
 	 * longer than the month above them and would make the page look like a
 	 * glossary with a calendar attached; a reader who wants one word has the
 	 * gloss, and a reader who wants the vocabulary opens the part of it they
-	 * are missing. `<details>` and not a component, because that is what the
-	 * element is for and it costs no script.
+	 * are missing.
+	 *
+	 * THE SHAPE IS `IndexSection`'S AND THE TYPE IS NOT. That component is a
+	 * 1.1rem heading over a list of destinations, and these are lists of
+	 * definitions in this section's quiet scale under a 0.95rem
+	 * `h2` — so a fold here takes the rule drawn only while open and the room
+	 * an open one adds below, and keeps the size the paragraph above argues
+	 * for. `<details class="fold">` and no component: what would be shared is
+	 * the element's own behaviour, which costs no script.
 	 *
 	 * ONLY THE CALENDAR PAGE RENDERS IT. The home page shows the day's card
 	 * too, and does not want a lesson under it — that page is a door, and its
@@ -109,7 +116,7 @@
 
 	{#each GROUPS as group (group.id)}
 		<details class="fold">
-			<summary>{t(`calendar.primer.${group.id}`)}</summary>
+			<summary><h3>{t(`calendar.primer.${group.id}`)}</h3></summary>
 			{#if group.lead}<p class="group-lead">{t(group.lead)}</p>{/if}
 			<dl>
 				{#each group.terms as term (term)}
@@ -160,16 +167,53 @@
 		line-height: 1.6;
 	}
 
+	/*
+	 * EVERY NAME SITS THE SAME DISTANCE FROM THE ONE ABOVE IT, open or shut,
+	 * so the extra room an open fold needs is BELOW it: opening one must not
+	 * move the words the reader just pressed (`IndexSection`). No padding on
+	 * the summary — `.fold` owns that row's height where a finger needs 44px.
+	 */
 	details {
-		border-top: 1px solid var(--color-border);
-		padding: 0.45rem 0;
+		margin-block: 0.5rem;
 	}
-	/* The section around these is muted, and a term is not — so the row states
-	   its colour, and the hover and focus answer that reaches it is `.fold`'s
-	   one rule (styles/components.css) rather than a second copy here. */
+
+	/* WHAT AN OPEN FOLD ADDS IS UNDERNEATH, and it is for its definitions:
+	   without it the last line of one vocabulary and the name of the next are
+	   a row apart, and the name reads as the end of the list above it. */
+	details[open] {
+		margin-block-end: 1.25rem;
+	}
+
+	/* THE RULE IS DRAWN ONLY WHILE THE FOLD IS OPEN, so that it underlines
+	   something. Four shut names each under a hairline were four headings over
+	   empty ruled boxes — the state `IndexSection`'s docblock argues out, and
+	   the Advanced panel's shelves the same from the other side. Shut, these
+	   draw none and the fold mark is all the structure the list has. */
+	details[open] > summary {
+		border-bottom: 1px solid var(--color-border);
+		padding-bottom: 0.4rem;
+	}
+
+	/* The section around these is muted and a term is not, so the ROW states
+	   its colour and the name inherits — which is what lets `.fold`'s one
+	   hover and focus rule (styles/components.css) reach the words. */
 	summary {
 		color: var(--color-text);
+	}
+
+	/* The vocabulary's own name, and now in the document's outline: `h3` under
+	   the section's own `h2`, the level `/schola` gives a fold standing under a
+	   heading of its own. Every size is restated because nothing resets a
+	   heading globally (base.css declares no family for `h1`–`h6` and no
+	   scale). The SCALE is the primer's own — the docblock above says why
+	   these must not compete with the day they explain — and it is the one
+	   thing here that is not the house default. */
+	summary h3 {
+		font-family: inherit;
+		font-size: inherit;
 		font-weight: 600;
+		color: inherit;
+		margin: 0;
 	}
 
 	/*
